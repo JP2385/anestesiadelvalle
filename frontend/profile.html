@@ -1,0 +1,60 @@
+<!-- profile.html -->
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mi Perfil - Anestesiólogos del Valle</title>
+    <link rel="stylesheet" href="css/base.css">
+    <link rel="stylesheet" href="css/header.css">
+    <link rel="stylesheet" href="css/login.css"> <!-- Usar login.css para estilos compartidos -->
+    <link rel="stylesheet" href="css/media.css">
+    <script src="js/forms.js" defer></script>
+</head>
+<body>
+    <header>
+        <a href="index.html" class="app-logo-link">
+            <img src="images/logo/logo.png" alt="Logo Anestesiólogos del Valle" class="app-logo">
+        </a>
+        <h1>Anestesiólogos del Valle</h1>
+        <a href="index.html" class="back-to-main-menu" title="Volver al menú principal">
+            <img src="images/icons/back-icon.svg" alt="Volver" class="back-icon">
+        </a>
+    </header>
+    <main class="form-container">
+        <h2>Mi Perfil</h2>
+        <div class="profile-info" id="profile-info">
+            <p><strong>Nombre:</strong> <span id="profile-name"></span></p>
+            <p><strong>Correo Electrónico:</strong> <span id="profile-email"></span></p>
+            <button onclick="toggleChangePassword()" class="main-menu-button">Cambiar Contraseña</button>
+        </div>
+        <div class="change-password-form" id="change-password-form" style="display: none;">
+            <h3>Cambiar Contraseña</h3>
+            <div class="input-group">
+                <label for="current-password">Contraseña Actual</label>
+                <div class="password-container">
+                    <input type="password" id="current-password" name="current-password" required>
+                    <span class="toggle-password" onclick="togglePasswordVisibility('current-password')">👁️</span>
+                </div>
+            </div>
+            <div class="input-group">
+                <label for="new-password">Nueva Contraseña</label>
+                <div class="password-container">
+                    <input type="password" id="new-password" name="new-password" required>
+                    <span class="toggle-password" onclick="togglePasswordVisibility('new-password')">👁️</span>
+                </div>
+            </div>
+            <div class="input-group">
+                <label for="confirm-password">Repetir Nueva Contraseña</label>
+                <div class="password-container">
+                    <input type="password" id="confirm-password" name="confirm-password" required>
+                    <span class="toggle-password" onclick="togglePasswordVisibility('confirm-password')">👁️</span>
+                </div>
+            </div>
+            <button onclick="confirmChangePassword()" class="main-menu-button">Confirmar</button>
+        </div>
+        <button onclick="goToMainMenu()" class="main-menu-button">Volver al Menú Principal</button>
+    </main>
+</body>
+</html>

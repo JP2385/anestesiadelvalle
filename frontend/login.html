@@ -1,0 +1,57 @@
+<!-- login.html -->
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - Anestesiólogos del Valle</title>
+    <link rel="stylesheet" href="css/base.css">
+    <link rel="stylesheet" href="css/header.css">
+    <link rel="stylesheet" href="css/nav.css">
+    <link rel="stylesheet" href="css/main.css">
+    <link rel="stylesheet" href="css/media.css">
+    <link rel="stylesheet" href="css/login.css">
+    <link rel="manifest" href="json/manifest.json">
+    <meta name="theme-color" content="#0056b3">
+    <script defer src="js/forms.js"></script>
+</head>
+<body>
+    <header>
+        <a href="login.html" class="app-logo-link">
+            <img src="images/logo/logo.png" alt="Logo Anestesiólogos del Valle" class="app-logo">
+        </a>
+        <h1>Anestesiólogos del Valle</h1>
+    </header>
+    <main class="form-container">
+        <form id="login-form">
+            <h2>Inicia Sesión</h2>
+            <div class="input-group">
+                <label for="username">Nombre de Usuario</label>
+                <input type="text" id="username" name="username" required>
+            </div>
+            <div class="input-group">
+                <label for="password">Contraseña</label>
+                <div class="password-container">
+                    <input type="password" id="password" name="password" required>
+                    <span class="toggle-password" onclick="togglePasswordVisibility('password')">👁️</span>
+                </div>
+            </div>
+            <div class="remember-me">
+                <label for="remember-me">
+                    <input type="checkbox" id="remember-me" name="remember-me" checked>
+                    Recuérdame
+                </label>
+            </div>
+            <button type="submit" class="login-button">Iniciar Sesión</button>
+            <a href="recover-password.html" id="forgot-password">¿Olvidaste tu contraseña?</a>
+            <div class="register-link-container">
+                <div class="register-link">
+                    <p>¿No tienes una cuenta?</p>
+                    <a href="register.html" id="register-link">Regístrate aquí</a>
+                </div>
+            </div>
+        </form>
+    </main>
+</body>
+</html>

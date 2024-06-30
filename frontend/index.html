@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Anestesiólogos del Valle</title>
+    <link rel="stylesheet" href="css/base.css">
+    <link rel="stylesheet" href="css/header.css">
+    <link rel="stylesheet" href="css/nav.css">
+    <link rel="stylesheet" href="css/main.css">
+    <link rel="stylesheet" href="css/media.css">
+    <link rel="manifest" href="json/manifest.json">
+    <meta name="theme-color" content="#0056b3">
+    <script src="js/service-worker.js" defer></script>
+    <script src="js/pwa-install.js" defer></script>
+    <script src="js/openfile.js" defer></script>
+    <script src="js/meetings.js" defer></script>
+    <script src="js/payments.js" defer></script>
+    <script src="js/main.js" defer></script>
+    <script src="js/facturacion.js" defer></script>
+    <script src="js/menu.js" defer></script>
+    <script src="js/nav.js" defer></script>
+</head>
+<body>
+    <header>
+        <a href="index.html" class="app-logo-link">
+            <img src="images/logo/logo.png" alt="Logo Anestesiólogos del Valle" class="app-logo">
+        </a>
+        <h1>Anestesiólogos del Valle</h1>
+        <div class="hamburger-menu" id="hamburger-menu">
+            &#9776;
+        </div>
+        <div class="dropdown-menu" id="dropdown-menu">
+            <a href="profile.html">Mi perfil</a>
+            <a href="login.html" id="logout">Cerrar sesión</a>
+        </div>
+    </header>
+    <nav>
+        <button onclick="showSection('programacion')">Programación</button>
+        <button onclick="showSection('facturacion')">Facturación y Nomenclado</button>
+        <button onclick="showSection('liquidaciones')">Liquidaciones e Ingresos</button>
+        <button onclick="showSection('reuniones')">Reuniones y Estatuto</button>
+        <button onclick="showSection('materiales')">Materiales</button>
+    </nav>
+    <main>
+        <section id="programacion" class="content-section">
+            <!-- <h2>Programación</h2> -->
+            <button onclick="openFile('https://docs.google.com/spreadsheets/d/18tNvZEY2VWkf3m5V7UnT1-yCWYDVAp6GggHg9hvsP0A/edit?usp=sharing')">Programación Semanal</button>
+            <button onclick="openFile('https://docs.google.com/spreadsheets/d/1IIAo4YHyBavQmA7iN3xVwhW9NncDwYU-3PpnL81d4TE/edit?usp=sharing')">Vacaciones y Guardias 2024</button>
+            <button onclick="openFile('https://docs.google.com/spreadsheets/d/1CBU7nXGDil2BPH5Ow2KOA7YgT9-LyGmtJSqBaOOmwng/edit?usp=drive_link')">Vacaciones y Guardias 2025</button>
+            <button onclick="openFile('https://docs.google.com/spreadsheets/d/1vB-44gFZ0czuDXqeHO9g-DZLP7h82Yi_/edit?usp=sharing&ouid=116849778907664010256&rtpof=true&sd=true')">Resultado sorteo vacaciones 2024/2025</button>
+        </section>
+        <section id="facturacion" class="content-section" style="display:none;">
+            <!-- <h2>Facturación y Nomenclado</h2> -->
+            <fieldset>
+                <legend>Neuquén</legend>
+                <button onclick="toggleNomencladoresneuquen()">Nomencladores</button>
+                <ul id="nomencladores-list-nqn" class="hidden" style="display:none;">
+                    <li><a href="https://drive.google.com/file/d/1qS6kYSzh839uY0q_K_RFlKwYDSK0c56r/view?usp=drive_link" target="_blank"><img src="images/icons/pdf-icon.png" alt="PDF"> Complejidades</a></li>
+                    <li><a href="https://drive.google.com/file/d/1jSSkiXIWHD5sBDBkCYvH3JTGXuRjQj_O/view?usp=drive_link" target="_blank"><img src="images/icons/pdf-icon.png" alt="PDF"> ISSN</a></li>
+                    <li><a href="https://drive.google.com/file/d/1CfkqYI6d1Is44_2HprhQ1RlRBZgV8-ON/view?usp=drive_link" target="_blank"><img src="images/icons/pdf-icon.png" alt="PDF"> Niveles</a></li>
+                    <li><a href="https://drive.google.com/file/d/1UmgxOdnOn_AXt2gJs76dALfWSRcduDih/view?usp=drive_link" target="_blank"><img src="images/icons/pdf-icon.png" alt="PDF"> OSDE</a></li>
+                    <li><a href="https://drive.google.com/file/d/1G7h0u650U9y39iUP4heaKxwIxuOGFOve/view?usp=drive_link" target="_blank"><img src="images/icons/pdf-icon.png" alt="PDF"> OSPEPRI</a></li>
+                </ul>
+                <button onclick="openFile('https://drive.google.com/file/d/1QtMQM642jhLQPl9A-Et4HxemkyIrqku2/view?usp=drive_link')">Instructivo ISSN</button>
+                <button onclick="openFile('https://drive.google.com/file/d/1TREExIbZmoKcOdS5RUwxX7f_tKjUK-J3/view?usp=drive_link')">Nomenclador por O.S</button>
+            </fieldset>
+            <fieldset>
+                <legend>Río Negro</legend>
+                <button onclick="toggleNomencladoresrionegro()">Nomencladores</button>
+                <ul id="nomencladores-list-rn" class="hidden" style="display:none;">
+                    <li><a href="https://drive.google.com/file/d/1vb7ZeUgggrDCXRvLdNdf8ewQjCqOSZwt/view?usp=drive_link" target="_blank"><img src="images/icons/pdf-icon.png" alt="PDF"> ARAAR 2015</a></li>
+                    <li><a href="https://drive.google.com/file/d/1lyBxPOq78zfdfgAYqfJLFOhcUQnlCKDe/view?usp=drive_link" target="_blank"><img src="images/icons/pdf-icon.png" alt="PDF"> ARAAR 2018</a></li>
+                    <li><a href="https://drive.google.com/file/d/1ucXPTH36aYWAosTWHWG7kQJhOeuoPabp/view?usp=drive_link" target="_blank"><img src="images/icons/pdf-icon.png" alt="PDF"> ARAAR 2022</a></li>
+                    <li><a href="https://drive.google.com/file/d/1tZwE2drmMs_k7IEQHtT0I5TajGOmCaO9/view?usp=drive_link" target="_blank"><img src="images/icons/pdf-icon.png" alt="PDF"> ISSN</a></li>
+                    <li><a href="https://drive.google.com/file/d/1t_n0KrS91wWrbuemFCX2v-aw2rxHnDh7/view?usp=drive_link" target="_blank"><img src="images/icons/pdf-icon.png" alt="PDF"> OSDE</a></li>
+                    <li><a href="https://drive.google.com/file/d/1LBt0piXrQkohi2Isvt9Hsq76VKs7v2Pw/view?usp=drive_link" target="_blank"><img src="images/icons/pdf-icon.png" alt="PDF"> OSDE</a></li>
+                    <li><a href="https://drive.google.com/file/d/1TFUlB0oSmXuR6VIF9qCKboBomMypI_IH/view?usp=drive_link" target="_blank"><img src="images/icons/pdf-icon.png" alt="PDF"> OSPEPRI</a></li>
+                </ul>
+                <button onclick="openFile('https://docs.google.com/document/d/1Qi-4nLkx5JaC6ENG58FqGUWTfMmmB86n/edit?usp=drive_link&ouid=116849778907664010256&rtpof=true&sd=true')">Nomenclado sugerido</button>
+                <button onclick="openFile('https://drive.google.com/file/d/1QqyHrtqT5lYKlDh7KKsF6noO7EJdeYxV/view?usp=drive_link')">Pautas según O.S.</button>
+            </fieldset>
+        </section>
+        <section id="liquidaciones" class="content-section" style="display:none;">
+            <!-- <h2>Liquidaciones e Ingresos</h2> -->
+            <button onclick="openFile('https://docs.google.com/spreadsheets/d/1gZCYAAnxdkvHWiVFM3DfMyzfKu9IDgfg45H95GWufGk/edit?usp=sharing')">Resumen de Liquidaciones</button>
+            <button onclick="openFile('https://docs.google.com/spreadsheets/d/1ondWWdxWX3So_pRfAgMhOkel8mMEgsJO4okDtE5TZSY/edit?usp=drive_link')">Resumen de Ingresos</button>
+            <button onclick="toggleUpcomingPayments()">Próximas liquidaciones</button>
+            <ul id="upcoming-payments" style="display:none;">
+                <!-- Las fechas serán insertadas dinámicamente -->
+            </ul>
+        </section>
+        <section id="reuniones" class="content-section" style="display:none;">
+            <!-- <h2>Reuniones y Estatuto</h2> -->
+            <button onclick="toggleMeetingDates()">Fechas reuniones</button>
+            <ul id="meeting-dates" style="display:none;"></ul>
+            <button onclick="openFile('https://drive.google.com/drive/folders/1mOhFcf6yHZuIIpDmeWz3afzNZuz-5uje?usp=drive_link')">Resúmenes reuniones</button>
+            <button onclick="openFile('https://drive.google.com/file/d/1XyDopUZhfHXkxZGXJnEa5UdmhqjR7HI1/view?usp=sharing')">Estatuto</button>
+        </section>
+        <section id="materiales" class="content-section" style="display:none;">
+            <!-- <h2>Materiales</h2> -->
+            <button onclick="openFile('https://docs.google.com/spreadsheets/d/1rHyyYz1Ceotfd47ZuikEYOEjeMizu8Oq/edit?usp=sharing&ouid=116849778907664010256&rtpof=true&sd=true')">Equipamiento propio</button>
+        </section>
+    </main>
+</body>
+</html>

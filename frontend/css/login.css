@@ -1,0 +1,172 @@
+/* Estilos para los contenedores de formularios */
+.form-container {
+    max-width: 400px;
+    margin: 50px auto;
+    padding: 20px;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    background-color: #fff;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    text-align: center;
+}
+
+.form-container h2 {
+    margin-bottom: 20px;
+    color: #0056b3;
+}
+
+/* Estilos para los grupos de entrada */
+.input-group {
+    margin-bottom: 20px;
+    text-align: left;
+}
+
+.input-group label {
+    display: block;
+    margin-bottom: 5px;
+    color: #555;
+    font-weight: bold;
+}
+
+.input-group input {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    font-size: 16px;
+    box-sizing: border-box;
+    transition: border-color 0.3s;
+}
+
+.input-group input:focus {
+    border-color: #0056b3;
+    outline: none;
+}
+
+/* Contenedor de la contraseña con el ícono */
+.password-container {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.password-container input {
+    flex: 1;
+    padding-right: 40px;
+}
+
+.toggle-password {
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    cursor: pointer;
+    font-size: 20px;
+    color: #007bff;
+    transition: color 0.3s;
+}
+
+.toggle-password:hover {
+    color: #0056b3;
+}
+
+/* Estilos para botones */
+.login-button, .register-button, .recover-button, .main-menu-button {
+    width: 100%;
+    padding: 10px;
+    background-color: #0069d9;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    margin: 0.5rem 0;
+}
+
+.login-button:hover, .register-button:hover, .recover-button:hover, .main-menu-button:hover {
+    background-color: #0056b3;
+}
+
+/* Estilos para el checkbox y la etiqueta "Recuérdame" */
+.remember-me {
+    display: flex;
+    align-items: center;
+    margin-bottom: 20px;
+    text-align: left;
+}
+
+.remember-me input[type="checkbox"] {
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    /* Estilo personalizado */
+    width: 16px;
+    height: 16px;
+    background-color: #fff; /* Color de fondo del checkbox */
+    border: 1px solid #ddd;
+    border-radius: 5px; /* Bordes redondeados */
+    outline: none;
+    cursor: pointer;
+    margin-right: 5px;
+    margin-left: -0.5px;
+}
+
+.remember-me input[type="checkbox"]:checked {
+    background-color: #0069d9; /* Color de fondo cuando está seleccionado */
+    border: 2px solid #0069d9; /* Borde del checkbox cuando está seleccionado */
+    background-image: url('../images/icons/check.svg');
+    background-size: 100% 100%;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+
+.remember-me label {
+    color: #555;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+}
+
+/* Estilos para enlaces */
+#forgot-password {
+    display: block;
+    margin-top: 15px;
+    color: #007bff;
+    text-decoration: none;
+    font-size: 0.9em;
+    text-align: center;
+}
+
+#forgot-password:hover {
+    text-decoration: underline;
+}
+
+/* Contenedores de enlaces */
+.register-link-container, .login-link-container {
+    margin-top: 20px;
+    border-top: 1px solid #ddd;
+    padding-top: 15px;
+    font-size: 0.9em;
+    text-align: center;
+}
+
+.register-link, .login-link {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    flex-wrap: nowrap;
+}
+
+.register-link p, .login-link p {
+    margin: 0;
+    color: #333;
+}
+
+.register-link a, .login-link a {
+    color: #007bff;
+    text-decoration: none;
+    margin-left: 5px;
+}

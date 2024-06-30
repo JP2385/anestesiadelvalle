@@ -1,0 +1,37 @@
+main {
+    padding: 2rem;
+}
+
+.content-section {
+    background-color: white;
+    padding: 1rem;
+    border-radius: 5px;
+    box-shadow: 0 0 10px rgba(0,0,0,0.1);
+}
+
+.content-section button {
+    background-color: #0069d9;
+    color: white;
+    border: none;
+    padding: 1rem 2rem;
+    cursor: pointer;
+    font-size: 1rem;
+    font-weight: bold;
+    margin: 0.5rem;
+    transition: background-color 0.3s, transform 0.3s;
+    border-radius: 10px;
+    width: calc(100% - 1rem);
+    box-sizing: border-box;
+    box-shadow: 2px 2px 5px rgba(0,0,0,0.2);
+}
+
+.content-section button:hover {
+    background-color: #0056b3;
+    transform: translateY(-2px);
+    box-shadow: 4px 4px 10px rgba(0,0,0,0.3);
+}
+
+.content-section button:active {
+    background-color: #003f7f;
+    transform: translateY(0);
+}

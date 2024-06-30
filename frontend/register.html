@@ -1,0 +1,60 @@
+<!-- register.html -->
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registro - Anestesiólogos del Valle</title>
+    <link rel="stylesheet" href="css/base.css">
+    <link rel="stylesheet" href="css/header.css">
+    <link rel="stylesheet" href="css/login.css">
+    <link rel="stylesheet" href="css/media.css">
+    <meta name="theme-color" content="#0056b3">
+</head>
+<body>
+    <header>
+        <a href="login.html" class="app-logo-link">
+            <img src="images/logo/logo.png" alt="Logo Anestesiólogos del Valle" class="app-logo">
+        </a>
+        <h1>Anestesiólogos del Valle</h1>
+        <a href="login.html" class="back-to-login" title="Volver a iniciar sesión">
+            <img src="images/icons/back-icon.svg" alt="Volver" class="back-icon">
+        </a>
+    </header>
+    <main class="form-container">
+        <form id="register-form">
+            <h2>Registrate</h2>
+            <div class="input-group">
+                <label for="username">Nombre de Usuario</label>
+                <input type="text" id="username" name="username" required>
+            </div>
+            <div class="input-group">
+                <label for="email">Correo Electrónico</label>
+                <input type="email" id="email" name="email" required>
+            </div>
+            <div class="input-group">
+                <label for="password">Contraseña</label>
+                <div class="password-container">
+                    <input type="password" id="password" name="password" required>
+                    <span class="toggle-password" onclick="togglePasswordVisibility('password')">👁️</span>
+                </div>
+            </div>
+            <div class="input-group">
+                <label for="confirm-password">Confirmar Contraseña</label>
+                <div class="password-container">
+                    <input type="password" id="confirm-password" name="confirm-password" required>
+                    <span class="toggle-password" onclick="togglePasswordVisibility('confirm-password')">👁️</span>
+                </div>
+            </div>
+            <button type="submit" class="register-button">Registrarse</button>
+            <div class="login-link-container">
+                <div class="login-link">
+                    <p>¿Ya tienes una cuenta? <a href="login.html" id="login-link">Inicia sesión aquí</a></p>
+                </div>
+            </div>
+        </form>
+    </main>
+    <script src="js/forms.js" defer></script>
+</body>
+</html>
