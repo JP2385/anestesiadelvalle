@@ -1,5 +1,5 @@
 document.addEventListener('DOMContentLoaded', function() {
-    const apiUrl = 'https://<your-app-name>.herokuapp.com'; // Reemplaza <your-app-name> con el nombre de tu aplicación en Heroku
+    const apiUrl = 'https://adv-37d5b772f5fd.herokuapp.com';
 
     // Login form submission
     const loginForm = document.getElementById('login-form');
