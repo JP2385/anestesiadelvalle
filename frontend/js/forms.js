@@ -1,4 +1,6 @@
 document.addEventListener('DOMContentLoaded', function() {
+    const apiUrl = 'https://<your-app-name>.herokuapp.com'; // Reemplaza <your-app-name> con el nombre de tu aplicación en Heroku
+
     // Login form submission
     const loginForm = document.getElementById('login-form');
     if (loginForm) {
@@ -8,7 +10,7 @@ document.addEventListener('DOMContentLoaded', function() {
             const password = document.getElementById('password').value;
 
             try {
-                const response = await fetch('http://localhost:3000/auth/login', {
+                const response = await fetch(`${apiUrl}/auth/login`, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
@@ -51,7 +53,7 @@ document.addEventListener('DOMContentLoaded', function() {
             submitButton.disabled = true;
 
             try {
-                const response = await fetch('http://localhost:3000/auth/register', {
+                const response = await fetch(`${apiUrl}/auth/register`, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
@@ -97,7 +99,7 @@ document.addEventListener('DOMContentLoaded', function() {
             }
 
             try {
-                const response = await fetch('http://localhost:3000/auth/change-password', {
+                const response = await fetch(`${apiUrl}/auth/change-password`, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
@@ -119,7 +121,7 @@ document.addEventListener('DOMContentLoaded', function() {
         };
     }
 
-// Recover password form submission
+    // Recover password form submission
     const recoverForm = document.getElementById('recover-form');
     if (recoverForm) {
         recoverForm.addEventListener('submit', async (event) => {
@@ -127,7 +129,7 @@ document.addEventListener('DOMContentLoaded', function() {
             const email = document.getElementById('email').value;
 
             try {
-                const response = await fetch('http://localhost:3000/auth/recover-password', {
+                const response = await fetch(`${apiUrl}/auth/recover-password`, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
@@ -147,7 +149,6 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
-
     // Reset password form submission
     const resetPasswordForm = document.getElementById('reset-password-form');
     if (resetPasswordForm) {
@@ -164,7 +165,7 @@ document.addEventListener('DOMContentLoaded', function() {
             }
 
             try {
-                const response = await fetch('http://localhost:3000/auth/reset-password', {
+                const response = await fetch(`${apiUrl}/auth/reset-password`, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
@@ -195,7 +196,7 @@ document.addEventListener('DOMContentLoaded', function() {
             return;
         }
 
-        fetch('http://localhost:3000/auth/profile', {
+        fetch(`${apiUrl}/auth/profile`, {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',
