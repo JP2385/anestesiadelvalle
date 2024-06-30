@@ -71,7 +71,7 @@
 }
 
 /* Estilos para botones */
-.login-button, .register-button, .recover-button, .main-menu-button {
+.login-button, .register-button, .recover-button, .main-menú-button,.reset-button {
     width: 100%;
     padding: 10px;
     background-color: #0069d9;
@@ -85,7 +85,7 @@
     margin: 0.5rem 0;
 }
 
-.login-button:hover, .register-button:hover, .recover-button:hover, .main-menu-button:hover {
+.login-button:hover, .register-button:hover, .recover-button:hover, .main-menu-button:hover,.reset-button:hover {
     background-color: #0056b3;
 }
 
