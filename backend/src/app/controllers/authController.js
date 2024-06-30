@@ -77,7 +77,7 @@ exports.recoverPassword = async (req, res) => {
         }
 
         const token = jwt.sign({ userId: user._id }, config.jwtSecret, { expiresIn: '1h' });
-        const link = `http://localhost:3000/reset-password.html?token=${token}`;
+        const link = `https://adv-37d5b772f5fd.herokuapp.com/reset-password.html?token=${token}`;
 
         // Configura el transporter de nodemailer
         const transporter = nodemailer.createTransport({
