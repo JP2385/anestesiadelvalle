@@ -8,6 +8,7 @@ document.addEventListener('DOMContentLoaded', function() {
             event.preventDefault();
             const username = document.getElementById('username').value;
             const password = document.getElementById('password').value;
+            const rememberMe = document.getElementById('remember-me').checked;
 
             try {
                 const response = await fetch(`${apiUrl}/auth/login`, {
@@ -20,7 +21,11 @@ document.addEventListener('DOMContentLoaded', function() {
 
                 if (response.ok) {
                     const data = await response.json();
-                    localStorage.setItem('token', data.token);
+                    if (rememberMe) {
+                        localStorage.setItem('token', data.token); // Guardar el token indefinidamente en dispositivos móviles
+                    } else {
+                        sessionStorage.setItem('token', data.token); // Guardar el token temporalmente en la sesión del navegador
+                    }
                     alert('Inicio de sesión exitoso');
                     window.location.href = 'index.html';
                 } else {
