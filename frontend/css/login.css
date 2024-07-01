@@ -71,7 +71,7 @@
 }
 
 /* Estilos para botones */
-.login-button, .register-button, .recover-button, .main-menú-button,.reset-button {
+.login-button, .register-button, .recover-button, .main-menu-button,.reset-button {
     width: 100%;
     padding: 10px;
     background-color: #0069d9;
