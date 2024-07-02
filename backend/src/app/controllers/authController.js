@@ -6,7 +6,8 @@ const config = require('../../../config');
 
 exports.register = async (req, res) => {
     try {
-        const { username, email, password } = req.body;
+        let { username, email, password } = req.body;
+        username = username.toLowerCase();
 
         // Verificar si el usuario ya existe
         const existingUser = await User.findOne({ username });
@@ -24,7 +25,8 @@ exports.register = async (req, res) => {
 
 exports.login = async (req, res) => {
     try {
-        const { username, password } = req.body;
+        let { username, password } = req.body;
+        username = username.toLowerCase();
         const user = await User.findOne({ username });
         if (!user || !(await user.comparePassword(password))) {
             throw new Error('Invalid username or password');
@@ -90,7 +92,7 @@ exports.recoverPassword = async (req, res) => {
 
         // Enviar el correo
         const mailOptions = {
-            from: 'your_email@gmail.com',
+            from: 'anestesiafunda@gmail.com',
             to: email,
             subject: 'Password Recovery',
             text: `Click the following link to reset your password: ${link}`

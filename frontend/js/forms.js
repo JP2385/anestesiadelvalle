@@ -6,7 +6,7 @@ document.addEventListener('DOMContentLoaded', function() {
     if (loginForm) {
         loginForm.addEventListener('submit', async (event) => {
             event.preventDefault();
-            const username = document.getElementById('username').value;
+            const username = document.getElementById('username').value.toLowerCase();
             const password = document.getElementById('password').value;
             const rememberMe = document.getElementById('remember-me').checked;
 
