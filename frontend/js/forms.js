@@ -37,7 +37,7 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
     }
-
+    
     // Register form submission
     const registerForm = document.getElementById('register-form');
     if (registerForm) {
@@ -67,8 +67,8 @@ document.addEventListener('DOMContentLoaded', function() {
                 });
 
                 if (response.ok) {
-                    alert('Registro exitoso. Por favor, inicia sesión.');
-                    window.location.href = 'login.html';
+                    alert('Registro exitoso. Por favor, verifica tu correo electrónico.');
+                    window.location.href = 'login.html'; // Redirigir al usuario a la página de inicio de sesión
                 } else {
                     const errorData = await response.json();
                     alert(`Error: ${errorData.message}`);
@@ -81,7 +81,7 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
     }
-
+    
     // Profile form submission
     const changePasswordForm = document.getElementById('change-password-form');
     if (changePasswordForm) {

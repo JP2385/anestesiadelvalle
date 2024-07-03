@@ -9,6 +9,11 @@ exports.register = async (req, res) => {
         let { username, email, password } = req.body;
         username = username.toLowerCase();
 
+        // Verificar si el correo electrónico es válido
+        if (!config.validEmails.includes(email)) {
+            return res.status(400).send({ message: 'Email is not allowed to register' });
+        }
+
         // Verificar si el usuario ya existe
         const existingUser = await User.findOne({ username });
         if (existingUser) {
@@ -73,6 +78,12 @@ exports.changePassword = async (req, res) => {
 exports.recoverPassword = async (req, res) => {
     try {
         const { email } = req.body;
+
+        // Verificar si el correo electrónico es válido
+        if (!config.validEmails.includes(email)) {
+            return res.status(400).send({ message: 'Email is not allowed for password recovery' });
+        }
+
         const user = await User.findOne({ email });
         if (!user) {
             throw new Error('User with this email does not exist');
@@ -83,16 +94,16 @@ exports.recoverPassword = async (req, res) => {
 
         // Configura el transporter de nodemailer
         const transporter = nodemailer.createTransport({
-            service: 'gmail', // o cualquier otro servicio de correo
+            service: 'gmail',
             auth: {
-                user: 'anestesiafunda@gmail.com',
-                pass: 'ockakxakspclgqqp',
+                user: config.emailUser,
+                pass: config.emailPass,
             }
         });
 
         // Enviar el correo
         const mailOptions = {
-            from: 'anestesiafunda@gmail.com',
+            from: config.emailUser,
             to: email,
             subject: 'Password Recovery',
             text: `Click the following link to reset your password: ${link}`
