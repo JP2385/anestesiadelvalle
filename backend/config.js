@@ -20,7 +20,7 @@ module.exports = {
         'ezequiel.smc@gmail.com',
         'lucasburibar@gmail.com',
         'matianestesia@gmail.com',
-        'luks.alvarez@hotmail.com',
+        'lucas.alvarez5002@gmail.com',
         'lu.totis@hotmail.com',
         'luisan1997@gmail.com',
         'silvestredegreef@gmail.com',
