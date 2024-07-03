@@ -67,7 +67,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 });
 
                 if (response.ok) {
-                    alert('Registro exitoso. Por favor, verifica tu correo electrónico.');
+                    alert('Registro exitoso, ahora puedes loguearte!');
                     window.location.href = 'login.html'; // Redirigir al usuario a la página de inicio de sesión
                 } else {
                     const errorData = await response.json();
