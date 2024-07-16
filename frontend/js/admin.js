@@ -1,6 +1,6 @@
 document.addEventListener('DOMContentLoaded', function() {
-    // const apiUrl = 'http://localhost:3000'; // Cambia esta URL si es necesario
     const apiUrl = 'https://adv-37d5b772f5fd.herokuapp.com';
+    // const apiUrl = 'http://localhost:3000';
 
     const userSelect = document.getElementById('user-select');
     const adminForm = document.getElementById('admin-form');
@@ -61,13 +61,13 @@ document.addEventListener('DOMContentLoaded', function() {
         };
 
         try {
-            const response = await fetch(`${apiUrl}/auth/user`, {
+            const response = await fetch(`${apiUrl}/auth/user/${userId}`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
                     'Authorization': 'Bearer ' + localStorage.getItem('token')
                 },
-                body: JSON.stringify({ userId, updates })
+                body: JSON.stringify(updates)
             });
 
             if (response.ok) {

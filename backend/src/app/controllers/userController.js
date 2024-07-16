@@ -24,7 +24,10 @@ exports.getUserById = async (req, res) => {
 
 exports.updateUser = async (req, res) => {
     try {
-        const { userId, updates } = req.body;
+        const userId = req.params.userId; // Obtener userId de los parámetros de la URL
+        const updates = req.body;
+
+        console.log(`Updating user with ID: ${userId}`); // Agrega este console.log para verificar el userId
 
         const user = await User.findByIdAndUpdate(userId, updates, { new: true }).select('-password');
         if (!user) {
