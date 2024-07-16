@@ -4,6 +4,8 @@ document.addEventListener('DOMContentLoaded', function() {
 
     const userSelect = document.getElementById('user-select');
     const adminForm = document.getElementById('admin-form');
+    const vacationList = document.getElementById('vacation-list');
+    const addVacationButton = document.getElementById('add-vacation');
 
     // Obtener la lista de usuarios
     fetch(`${apiUrl}/auth/users`, {
@@ -57,7 +59,11 @@ document.addEventListener('DOMContentLoaded', function() {
                 wednesday: document.getElementById('workSchedule-wednesday').value,
                 thursday: document.getElementById('workSchedule-thursday').value,
                 friday: document.getElementById('workSchedule-friday').value
-            }
+            },
+            vacations: Array.from(vacationList.children).map(item => ({
+                startDate: item.querySelector('.vacation-start').value,
+                endDate: item.querySelector('.vacation-end').value
+            }))
         };
 
         try {
@@ -80,6 +86,32 @@ document.addEventListener('DOMContentLoaded', function() {
         } catch (error) {
             alert('Hubo un problema con la solicitud: ' + error.message);
         }
+    });
+
+    // Manejar la adición de vacaciones
+    addVacationButton.addEventListener('click', () => {
+        const startDate = document.getElementById('vacation-start').value;
+        const endDate = document.getElementById('vacation-end').value;
+
+        if (!startDate || !endDate) {
+            alert('Por favor, ingresa ambas fechas de inicio y fin.');
+            return;
+        }
+
+        const vacationItem = document.createElement('li');
+        vacationItem.innerHTML = `
+            Del <input type="date" class="vacation-start" value="${startDate}"> 
+            al <input type="date" class="vacation-end" value="${endDate}">
+            <button class="delete-vacation">❌</button>
+        `;
+
+        vacationItem.querySelector('.delete-vacation').addEventListener('click', () => vacationItem.remove());
+
+        vacationList.appendChild(vacationItem);
+
+        // Clear input fields
+        document.getElementById('vacation-start').value = '';
+        document.getElementById('vacation-end').value = '';
     });
 
     // Función para cargar los datos del usuario seleccionado
@@ -106,6 +138,21 @@ document.addEventListener('DOMContentLoaded', function() {
                 document.getElementById('workSchedule-wednesday').value = user.workSchedule.wednesday || 'No trabaja';
                 document.getElementById('workSchedule-thursday').value = user.workSchedule.thursday || 'No trabaja';
                 document.getElementById('workSchedule-friday').value = user.workSchedule.friday || 'No trabaja';
+
+                // Cargar vacaciones
+                vacationList.innerHTML = '';
+                user.vacations.forEach(vacation => {
+                    const vacationItem = document.createElement('li');
+                    vacationItem.innerHTML = `
+                        Del <input type="date" class="vacation-start" value="${new Date(vacation.startDate).toISOString().split('T')[0]}"> 
+                        al <input type="date" class="vacation-end" value="${new Date(vacation.endDate).toISOString().split('T')[0]}">
+                        <button class="delete-vacation">❌</button>
+                    `;
+
+                    vacationItem.querySelector('.delete-vacation').addEventListener('click', () => vacationItem.remove());
+
+                    vacationList.appendChild(vacationItem);
+                });
             } else {
                 const errorData = await response.json();
                 alert(`Error: ${errorData.message}`);

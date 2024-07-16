@@ -94,6 +94,19 @@
                     <option value="No trabaja">No trabaja</option>
                 </select>
             </div>
+
+            <h3>Vacaciones Programadas:</h3>
+            <div class="input-group">
+                <label for="vacation-start">Fecha de Inicio</label>
+                <input type="date" id="vacation-start" name="vacation-start">
+            </div>
+            <div class="input-group">
+                <label for="vacation-end">Fecha de Fin</label>
+                <input type="date" id="vacation-end" name="vacation-end">
+            </div>
+            <button type="button" id="add-vacation" class="main-menu-button">Agregar Vacaciones</button>
+            <ul id="vacation-list"></ul>
+
             <button type="submit" class="main-menu-button">Actualizar Usuario</button>
         </form>
     </main>
