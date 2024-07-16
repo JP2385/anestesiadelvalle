@@ -1,4 +1,3 @@
-// backend/src/app/models/userModel.js
 const mongoose = require('mongoose');
 let bcrypt;
 
@@ -8,7 +7,14 @@ try {
     bcrypt = require('bcryptjs');
 }
 
-const userSchema = new mongoose.Schema({
+const Schema = mongoose.Schema;
+
+const vacationSchema = new Schema({
+    startDate: Date,
+    endDate: Date
+});
+
+const userSchema = new Schema({
     username: {
         type: String,
         required: true,
@@ -22,7 +28,63 @@ const userSchema = new mongoose.Schema({
     password: {
         type: String,
         required: true
-    }
+    },
+    isVerified: {
+        type: Boolean,
+        default: false
+    },
+    worksInNeuquen: {
+        type: Boolean,
+        default: false
+    },
+    worksInRioNegro: {
+        type: Boolean,
+        default: false
+    },
+    doesCardio: {
+        type: Boolean,
+        default: false
+    },
+    doesPediatrics: {
+        type: Boolean,
+        default: false
+    },
+    doesRNM: {
+        type: Boolean,
+        default: false
+    },
+    doesHospital: {
+        type: Boolean,
+        default: false
+    },
+    workSchedule: {
+        monday: {
+            type: String,
+            enum: ['Mañana', 'Tarde', 'Variable', 'No trabaja'],
+            default: 'Variable'
+        },
+        tuesday: {
+            type: String,
+            enum: ['Mañana', 'Tarde', 'Variable', 'No trabaja'],
+            default: 'Variable'
+        },
+        wednesday: {
+            type: String,
+            enum: ['Mañana', 'Tarde', 'Variable', 'No trabaja'],
+            default: 'Variable'
+        },
+        thursday: {
+            type: String,
+            enum: ['Mañana', 'Tarde', 'Variable', 'No trabaja'],
+            default: 'Variable'
+        },
+        friday: {
+            type: String,
+            enum: ['Mañana', 'Tarde', 'Variable', 'No trabaja'],
+            default: 'Variable'
+        }
+    },
+    vacations: [vacationSchema]
 });
 
 // Hash the password before saving the user model

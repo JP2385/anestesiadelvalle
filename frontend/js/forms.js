@@ -1,4 +1,5 @@
 document.addEventListener('DOMContentLoaded', function() {
+    // const apiUrl = 'http://localhost:3000';
     const apiUrl = 'https://adv-37d5b772f5fd.herokuapp.com';
 
     // Login form submission
@@ -216,6 +217,26 @@ document.addEventListener('DOMContentLoaded', function() {
             } else {
                 document.getElementById('profile-name').textContent = data.username;
                 document.getElementById('profile-email').textContent = data.email;
+                document.getElementById('worksInNeuquen').textContent = data.worksInNeuquen ? 'Sí' : 'No';
+                document.getElementById('worksInRioNegro').textContent = data.worksInRioNegro ? 'Sí' : 'No';
+                document.getElementById('doesCardio').textContent = data.doesCardio ? 'Sí' : 'No';
+                document.getElementById('doesPediatrics').textContent = data.doesPediatrics ? 'Sí' : 'No';
+                document.getElementById('doesRNM').textContent = data.doesRNM ? 'Sí' : 'No';
+                document.getElementById('doesHospital').textContent = data.doesHospital ? 'Sí' : 'No';
+                document.getElementById('workSchedule-monday').textContent = data.workSchedule.monday;
+                document.getElementById('workSchedule-tuesday').textContent = data.workSchedule.tuesday;
+                document.getElementById('workSchedule-wednesday').textContent = data.workSchedule.wednesday;
+                document.getElementById('workSchedule-thursday').textContent = data.workSchedule.thursday;
+                document.getElementById('workSchedule-friday').textContent = data.workSchedule.friday;
+
+                // Llenar el formulario de vacaciones
+                const vacationList = document.getElementById('vacation-list');
+                vacationList.innerHTML = '';
+                data.vacations.forEach(vacation => {
+                    const li = document.createElement('li');
+                    li.textContent = `Del ${vacation.startDate.split('T')[0]} al ${vacation.endDate.split('T')[0]}`;
+                    vacationList.appendChild(li);
+                });
             }
         })
         .catch(error => {

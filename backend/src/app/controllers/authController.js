@@ -137,3 +137,20 @@ exports.resetPassword = async (req, res) => {
         res.status(400).send({ message: error.message });
     }
 };
+
+
+exports.updateProfile = async (req, res) => {
+    try {
+        const { userId } = req;
+        const updates = req.body;
+
+        const user = await User.findByIdAndUpdate(userId, updates, { new: true }).select('-password');
+        if (!user) {
+            return res.status(404).send({ message: 'User not found' });
+        }
+
+        res.send(user);
+    } catch (error) {
+        res.status(400).send({ message: error.message });
+    }
+};

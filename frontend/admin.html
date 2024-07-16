@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Administrar Usuarios - Anestesiólogos del Valle</title>
+    <link rel="stylesheet" href="css/base.css">
+    <link rel="stylesheet" href="css/header.css">
+    <link rel="stylesheet" href="css/login.css">
+    <link rel="stylesheet" href="css/media.css">
+    <link rel="stylesheet" href="css/nav.css">
+    <link rel="stylesheet" href="css/main.css">
+    <script defer src="js/admin.js"></script>
+</head>
+<body>
+    <header>
+        <a href="index.html" class="app-logo-link">
+            <img src="images/logo/logo.png" alt="Logo Anestesiólogos del Valle" class="app-logo">
+        </a>
+        <h1>Administrar Usuarios</h1>
+    </header>
+    <main class="form-container">
+        <h2>Seleccionar Usuario</h2>
+        <select id="user-select"></select>
+        <form id="admin-form">
+            <h3>Actualizar perfil para la asignación de trabajo programado:</h3>
+            <div class="input-group">
+                <label for="worksInNeuquen">Trabaja en Neuquén</label>
+                <input type="checkbox" id="worksInNeuquen" name="worksInNeuquen">
+            </div>
+            <div class="input-group">
+                <label for="worksInRioNegro">Trabaja en Río Negro</label>
+                <input type="checkbox" id="worksInRioNegro" name="worksInRioNegro">
+            </div>
+            <div class="input-group">
+                <label for="doesCardio">Hace Cardio</label>
+                <input type="checkbox" id="doesCardio" name="doesCardio">
+            </div>
+            <div class="input-group">
+                <label for="doesPediatrics">Hace Pediatría</label>
+                <input type="checkbox" id="doesPediatrics" name="doesPediatrics">
+            </div>
+            <div class="input-group">
+                <label for="doesRNM">Hace RNM</label>
+                <input type="checkbox" id="doesRNM" name="doesRNM">
+            </div>
+            <div class="input-group">
+                <label for="doesHospital">Hace Hospital</label>
+                <input type="checkbox" id="doesHospital" name="doesHospital">
+            </div>
+            <h3>Esquema de trabajo programado:</h3>
+            <div class="input-group">
+                <label for="workSchedule-monday">Horario Lunes</label>
+                <select id="workSchedule-monday" name="workSchedule-monday">
+                    <option value="Mañana">Mañana</option>
+                    <option value="Tarde">Tarde</option>
+                    <option value="Variable">Variable</option>
+                    <option value="No trabaja">No trabaja</option>
+                </select>
+            </div>
+            <div class="input-group">
+                <label for="workSchedule-tuesday">Horario Martes</label>
+                <select id="workSchedule-tuesday" name="workSchedule-tuesday">
+                    <option value="Mañana">Mañana</option>
+                    <option value="Tarde">Tarde</option>
+                    <option value="Variable">Variable</option>
+                    <option value="No trabaja">No trabaja</option>
+                </select>
+            </div>
+            <div class="input-group">
+                <label for="workSchedule-wednesday">Horario Miércoles</label>
+                <select id="workSchedule-wednesday" name="workSchedule-wednesday">
+                    <option value="Mañana">Mañana</option>
+                    <option value="Tarde">Tarde</option>
+                    <option value="Variable">Variable</option>
+                    <option value="No trabaja">No trabaja</option>
+                </select>
+            </div>
+            <div class="input-group">
+                <label for="workSchedule-thursday">Horario Jueves</label>
+                <select id="workSchedule-thursday" name="workSchedule-thursday">
+                    <option value="Mañana">Mañana</option>
+                    <option value="Tarde">Tarde</option>
+                    <option value="Variable">Variable</option>
+                    <option value="No trabaja">No trabaja</option>
+                </select>
+            </div>
+            <div class="input-group">
+                <label for="workSchedule-friday">Horario Viernes</label>
+                <select id="workSchedule-friday" name="workSchedule-friday">
+                    <option value="Mañana">Mañana</option>
+                    <option value="Tarde">Tarde</option>
+                    <option value="Variable">Variable</option>
+                    <option value="No trabaja">No trabaja</option>
+                </select>
+            </div>
+            <button type="submit" class="main-menu-button">Actualizar Usuario</button>
+        </form>
+    </main>
+</body>
+</html>
