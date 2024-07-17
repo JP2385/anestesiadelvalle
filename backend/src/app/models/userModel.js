@@ -33,14 +33,6 @@ const userSchema = new Schema({
         type: Boolean,
         default: false
     },
-    worksInNeuquen: {
-        type: Boolean,
-        default: false
-    },
-    worksInRioNegro: {
-        type: Boolean,
-        default: false
-    },
     doesCardio: {
         type: Boolean,
         default: false
@@ -53,23 +45,19 @@ const userSchema = new Schema({
         type: Boolean,
         default: false
     },
-    doesHospital: {
+    worksInPublicNeuquen: {  
         type: Boolean,
         default: false
     },
-    worksInPublicNeuquen: {   // Nuevo campo
+    worksInPrivateNeuquen: {  
         type: Boolean,
         default: false
     },
-    worksInPrivateNeuquen: {   // Nuevo campo
+    worksInPublicRioNegro: {  
         type: Boolean,
         default: false
     },
-    worksInPublicRioNegro: {   // Nuevo campo
-        type: Boolean,
-        default: false
-    },
-    worksInPrivateRioNegro: {   // Nuevo campo
+    worksInPrivateRioNegro: {   
         type: Boolean,
         default: false
     },

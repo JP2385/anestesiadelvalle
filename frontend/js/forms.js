@@ -217,12 +217,9 @@ document.addEventListener('DOMContentLoaded', function() {
             } else {
                 document.getElementById('profile-name').textContent = data.username;
                 document.getElementById('profile-email').textContent = data.email;
-                document.getElementById('worksInNeuquen').textContent = data.worksInNeuquen ? 'Sí' : 'No';
-                document.getElementById('worksInRioNegro').textContent = data.worksInRioNegro ? 'Sí' : 'No';
                 document.getElementById('doesCardio').textContent = data.doesCardio ? 'Sí' : 'No';
                 document.getElementById('doesPediatrics').textContent = data.doesPediatrics ? 'Sí' : 'No';
                 document.getElementById('doesRNM').textContent = data.doesRNM ? 'Sí' : 'No';
-                document.getElementById('doesHospital').textContent = data.doesHospital ? 'Sí' : 'No';
                 document.getElementById('worksInPublicNeuquen').textContent = data.worksInPublicNeuquen ? 'Sí' : 'No';
                 document.getElementById('worksInPrivateNeuquen').textContent = data.worksInPrivateNeuquen ? 'Sí' : 'No';
                 document.getElementById('worksInPublicRioNegro').textContent = data.worksInPublicRioNegro ? 'Sí' : 'No';

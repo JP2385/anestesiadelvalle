@@ -47,12 +47,9 @@ document.addEventListener('DOMContentLoaded', function() {
         event.preventDefault();
         const userId = userSelect.value;
         const updates = {
-            worksInNeuquen: document.getElementById('worksInNeuquen').checked,
-            worksInRioNegro: document.getElementById('worksInRioNegro').checked,
             doesCardio: document.getElementById('doesCardio').checked,
             doesPediatrics: document.getElementById('doesPediatrics').checked,
             doesRNM: document.getElementById('doesRNM').checked,
-            doesHospital: document.getElementById('doesHospital').checked,
             worksInPublicNeuquen: document.getElementById('worksInPublicNeuquen').checked,
             worksInPrivateNeuquen: document.getElementById('worksInPrivateNeuquen').checked,
             worksInPublicRioNegro: document.getElementById('worksInPublicRioNegro').checked,
@@ -131,12 +128,9 @@ document.addEventListener('DOMContentLoaded', function() {
 
             if (response.ok) {
                 const user = await response.json();
-                document.getElementById('worksInNeuquen').checked = user.worksInNeuquen;
-                document.getElementById('worksInRioNegro').checked = user.worksInRioNegro;
                 document.getElementById('doesCardio').checked = user.doesCardio;
                 document.getElementById('doesPediatrics').checked = user.doesPediatrics;
                 document.getElementById('doesRNM').checked = user.doesRNM;
-                document.getElementById('doesHospital').checked = user.doesHospital;
                 document.getElementById('worksInPublicNeuquen').checked = user.worksInPublicNeuquen;
                 document.getElementById('worksInPrivateNeuquen').checked = user.worksInPrivateNeuquen;
                 document.getElementById('worksInPublicRioNegro').checked = user.worksInPublicRioNegro;
