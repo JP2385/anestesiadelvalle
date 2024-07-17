@@ -57,6 +57,22 @@ const userSchema = new Schema({
         type: Boolean,
         default: false
     },
+    worksInPublicNeuquen: {   // Nuevo campo
+        type: Boolean,
+        default: false
+    },
+    worksInPrivateNeuquen: {   // Nuevo campo
+        type: Boolean,
+        default: false
+    },
+    worksInPublicRioNegro: {   // Nuevo campo
+        type: Boolean,
+        default: false
+    },
+    worksInPrivateRioNegro: {   // Nuevo campo
+        type: Boolean,
+        default: false
+    },
     workSchedule: {
         monday: {
             type: String,

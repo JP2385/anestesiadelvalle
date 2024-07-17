@@ -201,7 +201,7 @@ document.addEventListener('DOMContentLoaded', function() {
             window.location.href = 'login.html';
             return;
         }
-
+    
         fetch(`${apiUrl}/auth/profile`, {
             method: 'GET',
             headers: {
@@ -223,12 +223,16 @@ document.addEventListener('DOMContentLoaded', function() {
                 document.getElementById('doesPediatrics').textContent = data.doesPediatrics ? 'Sí' : 'No';
                 document.getElementById('doesRNM').textContent = data.doesRNM ? 'Sí' : 'No';
                 document.getElementById('doesHospital').textContent = data.doesHospital ? 'Sí' : 'No';
+                document.getElementById('worksInPublicNeuquen').textContent = data.worksInPublicNeuquen ? 'Sí' : 'No';
+                document.getElementById('worksInPrivateNeuquen').textContent = data.worksInPrivateNeuquen ? 'Sí' : 'No';
+                document.getElementById('worksInPublicRioNegro').textContent = data.worksInPublicRioNegro ? 'Sí' : 'No';
+                document.getElementById('worksInPrivateRioNegro').textContent = data.worksInPrivateRioNegro ? 'Sí' : 'No';
                 document.getElementById('workSchedule-monday').textContent = data.workSchedule.monday;
                 document.getElementById('workSchedule-tuesday').textContent = data.workSchedule.tuesday;
                 document.getElementById('workSchedule-wednesday').textContent = data.workSchedule.wednesday;
                 document.getElementById('workSchedule-thursday').textContent = data.workSchedule.thursday;
                 document.getElementById('workSchedule-friday').textContent = data.workSchedule.friday;
-
+    
                 // Llenar el formulario de vacaciones
                 const vacationList = document.getElementById('vacation-list');
                 vacationList.innerHTML = '';
@@ -244,6 +248,7 @@ document.addEventListener('DOMContentLoaded', function() {
             window.location.href = 'login.html';
         });
     }
+    
 
     // Toggle password visibility
     window.togglePasswordVisibility = function(inputId) {

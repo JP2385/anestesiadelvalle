@@ -53,6 +53,10 @@ document.addEventListener('DOMContentLoaded', function() {
             doesPediatrics: document.getElementById('doesPediatrics').checked,
             doesRNM: document.getElementById('doesRNM').checked,
             doesHospital: document.getElementById('doesHospital').checked,
+            worksInPublicNeuquen: document.getElementById('worksInPublicNeuquen').checked,
+            worksInPrivateNeuquen: document.getElementById('worksInPrivateNeuquen').checked,
+            worksInPublicRioNegro: document.getElementById('worksInPublicRioNegro').checked,
+            worksInPrivateRioNegro: document.getElementById('worksInPrivateRioNegro').checked,
             workSchedule: {
                 monday: document.getElementById('workSchedule-monday').value,
                 tuesday: document.getElementById('workSchedule-tuesday').value,
@@ -133,6 +137,10 @@ document.addEventListener('DOMContentLoaded', function() {
                 document.getElementById('doesPediatrics').checked = user.doesPediatrics;
                 document.getElementById('doesRNM').checked = user.doesRNM;
                 document.getElementById('doesHospital').checked = user.doesHospital;
+                document.getElementById('worksInPublicNeuquen').checked = user.worksInPublicNeuquen;
+                document.getElementById('worksInPrivateNeuquen').checked = user.worksInPrivateNeuquen;
+                document.getElementById('worksInPublicRioNegro').checked = user.worksInPublicRioNegro;
+                document.getElementById('worksInPrivateRioNegro').checked = user.worksInPrivateRioNegro;
                 document.getElementById('workSchedule-monday').value = user.workSchedule.monday || 'No trabaja';
                 document.getElementById('workSchedule-tuesday').value = user.workSchedule.tuesday || 'No trabaja';
                 document.getElementById('workSchedule-wednesday').value = user.workSchedule.wednesday || 'No trabaja';

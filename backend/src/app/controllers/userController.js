@@ -2,7 +2,7 @@ const User = require('../models/userModel');
 
 exports.getAllUsers = async (req, res) => {
     try {
-        const users = await User.find().select('username email');
+        const users = await User.find().select('username email worksInPublicNeuquen worksInPrivateNeuquen worksInPublicRioNegro worksInPrivateRioNegro'); // Incluye nuevas propiedades en la selección
         res.send(users); // Asegúrate de que esto devuelva un arreglo
     } catch (error) {
         res.status(500).send({ message: error.message });
@@ -11,7 +11,7 @@ exports.getAllUsers = async (req, res) => {
 
 exports.getUserById = async (req, res) => {
     try {
-        const user = await User.findById(req.params.userId).select('-password');
+        const user = await User.findById(req.params.userId).select('-password'); // El usuario es devuelto sin la contraseña
         if (!user) {
             return res.status(404).send({ message: 'User not found' });
         }
