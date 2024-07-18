@@ -61,6 +61,10 @@ const userSchema = new Schema({
         type: Boolean,
         default: false
     },
+    worksInCmacOnly: {
+        type: Boolean,
+        default: false
+    },
     workSchedule: {
         monday: {
             type: String,

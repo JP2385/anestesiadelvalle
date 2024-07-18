@@ -2,8 +2,8 @@ const User = require('../models/userModel');
 
 exports.getAllUsers = async (req, res) => {
     try {
-        const users = await User.find().select('username email worksInPublicNeuquen worksInPrivateNeuquen worksInPublicRioNegro worksInPrivateRioNegro'); // Incluye nuevas propiedades en la selección
-        res.send(users); // Asegúrate de que esto devuelva un arreglo
+        const users = await User.find().select('username email doesCardio doesRNM worksInPrivateRioNegro worksInPublicRioNegro worksInPrivateNeuquen worksInPublicNeuquen workSchedule vacations worksInCmacOnly');
+        res.send(users);
     } catch (error) {
         res.status(500).send({ message: error.message });
     }

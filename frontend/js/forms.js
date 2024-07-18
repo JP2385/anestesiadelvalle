@@ -224,6 +224,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 document.getElementById('worksInPrivateNeuquen').textContent = data.worksInPrivateNeuquen ? 'Sí' : 'No';
                 document.getElementById('worksInPublicRioNegro').textContent = data.worksInPublicRioNegro ? 'Sí' : 'No';
                 document.getElementById('worksInPrivateRioNegro').textContent = data.worksInPrivateRioNegro ? 'Sí' : 'No';
+                document.getElementById('worksInCmacOnly').textContent = data.worksInCmacOnly ? 'Sí' : 'No';
                 document.getElementById('workSchedule-monday').textContent = data.workSchedule.monday;
                 document.getElementById('workSchedule-tuesday').textContent = data.workSchedule.tuesday;
                 document.getElementById('workSchedule-wednesday').textContent = data.workSchedule.wednesday;

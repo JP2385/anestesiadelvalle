@@ -24,6 +24,8 @@ module.exports = {
         'lu.totis@hotmail.com',
         'luisan1997@gmail.com',
         'silvestredegreef@gmail.com',
-        'gonzaloacastro.gc@gmail.com'
+        'gonzaloacastro.gc@gmail.com',
+        'anestesiafunda@gmail.com',
+        'familiaserranoesandi@gmail.com'
     ]
 };
