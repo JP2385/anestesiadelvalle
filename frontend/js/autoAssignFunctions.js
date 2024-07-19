@@ -6,18 +6,7 @@ export async function unassignAllUsers() {
         }
     });
     console.log("All users have been unassigned.");
-}
-
-// Agrega un botón para desasignar todos los usuarios
-document.addEventListener('DOMContentLoaded', function() {
-    const unassignButton = document.createElement('button');
-    unassignButton.innerText = 'Desasignar todos';
-    unassignButton.classList.add('unassign-button');
-    unassignButton.addEventListener('click', unassignAllUsers);
-
-    document.body.appendChild(unassignButton);
-});
-
+};
 
 export function assignSpecificUsers(scheme, user) {
     Object.entries(scheme).forEach(([dayHeaderId, workSite]) => {
@@ -399,7 +388,7 @@ export function autoAssignRemainingSlots(users) {
     });
 }
 
-export function countAssignmentsByDay() {
+export async function countAssignmentsByDay() {
     const selects = document.querySelectorAll('select');
     const dayHeaders = ['monday-header', 'tuesday-header', 'wednesday-header', 'thursday-header', 'friday-header'];
     const counts = {

@@ -1,3 +1,13 @@
+import { unassignUsersByDay } from './autoAssignDayFunctions.js';
+import { autoAssignCaroSandraGabiByDay } from './autoAssignHandlersCaroSandraGabi.js';
+import { autoAssignMorningsByDay } from './autoAssignHandlersMornings.js';
+import { autoAssignAfternoonsByDay } from './autoAssignHandlersAfternoons.js';
+import { autoAssignLongDaysByDay } from './autoAssignHandlersLongDays.js';
+import { autoAssignRemainingsByDay } from './autoAssignHandlersRemainings.js';
+import { countAssignmentsByDay } from './autoAssignFunctions.js';
+import { fetchAvailability } from './assignUtils.js';
+
+
 document.addEventListener('DOMContentLoaded', function() {
     // const apiUrl = 'http://localhost:3000';
     const apiUrl = 'https://adv-37d5b772f5fd.herokuapp.com';
@@ -14,42 +24,48 @@ document.addEventListener('DOMContentLoaded', function() {
     
         const dateOptions = { day: 'numeric' };
     
-        function createRandomizeButton(dayId) {
+        function createRandomizeButton(dayId, dayIndex) {
             const button = document.createElement('button');
             button.innerText = '🔀';
             button.classList.add('randomize-button');
-            button.addEventListener('click', () => {
-                alert(`Randomize for ${dayId}`);
+            button.addEventListener('click', async () => {
+                unassignUsersByDay(dayIndex);
+                await autoAssignCaroSandraGabiByDay(apiUrl, dayIndex);
+                await autoAssignMorningsByDay(apiUrl, dayIndex);
+                await autoAssignAfternoonsByDay(apiUrl, dayIndex);
+                await autoAssignLongDaysByDay(apiUrl, dayIndex);
+                await autoAssignRemainingsByDay(apiUrl, dayIndex);
+                countAssignmentsByDay(dayIndex); // Assuming countAssignmentsByDay is also async
+                fetchAvailability();
                 // Aquí puedes agregar la lógica de aleatorizar
             });
             return button;
         }
     
-        function updateHeader(dayId, dayName, date) {
+        function updateHeader(dayId, dayName, date, dayIndex) {
             const header = document.getElementById(dayId);
             header.innerText = `${dayName} ${date.toLocaleDateString('es-ES', dateOptions)}`;
-            header.appendChild(createRandomizeButton(dayId));
+            header.appendChild(createRandomizeButton(dayId, dayIndex));
         }
     
-        updateHeader('monday-header', 'Lunes', mondayDate);
+        updateHeader('monday-header', 'Lunes', mondayDate, 0);
     
         const tuesdayDate = new Date(mondayDate);
         tuesdayDate.setDate(mondayDate.getDate() + 1);
-        updateHeader('tuesday-header', 'Martes', tuesdayDate);
+        updateHeader('tuesday-header', 'Martes', tuesdayDate, 1);
     
         const wednesdayDate = new Date(mondayDate);
         wednesdayDate.setDate(mondayDate.getDate() + 2);
-        updateHeader('wednesday-header', 'Miércoles', wednesdayDate);
+        updateHeader('wednesday-header', 'Miércoles', wednesdayDate, 2);
     
         const thursdayDate = new Date(mondayDate);
         thursdayDate.setDate(mondayDate.getDate() + 3);
-        updateHeader('thursday-header', 'Jueves', thursdayDate);
+        updateHeader('thursday-header', 'Jueves', thursdayDate, 3);
     
         const fridayDate = new Date(mondayDate);
         fridayDate.setDate(mondayDate.getDate() + 4);
-        updateHeader('friday-header', 'Viernes', fridayDate);
+        updateHeader('friday-header', 'Viernes', fridayDate, 4);
     }
-    
 
     async function populateSelectOptions() {
         try {
