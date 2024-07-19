@@ -17,3 +17,27 @@ export function updateSelectBackgroundColors() {
         }
     });
 }
+
+export async function fetchAvailability() {
+    // const apiUrl = 'http://localhost:3000';
+    const apiUrl = 'https://adv-37d5b772f5fd.herokuapp.com';
+    try {
+        const response = await fetch(`${apiUrl}/auth/availability`, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': 'Bearer ' + localStorage.getItem('token')
+            }
+        });
+
+        if (response.ok) {
+            const availability = await response.json();
+            console.log('Availability:', availability);
+        } else {
+            const errorData = await response.json();
+            console.error(`Error: ${errorData.message}`);
+        }
+    } catch (error) {
+        console.error('Hubo un problema con la solicitud: ' + error.message);
+    }
+}

@@ -19,8 +19,6 @@ export async function autoAssignLongDays(apiUrl) {
             // Actualizar colores de fondo después de la asignación automática
             updateSelectBackgroundColors();
 
-            // Aviso después de la asignación automática
-            alert('Asignación automática completada.');
         } else {
             const errorData = await response.json();
             alert(`Error: ${errorData.message}`);

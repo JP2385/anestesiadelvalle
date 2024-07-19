@@ -1,3 +1,24 @@
+export async function unassignAllUsers() {
+    const selects = document.querySelectorAll('select');
+    selects.forEach(select => {
+        if (select.value) {
+            select.value = "";
+        }
+    });
+    console.log("All users have been unassigned.");
+}
+
+// Agrega un botón para desasignar todos los usuarios
+document.addEventListener('DOMContentLoaded', function() {
+    const unassignButton = document.createElement('button');
+    unassignButton.innerText = 'Desasignar todos';
+    unassignButton.classList.add('unassign-button');
+    unassignButton.addEventListener('click', unassignAllUsers);
+
+    document.body.appendChild(unassignButton);
+});
+
+
 export function assignSpecificUsers(scheme, user) {
     Object.entries(scheme).forEach(([dayHeaderId, workSite]) => {
         const dayHeader = document.getElementById(dayHeaderId);
@@ -405,95 +426,3 @@ export function countAssignmentsByDay() {
     console.log('Assignments by day:', counts);
     return counts;
 }
-
-
-// export function autoAssignSpecificSites(users) {
-//     const selects = document.querySelectorAll('select');
-
-//     selects.forEach(select => {
-//         const workSite = select.closest('tr').querySelector('.work-site').innerText.toLowerCase();
-
-//         if (!select.value && !select.disabled) {
-//             const dayColumnIndex = Array.from(select.closest('tr').children).indexOf(select.closest('td'));
-//             const availableUsers = Array.from(select.options)
-//                 .filter(option => option.value && !Array.from(selects).some(otherSelect => {
-//                     return otherSelect !== select && otherSelect.value === option.value && otherSelect.closest('tr').children[dayColumnIndex] === otherSelect.closest('td');
-//                 }))
-//                 .map(option => {
-//                     const user = users.find(user => user && user._id === option.value);
-//                     if (workSite.includes('imágenes') || workSite.includes('coi') || workSite.includes('heller') || workSite.includes('plottier') || workSite.includes('centenario')) {
-//                         return user && !user.worksInPrivateRioNegro ? user : null;
-//                     } else if (workSite.includes('fundación') || workSite.includes('cmac')) {
-//                         return user && !user.worksInPrivateNeuquen ? user : null;
-//                     }
-//                     return null;
-//                 })
-//                 .filter(user => user); // Filter out any null users
-
-//             if (availableUsers.length > 0) {
-//                 const randomUser = availableUsers[Math.floor(Math.random() * availableUsers.length)];
-//                 select.value = randomUser._id;
-//             } else {
-//                 console.warn(`No available users for ${workSite}`);
-//             }
-//         }
-//     });
-
-//     // Segunda pasada para asignar usuarios a sitios específicos adicionales
-//     assignsRemainingSites(users);
-//     // Tercera pasada para asignar usuarios a sitios restantes
-//     assignRemainingSites(users);
-// }
-
-// function assignsRemainingSites(users) {
-//     const additionalSites = ['imágenes', 'coi', 'heller', 'plottier', 'centenario'];
-//     const selects = document.querySelectorAll('select');
-
-//     additionalSites.forEach(site => {
-//         selects.forEach(select => {
-//             const workSite = select.closest('tr').querySelector('.work-site').innerText.toLowerCase();
-
-//             if (!select.value && !select.disabled && workSite.includes(site)) {
-//                 const dayColumnIndex = Array.from(select.closest('tr').children).indexOf(select.closest('td'));
-//                 const availableUsers = Array.from(select.options)
-//                     .filter(option => option.value && !Array.from(selects).some(otherSelect => {
-//                         return otherSelect !== select && otherSelect.value === option.value && otherSelect.closest('tr').children[dayColumnIndex] === otherSelect.closest('td');
-//                     }))
-//                     .map(option => users.find(user => user && user._id === option.value))
-//                     .filter(user => user); // Filter out any null users
-
-//                 if (availableUsers.length > 0) {
-//                     const randomUser = availableUsers[Math.floor(Math.random() * availableUsers.length)];
-//                     select.value = randomUser._id;
-//                 } else {
-//                     console.warn(`No available users for ${workSite}`);
-//                 }
-//             }
-//         });
-//     });
-// }
-
-// function assignRemainingSites(users) {
-//     const selects = document.querySelectorAll('select');
-
-//     selects.forEach(select => {
-//         const workSite = select.closest('tr').querySelector('.work-site').innerText.toLowerCase();
-
-//         if (!select.value && !select.disabled) {
-//             const dayColumnIndex = Array.from(select.closest('tr').children).indexOf(select.closest('td'));
-//             const availableUsers = Array.from(select.options)
-//                 .filter(option => option.value && !Array.from(selects).some(otherSelect => {
-//                     return otherSelect !== select && otherSelect.value === option.value && otherSelect.closest('tr').children[dayColumnIndex] === otherSelect.closest('td');
-//                 }))
-//                 .map(option => users.find(user => user && user._id === option.value))
-//                 .filter(user => user); // Filter out any null users
-
-//             if (availableUsers.length > 0) {
-//                 const randomUser = availableUsers[Math.floor(Math.random() * availableUsers.length)];
-//                 select.value = randomUser._id;
-//             } else {
-//                 console.warn(`No available users for ${workSite}`);
-//             }
-//         }
-//     });
-// }

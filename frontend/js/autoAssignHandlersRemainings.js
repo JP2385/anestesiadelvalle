@@ -1,4 +1,4 @@
-import { updateSelectBackgroundColors } from './assignUtils.js';
+import { updateSelectBackgroundColors, fetchAvailability } from './assignUtils.js';
 import { autoAssignRemainingSlots, countAssignmentsByDay} from './autoAssignFunctions.js';
 
 export async function autoAssignRemainings(apiUrl) {
@@ -26,5 +26,7 @@ export async function autoAssignRemainings(apiUrl) {
     } catch (error) {
         alert('Hubo un problema con la solicitud: ' + error.message);
     }
-    countAssignmentsByDay()
+    countAssignmentsByDay();
+    fetchAvailability();
+
 }

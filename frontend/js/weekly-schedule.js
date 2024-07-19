@@ -11,23 +11,45 @@ document.addEventListener('DOMContentLoaded', function() {
         const daysToMonday = (currentDay === 0 ? 6 : currentDay - 1);
         const mondayDate = new Date(currentDate);
         mondayDate.setDate(currentDate.getDate() - daysToMonday);
-
-        const dateOptions = { month: 'long', day: 'numeric' };
-
-        document.getElementById('monday-header').innerText = `Lunes ${mondayDate.toLocaleDateString('es-ES', dateOptions)}`;
+    
+        const dateOptions = { day: 'numeric' };
+    
+        function createRandomizeButton(dayId) {
+            const button = document.createElement('button');
+            button.innerText = '🔀';
+            button.classList.add('randomize-button');
+            button.addEventListener('click', () => {
+                alert(`Randomize for ${dayId}`);
+                // Aquí puedes agregar la lógica de aleatorizar
+            });
+            return button;
+        }
+    
+        function updateHeader(dayId, dayName, date) {
+            const header = document.getElementById(dayId);
+            header.innerText = `${dayName} ${date.toLocaleDateString('es-ES', dateOptions)}`;
+            header.appendChild(createRandomizeButton(dayId));
+        }
+    
+        updateHeader('monday-header', 'Lunes', mondayDate);
+    
         const tuesdayDate = new Date(mondayDate);
         tuesdayDate.setDate(mondayDate.getDate() + 1);
-        document.getElementById('tuesday-header').innerText = `Martes ${tuesdayDate.toLocaleDateString('es-ES', dateOptions)}`;
+        updateHeader('tuesday-header', 'Martes', tuesdayDate);
+    
         const wednesdayDate = new Date(mondayDate);
         wednesdayDate.setDate(mondayDate.getDate() + 2);
-        document.getElementById('wednesday-header').innerText = `Miércoles ${wednesdayDate.toLocaleDateString('es-ES', dateOptions)}`;
+        updateHeader('wednesday-header', 'Miércoles', wednesdayDate);
+    
         const thursdayDate = new Date(mondayDate);
         thursdayDate.setDate(mondayDate.getDate() + 3);
-        document.getElementById('thursday-header').innerText = `Jueves ${thursdayDate.toLocaleDateString('es-ES', dateOptions)}`;
+        updateHeader('thursday-header', 'Jueves', thursdayDate);
+    
         const fridayDate = new Date(mondayDate);
         fridayDate.setDate(mondayDate.getDate() + 4);
-        document.getElementById('friday-header').innerText = `Viernes ${fridayDate.toLocaleDateString('es-ES', dateOptions)}`;
+        updateHeader('friday-header', 'Viernes', fridayDate);
     }
+    
 
     async function populateSelectOptions() {
         try {
