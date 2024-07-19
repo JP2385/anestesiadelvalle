@@ -7,8 +7,8 @@ import { autoAssignLongDays } from './autoAssignHandlersLongDays.js';
 import { autoAssignRemainings} from './autoAssignHandlersRemainings.js';
 
 document.addEventListener('DOMContentLoaded', function() {
-    const apiUrl = 'http://localhost:3000';
-    // const apiUrl = 'https://adv-37d5b772f5fd.herokuapp.com';
+    // const apiUrl = 'http://localhost:3000';
+    const apiUrl = 'https://adv-37d5b772f5fd.herokuapp.com';
 
     document.getElementById('auto-assign').addEventListener('click', async () => {
         await unassignAllUsers(apiUrl);
