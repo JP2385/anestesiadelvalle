@@ -23,7 +23,6 @@ export function unassignUsersByDay(dayIndex) {
         }
     });
     updateSelectBackgroundColors();
-    console.log(`Users for ${dayHeaderId} have been unassigned.`);
 }
 
 export function assignSpecificUsersByDay(dayIndex, scheme, user) {
@@ -144,8 +143,6 @@ export function autoAssignMorningWorkersByDay(dayIndex, users) {
             if (availableUsers.length > 0) {
                 const randomUser = availableUsers[Math.floor(Math.random() * availableUsers.length)];
                 select.value = randomUser._id;
-            } else {
-                console.warn(`No available users for ${workSite} on ${dayHeaderId.split('-')[0]}`);
             }
         }
     });
@@ -233,8 +230,6 @@ export function autoAssignAfternoonWorkersByDay(dayIndex, users) {
             if (availableUsers.length > 0) {
                 const randomUser = availableUsers[Math.floor(Math.random() * availableUsers.length)];
                 select.value = randomUser._id;
-            } else {
-                console.warn(`No available users for ${workSite} on ${dayHeaderId.split('-')[0]}`);
             }
         }
     });
@@ -322,8 +317,6 @@ export function autoAssignLongDayWorkersByDay(dayIndex, users) {
             if (availableUsers.length > 0) {
                 const randomUser = availableUsers[Math.floor(Math.random() * availableUsers.length)];
                 select.value = randomUser._id;
-            } else {
-                console.warn(`No available users for ${workSite} on ${dayHeaderId.split('-')[0]}`);
             }
         }
     });
@@ -411,8 +404,6 @@ export function autoAssignRemainingSlotsByDay(dayIndex, users) {
             if (availableUsers.length > 0) {
                 const randomUser = availableUsers[Math.floor(Math.random() * availableUsers.length)];
                 select.value = randomUser._id;
-            } else {
-                console.warn(`No available users for ${workSite} on ${dayHeaderId.split('-')[0]}`);
             }
         }
     });

@@ -38,14 +38,14 @@ td.droppable {
 }
 
 td.separator-thin {
-    border-top: 1.5px solid #ddd;
+    border-top: 2px solid #ddd;
     background-color: #fff;
     padding: 0;
     height: 0;
 }
 
 td.separator-thick {
-    border-top: 2px solid #ddd;
+    border-top: 2.5px solid #ddd;
     background-color: #fff;
     padding: 0;
     height: 0;

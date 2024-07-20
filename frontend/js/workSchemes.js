@@ -15,7 +15,7 @@ export function getWorkSchemes(isOddWeek) {
 
     const ggudinoScheme = {
         'monday-header': 'COI Vespertino',
-        'tuesday-header': 'COI Matutino',
+        'tuesday-header': 'COI Largo',
         'wednesday-header': 'COI Matutino',
         'thursday-header': 'COI Matutino',
         'friday-header': 'COI Matutino'

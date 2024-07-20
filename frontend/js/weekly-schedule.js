@@ -1,5 +1,6 @@
 import { unassignUsersByDay } from './autoAssignDayFunctions.js';
 import { autoAssignCaroSandraGabiByDay } from './autoAssignHandlersCaroSandraGabi.js';
+import { autoAssignPublicHospitalsByDay } from './autoAssignHandlersPublicHospitals.js';
 import { autoAssignMorningsByDay } from './autoAssignHandlersMornings.js';
 import { autoAssignAfternoonsByDay } from './autoAssignHandlersAfternoons.js';
 import { autoAssignLongDaysByDay } from './autoAssignHandlersLongDays.js';
@@ -31,6 +32,7 @@ document.addEventListener('DOMContentLoaded', function() {
             button.addEventListener('click', async () => {
                 unassignUsersByDay(dayIndex);
                 await autoAssignCaroSandraGabiByDay(apiUrl, dayIndex);
+                await autoAssignPublicHospitalsByDay(apiUrl, dayIndex);
                 await autoAssignMorningsByDay(apiUrl, dayIndex);
                 await autoAssignAfternoonsByDay(apiUrl, dayIndex);
                 await autoAssignLongDaysByDay(apiUrl, dayIndex);
@@ -118,11 +120,11 @@ document.addEventListener('DOMContentLoaded', function() {
                                 return; // Skip this user if they only work in CMAC and the site is not CMAC
                             }
     
-                            if (workSite.includes('Fundación') || workSite.includes('CMAC')) {
+                            if ((workSite.includes('Fundación') || workSite.includes('CMAC Q')) && !workSite.includes('Fundación Q1')) {
                                 if (!user.worksInPrivateRioNegro) {
                                     return; // Skip this user if they do not work in Private Rio Negro
                                 }
-                            }
+                            }                            
     
                             if (workSite.includes('Hospital Cipolletti') || workSite.includes('Hospital Allen')) {
                                 if (!user.worksInPublicRioNegro) {
@@ -136,7 +138,7 @@ document.addEventListener('DOMContentLoaded', function() {
                                 }
                             }
     
-                            if (workSite.includes('Imágenes') || workSite.includes('COI')) {
+                            if ((workSite.includes('Imágenes') || workSite.includes('COI')) && !workSite.includes('4to piso')) {
                                 if (!user.worksInPrivateNeuquen) {
                                     return; // Skip this user if they do not work in Private Neuquen
                                 }
@@ -156,8 +158,18 @@ document.addEventListener('DOMContentLoaded', function() {
                             if (workSite.includes('Largo') && user.workSchedule[dayName] === 'Tarde') {
                                 return;
                             }
+
+                            if (workSite.includes('CMAC Endoscopia')) {
+                                // Incluir todos los usuarios que trabajan en Private Rio Negro
+                                if (user.worksInPrivateRioNegro || user.username === 'mgioja') {
+                                    // Incluir este usuario
+                                } else {
+                                    return; // Omitir este usuario si no trabaja en Private Rio Negro y no es mgioja
+                                }
+                            }                            
+
                             if (workSite.includes('Fundación Q1 Matutino')) {
-                                if (user.doesCardio && user.worksInPrivateRioNegro && (user.workSchedule[dayName] === 'Mañana' || user.workSchedule[dayName] === 'Variable')) {
+                                if (user.doesCardio) {
                                     const option = document.createElement('option');
                                     option.value = user._id;
                                     option.textContent = user.username;
