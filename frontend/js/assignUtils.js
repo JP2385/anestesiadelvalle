@@ -1,5 +1,11 @@
 export function getWeekNumber(d) {
     d = new Date(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate()));
+
+    // Si es sábado, avanzamos dos días para llegar al lunes siguiente
+    if (d.getUTCDay() === 6) {
+        d.setUTCDate(d.getUTCDate() + 2);
+    }
+
     d.setUTCDate(d.getUTCDate() + 4 - (d.getUTCDay() || 7));
     const yearStart = new Date(Date.UTC(d.getUTCFullYear(), 0, 1));
     const weekNo = Math.ceil((((d - yearStart) / 86400000) + 1) / 7);

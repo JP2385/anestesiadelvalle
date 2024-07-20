@@ -19,9 +19,9 @@ document.addEventListener('DOMContentLoaded', function() {
     function updateWeekDates() {
         const currentDate = new Date();
         const currentDay = currentDate.getDay();
-        const daysToMonday = (currentDay === 0 ? 6 : currentDay - 1);
-        const mondayDate = new Date(currentDate);
-        mondayDate.setDate(currentDate.getDate() - daysToMonday);
+        const daysToNextMonday = (currentDay === 0 ? 1 : 8 - currentDay); // Días hasta el próximo lunes
+        const nextMondayDate = new Date(currentDate);
+        nextMondayDate.setDate(currentDate.getDate() + daysToNextMonday);
     
         const dateOptions = { day: 'numeric' };
     
@@ -50,25 +50,25 @@ document.addEventListener('DOMContentLoaded', function() {
             header.appendChild(createRandomizeButton(dayId, dayIndex));
         }
     
-        updateHeader('monday-header', 'Lunes', mondayDate, 0);
+        updateHeader('monday-header', 'Lunes', nextMondayDate, 0);
     
-        const tuesdayDate = new Date(mondayDate);
-        tuesdayDate.setDate(mondayDate.getDate() + 1);
+        const tuesdayDate = new Date(nextMondayDate);
+        tuesdayDate.setDate(nextMondayDate.getDate() + 1);
         updateHeader('tuesday-header', 'Martes', tuesdayDate, 1);
     
-        const wednesdayDate = new Date(mondayDate);
-        wednesdayDate.setDate(mondayDate.getDate() + 2);
+        const wednesdayDate = new Date(nextMondayDate);
+        wednesdayDate.setDate(nextMondayDate.getDate() + 2);
         updateHeader('wednesday-header', 'Miércoles', wednesdayDate, 2);
     
-        const thursdayDate = new Date(mondayDate);
-        thursdayDate.setDate(mondayDate.getDate() + 3);
+        const thursdayDate = new Date(nextMondayDate);
+        thursdayDate.setDate(nextMondayDate.getDate() + 3);
         updateHeader('thursday-header', 'Jueves', thursdayDate, 3);
     
-        const fridayDate = new Date(mondayDate);
-        fridayDate.setDate(mondayDate.getDate() + 4);
+        const fridayDate = new Date(nextMondayDate);
+        fridayDate.setDate(nextMondayDate.getDate() + 4);
         updateHeader('friday-header', 'Viernes', fridayDate, 4);
     }
-
+    
     async function populateSelectOptions() {
         try {
             const response = await fetch(`${apiUrl}/auth/users`, {
