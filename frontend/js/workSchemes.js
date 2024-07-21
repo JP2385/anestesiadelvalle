@@ -1,16 +1,16 @@
 export function getWorkSchemes(isOddWeek) {
     const montesEspositoScheme = isOddWeek ? {
-        'monday-header': 'CMAC Q1 Matutino',
-        'tuesday-header': 'CMAC Q2 Matutino',
-        'wednesday-header': 'CMAC Endoscopia Largo',
-        'thursday-header': 'CMAC Endoscopia Matutino',
-        'friday-header': 'CMAC Q2 Matutino'
-    } : {
         'monday-header': 'CMAC Endoscopia Largo',
         'tuesday-header': 'CMAC Q1 Matutino',
         'wednesday-header': 'CMAC Q2 Matutino',
         'thursday-header': 'CMAC Endoscopia Matutino',
         'friday-header': 'CMAC Endoscopia Largo'
+    } : {
+        'monday-header': 'CMAC Q1 Matutino' ,
+        'tuesday-header': 'CMAC Q2 Matutino',
+        'wednesday-header': 'CMAC Endoscopia Largo',
+        'thursday-header': 'CMAC Endoscopia Matutino',
+        'friday-header': 'CMAC Q2 Matutino',
     };
 
     const ggudinoScheme = {

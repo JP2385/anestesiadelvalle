@@ -1,15 +1,27 @@
-export function getWeekNumber(d) {
-    d = new Date(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate()));
-
-    // Si es sábado, avanzamos dos días para llegar al lunes siguiente
-    if (d.getUTCDay() === 6) {
-        d.setUTCDate(d.getUTCDate() + 2);
+export function getWeekNumber(currentDate) {
+    const dayOfWeek = currentDate.getDay(); // 0 (Sunday) to 6 (Saturday)
+    
+    let referenceDate;
+    if (dayOfWeek === 0 || dayOfWeek === 6) {
+        // Saturday (6) or Sunday (0)
+        const daysUntilNextMonday = (8 - dayOfWeek) % 7;
+        referenceDate = new Date(currentDate);
+        referenceDate.setDate(currentDate.getDate() + daysUntilNextMonday);
+    } else if (dayOfWeek === 1) {
+        // Monday (1)
+        referenceDate = new Date(currentDate);
+    } else {
+        // Tuesday (2) to Friday (5)
+        const daysSinceLastMonday = (dayOfWeek - 1);
+        referenceDate = new Date(currentDate);
+        referenceDate.setDate(currentDate.getDate() - daysSinceLastMonday);
     }
 
-    d.setUTCDate(d.getUTCDate() + 4 - (d.getUTCDay() || 7));
-    const yearStart = new Date(Date.UTC(d.getUTCFullYear(), 0, 1));
-    const weekNo = Math.ceil((((d - yearStart) / 86400000) + 1) / 7);
-    return weekNo;
+    // Get the ISO week number for the reference date
+    const yearStart = new Date(Date.UTC(referenceDate.getUTCFullYear(), 0, 1));
+    const weekNumber = Math.ceil((((referenceDate - yearStart) / 86400000) + yearStart.getUTCDay() + 1) / 7);
+
+    return weekNumber;
 }
 
 export function updateSelectBackgroundColors() {
@@ -38,7 +50,7 @@ export async function fetchAvailability() {
 
         if (response.ok) {
             const availability = await response.json();
-            console.log('Availability:', availability);
+            displayAvailability(availability);
         } else {
             const errorData = await response.json();
             console.error(`Error: ${errorData.message}`);
@@ -46,4 +58,16 @@ export async function fetchAvailability() {
     } catch (error) {
         console.error('Hubo un problema con la solicitud: ' + error.message);
     }
+}
+
+function displayAvailability(availability) {
+    const container = document.getElementById('availability-container');
+    container.innerHTML = `
+        <h2>Anestesiólogos disponibles por día</h2>
+        <p>Lunes: ${availability.monday},
+        Martes: ${availability.tuesday},
+        Miércoles: ${availability.wednesday},
+        Jueves: ${availability.thursday},
+        Viernes: ${availability.friday}.</p>
+    `;
 }

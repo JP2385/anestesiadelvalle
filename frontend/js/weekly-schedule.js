@@ -15,6 +15,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     updateWeekDates();
     populateSelectOptions();
+    fetchAvailability();
 
     function updateWeekDates() {
         const currentDate = new Date();
@@ -38,7 +39,6 @@ document.addEventListener('DOMContentLoaded', function() {
                 await autoAssignLongDaysByDay(apiUrl, dayIndex);
                 await autoAssignRemainingsByDay(apiUrl, dayIndex);
                 countAssignmentsByDay(dayIndex); // Assuming countAssignmentsByDay is also async
-                fetchAvailability();
                 // Aquí puedes agregar la lógica de aleatorizar
             });
             return button;
@@ -168,7 +168,7 @@ document.addEventListener('DOMContentLoaded', function() {
                                 }
                             }                            
 
-                            if (workSite.includes('Fundación Q1 Matutino')) {
+                            if (workSite.includes('Fundación Q1')) {
                                 if (user.doesCardio) {
                                     const option = document.createElement('option');
                                     option.value = user._id;
