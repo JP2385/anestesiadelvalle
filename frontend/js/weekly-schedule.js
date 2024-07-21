@@ -120,7 +120,7 @@ document.addEventListener('DOMContentLoaded', function() {
                                 return; // Skip this user if they only work in CMAC and the site is not CMAC
                             }
     
-                            if ((workSite.includes('Fundación Q') || workSite.includes('CMAC Q')))  {
+                            if ((workSite.includes('Fundación Q2') || workSite.includes('Fundación 3') | workSite.includes('CMAC Q')))  {
                                 if (!user.worksInPrivateRioNegro) {
                                     return; // Skip this user if they do not work in Private Rio Negro
                                 }
