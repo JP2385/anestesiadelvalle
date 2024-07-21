@@ -63,17 +63,18 @@ export async function fetchAvailability() {
 function displayAvailability(availability) {
     const container = document.getElementById('availability-container');
     container.innerHTML = `
-        <h2>Anestesiólogos disponibles por día</h2>
+        <h2>Informe de asignaciones:</h2>
+        <h3>Anestesiólogos disponibles por día:</h3>
         <p>Lunes: ${availability.monday},
         Martes: ${availability.tuesday},
         Miércoles: ${availability.wednesday},
         Jueves: ${availability.thursday},
         Viernes: ${availability.friday}.</p>
-        <h2>Cantidad de asignaciones por día</h2>
-        <span id="monday-assignments"></span>
-        <span id="tuesday-assignments"></span>
-        <span id="wednesday-assignments"></span>
-        <span id="thursday-assignments"></span>
-        <span id="friday-assignments"></span>
+        <h3>Anestesiólogos asignados por día:</h3>
+        <span id="monday-assignments">Lunes: 0, </span>
+        <span id="tuesday-assignments">Martes: 0, </span>
+        <span id="wednesday-assignments">Miércoles: 0,</span>
+        <span id="thursday-assignments">Jueves: 0, </span>
+        <span id="friday-assignments">Viernes: 0.</span>
     `;
 }
