@@ -412,6 +412,12 @@ export async function countAssignmentsByDay() {
         }
     });
 
-    console.log('Assignments by day:', counts);
+    // Update HTML with counts
+    document.getElementById('monday-assignments').textContent = `Lunes: ${counts.monday},`;
+    document.getElementById('tuesday-assignments').textContent = `Martes: ${counts.tuesday},`;
+    document.getElementById('wednesday-assignments').textContent = `Miércoles: ${counts.wednesday},`;
+    document.getElementById('thursday-assignments').textContent = `Jueves: ${counts.thursday},`;
+    document.getElementById('friday-assignments').textContent = `Viernes: ${counts.friday}.`;
+
     return counts;
 }

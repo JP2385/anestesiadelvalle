@@ -120,7 +120,7 @@ document.addEventListener('DOMContentLoaded', function() {
                                 return; // Skip this user if they only work in CMAC and the site is not CMAC
                             }
     
-                            if ((workSite.includes('Fundación') || workSite.includes('CMAC Q')) && !workSite.includes('Fundación Q1')) {
+                            if ((workSite.includes('Fundación Q') || workSite.includes('CMAC Q')))  {
                                 if (!user.worksInPrivateRioNegro) {
                                     return; // Skip this user if they do not work in Private Rio Negro
                                 }
@@ -168,7 +168,7 @@ document.addEventListener('DOMContentLoaded', function() {
                                 }
                             }                            
 
-                            if (workSite.includes('Fundación Q1')) {
+                            if (workSite.includes('Fundación Q1') || workSite.includes('Fundación Hemo')) {
                                 if (user.doesCardio) {
                                     const option = document.createElement('option');
                                     option.value = user._id;

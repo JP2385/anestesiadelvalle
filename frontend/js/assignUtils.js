@@ -69,5 +69,11 @@ function displayAvailability(availability) {
         Miércoles: ${availability.wednesday},
         Jueves: ${availability.thursday},
         Viernes: ${availability.friday}.</p>
+        <h2>Cantidad de asignaciones por día</h2>
+        <span id="monday-assignments"></span>
+        <span id="tuesday-assignments"></span>
+        <span id="wednesday-assignments"></span>
+        <span id="thursday-assignments"></span>
+        <span id="friday-assignments"></span>
     `;
 }
