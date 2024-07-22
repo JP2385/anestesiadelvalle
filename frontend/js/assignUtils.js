@@ -1,3 +1,5 @@
+import {countEnabledSelectsByDay} from './autoAssignFunctions.js';
+
 export function getWeekNumber(currentDate) {
     const dayOfWeek = currentDate.getDay(); // 0 (Sunday) to 6 (Saturday)
     
@@ -51,6 +53,7 @@ export async function fetchAvailability() {
         if (response.ok) {
             const availability = await response.json();
             displayAvailability(availability);
+            countEnabledSelectsByDay();
         } else {
             const errorData = await response.json();
             console.error(`Error: ${errorData.message}`);
@@ -76,5 +79,11 @@ function displayAvailability(availability) {
         <span id="wednesday-assignments">Miércoles: 0,</span>
         <span id="thursday-assignments">Jueves: 0, </span>
         <span id="friday-assignments">Viernes: 0.</span>
+        <h3>Lugares de trabajo por día:</h3>
+        <span id="monday-sites">Lunes: 0, </span>
+        <span id="tuesday-sites">Martes: 0, </span>
+        <span id="wednesday-sites">Miércoles: 0,</span>
+        <span id="thursday-sites">Jueves: 0, </span>
+        <span id="friday-sites">Viernes: 0.</span>
     `;
 }

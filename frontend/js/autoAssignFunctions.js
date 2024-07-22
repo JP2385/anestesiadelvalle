@@ -421,3 +421,41 @@ export async function countAssignmentsByDay() {
 
     return counts;
 }
+
+export async function countEnabledSelectsByDay() {
+    const days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'];
+    const counts = days.map(() => 0);
+
+    const table = document.querySelector('table');
+    const rows = table.querySelectorAll('tbody tr');
+
+    rows.forEach(row => {
+        const cells = row.querySelectorAll('td');
+        cells.forEach((cell, index) => {
+            if (index > 0 && index <= days.length) { // Skip the first column which is 'Sitio de Trabajo'
+                const select = cell.querySelector('select');
+                if (select && !select.disabled) {
+                    counts[index - 1]++;
+                }
+            }
+        });
+    });
+
+    updateSiteCounts(counts);
+}
+
+function updateSiteCounts(counts) {
+    const elements = {
+        'Monday': document.getElementById('monday-sites'),
+        'Tuesday': document.getElementById('tuesday-sites'),
+        'Wednesday': document.getElementById('wednesday-sites'),
+        'Thursday': document.getElementById('thursday-sites'),
+        'Friday': document.getElementById('friday-sites')
+    };
+
+    elements.Monday.textContent = `Lunes: ${counts[0]}, `;
+    elements.Tuesday.textContent = `Martes: ${counts[1]}, `;
+    elements.Wednesday.textContent = `Miércoles: ${counts[2]}, `;
+    elements.Thursday.textContent = `Jueves: ${counts[3]}, `;
+    elements.Friday.textContent = `Viernes: ${counts[4]}.`;
+}
