@@ -19,12 +19,20 @@ document.addEventListener('DOMContentLoaded', async function() {
     function updateWeekDates() {
         const currentDate = new Date();
         const currentDay = currentDate.getDay();
-        const daysToNextMonday = (currentDay === 0 ? 1 : 8 - currentDay);
-        const nextMondayDate = new Date(currentDate);
-        nextMondayDate.setDate(currentDate.getDate() + daysToNextMonday);
-
+        let nextMondayDate;
+    
+        if (currentDay === 6) { // Si hoy es sábado
+            // Calcular el próximo lunes
+            nextMondayDate = new Date(currentDate);
+            nextMondayDate.setDate(currentDate.getDate() + (8 - currentDay));
+        } else {
+            // Calcular el lunes de esta semana
+            nextMondayDate = new Date(currentDate);
+            nextMondayDate.setDate(currentDate.getDate() - (currentDay === 0 ? 6 : currentDay - 1));
+        }
+    
         const dateOptions = { day: 'numeric' };
-
+    
         function createRandomizeButton(dayId, dayIndex) {
             const button = document.createElement('button');
             button.innerText = '🔀';
@@ -41,31 +49,31 @@ document.addEventListener('DOMContentLoaded', async function() {
             });
             return button;
         }
-
+    
         function updateHeader(dayId, dayName, date, dayIndex) {
             const header = document.getElementById(dayId);
             header.innerText = `${dayName} ${date.toLocaleDateString('es-ES', dateOptions)}`;
             header.appendChild(createRandomizeButton(dayId, dayIndex));
         }
-
+    
         updateHeader('monday-header', 'Lunes', nextMondayDate, 0);
-
+    
         const tuesdayDate = new Date(nextMondayDate);
         tuesdayDate.setDate(nextMondayDate.getDate() + 1);
         updateHeader('tuesday-header', 'Martes', tuesdayDate, 1);
-
+    
         const wednesdayDate = new Date(nextMondayDate);
         wednesdayDate.setDate(nextMondayDate.getDate() + 2);
         updateHeader('wednesday-header', 'Miércoles', wednesdayDate, 2);
-
+    
         const thursdayDate = new Date(nextMondayDate);
         thursdayDate.setDate(nextMondayDate.getDate() + 3);
         updateHeader('thursday-header', 'Jueves', thursdayDate, 3);
-
+    
         const fridayDate = new Date(nextMondayDate);
         fridayDate.setDate(nextMondayDate.getDate() + 4);
         updateHeader('friday-header', 'Viernes', fridayDate, 4);
-    }
+    }    
 
     async function populateSelectOptions() {
         try {
