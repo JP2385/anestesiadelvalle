@@ -39,7 +39,6 @@ export function updateSelectBackgroundColors() {
 }
 
 export async function fetchAvailability() {
-    // const apiUrl = 'http://localhost:3000';
     const apiUrl = 'https://adv-37d5b772f5fd.herokuapp.com';
     try {
         const response = await fetch(`${apiUrl}/auth/availability`, {
@@ -53,6 +52,7 @@ export async function fetchAvailability() {
         if (response.ok) {
             const availability = await response.json();
             displayAvailability(availability);
+            // Asegurarse de que el DOM esté listo
             countEnabledSelectsByDay();
         } else {
             const errorData = await response.json();
@@ -66,24 +66,70 @@ export async function fetchAvailability() {
 function displayAvailability(availability) {
     const container = document.getElementById('availability-container');
     container.innerHTML = `
-        <h2>Informe de asignaciones:</h2>
-        <h3>Anestesiólogos disponibles por día:</h3>
-        <p>Lunes: ${availability.monday},
-        Martes: ${availability.tuesday},
-        Miércoles: ${availability.wednesday},
-        Jueves: ${availability.thursday},
-        Viernes: ${availability.friday}.</p>
-        <h3>Anestesiólogos asignados por día:</h3>
-        <span id="monday-assignments">Lunes: 0, </span>
-        <span id="tuesday-assignments">Martes: 0, </span>
-        <span id="wednesday-assignments">Miércoles: 0,</span>
-        <span id="thursday-assignments">Jueves: 0, </span>
-        <span id="friday-assignments">Viernes: 0.</span>
-        <h3>Lugares de trabajo por día:</h3>
-        <span id="monday-sites">Lunes: 0, </span>
-        <span id="tuesday-sites">Martes: 0, </span>
-        <span id="wednesday-sites">Miércoles: 0,</span>
-        <span id="thursday-sites">Jueves: 0, </span>
-        <span id="friday-sites">Viernes: 0.</span>
+        <h3>Informe de asignaciones</h3>
+            <table>
+        <thead>
+        <tr>
+            <th class="work-site"></th>
+            <th>Lunes</th>
+            <th>Martes</th>
+            <th>Miércoles</th>
+            <th>Jueves</th>
+            <th>Viernes</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td class="work-site"><span class="inform">Lugares habilitados</span></td>
+            <td id="monday-sites"></td>
+            <td id="tuesday-sites"></td>
+            <td id="wednesday-sites"></td>
+            <td id="thursday-sites"></td>
+            <td id="friday-sites"></td>
+        </tr>
+        <tr>
+            <td><span class="inform">Anestesiólogos disponibles</span></td>
+            <td><span id="monday-available">${availability.monday}</span></td>
+            <td><span id="tuesday-available">${availability.tuesday}</span></td>
+            <td><span id="wednesday-available">${availability.wednesday}</span></td>
+            <td><span id="thursday-available">${availability.thursday}</span></td>
+            <td><span id="friday-available">${availability.friday}</span></td>
+        </tr>
+        <tr>
+            <td><span class="inform">Anestesiólogos asignados</span></td>
+            <td><span id="monday-assignments">0</span></td>
+            <td><span id="tuesday-assignments">0</span></td>
+            <td><span id="wednesday-assignments">0</span></td>
+            <td><span id="thursday-assignments">0</span></td>
+            <td><span id="friday-assignments">0</span></td>
+        </tr>
+    </tbody>
+</table>
+        
+    
+
     `;
+        
 }
+
+
+
+
+/* <span class="inform">Lugares de trabajo por día:</span>
+<span id="monday-sites">Lunes: 0, </span>
+<span id="tuesday-sites">Martes: 0, </span>
+<span id="wednesday-sites">Miércoles: 0,</span>
+<span id="thursday-sites">Jueves: 0, </span>
+<span id="friday-sites">Viernes: 0.</span>
+<h3>Anestesiólogos disponibles por día:</h3>
+<p>Lunes: ${availability.monday},
+Martes: ${availability.tuesday},
+Miércoles: ${availability.wednesday},
+Jueves: ${availability.thursday},
+Viernes: ${availability.friday}.</p>
+<h3>Anestesiólogos asignados por día:</h3>
+<span id="monday-assignments">Lunes: 0, </span>
+<span id="tuesday-assignments">Martes: 0, </span>
+<span id="wednesday-assignments">Miércoles: 0,</span>
+<span id="thursday-assignments">Jueves: 0, </span>
+<span id="friday-assignments">Viernes: 0.</span> */

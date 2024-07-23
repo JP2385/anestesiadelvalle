@@ -13,21 +13,26 @@
         <h1>Asistente de Programación Semanal</h1>
     </header>
     <main>
-        <!-- <div class="instructions">
-            <h2>Pasos para generar programación:</h2>
+        <div class="instructions">
+            <h3>Pasos para generar programación</h3>
             <ol>
-                <li> Verifique que los sitios que no se van a programar estén bloqueados y lo que se van a usar desbloqueados.</li>
-                <li> Oprimir el botón <button id="auto-assign">Asignación automática</button></li>
-                <li> Modifique lo que se considere necesario.</li>
-                <li> Imprima programación: <button id="print-schedule-button">Imprimir Programación</button></li>
+                <li> Setee las sitios de trabajo de acuerdo a la programación de clínicas y hospitales.</li>
+                <li> Si la cantidad de lugares de trabajo excede a la cantidad de anestesiólogos por día:
+                    cambie días vespertinos/matutinos por días largos.</li>
+                <li> Si la cantidad de anestesiólogos excede a la cantidad de anestesiólogos por día:
+                    cambie días días largos por días matutinos/vespertinos.</li>
+                <li> Realice la asignación por día hasta que la cantidad de anestesiólogos asignados sea igual
+                    a los disponibles.
             </ol>
-        </div> -->
+        </div>
         <div id="availability-container" class="instructions">
         </div>
-        <table>
+        <div class="instructions">
+        <h3>Asistente propiamente dicho</h3>
+        <table id="schedule-assistant">
             <thead>
                 <tr>
-                    <th>Sitio de Trabajo</th>
+                    <th class="work-site">Sitio de Trabajo</th>
                     <th id="monday-header">Lunes</th>
                     <th id="tuesday-header">Martes</th>
                     <th id="wednesday-header">Miércoles</th>
@@ -388,6 +393,7 @@
                 </tr>
             </tbody>
         </table> 
+        </div>
     </main>
 </body>
 </html>

@@ -6,6 +6,7 @@ const config = require('./config');
 const cors = require('cors');
 const authRoutes = require('./src/app/routes/authRoutes');
 const path = require('path');
+const { getUsersAvailability } = require('./src/app/controllers/availabilityController');
 
 const app = express();
 app.use(express.json());
@@ -16,6 +17,9 @@ mongoose.connect(config.mongoUri, { useNewUrlParser: true, useUnifiedTopology: t
     .catch(error => console.error('Error connecting to MongoDB:', error));
 
 app.use('/auth', authRoutes);
+
+// Definir la ruta para obtener la disponibilidad de los usuarios
+app.get('/availability', getUsersAvailability);
 
 app.use(express.static(path.join(__dirname, '../frontend')));
 

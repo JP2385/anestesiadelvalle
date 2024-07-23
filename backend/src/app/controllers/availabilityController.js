@@ -5,11 +5,11 @@ const getUsersAvailability = async (req, res) => {
         const users = await User.find();
 
         const availability = {
-            monday: 0,
-            tuesday: 0,
-            wednesday: 0,
-            thursday: 0,
-            friday: 0
+            monday: [],
+            tuesday: [],
+            wednesday: [],
+            thursday: [],
+            friday: []
         };
 
         const currentDate = new Date();
@@ -29,12 +29,15 @@ const getUsersAvailability = async (req, res) => {
                 return day >= start && day <= end;
             });
 
-            if (user.workSchedule.monday !== 'No trabaja' && !onVacation(daysOfWeek[0])) availability.monday++;
-            if (user.workSchedule.tuesday !== 'No trabaja' && !onVacation(daysOfWeek[1])) availability.tuesday++;
-            if (user.workSchedule.wednesday !== 'No trabaja' && !onVacation(daysOfWeek[2])) availability.wednesday++;
-            if (user.workSchedule.thursday !== 'No trabaja' && !onVacation(daysOfWeek[3])) availability.thursday++;
-            if (user.workSchedule.friday !== 'No trabaja' && !onVacation(daysOfWeek[4])) availability.friday++;
+            if (user.workSchedule.monday !== 'No trabaja' && !onVacation(daysOfWeek[0])) availability.monday.push(user.username);
+            if (user.workSchedule.tuesday !== 'No trabaja' && !onVacation(daysOfWeek[1])) availability.tuesday.push(user.username);
+            if (user.workSchedule.wednesday !== 'No trabaja' && !onVacation(daysOfWeek[2])) availability.wednesday.push(user.username);
+            if (user.workSchedule.thursday !== 'No trabaja' && !onVacation(daysOfWeek[3])) availability.thursday.push(user.username);
+            if (user.workSchedule.friday !== 'No trabaja' && !onVacation(daysOfWeek[4])) availability.friday.push(user.username);
         });
+
+        // Imprimir los arrays de disponibilidad en la consola
+        console.log('Availability:', availability);
 
         res.status(200).json(availability);
     } catch (error) {

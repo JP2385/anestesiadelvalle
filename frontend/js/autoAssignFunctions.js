@@ -413,11 +413,11 @@ export async function countAssignmentsByDay() {
     });
 
     // Update HTML with counts
-    document.getElementById('monday-assignments').textContent = `Lunes: ${counts.monday},`;
-    document.getElementById('tuesday-assignments').textContent = `Martes: ${counts.tuesday},`;
-    document.getElementById('wednesday-assignments').textContent = `Miércoles: ${counts.wednesday},`;
-    document.getElementById('thursday-assignments').textContent = `Jueves: ${counts.thursday},`;
-    document.getElementById('friday-assignments').textContent = `Viernes: ${counts.friday}.`;
+    document.getElementById('monday-assignments').textContent = `${counts.monday}`;
+    document.getElementById('tuesday-assignments').textContent = `${counts.tuesday}`;
+    document.getElementById('wednesday-assignments').textContent = `${counts.wednesday}`;
+    document.getElementById('thursday-assignments').textContent = `${counts.thursday}`;
+    document.getElementById('friday-assignments').textContent = `${counts.friday}`;
 
     return counts;
 }
@@ -426,11 +426,17 @@ export async function countEnabledSelectsByDay() {
     const days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'];
     const counts = days.map(() => 0);
 
-    const table = document.querySelector('table');
+    const table = document.querySelector('table#schedule-assistant');
+    if (!table) {
+        console.error("Table with id 'schedule-assistant' not found");
+        return;
+    }
+
     const rows = table.querySelectorAll('tbody tr');
 
     rows.forEach(row => {
         const cells = row.querySelectorAll('td');
+
         cells.forEach((cell, index) => {
             if (index > 0 && index <= days.length) { // Skip the first column which is 'Sitio de Trabajo'
                 const select = cell.querySelector('select');
@@ -453,9 +459,9 @@ function updateSiteCounts(counts) {
         'Friday': document.getElementById('friday-sites')
     };
 
-    elements.Monday.textContent = `Lunes: ${counts[0]}, `;
-    elements.Tuesday.textContent = `Martes: ${counts[1]}, `;
-    elements.Wednesday.textContent = `Miércoles: ${counts[2]}, `;
-    elements.Thursday.textContent = `Jueves: ${counts[3]}, `;
-    elements.Friday.textContent = `Viernes: ${counts[4]}.`;
+    elements.Monday.textContent = `${counts[0]}`;
+    elements.Tuesday.textContent = `${counts[1]}`;
+    elements.Wednesday.textContent = `${counts[2]}`;
+    elements.Thursday.textContent = `${counts[3]}`;
+    elements.Friday.textContent = `${counts[4]}`;
 }
