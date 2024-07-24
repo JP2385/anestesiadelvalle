@@ -89,6 +89,24 @@ select {
     margin-right: 5px; /* Espacio entre el select y el botón */
 }
 
+.instructions button {
+    width: 100%;
+    padding: 10px;
+    background-color: #0069d9;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    margin: 0.5rem 0;
+}
+
+.instructions button:hover {
+    background-color: #0056b3;
+}
+
 .lock-button {
     color: white;
     border: none;
@@ -126,7 +144,7 @@ select {
     justify-content: space-between;
 }
 
-.instructions button {
+.schedule-assistant button {
     background: none;
     border: none;
     cursor: pointer;
