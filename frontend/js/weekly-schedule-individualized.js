@@ -1,8 +1,8 @@
 document.addEventListener('DOMContentLoaded', () => {
-    
     const apiUrl = window.location.hostname === 'localhost' ? 'http://localhost:3000' : 'https://adv-37d5b772f5fd.herokuapp.com';
     const userAssignmentsContainer = document.getElementById('user-assignments');
     const token = localStorage.getItem('token');
+
     if (!token) {
         alert('No has iniciado sesión.');
         window.location.href = 'login.html';
@@ -23,24 +23,33 @@ document.addEventListener('DOMContentLoaded', () => {
             window.location.href = 'login.html';
         } else {
             const currentUser = data.username;
-            const assignments = JSON.parse(localStorage.getItem('savedAssignments'));
-            let dayHeaders = JSON.parse(localStorage.getItem('dayHeaders'));
 
-            if (assignments && dayHeaders) {
-                // Limpiar los encabezados de los días
-                dayHeaders = cleanDayHeaders(dayHeaders);
+            // Obtener el último schedule desde MongoDB
+            fetch(`${apiUrl}/schedule/last-schedule`)
+                .then(response => response.json())
+                .then(schedule => {
+                    const assignments = schedule.assignments;
+                    let dayHeaders = schedule.dayHeaders;
 
-                const userAssignments = transformAssignments(assignments);
+                    if (assignments && dayHeaders) {
+                        // Limpiar los encabezados de los días
+                        dayHeaders = cleanDayHeaders(dayHeaders);
 
-                if (userAssignments[currentUser]) {
-                    const assignmentList = generateAssignmentList(userAssignments[currentUser], dayHeaders);
-                    userAssignmentsContainer.appendChild(assignmentList);
-                } else {
-                    userAssignmentsContainer.textContent = 'No tienes asignaciones para esta semana.';
-                }
-            } else {
-                userAssignmentsContainer.textContent = 'No hay datos de asignaciones disponibles.';
-            }
+                        const userAssignments = transformAssignments(assignments);
+
+                        if (userAssignments[currentUser]) {
+                            const assignmentList = generateAssignmentList(userAssignments[currentUser], dayHeaders);
+                            userAssignmentsContainer.appendChild(assignmentList);
+                        } else {
+                            userAssignmentsContainer.textContent = 'No tienes asignaciones para esta semana.';
+                        }
+                    } else {
+                        userAssignmentsContainer.textContent = 'No hay datos de asignaciones disponibles.';
+                    }
+                })
+                .catch(error => {
+                    alert('Hubo un problema al obtener el último schedule: ' + error.message);
+                });
         }
     })
     .catch(error => {
