@@ -6,22 +6,58 @@ document.addEventListener('DOMContentLoaded', () => {
     const dayHeaders = JSON.parse(localStorage.getItem('dayHeaders'));
     const timestamp = localStorage.getItem('timestamp');
 
+    // Limpiar los encabezados de cualquier símbolo de actualización
+    const cleanedDayHeaders = {
+        monday: dayHeaders.monday.replace(/🔄/g, ''),
+        tuesday: dayHeaders.tuesday.replace(/🔄/g, ''),
+        wednesday: dayHeaders.wednesday.replace(/🔄/g, ''),
+        thursday: dayHeaders.thursday.replace(/🔄/g, ''),
+        friday: dayHeaders.friday.replace(/🔄/g, '')
+    };
+
     // Generar la tabla de resumen
-    let summaryTable = generateSummaryTable(assignments, dayHeaders);
+    let summaryTable = generateSummaryTable(assignments, cleanedDayHeaders);
 
     // Formatear la fecha de impresión
     const formattedTimestamp = formatTimestamp(timestamp);
 
+    // Crear el contenedor para la fecha y el botón de descarga
+    const headerDiv = document.createElement('div');
+    headerDiv.className = 'header-div';
+
+    // Crear el div para la fecha de impresión
+    const timestampDiv = document.createElement('div');
+    timestampDiv.className = 'timestamp-div';
+
     // Crear el elemento de fecha de impresión
     const timestampElement = document.createElement('p');
     timestampElement.textContent = `Programación generada el ${formattedTimestamp}`;
+    timestampElement.className = 'timestamp';
 
-    // Añadir la fecha de impresión y la tabla al contenedor
-    summaryContainer.appendChild(timestampElement);
+    // Añadir el elemento de fecha al div de la fecha
+    timestampDiv.appendChild(timestampElement);
+
+    // Crear el botón de descarga
+    const downloadButton = document.createElement('button');
+    downloadButton.id = 'download-button';
+    downloadButton.textContent = 'Descargar como imagen'; // Texto del botón de descarga
+    downloadButton.className = 'download-button';
+
+    // Añadir la fecha de impresión y el botón al contenedor
+    headerDiv.appendChild(timestampDiv);
+    headerDiv.appendChild(downloadButton);
+
+    // Añadir el contenedor de la cabecera y la tabla al contenedor principal
+    summaryContainer.appendChild(headerDiv);
     summaryContainer.appendChild(summaryTable);
 
     // Aplicar separadores después de eliminar filas innecesarias
     summaryTable = applySeparators(summaryTable);
+
+    // Agregar evento al botón de descarga
+    downloadButton.addEventListener('click', () => {
+        downloadTableAsImage(summaryContainer);
+    });
 });
 
 function generateSummaryTable(assignments, dayHeaders) {
@@ -134,4 +170,13 @@ function formatTimestamp(timestamp) {
     const minutes = String(date.getMinutes()).padStart(2, '0');
 
     return `${dayName} ${day} de ${month} de ${year} a las ${hours}:${minutes} hs.`;
+}
+
+function downloadTableAsImage(container) {
+    html2canvas(container).then(canvas => {
+        const link = document.createElement('a');
+        link.download = 'programacion-semanal.png';
+        link.href = canvas.toDataURL('image/png');
+        link.click();
+    });
 }

@@ -5,13 +5,6 @@ body {
     background-color: #f5f5f5;
 }
 
-header {
-    background-color: #0056b3;
-    color: #fff;
-    padding: 10px 0;
-    text-align: center;
-}
-
 main {
     padding: 20px;
 }
@@ -103,6 +96,22 @@ select {
     margin: 0.5rem 0;
 }
 
+.download-button {
+    font-size: 16px;
+    background-color: #0069d9; /* Color de fondo del botón */
+    color: white; /* Color del texto del botón */
+    border: none;
+    padding: 10px 20px; /* Espaciado interno del botón */
+    cursor: pointer;
+    border-radius: 5px; /* Bordes redondeados */
+    transition: background-color 0.3s; /* Transición suave para el cambio de color de fondo */
+    margin: 0.5rem 0;
+}
+
+.download-button:hover {
+    background-color: #0056b3; /* Color de fondo al pasar el ratón por encima */
+}
+
 .instructions button:hover {
     background-color: #0056b3;
 }
@@ -166,4 +175,33 @@ select.assigned {
 
 .title {
     margin-top:30px;
+}
+
+.timestamp {
+    margin: 0;
+}
+
+.timestamp-div {
+    display: inline-block;
+    padding: 10px; /* Ajustar el padding según sea necesario */
+    font-weight: bold ;
+}
+
+.header-div {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    margin-bottom: 10px; /* Añadir margen inferior para separación */
+}
+
+.timestamp {
+    margin: 0;
+}
+
+#image-container img {
+    max-width: 100%; /* Ajusta este valor según sea necesario */
+    height: auto;
+    display: block;
+    margin: 0 auto;
 }

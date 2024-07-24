@@ -4,7 +4,7 @@ document.addEventListener('DOMContentLoaded', () => {
     printButton.addEventListener('click', () => {
         // Almacenar el momento en que se oprimió
         const timestamp = new Date().toISOString();
-        console.log(`Programación imprimida a las: ${timestamp}`);
+        console.log(`Programación impresa a las: ${timestamp}`);
 
         // Almacenar las asignaciones y fechas de los encabezados
         const assignments = collectAssignments();
