@@ -121,7 +121,7 @@ select {
 }
 
 /* Estilos para la sección de instrucciones */
-.instructions {
+.instructions, .schedule-assistant, .summary-container {
     background-color: #f9f9f9;
     border: 1px solid #ddd;
     padding: 20px;
@@ -129,7 +129,7 @@ select {
     border-radius: 5px;
 }
 
-.instructions h3 {
+.instructions, .schedule-assistant h3 {
     margin-top: 0;
 }
 
