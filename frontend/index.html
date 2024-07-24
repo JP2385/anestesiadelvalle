@@ -23,6 +23,7 @@
     <script src="js/auth.js"></script>
     <script src="js/sessionTimeout.js"></script>
     <script src="js/logout.js" defer></script>
+    <script src="js/weekly-schedule-individualized.js" defer></script>
 </head>
 <body>
     <header>
@@ -47,7 +48,9 @@
     </nav>
     <main>
         <section id="programacion" class="content-section">
-            <!-- <h2>Programación</h2> -->
+            <h3>Tus quirófanos asignados para esta semana son:(NO LE PRESTES ATENCIÓN A ESTO AHORA, ES UNA PRUEBA)
+            </h3>
+            <div id="user-assignments"></div>
             <a href="weekly-schedule.html"><button>Asistente de programación semanal</button></a>
             <a href="print-view.html"><button>Visualizacion de prueba</button></a>
             <button onclick="openFile('https://docs.google.com/spreadsheets/d/18tNvZEY2VWkf3m5V7UnT1-yCWYDVAp6GggHg9hvsP0A/edit?usp=sharing')">Programación Semanal</button>
