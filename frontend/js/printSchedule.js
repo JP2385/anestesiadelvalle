@@ -1,25 +1,35 @@
 document.addEventListener('DOMContentLoaded', () => {
+    const apiUrl = window.location.hostname === 'localhost' ? 'http://localhost:3000' : 'https://adv-37d5b772f5fd.herokuapp.com';
     const printButton = document.getElementById('print-schedule');
 
-    printButton.addEventListener('click', () => {
-        // Almacenar el momento en que se oprimió
+    printButton.addEventListener('click', async () => {
         const timestamp = new Date().toISOString();
         console.log(`Programación impresa a las: ${timestamp}`);
 
-        // Almacenar las asignaciones y fechas de los encabezados
         const assignments = collectAssignments();
         const dayHeaders = collectDayHeaders();
         if (assignments) {
             console.log('Asignaciones:', assignments);
             console.log('Day Headers:', dayHeaders);
 
-            // Guardar las asignaciones, las fechas de los encabezados y el timestamp en el localStorage
-            localStorage.setItem('savedAssignments', JSON.stringify(assignments));
-            localStorage.setItem('dayHeaders', JSON.stringify(dayHeaders));
-            localStorage.setItem('timestamp', timestamp);
+            try {
+                const response = await fetch(`${apiUrl}/schedule/save-schedule`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ timestamp, assignments, dayHeaders })
+                });
 
-            // Redirigir a la nueva página que muestra la tabla generada
-            window.location.href = 'print-view.html';
+                if (response.ok) {
+                    console.log('Datos guardados correctamente en la base de datos');
+                    window.location.href = 'print-view.html';
+                } else {
+                    console.error('Error al guardar los datos en la base de datos');
+                }
+            } catch (error) {
+                console.error('Error al enviar los datos al servidor:', error);
+            }
         }
     });
 });
@@ -43,7 +53,7 @@ function collectAssignments() {
                     assignments[day] = [];
                 }
 
-                if (selectedUser !== "") { // Asegurarse de que no está vacío
+                if (selectedUser !== "") {
                     assignments[day].push({
                         workSite: workSite,
                         user: selectedUser
@@ -61,7 +71,7 @@ function collectDayHeaders() {
     const headers = document.querySelectorAll('#schedule-assistant thead th');
 
     headers.forEach((header, index) => {
-        if (index > 0) { // Saltar el primer header que no corresponde a los días de la semana
+        if (index > 0) {
             const day = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday'][index - 1];
             dayHeaders[day] = header.textContent.trim();
         }

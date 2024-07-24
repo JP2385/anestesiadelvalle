@@ -1,63 +1,71 @@
 document.addEventListener('DOMContentLoaded', () => {
     const summaryContainer = document.getElementById('summary-container');
+    const apiUrl = window.location.hostname === 'localhost' ? 'http://localhost:3000' : 'https://adv-37d5b772f5fd.herokuapp.com';
 
-    // Obtener las asignaciones y las fechas de los encabezados del localStorage
-    const assignments = JSON.parse(localStorage.getItem('savedAssignments'));
-    const dayHeaders = JSON.parse(localStorage.getItem('dayHeaders'));
-    const timestamp = localStorage.getItem('timestamp');
+    // Hacer una solicitud al backend para obtener el último schedule
+    fetch(`${apiUrl}/schedule/last-schedule`)
+        .then(response => response.json())
+        .then(data => {
+            const assignments = data.assignments;
+            const dayHeaders = data.dayHeaders;
+            const timestamp = data.timestamp;
 
-    // Limpiar los encabezados de cualquier símbolo de actualización
-    const cleanedDayHeaders = {
-        monday: dayHeaders.monday.replace(/🔄/g, ''),
-        tuesday: dayHeaders.tuesday.replace(/🔄/g, ''),
-        wednesday: dayHeaders.wednesday.replace(/🔄/g, ''),
-        thursday: dayHeaders.thursday.replace(/🔄/g, ''),
-        friday: dayHeaders.friday.replace(/🔄/g, '')
-    };
+            // Limpiar los encabezados de cualquier símbolo de actualización
+            const cleanedDayHeaders = {
+                monday: dayHeaders.monday.replace(/🔄/g, ''),
+                tuesday: dayHeaders.tuesday.replace(/🔄/g, ''),
+                wednesday: dayHeaders.wednesday.replace(/🔄/g, ''),
+                thursday: dayHeaders.thursday.replace(/🔄/g, ''),
+                friday: dayHeaders.friday.replace(/🔄/g, '')
+            };
 
-    // Generar la tabla de resumen
-    let summaryTable = generateSummaryTable(assignments, cleanedDayHeaders);
+            // Generar la tabla de resumen
+            let summaryTable = generateSummaryTable(assignments, cleanedDayHeaders);
 
-    // Formatear la fecha de impresión
-    const formattedTimestamp = formatTimestamp(timestamp);
+            // Formatear la fecha de impresión
+            const formattedTimestamp = formatTimestamp(timestamp);
 
-    // Crear el contenedor para la fecha y el botón de descarga
-    const headerDiv = document.createElement('div');
-    headerDiv.className = 'header-div';
+            // Crear el contenedor para la fecha y el botón de descarga
+            const headerDiv = document.createElement('div');
+            headerDiv.className = 'header-div';
 
-    // Crear el div para la fecha de impresión
-    const timestampDiv = document.createElement('div');
-    timestampDiv.className = 'timestamp-div';
+            // Crear el div para la fecha de impresión
+            const timestampDiv = document.createElement('div');
+            timestampDiv.className = 'timestamp-div';
 
-    // Crear el elemento de fecha de impresión
-    const timestampElement = document.createElement('p');
-    timestampElement.textContent = `Programación generada el ${formattedTimestamp}`;
-    timestampElement.className = 'timestamp';
+            // Crear el elemento de fecha de impresión
+            const timestampElement = document.createElement('p');
+            timestampElement.textContent = `Programación generada el ${formattedTimestamp}`;
+            timestampElement.className = 'timestamp';
 
-    // Añadir el elemento de fecha al div de la fecha
-    timestampDiv.appendChild(timestampElement);
+            // Añadir el elemento de fecha al div de la fecha
+            timestampDiv.appendChild(timestampElement);
 
-    // Crear el botón de descarga
-    const downloadButton = document.createElement('button');
-    downloadButton.id = 'download-button';
-    downloadButton.textContent = 'Descargar como imagen'; // Texto del botón de descarga
-    downloadButton.className = 'download-button';
+            // Crear el botón de descarga
+            const downloadButton = document.createElement('button');
+            downloadButton.id = 'download-button';
+            downloadButton.textContent = 'Descargar como imagen'; // Texto del botón de descarga
+            downloadButton.className = 'download-button';
 
-    // Añadir la fecha de impresión y el botón al contenedor
-    headerDiv.appendChild(timestampDiv);
-    headerDiv.appendChild(downloadButton);
+            // Añadir la fecha de impresión y el botón al contenedor
+            headerDiv.appendChild(timestampDiv);
+            headerDiv.appendChild(downloadButton);
 
-    // Añadir el contenedor de la cabecera y la tabla al contenedor principal
-    summaryContainer.appendChild(headerDiv);
-    summaryContainer.appendChild(summaryTable);
+            // Añadir el contenedor de la cabecera y la tabla al contenedor principal
+            summaryContainer.appendChild(headerDiv);
+            summaryContainer.appendChild(summaryTable);
 
-    // Aplicar separadores después de eliminar filas innecesarias
-    summaryTable = applySeparators(summaryTable);
+            // Aplicar separadores después de eliminar filas innecesarias
+            summaryTable = applySeparators(summaryTable);
 
-    // Agregar evento al botón de descarga
-    downloadButton.addEventListener('click', () => {
-        downloadTableAsImage(summaryContainer);
-    });
+            // Agregar evento al botón de descarga
+            downloadButton.addEventListener('click', () => {
+                downloadTableAsImage(summaryContainer);
+            });
+        })
+        .catch(error => {
+            console.error('Error fetching schedule:', error);
+        });
 });
 
 function generateSummaryTable(assignments, dayHeaders) {
