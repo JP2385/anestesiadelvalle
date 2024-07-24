@@ -39,7 +39,7 @@ export function updateSelectBackgroundColors() {
 }
 
 export async function fetchAvailability() {
-    const apiUrl = 'https://adv-37d5b772f5fd.herokuapp.com';
+    const apiUrl = window.location.hostname === 'localhost' ? 'http://localhost:3000' : 'https://adv-37d5b772f5fd.herokuapp.com';
     try {
         const response = await fetch(`${apiUrl}/auth/availability`, {
             method: 'GET',

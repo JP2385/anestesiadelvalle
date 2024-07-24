@@ -1,4 +1,4 @@
-require('dotenv').config({ path: './backend/.env' }); 
+require('dotenv').config({ path: './backend/.env' });
 
 const express = require('express');
 const mongoose = require('mongoose');
@@ -12,9 +12,9 @@ const app = express();
 app.use(express.json());
 
 const corsOptions = {
-    origin: 'https://adv-37d5b772f5fd.herokuapp.com', // Cambia esto a tu dominio frontend si es necesario
+    origin: ['http://localhost:3000', 'https://adv-37d5b772f5fd.herokuapp.com'], // Permitir el acceso desde ambos dominios
     optionsSuccessStatus: 200,
-    credentials: true // Permitir el envío de credenciales (autenticación)
+    credentials: true
 };
 
 app.use(cors(corsOptions));

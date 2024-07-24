@@ -10,7 +10,7 @@
     import { compareAvailabilities } from './compareArrays.js';
 
     document.addEventListener('DOMContentLoaded', async function() {
-        const apiUrl = 'https://adv-37d5b772f5fd.herokuapp.com';
+        const apiUrl = window.location.hostname === 'localhost' ? 'http://localhost:3000' : 'https://adv-37d5b772f5fd.herokuapp.com';
 
         updateWeekDates();
         await populateSelectOptions();
