@@ -51,9 +51,20 @@ export async function fetchAvailability() {
 
         if (response.ok) {
             const availability = await response.json();
-            displayAvailability(availability);
+
+            // Crear availabilityCount a partir de la data recibida
+            const availabilityCount = {
+                monday: availability.monday.length,
+                tuesday: availability.tuesday.length,
+                wednesday: availability.wednesday.length,
+                thursday: availability.thursday.length,
+                friday: availability.friday.length
+            };
+
+            displayAvailability(availabilityCount);
             // Asegurarse de que el DOM esté listo
             countEnabledSelectsByDay();
+            return availability; // Devolver la disponibilidad recibida del servidor
         } else {
             const errorData = await response.json();
             console.error(`Error: ${errorData.message}`);
@@ -63,54 +74,67 @@ export async function fetchAvailability() {
     }
 }
 
-function displayAvailability(availability) {
+function displayAvailability(availabilityCount) {
     const container = document.getElementById('availability-container');
+    if (!container) {
+        console.error('No se encontró el contenedor de disponibilidad');
+        return;
+    }
+
     container.innerHTML = `
         <h3>Informe de asignaciones</h3>
-            <table>
-        <thead>
-        <tr>
-            <th class="work-site"></th>
-            <th>Lunes</th>
-            <th>Martes</th>
-            <th>Miércoles</th>
-            <th>Jueves</th>
-            <th>Viernes</th>
-        </tr>
-    </thead>
-    <tbody>
-        <tr>
-            <td class="work-site"><span class="inform">Lugares habilitados</span></td>
-            <td id="monday-sites"></td>
-            <td id="tuesday-sites"></td>
-            <td id="wednesday-sites"></td>
-            <td id="thursday-sites"></td>
-            <td id="friday-sites"></td>
-        </tr>
-        <tr>
-            <td><span class="inform">Anestesiólogos disponibles</span></td>
-            <td><span id="monday-available">${availability.monday}</span></td>
-            <td><span id="tuesday-available">${availability.tuesday}</span></td>
-            <td><span id="wednesday-available">${availability.wednesday}</span></td>
-            <td><span id="thursday-available">${availability.thursday}</span></td>
-            <td><span id="friday-available">${availability.friday}</span></td>
-        </tr>
-        <tr>
-            <td><span class="inform">Anestesiólogos asignados</span></td>
-            <td><span id="monday-assignments">0</span></td>
-            <td><span id="tuesday-assignments">0</span></td>
-            <td><span id="wednesday-assignments">0</span></td>
-            <td><span id="thursday-assignments">0</span></td>
-            <td><span id="friday-assignments">0</span></td>
-        </tr>
-    </tbody>
-</table>
-        
-    
-
+        <table class="assigments-inform">
+            <thead>
+                <tr>
+                    <th class="work-site"></th>
+                    <th>Lunes</th>
+                    <th>Martes</th>
+                    <th>Miércoles</th>
+                    <th>Jueves</th>
+                    <th>Viernes</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td class="work-site"><span class="inform">Nro de lugares habilitados</span></td>
+                    <td id="monday-sites"></td>
+                    <td id="tuesday-sites"></td>
+                    <td id="wednesday-sites"></td>
+                    <td id="thursday-sites"></td>
+                    <td id="friday-sites"></td>
+                </tr>
+                <tr>
+                    <td><span class="inform">Nro. de Anestesiólogos disponibles</span></td>
+                    <td><span id="monday-available">${availabilityCount.monday}</span></td>
+                    <td><span id="tuesday-available">${availabilityCount.tuesday}</span></td>
+                    <td><span id="wednesday-available">${availabilityCount.wednesday}</span></td>
+                    <td><span id="thursday-available">${availabilityCount.thursday}</span></td>
+                    <td><span id="friday-available">${availabilityCount.friday}</span></td>
+                </tr>
+                <tr>
+                    <td><span class="inform">Nro. de Anestesiólogos asignados</span></td>
+                    <td><span id="monday-assignments">0</span></td>
+                    <td><span id="tuesday-assignments">0</span></td>
+                    <td><span id="wednesday-assignments">0</span></td>
+                    <td><span id="thursday-assignments">0</span></td>
+                    <td><span id="friday-assignments">0</span></td>
+                </tr>
+                <tr>
+                    <td><span class="inform">Anestesiólogos no asignados</span></td>
+                    <td><span id="monday-compare"></span></td>
+                    <td><span id= "tuesday-compare"></span></td>
+                    <td><span id="wednesday-compare"></span></td>
+                    <td><span id="thursday-compare"></span></td>
+                    <td><span id="friday-compare"></span></td>
+                </tr>
+            </tbody>
+        </table>
     `;
-        
 }
+
+
+
+
 
 
 

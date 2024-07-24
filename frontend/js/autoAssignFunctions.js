@@ -398,17 +398,35 @@ export async function countAssignmentsByDay() {
         thursday: 0,
         friday: 0
     };
+    const contents = {
+        monday: [],
+        tuesday: [],
+        wednesday: [],
+        thursday: [],
+        friday: []
+    };
 
     selects.forEach(select => {
         if (select.value) {
             const dayColumnIndex = Array.from(select.closest('tr').children).indexOf(select.closest('td'));
             const dayName = dayHeaders[dayColumnIndex - 1].split('-')[0];
             
-            if (dayName === 'monday') counts.monday++;
-            else if (dayName === 'tuesday') counts.tuesday++;
-            else if (dayName === 'wednesday') counts.wednesday++;
-            else if (dayName === 'thursday') counts.thursday++;
-            else if (dayName === 'friday') counts.friday++;
+            if (dayName === 'monday') {
+                counts.monday++;
+                contents.monday.push(select.options[select.selectedIndex].text);
+            } else if (dayName === 'tuesday') {
+                counts.tuesday++;
+                contents.tuesday.push(select.options[select.selectedIndex].text);
+            } else if (dayName === 'wednesday') {
+                counts.wednesday++;
+                contents.wednesday.push(select.options[select.selectedIndex].text);
+            } else if (dayName === 'thursday') {
+                counts.thursday++;
+                contents.thursday.push(select.options[select.selectedIndex].text);
+            } else if (dayName === 'friday') {
+                counts.friday++;
+                contents.friday.push(select.options[select.selectedIndex].text);
+            }
         }
     });
 
@@ -419,7 +437,7 @@ export async function countAssignmentsByDay() {
     document.getElementById('thursday-assignments').textContent = `${counts.thursday}`;
     document.getElementById('friday-assignments').textContent = `${counts.friday}`;
 
-    return counts;
+    return { counts, contents }; // Devolver los contenidos seleccionados
 }
 
 export async function countEnabledSelectsByDay() {

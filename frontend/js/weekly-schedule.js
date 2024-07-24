@@ -7,6 +7,7 @@
     import { autoAssignRemainingsByDay } from './autoAssignHandlersRemainings.js';
     import { countAssignmentsByDay, countEnabledSelectsByDay } from './autoAssignFunctions.js';
     import { fetchAvailability } from './assignUtils.js';
+    import { compareAvailabilities } from './compareArrays.js';
 
     document.addEventListener('DOMContentLoaded', async function() {
         const apiUrl = 'https://adv-37d5b772f5fd.herokuapp.com';
@@ -21,7 +22,8 @@
         for (const dayIndex of dayIndices) {
             await autoAssignCaroSandraGabiByDay(apiUrl, dayIndex);
             await autoAssignPublicHospitalsByDay(apiUrl, dayIndex);
-            countAssignmentsByDay(dayIndex);
+            await countAssignmentsByDay(dayIndex);
+            await compareAvailabilities();
         }
 
         function updateWeekDates() {
@@ -53,13 +55,12 @@
                     await autoAssignAfternoonsByDay(apiUrl, dayIndex);
                     await autoAssignLongDaysByDay(apiUrl, dayIndex);
                     await autoAssignRemainingsByDay(apiUrl, dayIndex);
-                    countAssignmentsByDay(dayIndex);
-                    generateSelectedUsersArrays();
+                    await countAssignmentsByDay(dayIndex);
+                    await compareAvailabilities();
                 });
                 return button;
             }
 
-        
             function updateHeader(dayId, dayName, date, dayIndex) {
                 const header = document.getElementById(dayId);
                 header.innerText = `${dayName} ${date.toLocaleDateString('es-ES', dateOptions)}`;
@@ -244,45 +245,4 @@
             select.classList.add('default');
             select.addEventListener('change', handleSelectChange);
         });
-
-        function generateSelectedUsersArrays() {
-            const availability = {
-                monday: [],
-                tuesday: [],
-                wednesday: [],
-                thursday: [],
-                friday: []
-            };
-        
-            // Obtener todas las filas de la tabla
-            const rows = document.querySelectorAll('#schedule-body tr');
-        
-            // Recorrer cada fila de la tabla
-            rows.forEach(row => {
-                // Obtener todos los elementos select en la fila
-                const selects = row.querySelectorAll('td.droppable select');
-        
-                // Si hay 5 selects (uno para cada día de la semana), proceder
-                if (selects.length === 5) {
-                    // Obtener los valores seleccionados para cada día de la semana
-                    const mondaySelect = selects[0];
-                    const tuesdaySelect = selects[1];
-                    const wednesdaySelect = selects[2];
-                    const thursdaySelect = selects[3];
-                    const fridaySelect = selects[4];
-        
-                    // Agregar los valores seleccionados a los arrays correspondientes
-                    if (mondaySelect.value) availability.monday.push(mondaySelect.value);
-                    if (tuesdaySelect.value) availability.tuesday.push(tuesdaySelect.value);
-                    if (wednesdaySelect.value) availability.wednesday.push(wednesdaySelect.value);
-                    if (thursdaySelect.value) availability.thursday.push(thursdaySelect.value);
-                    if (fridaySelect.value) availability.friday.push(fridaySelect.value);
-                }
-            });
-        
-            // Imprimir los arrays generados en la consola (puedes eliminar esta línea si no es necesaria)
-            console.log('Selected Users Availability:', availability);
-        
-            return availability;
-        }
     });

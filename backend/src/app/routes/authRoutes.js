@@ -1,4 +1,3 @@
-
 // backend/src/app/routes/authRoutes.js
 const express = require('express');
 const { register, login, changePassword, getProfile, recoverPassword, resetPassword } = require('../controllers/authController');
@@ -18,7 +17,6 @@ router.put('/user/:userId', authMiddleware, updateUser);
 
 // Rutas de administración
 router.get('/users', authMiddleware, getAllUsers);
-router.get('/availability', authMiddleware, getUsersAvailability)
+router.get('/availability', authMiddleware, getUsersAvailability);
 
 module.exports = router;
-

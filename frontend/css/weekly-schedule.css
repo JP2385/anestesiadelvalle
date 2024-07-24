@@ -23,6 +23,10 @@ table {
     table-layout: fixed; /* Hace que las columnas tengan un ancho fijo */
 }
 
+.assigments-table {
+    margin-bottom: 20px; /* Agrega margen inferior para separar de h3.title */
+}
+
 th, td {
     border: 1px solid #ddd;
     padding: 8px;
@@ -63,6 +67,10 @@ td.separator-thick {
 td.work-site {
     font-weight: 600;
     width: 250px; /* Ancho fijo para la primera columna */
+}
+
+table.assigments-inform {
+    margin-bottom: 20px; /* Ajusta el valor según tus necesidades */
 }
 
 select {
@@ -136,4 +144,8 @@ select.assigned {
 
 .inform {
     font-weight:600;
+}
+
+.title {
+    margin-top:30px;
 }
