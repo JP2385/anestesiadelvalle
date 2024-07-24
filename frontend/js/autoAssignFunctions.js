@@ -410,22 +410,23 @@ export async function countAssignmentsByDay() {
         if (select.value) {
             const dayColumnIndex = Array.from(select.closest('tr').children).indexOf(select.closest('td'));
             const dayName = dayHeaders[dayColumnIndex - 1].split('-')[0];
+            const selectedText = select.options[select.selectedIndex].text; // Obtener el texto del option seleccionado
             
             if (dayName === 'monday') {
                 counts.monday++;
-                contents.monday.push(select.options[select.selectedIndex].text);
+                contents.monday.push(selectedText);
             } else if (dayName === 'tuesday') {
                 counts.tuesday++;
-                contents.tuesday.push(select.options[select.selectedIndex].text);
+                contents.tuesday.push(selectedText);
             } else if (dayName === 'wednesday') {
                 counts.wednesday++;
-                contents.wednesday.push(select.options[select.selectedIndex].text);
+                contents.wednesday.push(selectedText);
             } else if (dayName === 'thursday') {
                 counts.thursday++;
-                contents.thursday.push(select.options[select.selectedIndex].text);
+                contents.thursday.push(selectedText);
             } else if (dayName === 'friday') {
                 counts.friday++;
-                contents.friday.push(select.options[select.selectedIndex].text);
+                contents.friday.push(selectedText);
             }
         }
     });
@@ -437,8 +438,13 @@ export async function countAssignmentsByDay() {
     document.getElementById('thursday-assignments').textContent = `${counts.thursday}`;
     document.getElementById('friday-assignments').textContent = `${counts.friday}`;
 
-    return { counts, contents }; // Devolver los contenidos seleccionados
+    // Log contents to console
+    console.log(contents);
+
+    return { counts, contents };
 }
+
+
 
 export async function countEnabledSelectsByDay() {
     const days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'];

@@ -10,7 +10,14 @@ const { getUsersAvailability } = require('./src/app/controllers/availabilityCont
 
 const app = express();
 app.use(express.json());
-app.use(cors());
+
+const corsOptions = {
+    origin: 'https://adv-37d5b772f5fd.herokuapp.com', // Cambia esto a tu dominio frontend si es necesario
+    optionsSuccessStatus: 200,
+    credentials: true // Permitir el envío de credenciales (autenticación)
+};
+
+app.use(cors(corsOptions));
 
 mongoose.connect(config.mongoUri, { useNewUrlParser: true, useUnifiedTopology: true })
     .then(() => console.log('Connected to MongoDB'))
@@ -27,4 +34,3 @@ const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`);
 });
-

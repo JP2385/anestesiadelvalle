@@ -62,8 +62,13 @@ export async function fetchAvailability() {
             };
 
             displayAvailability(availabilityCount);
+
             // Asegurarse de que el DOM esté listo
             countEnabledSelectsByDay();
+
+            // Log arrays to console
+            console.log('Server Availability:', availability);
+
             return availability; // Devolver la disponibilidad recibida del servidor
         } else {
             const errorData = await response.json();

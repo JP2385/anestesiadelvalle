@@ -2,8 +2,9 @@ const User = require('../models/userModel');
 
 const getUsersAvailability = async (req, res) => {
     try {
-        const users = await User.find();
-
+        // Consulta para obtener los usuarios incluyendo su username, workSchedule y vacations
+        const users = await User.find({}, 'username workSchedule vacations');
+        
         const availability = {
             monday: [],
             tuesday: [],
@@ -23,19 +24,22 @@ const getUsersAvailability = async (req, res) => {
         ];
 
         users.forEach(user => {
+            console.log('Current user:', user); // Log individual para cada usuario
+
             const onVacation = (day) => user.vacations.some(vacation => {
                 const start = new Date(vacation.startDate);
                 const end = new Date(vacation.endDate);
                 return day >= start && day <= end;
             });
 
-            if (user.workSchedule.monday !== 'No trabaja' && !onVacation(daysOfWeek[0])) availability.monday.push(user._id);
-            if (user.workSchedule.tuesday !== 'No trabaja' && !onVacation(daysOfWeek[1])) availability.tuesday.push(user._id);
-            if (user.workSchedule.wednesday !== 'No trabaja' && !onVacation(daysOfWeek[2])) availability.wednesday.push(user._id);
-            if (user.workSchedule.thursday !== 'No trabaja' && !onVacation(daysOfWeek[3])) availability.thursday.push(user._id);
-            if (user.workSchedule.friday !== 'No trabaja' && !onVacation(daysOfWeek[4])) availability.friday.push(user._id);
+            if (user.workSchedule.monday !== 'No trabaja' && !onVacation(daysOfWeek[0])) availability.monday.push(user.username);
+            if (user.workSchedule.tuesday !== 'No trabaja' && !onVacation(daysOfWeek[1])) availability.tuesday.push(user.username);
+            if (user.workSchedule.wednesday !== 'No trabaja' && !onVacation(daysOfWeek[2])) availability.wednesday.push(user.username);
+            if (user.workSchedule.thursday !== 'No trabaja' && !onVacation(daysOfWeek[3])) availability.thursday.push(user.username);
+            if (user.workSchedule.friday !== 'No trabaja' && !onVacation(daysOfWeek[4])) availability.friday.push(user.username);
         });
 
+        console.log('Availability:', availability); // Verifica que los usernames estén aquí
         res.status(200).json(availability);
     } catch (error) {
         res.status(500).json({ message: error.message });

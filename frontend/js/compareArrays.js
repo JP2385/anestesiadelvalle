@@ -6,6 +6,10 @@ export async function compareAvailabilities() {
         const serverAvailability = await fetchAvailability();
         const { contents: clientAvailability } = await countAssignmentsByDay();
 
+         // Log arrays to console
+         console.log('Server Availability:', serverAvailability);
+         console.log('Client Availability:', clientAvailability);
+
         const differences = compareUserAvailability(serverAvailability, clientAvailability);
 
         // Actualizar el DOM con las diferencias encontradas
