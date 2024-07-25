@@ -3,11 +3,11 @@ const Schedule = require('../models/scheduleModel');
 
 // Función para guardar un schedule
 const saveSchedule = async (req, res) => {
-    const { timestamp, assignments, dayHeaders } = req.body;
+    const { timestamp, assignments, dayHeaders, selectConfig } = req.body; // Incluir selectConfig
 
     try {
         // Crear un nuevo documento en la colección de schedules
-        const newSchedule = new Schedule({ timestamp, assignments, dayHeaders });
+        const newSchedule = new Schedule({ timestamp, assignments, dayHeaders, selectConfig });
         await newSchedule.save();
         res.status(201).send('Schedule saved successfully');
     } catch (error) {
@@ -31,4 +31,3 @@ const getLastSchedule = async (req, res) => {
 };
 
 module.exports = { saveSchedule, getLastSchedule };
-

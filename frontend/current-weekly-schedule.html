@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Asistente de Programación Semanal</title>
+    <link rel="stylesheet" href="css/weekly-schedule.css">
+    <link rel="stylesheet" href="css/header.css">
+    <script type="module" defer src="js/weekly-schedule.js"></script>
+    <script type="module" src="js/autoAssign.js"></script>
+    <script type="module" src="js/printSchedule.js"></script>
+    <script type="module" src="js/load-current-schedule.js"></script>
+</head>
+<body>
+    <body>
+        <header>
+            <a href="index.html" class="app-logo-link">
+                <img src="images/logo/logo.png" alt="Logo Anestesiólogos del Valle" class="app-logo">
+            </a>
+            <h1>Anestesiólogos del Valle</h1>
+            <a href="index.html" class="back-to-main-menu" title="Volver al menú principal">
+                <img src="images/icons/back-icon.svg" alt="Volver" class="back-icon">
+            </a>
+        </header>
+    <main>
+        <div class="instructions">
+            <h3>Pasos para generar programación</h3>
+            <ol>
+                <li> Setee los sitios de trabajo de acuerdo a la programación de clínicas y hospitales.</li>
+                <li> Si la cantidad de lugares de trabajo excede a la cantidad de anestesiólogos por día:
+                    cambie días vespertinos/matutinos por días largos.</li>
+                <li> Si la cantidad de anestesiólogos excede a la cantidad de anestesiólogos por día:
+                    cambie días días largos por días matutinos/vespertinos.</li>
+                <li> Realice la asignación por día hasta que la cantidad de anestesiólogos asignados sea igual
+                    a los disponibles.</li>
+                <li> Imprima programación:</li><button id="print-schedule">Imprimir Programación</button>
+            </ol>
+        </div>
+        <div id="availability-container" class="instructions">
+        </div>
+        <div class="schedule-assistant">
+        <h3>Asistente propiamente dicho</h3>
+        <table id="schedule-assistant">
+            <thead>
+                <tr>
+                    <th class="work-site">Sitio de Trabajo</th>
+                    <th id="monday-header">Lunes</th>
+                    <th id="tuesday-header">Martes</th>
+                    <th id="wednesday-header">Miércoles</th>
+                    <th id="thursday-header">Jueves</th>
+                    <th id="friday-header">Viernes</th>
+                </tr>
+            <t/head>
+            <tbody id="schedule-body">
+                <tr>
+                    <td class="work-site">Fundación Hemo Matutino</td>
+                    <td class="droppable"><select disabled></select></td>
+                    <td class="droppable"><select disabled></select></td>
+                    <td class="droppable"><select disabled></select></td>
+                    <td class="droppable"><select disabled></select></td>
+                    <td class="droppable"><select disabled></select></td>
+                </tr>
+                <tr>
+                    <td class="work-site">Fundación Hemo Vespertino</td>
+                    <td class="droppable"><select disabled></td>
+                    <td class="droppable"><select disabled></td>
+                    <td class="droppable"><select disabled></td>
+                    <td class="droppable"><select disabled></td>
+                    <td class="droppable"><select disabled></td>
+                </tr>
+                <tr>
+                    <td class="work-site">Fundación Hemo Largo</td>
+                    <td class="droppable"><select disabled></select></td>
+                    <td class="droppable"><select disabled></select></td>
+                    <td class="droppable"><select disabled></select></td>
+                    <td class="droppable"><select></select></td>
+                    <td class="droppable"><select disabled></select></td>
+                </tr>
+                <tr><td class="separator-thin" colspan="6"></td></tr>
+                <tr>
+                    <td class="work-site">Fundación Q1 Matutino</td>
+                    <td class="droppable"><select></select></td>
+                    <td class="droppable"><select></select></td>
+                    <td class="droppable"><select></select></td>
+                    <td class="droppable"><select></select></td>
+                    <td class="droppable"><select></select></td>
+                </tr>
+                <tr>
+                    <td class="work-site">Fundación Q1 Vespertino</td>
+                    <td class="droppable"><select></select></td>
+                    <td class="droppable"><select></select></td>
+                    <td class="droppable"><select></select></td>
+                    <td class="droppable"><select></select></td>
+                    <td class="droppable"><select></select></td>
+                </tr>
+                <tr>
+                    <td class="work-site">Fundación Q1 Largo</td>
+                    <td class="droppable"><select disabled></select></td>
+                    <td class="droppable"><select disabled></select></td>
+                    <td class="droppable"><select disabled></select></td>
+                    <td class="droppable"><select disabled></select></td>
+                    <td class="droppable"><select disabled></select></td>
+                </tr>
+                <tr><td class="separator-thin" colspan="6"></td></tr>
+                <tr>
+                    <td class="work-site">Fundación Q2 Matutino</td>
+                    <td class="droppable"><select></select></td>
+                    <td class="droppable"><select></select></td>
+                    <td class="droppable"><select></select></td>
+                    <td class="droppable"><select></select></td>
+                    <td class="droppable"><select></select></td>
+                </tr>
+                <tr>
+                    <td class="work-site">Fundación Q2 Vespertino</td>
+                    <td class="droppable"><select></select></td>
+                    <td class="droppable"><select></select></td>
+                    <td class="droppable"><select></select></td>
+                    <td class="droppable"><select></select></td>
+                    <td class="droppable"><select></select></td>
+                </tr>
+                <tr>
+                    <td class="work-site">Fundación Q2 Largo</td>
+                    <td class="droppable"><select disabled></select></td>
+                    <td class="droppable"><select disabled></select></td>
+                    <td class="droppable"><select disabled></select></td>
+                    <td class="droppable"><select disabled></select></td>
+                    <td class="droppable"><select disabled></select></td>
+                </tr>
+                <tr><td class="separator-thin" colspan="6"></td></tr>
+                <tr>
+                    <td class="work-site">Fundación Q3 Matutino</td>
+                    <td class="droppable"><select></select></td>
+                    <td class="droppable"><select></select></td>
+                    <td class="droppable"><select disabled></select></td>
+                    <td class="droppable"><select disabled></select></td>
+                    <td class="droppable"><select></select></td>
+                </tr>
+                <tr>
+                    <td class="work-site">Fundación Q3 Vespertino</td>
+                    <td class="droppable"><select disabled></select></td>
+                    <td class="droppable"><select disabled></select></td>
+                    <td class="droppable"><select disabled></select></td>
+                    <td class="droppable"><select disabled></select></td>
+                    <td class="droppable"><select disabled></select></td>
+                </tr>
+                <tr>
+                    <td class="work-site">Fundación Q3 Largo</td>
+                    <td class="droppable"><select disabled></select></td>
+                    <td class="droppable"><select disabled></select></td>
+                    <td class="droppable"><select></select></td>
+                    <td class="droppable"><select></select></td>
+                    <td class="droppable"><select disabled></select></td>
+                </tr>
+                <tr><td class="separator-thin" colspan="6"></td></tr>
+                <tr>
+                    <td class="work-site">Fundación RNM TAC Largo</td>
+                    <td class="droppable"><select disabled></select></td>
+                    <td class="droppable"><select></select></td>
+                    <td class="droppable"><select disabled></select></td>
+                    <td class="droppable"><select disabled></select></td>
+                    <td class="droppable"><select disabled></select></td>
+                </tr>
+                <tr>
+                    <td class="work-site">Fundación RNM TAC Vespertino</td>
+                    <td class="droppable"><select disabled></select></td>
+                    <td class="droppable"><select disabled></select></td>
+                    <td class="droppable"><select disabled></select></td>
+                    <td class="droppable"><select></select></td>
+                    <td class="droppable"><select disabled></select></td>
+                </tr>
+                <tr><td class="separator-thick" colspan="6"></td></tr>
+                <tr>
+                    <td class="work-site">CMAC Q1 Matutino</td>
+                    <td class="droppable"><select></select></td>
+                    <td class="droppable"><select></select></td>
+                    <td class="droppable"><select></select></td>
+                    <td class="droppable"><select></select></td>
+                    <td class="droppable"><select></select></td>
+                </tr>
+                <tr>
+                    <td class="work-site">CMAC Q1 Largo</td>
+                    <td class="droppable"><select disabled></select></td>
+                    <td class="droppable"><select disabled></select></td>
+                    <td class="droppable"><select disabled></select></td>
+                    <td class="droppable"><select disabled></select></td>
+                    <td class="droppable"><select disabled></select></td>
+                </tr>
+                <tr><td class="separator-thin" colspan="6"></td></tr>
+                <tr>
+                    <td class="work-site">CMAC Q2 Matutino</td>
+                    <td class="droppable"><select></select></td>
+                    <td class="droppable"><select></select></td>
+                    <td class="droppable"><select></select></td>
+                    <td class="droppable"><select></select></td>
+                    <td class="droppable"><select></select></td>
+                </tr>
+                <tr>
+                    <td class="work-site">CMAC Q2 Largo</td>
+                    <td class="droppable"><select disabled></select></td>
+                    <td class="droppable"><select disabled></select></td>
+                    <td class="droppable"><select disabled></select></td>
+                    <td class="droppable"><select disabled></select></td>
+                    <td class="droppable"><select disabled></select></td>
+                </tr>
+                <tr><td class="separator-thin" colspan="6"></td></tr>
+                <tr>
+                    <td class="work-site">CMAC Endoscopia Matutino</td>
+                    <td class="droppable"><select disabled></select></td>
+                    <td class="droppable"><select></select></td>
+                    <td class="droppable"><select disabled></select></td>
+                    <td class="droppable"><select></select></td>
+                    <td class="droppable"><select disabled></select></td>
+                </tr>
+                <tr>
+                    <td class="work-site">CMAC Endoscopia Largo</td>
+                    <td class="droppable"><select></select></td>
+                    <td class="droppable"><select disabled></select></td>
+                    <td class="droppable"><select></select></td>
+                    <td class="droppable"><select disabled></select></td>
+                    <td class="droppable"><select></select></td>
+                </tr>
+                <tr><td class="separator-thick" colspan="6"></td></tr>
+                <tr>
+                    <td class="work-site">Hospital Cipolletti Vespertino</td>
+                    <td class="droppable"><select disabled></select></td>
+                    <td class="droppable"><select disabled></select></td>
+                    <td class="droppable"><select disabled></select></td>
+                    <td class="droppable"><select disabled></select></td>
+                    <td class="droppable"><select disabled></select></td>
+                </tr>
+                <tr>
+                    <td class="work-site">Hospital Allen Largo</td>
+                    <td class="droppable"><select disabled></select></td>
+                    <td class="droppable"><select></select></td>
+                    <td class="droppable"><select disabled></select></td>
+                    <td class="droppable"><select></select></td>
+                    <td class="droppable"><select disabled></select></td>
+                </tr>
+                <tr><td class="separator-thick" colspan="6"></td></tr>
+                <tr>
+                    <td class="work-site">Imágenes Hemo Matutino</td>
+                    <td class="droppable"><select></select></td>
+                    <td class="droppable"><select disabled></select></td>
+                    <td class="droppable"><select></select></td>
+                    <td class="droppable"><select disabled></select></td>
+                    <td class="droppable"><select disabled></select></td>
+                </tr>
+                <tr>
+                    <td class="work-site">Imágenes Hemo Largo</td>
+                    <td class="droppable"><select disabled></select></td>
+                    <td class="droppable"><select disabled></select></td>
+                    <td class="droppable"><select disabled></select></td>
+                    <td class="droppable"><select disabled></select></td>
+                    <td class="droppable"><select disabled></select></td>
+                </tr>
+                <tr><td class="separator-thin" colspan="6"></td></tr>
+                <tr>
+                    <td class="work-site">Imágenes Q1 Matutino</td>
+                    <td class="droppable"><select></select></td>
+                    <td class="droppable"><select></select></td>
+                    <td class="droppable"><select></select></td>
+                    <td class="droppable"><select></select></td>
+                    <td class="droppable"><select></select></td>
+                </tr>
+                <tr>
+                    <td class="work-site">Imágenes Q1 Vespertino</td>
+                    <td class="droppable"><select></select></td>
+                    <td class="droppable"><select></select></td>
+                    <td class="droppable"><select></select></td>
+                    <td class="droppable"><select></select></td>
+                    <td class="droppable"><select></select></td>
+                </tr>
+                <tr>
+                    <td class="work-site">Imágenes Q1 Largo</td>
+                    <td class="droppable"><select disabled></select></td>
+                    <td class="droppable"><select disabled></select></td>
+                    <td class="droppable"><select disabled></select></td>
+                    <td class="droppable"><select disabled></select></td>
+                    <td class="droppable"><select disabled></select></td>
+                </tr>
+                <tr><td class="separator-thin" colspan="6"></td></tr>
+                <tr>
+                    <td class="work-site">Imágenes Q2 Matutino</td>
+                    <td class="droppable"><select></select></td>
+                    <td class="droppable"><select></select></td>
+                    <td class="droppable"><select></select></td>
+                    <td class="droppable"><select></select></td>
+                    <td class="droppable"><select></select></td>
+                </tr>
+                <tr>
+                    <td class="work-site">Imágenes Q2 Vespertino</td>
+                    <td class="droppable"><select></select></td>
+                    <td class="droppable"><select></select></td>
+                    <td class="droppable"><select></select></td>
+                    <td class="droppable"><select></select></td>
+                    <td class="droppable"><select></select></td>
+                </tr>
+                <tr>
+                    <td class="work-site">Imágenes Q2 Largo</td>
+                    <td class="droppable"><select disabled></select></td>
+                    <td class="droppable"><select disabled></select></td>
+                    <td class="droppable"><select disabled></select></td>
+                    <td class="droppable"><select disabled></select></td>
+                    <td class="droppable"><select disabled></select></td>
+                </tr>
+                <tr><td class="separator-thin" colspan="6"></td></tr>
+                <tr>
+                    <td class="work-site">Imágenes 4to piso Matutino</td>
+                    <td class="droppable"><select disabled></select></td>
+                    <td class="droppable"><select disabled></select></td>
+                    <td class="droppable"><select disabled></select></td>
+                    <td class="droppable"><select disabled></select></td>
+                    <td class="droppable"><select></select></td>
+                </tr>
+                <tr>
+                    <td class="work-site">Imágenes 4to piso Largo</td>
+                    <td class="droppable"><select></select></td>
+                    <td class="droppable"><select></select></td>
+                    <td class="droppable"><select></select></td>
+                    <td class="droppable"><select></select></td>
+                    <td class="droppable"><select disabled></select></td>
+                </tr>
+                <tr><td class="separator-thick" colspan="6"></td></tr>
+                <tr>
+                    <td class="work-site">COI Matutino</td>
+                    <td class="droppable"><select></select></td>
+                    <td class="droppable"><select disabled></select></td>
+                    <td class="droppable"><select></select></td>
+                    <td class="droppable"><select></select></td>
+                    <td class="droppable"><select></select></td>
+                </tr>
+                <tr>
+                    <td class="work-site">COI Vespertino</td>
+                    <td class="droppable"><select></select></td>
+                    <td class="droppable"><select disabled></select></td>
+                    <td class="droppable"><select disabled></select></td>
+                    <td class="droppable"><select disabled></select></td>
+                    <td class="droppable"><select disabled></select></td>
+                </tr>
+                <tr>
+                    <td class="work-site">COI Largo</td>
+                    <td class="droppable"><select disabled></select></td>
+                    <td class="droppable"><select></select></td>
+                    <td class="droppable"><select disabled></select></td>
+                    <td class="droppable"><select disabled></select></td>
+                    <td class="droppable"><select disabled></select></td>
+                </tr>
+                <tr><td class="separator-thick" colspan="6"></td></tr>
+                <tr>
+                    <td class="work-site">Hospital Heller Matutino</td>
+                    <td class="droppable"><select disabled></select></td>
+                    <td class="droppable"><select disabled></select></td>
+                    <td class="droppable"><select disabled></select></td>
+                    <td class="droppable"><select disabled></select></td>
+                    <td class="droppable"><select disabled></select></td>
+                </tr>
+                <tr>
+                    <td class="work-site">Hospital Heller Vespertino</td>
+                    <td class="droppable"><select disabled></select></td>
+                    <td class="droppable"><select disabled></select></td>
+                    <td class="droppable"><select disabled></select></td>
+                    <td class="droppable"><select disabled></select></td>
+                    <td class="droppable"><select disabled></select></td>
+                </tr>
+                <tr>
+                    <td class="work-site">Hospital Heller Largo</td>
+                    <td class="droppable"><select disabled></select></td>
+                    <td class="droppable"><select disabled></select></td>
+                    <td class="droppable"><select disabled></select></td>
+                    <td class="droppable"><select disabled></select></td>
+                    <td class="droppable"><select disabled></select></td>
+                </tr>
+                <tr>
+                    <td class="work-site">Hospital Plottier Matutino</td>
+                    <td class="droppable"><select disabled></select></td>
+                    <td class="droppable"><select disabled></select></td>
+                    <td class="droppable"><select disabled></select></td>
+                    <td class="droppable"><select disabled></select></td>
+                    <td class="droppable"><select disabled></select></td>
+                </tr>
+                <tr>
+                    <td class="work-site">Hospital Centenario Matutino</td>
+                    <td class="droppable"><select disabled></select></td>
+                    <td class="droppable"><select disabled></select></td>
+                    <td class="droppable"><select disabled></select></td>
+                    <td class="droppable"><select disabled></select></td>
+                    <td class="droppable"><select disabled></select></td>
+                </tr>
+                <tr>
+                    <td class="work-site">Hospital Centenario Largo</td>
+                    <td class="droppable"><select disabled></select></td>
+                    <td class="droppable"><select disabled></select></td>
+                    <td class="droppable"><select disabled></select></td>
+                    <td class="droppable"><select disabled></select></td>
+                    <td class="droppable"><select disabled></select></td>
+                </tr>
+                <tr>
+                    <td class="work-site">Hospital Castro Rendon Largo</td>
+                    <td class="droppable"><select disabled></select></td>
+                    <td class="droppable"><select disabled></select></td>
+                    <td class="droppable"><select></select></td>
+                    <td class="droppable"><select disabled></select></td>
+                    <td class="droppable"><select disabled></select></td>
+                </tr>
+            </tbody>
+        </table> 
+        </div>
+    </main>
+</body>
+</html>
