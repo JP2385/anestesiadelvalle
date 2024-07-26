@@ -19,13 +19,13 @@ export function autoAssignReportBgColorsUpdate(dayIndex) {
 
     // Update background colors based on the conditions
     if (siteValue > availableValue) {
-        siteTd.style.backgroundColor = 'red';
+        siteTd.style.backgroundColor = 'rgb(238, 144, 144)';
     } else if (availableValue > siteValue) {
-        availableTd.style.backgroundColor = 'yellow';
+        availableTd.style.backgroundColor = 'rgb(238, 230, 144)';
     }
 
     if (assignmentsValue > availableValue) {
-        assignmentsTd.style.backgroundColor = 'yellow';
+        assignmentsTd.style.backgroundColor = 'rgb(238, 230, 144)';
     } else if (assignmentsValue === availableValue) {
         assignmentsTd.style.backgroundColor = ''; // Remove background color if equal
     }

@@ -1,6 +1,5 @@
 document.addEventListener('DOMContentLoaded', function() {
     const apiUrl = window.location.hostname === 'localhost' ? 'http://localhost:3000' : 'https://adv-37d5b772f5fd.herokuapp.com';
-    // const apiUrl = 'http://localhost:3000';
 
     const userSelect = document.getElementById('user-select');
     const adminForm = document.getElementById('admin-form');
