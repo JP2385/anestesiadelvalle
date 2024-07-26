@@ -6,23 +6,24 @@
     <title>Asistente de Programación Semanal</title>
     <link rel="stylesheet" href="css/weekly-schedule.css">
     <link rel="stylesheet" href="css/header.css">
+    <link rel="stylesheet" href="css/spinner.css">
     <script type="module" defer src="js/weekly-schedule.js"></script>
-    <script type="module" src="js/autoAssign.js"></script>
     <script type="module" src="js/printSchedule.js"></script>
     <script type="module" src="js/load-current-schedule.js"></script>
+    <script src="js/spinner.js"></script>
 </head>
 <body>
-    <body>
-        <header>
-            <a href="index.html" class="app-logo-link">
-                <img src="images/logo/logo.png" alt="Logo Anestesiólogos del Valle" class="app-logo">
-            </a>
-            <h1>Anestesiólogos del Valle</h1>
-            <a href="index.html" class="back-to-main-menu" title="Volver al menú principal">
-                <img src="images/icons/back-icon.svg" alt="Volver" class="back-icon">
-            </a>
-        </header>
-    <main>
+    <div class="spinner" id="spinner"></div>
+    <header>
+        <a href="index.html" class="app-logo-link">
+            <img src="images/logo/logo.png" alt="Logo Anestesiólogos del Valle" class="app-logo">
+        </a>
+        <h1>Anestesiólogos del Valle</h1>
+        <a href="index.html" class="back-to-main-menu" title="Volver al menú principal">
+            <img src="images/icons/back-icon.svg" alt="Volver" class="back-icon">
+        </a>
+    </header>
+    <main>  
         <div class="instructions">
             <h3>Pasos para generar programación</h3>
             <ol>

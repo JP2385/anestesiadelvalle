@@ -9,19 +9,28 @@ import { autoAssignReportBgColorsUpdate } from './autoAssignReportBgColorsUpdate
 
 document.addEventListener('DOMContentLoaded', async function() {
     const apiUrl = window.location.hostname === 'localhost' ? 'http://localhost:3000' : 'https://adv-37d5b772f5fd.herokuapp.com';
-
-    updateWeekDates();
-    await populateSelectOptions();
-    initializeLockButtons();
-    await fetchAvailability();
+    try {
+        showSpinner();
+        updateWeekDates();
+        await populateSelectOptions();
+        initializeLockButtons();
+        await fetchAvailability();
+    } finally {
+        hideSpinner();
+    }
 
     // Llamar a autoAssignCaroSandraGabiByDay para cada día de la semana
     const dayIndices = [0, 1, 2, 3, 4]; // Índices para lunes a viernes
     for (const dayIndex of dayIndices) {
-        await autoAssignCaroSandraGabiByDay(apiUrl, dayIndex);
-        await autoAssignPublicHospitalsByDay(apiUrl, dayIndex);
-        await countAssignmentsByDay(dayIndex);
-        autoAssignReportBgColorsUpdate(dayIndex);
+        try {
+            showSpinner();
+            await autoAssignCaroSandraGabiByDay(apiUrl, dayIndex);
+            await autoAssignPublicHospitalsByDay(apiUrl, dayIndex);
+            await countAssignmentsByDay(dayIndex);
+            autoAssignReportBgColorsUpdate(dayIndex);
+        } finally {
+            hideSpinner();
+        }
     }
 
     await compareAvailabilities();
@@ -34,7 +43,13 @@ document.addEventListener('DOMContentLoaded', async function() {
         
         const dayIndices = [0, 1, 2, 3, 4]; // Índices para lunes a viernes
         for (const dayIndex of dayIndices) {
-            await handleRandomizeButtonClick(apiUrl, dayIndex);
+            try {
+                showSpinner();
+                await handleRandomizeButtonClick(apiUrl, dayIndex);
+            }
+           finally {
+                hideSpinner();
+           }
         }
         console.log('Asignaciones completadas para todos los días de la semana');
     });
@@ -61,7 +76,12 @@ document.addEventListener('DOMContentLoaded', async function() {
             button.innerText = '🔄';
             button.classList.add('randomize-button');
             button.addEventListener('click', async () => {
-                await handleRandomizeButtonClick(apiUrl, dayIndex);
+                try {
+                    showSpinner();
+                    await handleRandomizeButtonClick(apiUrl, dayIndex);
+                } finally {
+                    hideSpinner();
+                }
             });
             return button;
         }
