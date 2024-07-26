@@ -41,6 +41,8 @@ export function updateSelectBackgroundColors() {
 export async function fetchAvailability() {
     const apiUrl = window.location.hostname === 'localhost' ? 'http://localhost:3000' : 'https://adv-37d5b772f5fd.herokuapp.com';
     try {
+        (`Fetching availability from: ${apiUrl}/auth/availability`);
+
         const response = await fetch(`${apiUrl}/auth/availability`, {
             method: 'GET',
             headers: {
@@ -51,6 +53,7 @@ export async function fetchAvailability() {
 
         if (response.ok) {
             const availability = await response.json();
+            ('Fetched availability:', availability);
 
             // Crear availabilityCount a partir de la data recibida
             const availabilityCount = {
@@ -60,6 +63,7 @@ export async function fetchAvailability() {
                 thursday: availability.thursday.length,
                 friday: availability.friday.length
             };
+            ('Calculated availability count:', availabilityCount);
 
             updateAvailability(availabilityCount);
 
@@ -82,6 +86,8 @@ function updateAvailability(availabilityCount) {
         console.error('No se encontró el contenedor de disponibilidad');
         return;
     }
+
+    ('Updating availability in DOM with:', availabilityCount);
 
     document.getElementById('monday-available').innerText = availabilityCount.monday;
     document.getElementById('tuesday-available').innerText = availabilityCount.tuesday;

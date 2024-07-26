@@ -47,6 +47,9 @@ export async function validateAssignmentForDay(dayIndex) {
         return false;
     }
 
+    (`Comparing sites and availability for ${day}`);
+    (`Sites: ${siteCounts[day]}, Availability: ${availabilityCount[day]}`);
+
     if (siteCounts[day] > availabilityCount[day]) {
         const dayNameInSpanish = daysMapping[day];
         alert(`El ${dayNameInSpanish} tiene más sitios de trabajo que anestesiólogos disponibles. Por favor, corrija y vuelva a intentar.`);
@@ -66,19 +69,19 @@ export async function validateAllDays() {
         thursday: availabilityData.thursday.length,
         friday: availabilityData.friday.length
     };
-    console.log('Availability count:', availabilityCount);
+    ('Availability count:', availabilityCount);
 
     // Ejecutar countEnabledSelectsByDay y extraer los datos
     await countEnabledSelectsByDay(); // Asegurarse de que el DOM esté listo
     const siteCounts = getSiteCounts();
-    console.log('Site counts:', siteCounts);
+    ('Site counts:', siteCounts);
 
     // Verificar las condiciones para todos los días
     let daysWithIssues = [];
 
     Object.keys(siteCounts).forEach(day => {
         if (siteCounts[day] > availabilityCount[day.toLowerCase()]) {
-            console.log(`Issue found for day: ${day}`);
+            (`Issue found for day: ${day}`);
             daysWithIssues.push(daysMapping[day.toLowerCase()]);
         }
     });

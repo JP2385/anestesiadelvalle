@@ -84,6 +84,7 @@ function findBestIteration(dayIndex) {
     }
 
     return { bestIteration, bestAssignments };
+    autoAssignReportBgColorsUpdate(dayIndex);
 }
 
 function applyBestAssignments(dayIndex) {

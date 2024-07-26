@@ -175,7 +175,7 @@ select.default {
 }
 
 select.assigned {
-    background-color: rgb(238, 230, 144); /* Puedes cambiar a cualquier color que prefieras */
+    background-color: rgb(238, 230, 144); 
 }
 
 .inform {

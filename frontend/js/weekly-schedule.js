@@ -19,7 +19,6 @@ document.addEventListener('DOMContentLoaded', async function() {
         hideSpinner();
     }
 
-    // Llamar a autoAssignCaroSandraGabiByDay para cada día de la semana
     const dayIndices = [0, 1, 2, 3, 4]; // Índices para lunes a viernes
     for (const dayIndex of dayIndices) {
         try {
@@ -46,12 +45,13 @@ document.addEventListener('DOMContentLoaded', async function() {
             try {
                 showSpinner();
                 await handleRandomizeButtonClick(apiUrl, dayIndex);
+                autoAssignReportBgColorsUpdate(dayIndex);
             }
            finally {
                 hideSpinner();
            }
         }
-        console.log('Asignaciones completadas para todos los días de la semana');
+        ('Asignaciones completadas para todos los días de la semana');
     });
 
     function updateWeekDates() {
@@ -79,6 +79,7 @@ document.addEventListener('DOMContentLoaded', async function() {
                 try {
                     showSpinner();
                     await handleRandomizeButtonClick(apiUrl, dayIndex);
+                     autoAssignReportBgColorsUpdate(dayIndex);
                 } finally {
                     hideSpinner();
                 }
