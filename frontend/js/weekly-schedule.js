@@ -5,6 +5,7 @@ import { autoAssignPublicHospitalsByDay } from './autoAssignHandlersPublicHospit
 import { countAssignmentsByDay, countEnabledSelectsByDay } from './autoAssignFunctions.js';
 import { compareAvailabilities } from './compareArrays.js';
 import { validateAllDays } from './autoAssignValidation.js';
+import { autoAssignReportBgColorsUpdate } from './autoAssignReportBgColorsUpdate.js';
 
 document.addEventListener('DOMContentLoaded', async function() {
     const apiUrl = window.location.hostname === 'localhost' ? 'http://localhost:3000' : 'https://adv-37d5b772f5fd.herokuapp.com';
@@ -20,6 +21,7 @@ document.addEventListener('DOMContentLoaded', async function() {
         await autoAssignCaroSandraGabiByDay(apiUrl, dayIndex);
         await autoAssignPublicHospitalsByDay(apiUrl, dayIndex);
         await countAssignmentsByDay(dayIndex);
+        autoAssignReportBgColorsUpdate(dayIndex);
     }
 
     await compareAvailabilities();
@@ -205,14 +207,23 @@ document.addEventListener('DOMContentLoaded', async function() {
             const button = document.createElement('button');
             button.classList.add('lock-button');
             button.textContent = select.disabled ? '🔓' : '🔒';
+            
+            // Obtener el índice del día
+            const dayIndex = cell.closest('td').cellIndex - 1;
+            button.setAttribute('data-day-index', dayIndex); // Añadir el índice del día como un atributo de datos
+            
             button.addEventListener('click', () => {
                 select.disabled = !select.disabled;
                 button.textContent = select.disabled ? '🔓' : '🔒';
                 countEnabledSelectsByDay();
+                
+                // Recuperar el índice del día desde el atributo de datos
+                const dayIndex = button.getAttribute('data-day-index');
+                autoAssignReportBgColorsUpdate(dayIndex);
             });
             cell.appendChild(button);
         });
-    }
+    }    
 
     function handleSelectChange(event) {
         const select = event.target;
@@ -243,6 +254,8 @@ document.addEventListener('DOMContentLoaded', async function() {
             select.classList.add('assigned');
             select.classList.remove('default');
         }
+
+        autoAssignReportBgColorsUpdate(dayIndex); // Update colors after changing selection    
     }        
 
     document.querySelectorAll('select').forEach(select => {
