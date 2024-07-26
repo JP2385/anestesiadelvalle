@@ -33,12 +33,10 @@ export async function validateAssignmentForDay(dayIndex) {
         thursday: availabilityData.thursday.length,
         friday: availabilityData.friday.length
     };
-    console.log('Availability count:', availabilityCount);
 
     // Ejecutar countEnabledSelectsByDay y extraer los datos
     await countEnabledSelectsByDay(); // Asegurarse de que el DOM esté listo
     const siteCounts = getSiteCounts();
-    console.log('Site counts:', siteCounts);
 
     // Verificar las condiciones para el día específico
     const days = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday'];
@@ -48,9 +46,6 @@ export async function validateAssignmentForDay(dayIndex) {
         console.error(`Error: invalid day or counts. Day: ${day}, Sites: ${siteCounts[day]}, Availability: ${availabilityCount[day]}`);
         return false;
     }
-
-    console.log(`Comparing sites and availability for ${day}`);
-    console.log(`Sites: ${siteCounts[day]}, Availability: ${availabilityCount[day]}`);
 
     if (siteCounts[day] > availabilityCount[day]) {
         const dayNameInSpanish = daysMapping[day];
