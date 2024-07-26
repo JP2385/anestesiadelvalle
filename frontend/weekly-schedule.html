@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="es">    
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -25,17 +25,63 @@
         <div class="instructions">
             <h3>Pasos para generar programación</h3>
             <ol>
-                <li> Setee los sitios de trabajo de acuerdo a la programación de clínicas y hospitales.</li>
-                <li> Si la cantidad de lugares de trabajo excede a la cantidad de anestesiólogos por día:
+                <li>1. Setee los sitios de trabajo de acuerdo a la programación de clínicas y hospitales.</li>
+                <li>2. Si la cantidad de lugares de trabajo excede a la cantidad de anestesiólogos por día:
                     cambie días vespertinos/matutinos por días largos.</li>
-                <li> Si la cantidad de anestesiólogos excede a la cantidad de anestesiólogos por día:
+                <li>3. Si la cantidad de anestesiólogos excede a la cantidad de anestesiólogos por día:
                     cambie días días largos por días matutinos/vespertinos.</li>
-                <li> Realice la asignación por día hasta que la cantidad de anestesiólogos asignados sea igual
-                    a los disponibles.</li>
-                <li> Imprima programación:</li><button id="print-schedule">Imprimir Programación</button>
+                <li>4. Asigne anestesiólogos:<button id="autoAssign-button">Asignar anestesiólogos</button></li>
+                <li>5. Imprima:<button id="print-schedule">Imprimir Programación</button></li>
             </ol>
         </div>
         <div id="availability-container" class="instructions">
+            <h3>Informe de asignaciones</h3>
+        <table class="assigments-inform">
+            <thead>
+                <tr>
+                    <th class="work-site"></th>
+                    <th>Lunes</th>
+                    <th>Martes</th>
+                    <th>Miércoles</th>
+                    <th>Jueves</th>
+                    <th>Viernes</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td class="work-site"><span class="inform">Nro de lugares habilitados</span></td>
+                    <td id="monday-sites"></td>
+                    <td id="tuesday-sites"></td>
+                    <td id="wednesday-sites"></td>
+                    <td id="thursday-sites"></td>
+                    <td id="friday-sites"></td>
+                </tr>
+                <tr>
+                    <td><span class="inform">Nro. de Anestesiólogos disponibles</span></td>
+                    <td><span id="monday-available"></span></td>
+                    <td><span id="tuesday-available"></span></td>
+                    <td><span id="wednesday-available"></span></td>
+                    <td><span id="thursday-available"></span></td>
+                    <td><span id="friday-available"></span></td>
+                </tr>
+                <tr>
+                    <td><span class="inform">Nro. de Anestesiólogos asignados</span></td>
+                    <td><span id="monday-assignments"></span></td>
+                    <td><span id="tuesday-assignments"></span></td>
+                    <td><span id="wednesday-assignments"></span></td>
+                    <td><span id="thursday-assignments"></span></td>
+                    <td><span id="friday-assignments"></span></td>
+                </tr>
+                <tr>
+                    <td><span class="inform">Anestesiólogos no asignados</span></td>
+                    <td><span id="monday-compare"></span></td>
+                    <td><span id= "tuesday-compare"></span></td>
+                    <td><span id="wednesday-compare"></span></td>
+                    <td><span id="thursday-compare"></span></td>
+                    <td><span id="friday-compare"></span></td>
+                </tr>
+            </tbody>
+        </table>
         </div>
         <div class="schedule-assistant">
         <h3>Asistente propiamente dicho</h3>

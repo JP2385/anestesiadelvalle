@@ -5,7 +5,6 @@ document.addEventListener('DOMContentLoaded', () => {
     printButton.addEventListener('click', async () => {
         // Almacenar el momento en que se oprimió
         const timestamp = new Date().toISOString();
-        console.log(`Programación impresa a las: ${timestamp}`);
 
         // Almacenar las asignaciones y fechas de los encabezados
         const assignments = collectAssignments();
@@ -13,9 +12,6 @@ document.addEventListener('DOMContentLoaded', () => {
         const selectConfig = collectSelectConfig(); // Recolectar configuración de los selects
 
         if (assignments) {
-            console.log('Asignaciones:', assignments);
-            console.log('Day Headers:', dayHeaders);
-            console.log('Select Config:', selectConfig);
 
             try {
                 // Enviar los datos al backend
@@ -28,7 +24,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 });
 
                 if (response.ok) {
-                    console.log('Datos guardados correctamente en la base de datos');
                     window.location.href = 'print-view.html'; // Redirigir a la vista de impresión
                 } else {
                     console.error('Error al guardar los datos en la base de datos');

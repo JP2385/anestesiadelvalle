@@ -5,7 +5,6 @@ export async function unassignAllUsers() {
             select.value = "";
         }
     });
-    console.log("All users have been unassigned.");
 };
 
 export function assignSpecificUsers(scheme, user) {
@@ -438,13 +437,8 @@ export async function countAssignmentsByDay() {
     document.getElementById('thursday-assignments').textContent = `${counts.thursday}`;
     document.getElementById('friday-assignments').textContent = `${counts.friday}`;
 
-    // Log contents to console
-    console.log(contents);
-
     return { counts, contents };
 }
-
-
 
 export async function countEnabledSelectsByDay() {
     const days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'];

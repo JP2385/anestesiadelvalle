@@ -26,8 +26,6 @@ exports.updateUser = async (req, res) => {
         const userId = req.params.userId; // Obtener userId de los parámetros de la URL
         const updates = req.body;
 
-        console.log(`Updating user with ID: ${userId}`); // Agrega este console.log para verificar el userId
-
         const user = await User.findByIdAndUpdate(userId, updates, { new: true }).select('-password');
         if (!user) {
             return res.status(404).send({ message: 'User not found' });

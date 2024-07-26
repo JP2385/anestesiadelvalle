@@ -61,13 +61,10 @@ export async function fetchAvailability() {
                 friday: availability.friday.length
             };
 
-            displayAvailability(availabilityCount);
+            updateAvailability(availabilityCount);
 
             // Asegurarse de que el DOM esté listo
             countEnabledSelectsByDay();
-
-            // Log arrays to console
-            console.log('Server Availability:', availability);
 
             return availability; // Devolver la disponibilidad recibida del servidor
         } else {
@@ -79,86 +76,16 @@ export async function fetchAvailability() {
     }
 }
 
-function displayAvailability(availabilityCount) {
+function updateAvailability(availabilityCount) {
     const container = document.getElementById('availability-container');
     if (!container) {
         console.error('No se encontró el contenedor de disponibilidad');
         return;
     }
 
-    container.innerHTML = `
-        <h3>Informe de asignaciones</h3>
-        <table class="assigments-inform">
-            <thead>
-                <tr>
-                    <th class="work-site"></th>
-                    <th>Lunes</th>
-                    <th>Martes</th>
-                    <th>Miércoles</th>
-                    <th>Jueves</th>
-                    <th>Viernes</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td class="work-site"><span class="inform">Nro de lugares habilitados</span></td>
-                    <td id="monday-sites"></td>
-                    <td id="tuesday-sites"></td>
-                    <td id="wednesday-sites"></td>
-                    <td id="thursday-sites"></td>
-                    <td id="friday-sites"></td>
-                </tr>
-                <tr>
-                    <td><span class="inform">Nro. de Anestesiólogos disponibles</span></td>
-                    <td><span id="monday-available">${availabilityCount.monday}</span></td>
-                    <td><span id="tuesday-available">${availabilityCount.tuesday}</span></td>
-                    <td><span id="wednesday-available">${availabilityCount.wednesday}</span></td>
-                    <td><span id="thursday-available">${availabilityCount.thursday}</span></td>
-                    <td><span id="friday-available">${availabilityCount.friday}</span></td>
-                </tr>
-                <tr>
-                    <td><span class="inform">Nro. de Anestesiólogos asignados</span></td>
-                    <td><span id="monday-assignments">0</span></td>
-                    <td><span id="tuesday-assignments">0</span></td>
-                    <td><span id="wednesday-assignments">0</span></td>
-                    <td><span id="thursday-assignments">0</span></td>
-                    <td><span id="friday-assignments">0</span></td>
-                </tr>
-                <tr>
-                    <td><span class="inform">Anestesiólogos no asignados</span></td>
-                    <td><span id="monday-compare"></span></td>
-                    <td><span id= "tuesday-compare"></span></td>
-                    <td><span id="wednesday-compare"></span></td>
-                    <td><span id="thursday-compare"></span></td>
-                    <td><span id="friday-compare"></span></td>
-                </tr>
-            </tbody>
-        </table>
-    `;
+    document.getElementById('monday-available').innerText = availabilityCount.monday;
+    document.getElementById('tuesday-available').innerText = availabilityCount.tuesday;
+    document.getElementById('wednesday-available').innerText = availabilityCount.wednesday;
+    document.getElementById('thursday-available').innerText = availabilityCount.thursday;
+    document.getElementById('friday-available').innerText = availabilityCount.friday;
 }
-
-
-
-
-
-
-
-
-/* <span class="inform">Lugares de trabajo por día:</span>
-<span id="monday-sites">Lunes: 0, </span>
-<span id="tuesday-sites">Martes: 0, </span>
-<span id="wednesday-sites">Miércoles: 0,</span>
-<span id="thursday-sites">Jueves: 0, </span>
-<span id="friday-sites">Viernes: 0.</span>
-<h3>Anestesiólogos disponibles por día:</h3>
-<p>Lunes: ${availability.monday},
-Martes: ${availability.tuesday},
-Miércoles: ${availability.wednesday},
-Jueves: ${availability.thursday},
-Viernes: ${availability.friday}.</p>
-<h3>Anestesiólogos asignados por día:</h3>
-<span id="monday-assignments">Lunes: 0, </span>
-<span id="tuesday-assignments">Martes: 0, </span>
-<span id="wednesday-assignments">Miércoles: 0,</span>
-<span id="thursday-assignments">Jueves: 0, </span>
-<span id="friday-assignments">Viernes: 0.</span> */

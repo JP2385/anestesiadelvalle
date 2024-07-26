@@ -24,7 +24,6 @@ const getUsersAvailability = async (req, res) => {
         ];
 
         users.forEach(user => {
-            console.log('Current user:', user); // Log individual para cada usuario
 
             const onVacation = (day) => user.vacations.some(vacation => {
                 const start = new Date(vacation.startDate);
@@ -39,7 +38,6 @@ const getUsersAvailability = async (req, res) => {
             if (user.workSchedule.friday !== 'No trabaja' && !onVacation(daysOfWeek[4])) availability.friday.push(user.username);
         });
 
-        console.log('Availability:', availability); // Verifica que los usernames estén aquí
         res.status(200).json(availability);
     } catch (error) {
         res.status(500).json({ message: error.message });

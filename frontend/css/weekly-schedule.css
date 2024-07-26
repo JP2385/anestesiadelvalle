@@ -82,8 +82,18 @@ select {
     margin-right: 5px; /* Espacio entre el select y el botón */
 }
 
+.instructions ol {
+    list-style: decimal;
+}
+
+.instructions li {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
 .instructions button {
-    width: 100%;
+    width: 80%;
     padding: 10px;
     background-color: #0069d9;
     color: #fff;
@@ -93,7 +103,6 @@ select {
     font-weight: bold;
     cursor: pointer;
     transition: background-color 0.3s;
-    margin: 0.5rem 0;
 }
 
 .download-button {
