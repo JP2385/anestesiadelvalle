@@ -13,8 +13,18 @@ const getUsersAvailability = async (req, res) => {
         };
 
         const currentDate = new Date();
-        const startOfWeek = new Date(currentDate);
-        startOfWeek.setDate(currentDate.getDate() - currentDate.getDay() + 1);
+        let startOfWeek = new Date(currentDate);
+        
+        // Check if today is Saturday (6) or Sunday (0) and adjust startOfWeek accordingly
+        const todayDay = currentDate.getDay();
+        if (todayDay === 6) { // If today is Saturday
+            startOfWeek.setDate(currentDate.getDate() - currentDate.getDay() + 8); // Next Monday
+        } else if (todayDay === 0) { // If today is Sunday
+            startOfWeek.setDate(currentDate.getDate() - currentDate.getDay() + 7); // Next Monday
+        } else {
+            startOfWeek.setDate(currentDate.getDate() - currentDate.getDay() + 1); // This Monday
+        }
+        
         startOfWeek.setHours(0, 0, 0, 0);
 
         const daysOfWeek = [
@@ -35,11 +45,12 @@ const getUsersAvailability = async (req, res) => {
             const onVacation = (day) => user.vacations.some(vacation => {
                 const start = adjustForTimezone(new Date(vacation.startDate));
                 const end = adjustForTimezone(new Date(vacation.endDate));
-                return day >= start && day <= end;
+                const isOnVacation = day >= start && day <= end;
+                return isOnVacation;
             });
 
             const userData = {
-                _id: user._id, // Asegurarse de incluir el _id aquí
+                _id: user._id,
                 username: user.username,
                 workSchedule: user.workSchedule,
                 worksInCmacOnly: user.worksInCmacOnly,
