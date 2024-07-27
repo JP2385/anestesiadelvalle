@@ -12,11 +12,17 @@ import { compareAvailabilitiesForEachDay } from './compareArrays.js';
 import { validateAssignmentForDay } from './autoAssignValidation.js';
 
 export async function handleRandomizeButtonClick(apiUrl, dayIndex) {
-        // Validar antes de iterar
-        const isValid = await validateAssignmentForDay(dayIndex);
-        if (!isValid) return;
+    (`Starting randomize process for day index: ${dayIndex}`);
+
+    // Validar antes de iterar
+    const isValid = await validateAssignmentForDay(dayIndex);
+    if (!isValid) {
+        (`Validation failed for day index: ${dayIndex}`);
+        return;
+    }
 
     for (let i = 0; i < 7; i++) {
+        (`Iteration ${i + 1} for day index: ${dayIndex}`);
         unassignUsersByDay(dayIndex);
         await autoAssignCaroSandraGabiByDay(apiUrl, dayIndex);
         await autoAssignPublicHospitalsByDay(apiUrl, dayIndex);
@@ -24,15 +30,25 @@ export async function handleRandomizeButtonClick(apiUrl, dayIndex) {
         await autoAssignAfternoonsByDay(apiUrl, dayIndex);
         await autoAssignLongDaysByDay(apiUrl, dayIndex);
         await autoAssignRemainingsByDay(apiUrl, dayIndex);
+
         const { counts } = await countAssignmentsByDay();
         const assignmentCount = Object.values(counts)[dayIndex];
+        (`Assignment count for iteration ${i + 1}: ${assignmentCount}`);
         collectAssignmentsForDay(dayIndex, i + 1, assignmentCount);
     }
 
-    applyBestAssignments(dayIndex);
+    await applyBestAssignments(dayIndex);
+    (`Best assignments applied for day index: ${dayIndex}`);
+
+    // Verificar el conteo de asignaciones después de aplicar las mejores asignaciones
+    const { counts: finalCounts } = await countAssignmentsByDay();
+    const finalAssignmentCount = Object.values(finalCounts)[dayIndex];
+    (`Final assignment count for day index ${dayIndex}: ${finalAssignmentCount}`);
+
     compareAvailabilitiesForEachDay(dayIndex);
     clearLocalStorageForDay(dayIndex); // Limpia el localStorage al final de la ejecución
 }
+
 
 function collectAssignmentsForDay(dayIndex, iteration, assignmentCount) {
     const assignments = [];
@@ -84,10 +100,9 @@ function findBestIteration(dayIndex) {
     }
 
     return { bestIteration, bestAssignments };
-    autoAssignReportBgColorsUpdate(dayIndex);
 }
 
-function applyBestAssignments(dayIndex) {
+async function applyBestAssignments(dayIndex) {
     const { bestIteration, bestAssignments } = findBestIteration(dayIndex);
     const scheduleBody = document.getElementById('schedule-body');
     const rows = scheduleBody.getElementsByTagName('tr');

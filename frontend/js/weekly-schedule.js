@@ -6,6 +6,7 @@ import { countAssignmentsByDay, countEnabledSelectsByDay } from './autoAssignFun
 import { compareAvailabilities } from './compareArrays.js';
 import { validateAllDays } from './autoAssignValidation.js';
 import { autoAssignReportBgColorsUpdate } from './autoAssignReportBgColorsUpdate.js';
+import { compareAvailabilitiesForEachDay } from './compareArrays.js';
 
 document.addEventListener('DOMContentLoaded', async function() {
     const apiUrl = window.location.hostname === 'localhost' ? 'http://localhost:3000' : 'https://adv-37d5b772f5fd.herokuapp.com';
@@ -78,14 +79,17 @@ document.addEventListener('DOMContentLoaded', async function() {
             button.addEventListener('click', async () => {
                 try {
                     showSpinner();
+                    (`Randomizing assignments for day index: ${dayIndex}`);
                     await handleRandomizeButtonClick(apiUrl, dayIndex);
-                     autoAssignReportBgColorsUpdate(dayIndex);
+                    (`Calling autoAssignReportBgColorsUpdate for day index: ${dayIndex}`);
+                    autoAssignReportBgColorsUpdate(dayIndex);
                 } finally {
                     hideSpinner();
                 }
             });
             return button;
         }
+        
 
         function updateHeader(dayId, dayName, date, dayIndex) {
             const header = document.getElementById(dayId);
@@ -246,38 +250,39 @@ document.addEventListener('DOMContentLoaded', async function() {
         });
     }    
 
-    function handleSelectChange(event) {
-        const select = event.target;
-        const selectedUserId = select.value;
-        const dayIndex = select.closest('td').cellIndex - 1;
-        const selects = document.querySelectorAll(`td:nth-child(${dayIndex + 2}) select`);
-    
-        let userAlreadyAssigned = false;
-    
-        if (selectedUserId !== '') { // Solo verificar si no es la opción por defecto
-            selects.forEach(otherSelect => {
-                if (otherSelect !== select && otherSelect.value === selectedUserId) {
-                    userAlreadyAssigned = true;
+        function handleSelectChange(event) {
+            const select = event.target;
+            const selectedUserId = select.value;
+            const dayIndex = select.closest('td').cellIndex - 1;
+            const selects = document.querySelectorAll(`td:nth-child(${dayIndex + 2}) select`);
+        
+            let userAlreadyAssigned = false;
+        
+            if (selectedUserId !== '') { // Solo verificar si no es la opción por defecto
+                selects.forEach(otherSelect => {
+                    if (otherSelect !== select && otherSelect.value === selectedUserId) {
+                        userAlreadyAssigned = true;
+                    }
+
+                });
+
+                if (userAlreadyAssigned) {
+                    alert('El usuario que se intenta asignar ya tiene otro lugar asignado en este día.');
+                    select.value = '';
                 }
-
-            });
-
-            if (userAlreadyAssigned) {
-                alert('El usuario que se intenta asignar ya tiene otro lugar asignado en este día.');
-                select.value = '';
             }
-        }
-    
-        if (select.value === '') {
-            select.classList.add('default');
-            select.classList.remove('assigned');
-        } else {
-            select.classList.add('assigned');
-            select.classList.remove('default');
-        }
+        
+            if (select.value === '') {
+                select.classList.add('default');
+                select.classList.remove('assigned');
+            } else {
+                select.classList.add('assigned');
+                select.classList.remove('default');
+            }
+            compareAvailabilitiesForEachDay(dayIndex);
 
-        autoAssignReportBgColorsUpdate(dayIndex); // Update colors after changing selection    
-    }        
+            autoAssignReportBgColorsUpdate(dayIndex);
+        }        
 
     document.querySelectorAll('select').forEach(select => {
         select.classList.add('default');

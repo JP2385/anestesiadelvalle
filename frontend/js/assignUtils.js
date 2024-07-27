@@ -80,6 +80,7 @@ export async function fetchAvailability() {
     }
 }
 
+
 function updateAvailability(availabilityCount) {
     const container = document.getElementById('availability-container');
     if (!container) {
