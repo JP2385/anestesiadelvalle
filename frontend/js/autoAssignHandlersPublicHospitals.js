@@ -49,7 +49,7 @@ export async function autoAssignPublicHospitals(apiUrl) {
 
 export async function autoAssignPublicHospitalsByDay(apiUrl, dayIndex) {
     try {
-        const response = await fetch(`${apiUrl}/auth/users`, {
+        const response = await fetch(`${apiUrl}/availability`, {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',
@@ -58,11 +58,12 @@ export async function autoAssignPublicHospitalsByDay(apiUrl, dayIndex) {
         });
 
         if (response.ok) {
-            const users = await response.json();
-            const lalvarez = users.find(user => user.username === 'lalvarez');
-            const ltotis = users.find(user => user.username === 'ltotis');
-            const lburgueño = users.find(user => user.username === 'lburgueño');
-            const sdegreef = users.find(user => user.username === 'sdegreef');
+            const availability = await response.json();
+            const lalvarez = availability[Object.keys(availability)[dayIndex]].find(user => user.username === 'lalvarez');
+            const ltotis = availability[Object.keys(availability)[dayIndex]].find(user => user.username === 'ltotis');
+            const lburgueño = availability[Object.keys(availability)[dayIndex]].find(user => user.username === 'lburgueño');
+            const sdegreef = availability[Object.keys(availability)[dayIndex]].find(user => user.username === 'sdegreef');
+
             const currentWeekNumber = getWeekNumber(new Date());
             const isOddWeek = currentWeekNumber % 2 !== 0;
 

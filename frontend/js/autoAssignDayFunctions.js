@@ -40,22 +40,28 @@ export function assignSpecificUsersByDay(dayIndex, scheme, user) {
         return;
     }
 
-    const dayColumnIndex = Array.from(dayHeader.parentElement.children).indexOf(dayHeader);
+    const dayColumnIndex = Array.from(dayHeader.parentElement.children).indexOf(dayHeader) + 1; // +1 because nth-child is 1-based
 
     Object.entries(scheme).forEach(([headerId, workSite]) => {
         if (headerId === dayHeaderId) {
-            const row = Array.from(document.querySelectorAll('.work-site')).find(row => row.innerText === workSite);
+            const row = Array.from(document.querySelectorAll('.work-site')).find(row => row.innerText.trim() === workSite);
             if (row) {
-                const selectCell = row.parentElement.querySelector(`td:nth-child(${dayColumnIndex + 1})`);
+                const selectCell = row.closest('tr').querySelector(`td:nth-child(${dayColumnIndex})`);
                 const select = selectCell.querySelector('select');
                 if (select && !select.disabled) {
-                    const option = Array.from(select.options).find(option => option.value === user._id);
+                    const option = Array.from(select.options).find(option => option.text === user.username); // Use text for comparison
                     if (option) {
-                        select.value = user._id;
+                        select.value = option.value;
                         select.classList.add('assigned');
                         select.classList.remove('default');
+                    } else {
+                        console.log(`Option for user: ${user.username} not found in select`);
                     }
+                } else {
+                    console.log(`Select not found or disabled for workSite: ${workSite}, dayIndex: ${dayIndex}`);
                 }
+            } else {
+                console.log(`Row for workSite: ${workSite} not found`);
             }
         }
     });

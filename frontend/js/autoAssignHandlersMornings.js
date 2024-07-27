@@ -31,7 +31,7 @@ export async function autoAssignMornings(apiUrl) {
 
 export async function autoAssignMorningsByDay(apiUrl, dayIndex) {
     try {
-        const response = await fetch(`${apiUrl}/auth/users`, {
+        const response = await fetch(`${apiUrl}/availability`, {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',
@@ -40,8 +40,17 @@ export async function autoAssignMorningsByDay(apiUrl, dayIndex) {
         });
 
         if (response.ok) {
-            const users = await response.json();
-            autoAssignMorningWorkersByDay(dayIndex, users);
+            const availability = await response.json();
+            const dayNames = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday'];
+            const dayName = dayNames[dayIndex];
+
+            if (!availability || !availability[dayName]) {
+                console.error(`Day name ${dayName} does not exist in availability.`);
+                return;
+            }
+
+            const availableUsers = availability[dayName];
+            autoAssignMorningWorkersByDay(dayIndex, availableUsers, dayName);
             updateSelectBackgroundColors();
         } else {
             const errorData = await response.json();

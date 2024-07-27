@@ -43,7 +43,7 @@ export async function autoAssignCaroSandraGabi(apiUrl) {
 
 export async function autoAssignCaroSandraGabiByDay(apiUrl, dayIndex) {
     try {
-        const response = await fetch(`${apiUrl}/auth/users`, {
+        const response = await fetch(`${apiUrl}/availability`, {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',
@@ -52,9 +52,9 @@ export async function autoAssignCaroSandraGabiByDay(apiUrl, dayIndex) {
         });
 
         if (response.ok) {
-            const users = await response.json();
-            const montesEsposito = users.find(user => user.username === 'montes_esposito');
-            const ggudino = users.find(user => user.username === 'ggudiño');
+            const availability = await response.json();
+            const montesEsposito = availability[Object.keys(availability)[dayIndex]].find(user => user.username === 'montes_esposito');
+            const ggudino = availability[Object.keys(availability)[dayIndex]].find(user => user.username === 'ggudiño');
 
             const currentWeekNumber = getWeekNumber(new Date());
             const isOddWeek = currentWeekNumber % 2 !== 0;
@@ -64,10 +64,19 @@ export async function autoAssignCaroSandraGabiByDay(apiUrl, dayIndex) {
                 ggudinoScheme,
             } = getWorkSchemes(isOddWeek);
 
-            assignSpecificUsersByDay(dayIndex, montesEspositoScheme, montesEsposito);
-            assignSpecificUsersByDay(dayIndex, ggudinoScheme, ggudino);
 
-            // Actualizar colores de fondo después de la asignación automática
+            if (montesEsposito) {
+                assignSpecificUsersByDay(dayIndex, montesEspositoScheme, montesEsposito);
+            } else {
+                console.error('montes_esposito not found in availability');
+            }
+
+            if (ggudino) {
+                assignSpecificUsersByDay(dayIndex, ggudinoScheme, ggudino);
+            } else {
+                console.error('ggudino not found in availability');
+            }
+
             updateSelectBackgroundColors();
 
         } else {

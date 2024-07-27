@@ -125,104 +125,83 @@ document.addEventListener('DOMContentLoaded', async function() {
 
     async function populateSelectOptions() {
         try {
-            const response = await fetch(`${apiUrl}/auth/users`, {
+            const response = await fetch(`${apiUrl}/availability`, {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json',
                     'Authorization': 'Bearer ' + localStorage.getItem('token')
                 }
             });
-
+    
             if (response.ok) {
-                const users = await response.json();
+                const availability = await response.json();
                 const selects = document.querySelectorAll('select');
-
+    
                 selects.forEach(select => {
                     const workSite = select.closest('tr').querySelector('.work-site').innerText;
                     const dayIndex = select.closest('td').cellIndex - 1;
                     const dayHeaderId = ['monday-header', 'tuesday-header', 'wednesday-header', 'thursday-header', 'friday-header'][dayIndex];
-                    const dayHeaderText = document.getElementById(dayHeaderId).innerText;
-                    const dayDateParts = dayHeaderText.match(/\d+/g);
+                    const dayName = dayHeaderId.split('-')[0];
+    
+                    select.innerHTML = '<option value="">Select user</option>';
+    
+                    const availableUsers = availability[dayName];
 
-                    if (dayDateParts && dayDateParts.length === 1) {
-                        const dayOfMonth = dayDateParts[0];
-                        const month = new Date().getMonth() + 1;
-                        const year = new Date().getFullYear();
-                        const dayDate = new Date(`${year}-${month}-${dayOfMonth}`);
-
-                        select.innerHTML = '<option value="">Select user</option>';
-
-                        users.forEach(user => {
-                            const onVacation = user.vacations.some(vacation => {
-                                const start = new Date(vacation.startDate);
-                                const end = new Date(vacation.endDate);
-                                return dayDate >= start && dayDate <= end;
-                            });
-
-                            if (onVacation) return;
-
-                            const dayName = dayHeaderId.split('-')[0];
-                            if (user.workSchedule[dayName] === 'No trabaja') return;
-                            if (user.worksInCmacOnly && !workSite.includes('CMAC')) return;
-
-                            if ((workSite.includes('Fundación Q2') || workSite.includes('Fundación 3') || workSite.includes('CMAC Q'))) {
-                                if (!user.worksInPrivateRioNegro) return;
-                            }
-
-                            if (workSite.includes('Hospital Cipolletti') || workSite.includes('Hospital Allen')) {
-                                if (!user.worksInPublicRioNegro) return;
-                            }
-
-                            if (workSite.includes('Hospital Heller') || workSite.includes('Hospital Plottier') || workSite.includes('Hospital Centenario') || workSite.includes('Hospital Castro Rendon')) {
-                                if (!user.worksInPublicNeuquen) return;
-                            }
-
-                            if ((workSite.includes('Imágenes') || workSite.includes('COI')) && !workSite.includes('4to piso')) {
-                                if (!user.worksInPrivateNeuquen) return;
-                            }
-
-                            if (workSite.includes('Matutino') && user.workSchedule[dayName] === 'Tarde') return;
-                            if (workSite.includes('Vespertino') && user.workSchedule[dayName] === 'Mañana') return;
-                            if (workSite.includes('Largo') && user.workSchedule[dayName] === 'Mañana') return;
-                            if (workSite.includes('Largo') && user.workSchedule[dayName] === 'Tarde') return;
-
-                            if (workSite.includes('CMAC Endoscopia')) {
-                                if (user.worksInPrivateRioNegro || user.username === 'mgioja') {
-                                    // Incluir este usuario
-                                } else {
-                                    return;
-                                }
-                            }
-
-                            if (workSite.includes('Fundación Q1') || workSite.includes('Fundación Hemo')) {
-                                if (user.doesCardio) {
-                                    const option = document.createElement('option');
-                                    option.value = user._id;
-                                    option.textContent = user.username;
-                                    select.appendChild(option);
-                                }
-                            } else if (workSite.includes('Fundación RNM TAC') || workSite.includes('COI')) {
-                                if (user.doesRNM) {
-                                    const option = document.createElement('option');
-                                    option.value = user._id;
-                                    option.textContent = user.username;
-                                    select.appendChild(option);
-                                }
+                    availableUsers.forEach(user => {
+                        if (user.worksInCmacOnly && !workSite.includes('CMAC')) return;
+    
+                        if ((workSite.includes('Fundación Q2') || workSite.includes('Fundación 3') || workSite.includes('CMAC Q'))) {
+                            if (!user.worksInPrivateRioNegro) return;
+                        }
+    
+                        if (workSite.includes('Hospital Cipolletti') || workSite.includes('Hospital Allen')) {
+                            if (!user.worksInPublicRioNegro) return;
+                        }
+    
+                        if (workSite.includes('Hospital Heller') || workSite.includes('Hospital Plottier') || workSite.includes('Hospital Centenario') || workSite.includes('Hospital Castro Rendon')) {
+                            if (!user.worksInPublicNeuquen) return;
+                        }
+    
+                        if ((workSite.includes('Imágenes') || workSite.includes('COI')) && !workSite.includes('4to piso')) {
+                            if (!user.worksInPrivateNeuquen) return;
+                        }
+    
+                        if (workSite.includes('Matutino') && user.workSchedule[dayName] === 'Tarde') return;
+                        if (workSite.includes('Vespertino') && user.workSchedule[dayName] === 'Mañana') return;
+                        if (workSite.includes('Largo') && user.workSchedule[dayName] === 'Mañana') return;
+                        if (workSite.includes('Largo') && user.workSchedule[dayName] === 'Tarde') return;
+    
+                        if (workSite.includes('CMAC Endoscopia')) {
+                            if (user.worksInPrivateRioNegro || user.username === 'mgioja') {
+                                // Incluir este usuario
                             } else {
-                                const option = document.createElement('option');
-                                option.value = user._id;
-                                option.textContent = user.username;
+                                return;
+                            }
+                        }
+    
+                        const option = document.createElement('option');
+                        option.value = user._id || user.username; // Asegurarse de usar user._id si está disponible
+                        option.textContent = user.username;
+    
+                        if (workSite.includes('Fundación Q1') || workSite.includes('Fundación Hemo')) {
+                            if (user.doesCardio) {
                                 select.appendChild(option);
                             }
-                        });
-                    }
+                        } else if (workSite.includes('Fundación RNM TAC') || workSite.includes('COI')) {
+                            if (user.doesRNM) {
+                                select.appendChild(option);
+                            }
+                        } else {
+                            select.appendChild(option);
+                        }
+                    });
                 });
-
+    
                 // Añadir eventos de cambio para los selectores
                 selects.forEach(select => {
                     select.addEventListener('change', handleSelectChange);
                 });
-
+    
             } else {
                 const errorData = await response.json();
                 alert(`Error: ${errorData.message}`);
@@ -231,7 +210,7 @@ document.addEventListener('DOMContentLoaded', async function() {
             alert('Hubo un problema con la solicitud: ' + error.message);
         }
     }
-
+    
     function initializeLockButtons() {
         const droppableCells = document.querySelectorAll('.droppable');
         droppableCells.forEach(cell => {

@@ -21,7 +21,8 @@ export async function handleRandomizeButtonClick(apiUrl, dayIndex) {
         return;
     }
 
-    for (let i = 0; i < 8; i++) {
+    for (let i = 1; i <= 8; i++) {
+        // for (let i = 1; i <= 1; i++) {
         (`Iteration ${i + 1} for day index: ${dayIndex}`);
         unassignUsersByDay(dayIndex);
         await autoAssignCaroSandraGabiByDay(apiUrl, dayIndex);
@@ -89,6 +90,7 @@ function findBestIteration(dayIndex) {
     let bestAssignments = [];
 
     for (let i = 1; i <= 8; i++) {
+        // for (let i = 1; i <= 1; i++) {
         const storageKey = `assignments_${dayName}_iteration_${i}`;
         const storedData = JSON.parse(localStorage.getItem(storageKey));
 
@@ -127,6 +129,7 @@ function clearLocalStorageForDay(dayIndex) {
     const dayNames = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday'];
     const dayName = dayNames[dayIndex];
     for (let i = 1; i <= 8; i++) {
+        // for (let i = 1; i <= 1; i++) {
         const storageKey = `assignments_${dayName}_iteration_${i}`;
         localStorage.removeItem(storageKey);
     }

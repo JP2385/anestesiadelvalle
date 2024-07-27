@@ -31,7 +31,7 @@ export async function autoAssignLongDays(apiUrl) {
 
 export async function autoAssignLongDaysByDay(apiUrl, dayIndex) {
     try {
-        const response = await fetch(`${apiUrl}/auth/users`, {
+        const response = await fetch(`${apiUrl}/availability`, {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',
@@ -40,8 +40,9 @@ export async function autoAssignLongDaysByDay(apiUrl, dayIndex) {
         });
 
         if (response.ok) {
-            const users = await response.json();
-            autoAssignLongDayWorkersByDay(dayIndex, users);
+            const availability = await response.json();
+            const availableUsers = availability[Object.keys(availability)[dayIndex]];
+            autoAssignLongDayWorkersByDay(dayIndex, availableUsers);
             updateSelectBackgroundColors();
         } else {
             const errorData = await response.json();
