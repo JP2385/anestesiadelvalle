@@ -32,6 +32,49 @@
     .remember-me input[type="checkbox"] {
         margin-left: 0px;
     }
+
+    /* Estilos responsivos para las tablas */
+    table {
+        width: 100%;
+        table-layout: auto; /* Cambia a auto para permitir la expansión */
+    }
+
+    th, td {
+        font-size: 0.875rem; /* Reduce el tamaño de la fuente */
+        padding: 4px; /* Reduce el padding */
+    }
+
+    th.work-site {
+        width: auto; /* Permite que la primera columna se ajuste automáticamente */
+    }
+
+    th:not(.work-site) {
+        width: auto; /* Permite que las demás columnas se ajusten automáticamente */
+    }
+
+    td.work-site {
+        width: auto; /* Permite que la primera columna se ajuste automáticamente */
+    }
+
+    td.droppable {
+        background-color: #f0f0f0;
+        white-space: nowrap; /* Evita el desbordamiento de texto */
+    }
+
+    .instructions button {
+        width: 100%; /* Asegura que los botones ocupen todo el ancho en dispositivos pequeños */
+        padding: 0.5rem; /* Ajusta el padding según sea necesario */
+    }
+
+    .download-button {
+        width: 100%; /* Asegura que los botones ocupen todo el ancho en dispositivos pequeños */
+        padding: 0.5rem; /* Ajusta el padding según sea necesario */
+    }
+
+    .lock-button {
+        width: 100%; /* Asegura que los botones ocupen todo el ancho en dispositivos pequeños */
+        padding: 0.5rem; /* Ajusta el padding según sea necesario */
+    }
 }
 
 @media (max-width: 480px) {
@@ -71,5 +114,48 @@
 
     .remember-me input[type="checkbox"] {
         margin-left: 2px;
+    }
+
+    /* Estilos responsivos para las tablas */
+    table {
+        width: 100%;
+        table-layout: auto; /* Cambia a auto para permitir la expansión */
+    }
+
+    th, td {
+        font-size: 0.75rem; /* Reduce aún más el tamaño de la fuente */
+        padding: 4px; /* Reduce el padding */
+    }
+
+    th.work-site {
+        width: auto; /* Permite que la primera columna se ajuste automáticamente */
+    }
+
+    th:not(.work-site) {
+        width: auto; /* Permite que las demás columnas se ajusten automáticamente */
+    }
+
+    td.work-site {
+        width: auto; /* Permite que la primera columna se ajuste automáticamente */
+    }
+
+    td.droppable {
+        background-color: #f0f0f0;
+        white-space: nowrap; /* Evita el desbordamiento de texto */
+    }
+
+    .instructions button {
+        width: 100%; /* Asegura que los botones ocupen todo el ancho en dispositivos pequeños */
+        padding: 0.5rem; /* Ajusta el padding según sea necesario */
+    }
+
+    .download-button {
+        width: 100%; /* Asegura que los botones ocupen todo el ancho en dispositivos pequeños */
+        padding: 0.5rem; /* Ajusta el padding según sea necesario */
+    }
+
+    .lock-button {
+        width: 100%; /* Asegura que los botones ocupen todo el ancho en dispositivos pequeños */
+        padding: 0.5rem; /* Ajusta el padding según sea necesario */
     }
 }
