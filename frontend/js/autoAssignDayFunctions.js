@@ -77,15 +77,27 @@ export function autoAssignMorningWorkersByDay(dayIndex, users) {
     }
 
     const dayColumnIndex = Array.from(dayHeader.parentElement.children).indexOf(dayHeader);
-    const selects = document.querySelectorAll(`td:nth-child(${dayColumnIndex + 1}) select`); // +1 porque nth-child es 1-indexed
+    const selects = Array.from(document.querySelectorAll(`td:nth-child(${dayColumnIndex + 1}) select`)); // Convertimos NodeList a Array
+
+    // Función para mezclar el array aleatoriamente
+    function shuffle(array) {
+        for (let i = array.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [array[i], array[j]] = [array[j], array[i]];
+        }
+        return array;
+    }
+
+    // Mezclamos los selects
+    const shuffledSelects = shuffle(selects);
 
     // Primera etapa: Asignar usuarios a sitios específicos
-    selects.forEach(select => {
+    shuffledSelects.forEach(select => {
         const workSite = select.closest('tr').querySelector('.work-site').innerText.toLowerCase();
 
         if (workSite.includes('matutino') && (workSite.includes('imágenes') || workSite.includes('coi') || workSite.includes('heller') || workSite.includes('plottier') || workSite.includes('centenario')) && !select.value && !select.disabled) {
             const availableUsers = Array.from(select.options)
-                .filter(option => option.value && !Array.from(selects).some(otherSelect => {
+                .filter(option => option.value && !Array.from(shuffledSelects).some(otherSelect => {
                     return otherSelect !== select && otherSelect.value === option.value && otherSelect.closest('td').cellIndex === dayColumnIndex;
                 }))
                 .map(option => {
@@ -103,7 +115,7 @@ export function autoAssignMorningWorkersByDay(dayIndex, users) {
             }
         } else if (workSite.includes('matutino') && (workSite.includes('fundación') || workSite.includes('cmac') || workSite.includes('cipolletti')) && !select.value && !select.disabled) {
             const availableUsers = Array.from(select.options)
-                .filter(option => option.value && !Array.from(selects).some(otherSelect => {
+                .filter(option => option.value && !Array.from(shuffledSelects).some(otherSelect => {
                     return otherSelect !== select && otherSelect.value === option.value && otherSelect.closest('td').cellIndex === dayColumnIndex;
                 }))
                 .map(option => {
@@ -123,12 +135,12 @@ export function autoAssignMorningWorkersByDay(dayIndex, users) {
     });
 
     // Segunda etapa: Asignar usuarios a los sitios restantes
-    selects.forEach(select => {
+    shuffledSelects.forEach(select => {
         const workSite = select.closest('tr').querySelector('.work-site').innerText.toLowerCase();
 
         if (workSite.includes('matutino') && !select.value && !select.disabled) {
             const availableUsers = Array.from(select.options)
-                .filter(option => option.value && !Array.from(selects).some(otherSelect => {
+                .filter(option => option.value && !Array.from(shuffledSelects).some(otherSelect => {
                     return otherSelect !== select && otherSelect.value === option.value && otherSelect.closest('td').cellIndex === dayColumnIndex;
                 }))
                 .map(option => {
@@ -164,15 +176,27 @@ export function autoAssignAfternoonWorkersByDay(dayIndex, users) {
     }
 
     const dayColumnIndex = Array.from(dayHeader.parentElement.children).indexOf(dayHeader);
-    const selects = document.querySelectorAll(`td:nth-child(${dayColumnIndex + 1}) select`); // +1 porque nth-child es 1-indexed
+    const selects = Array.from(document.querySelectorAll(`td:nth-child(${dayColumnIndex + 1}) select`)); // Convertimos NodeList a Array
+
+    // Función para mezclar el array aleatoriamente
+    function shuffle(array) {
+        for (let i = array.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [array[i], array[j]] = [array[j], array[i]];
+        }
+        return array;
+    }
+
+    // Mezclamos los selects
+    const shuffledSelects = shuffle(selects);
 
     // Primera etapa: Asignar usuarios a sitios específicos
-    selects.forEach(select => {
+    shuffledSelects.forEach(select => {
         const workSite = select.closest('tr').querySelector('.work-site').innerText.toLowerCase();
 
         if (workSite.includes('vespertino') && (workSite.includes('imágenes') || workSite.includes('coi') || workSite.includes('heller') || workSite.includes('plottier') || workSite.includes('centenario')) && !select.value && !select.disabled) {
             const availableUsers = Array.from(select.options)
-                .filter(option => option.value && !Array.from(selects).some(otherSelect => {
+                .filter(option => option.value && !Array.from(shuffledSelects).some(otherSelect => {
                     return otherSelect !== select && otherSelect.value === option.value && otherSelect.closest('td').cellIndex === dayColumnIndex;
                 }))
                 .map(option => {
@@ -190,7 +214,7 @@ export function autoAssignAfternoonWorkersByDay(dayIndex, users) {
             }
         } else if (workSite.includes('vespertino') && (workSite.includes('fundación') || workSite.includes('cmac') || workSite.includes('cipolletti')) && !select.value && !select.disabled) {
             const availableUsers = Array.from(select.options)
-                .filter(option => option.value && !Array.from(selects).some(otherSelect => {
+                .filter(option => option.value && !Array.from(shuffledSelects).some(otherSelect => {
                     return otherSelect !== select && otherSelect.value === option.value && otherSelect.closest('td').cellIndex === dayColumnIndex;
                 }))
                 .map(option => {
@@ -210,12 +234,12 @@ export function autoAssignAfternoonWorkersByDay(dayIndex, users) {
     });
 
     // Segunda etapa: Asignar usuarios a los sitios restantes
-    selects.forEach(select => {
+    shuffledSelects.forEach(select => {
         const workSite = select.closest('tr').querySelector('.work-site').innerText.toLowerCase();
 
         if (workSite.includes('vespertino') && !select.value && !select.disabled) {
             const availableUsers = Array.from(select.options)
-                .filter(option => option.value && !Array.from(selects).some(otherSelect => {
+                .filter(option => option.value && !Array.from(shuffledSelects).some(otherSelect => {
                     return otherSelect !== select && otherSelect.value === option.value && otherSelect.closest('td').cellIndex === dayColumnIndex;
                 }))
                 .map(option => {
@@ -251,15 +275,27 @@ export function autoAssignLongDayWorkersByDay(dayIndex, users) {
     }
 
     const dayColumnIndex = Array.from(dayHeader.parentElement.children).indexOf(dayHeader);
-    const selects = document.querySelectorAll(`td:nth-child(${dayColumnIndex + 1}) select`); // +1 porque nth-child es 1-indexed
+    const selects = Array.from(document.querySelectorAll(`td:nth-child(${dayColumnIndex + 1}) select`)); // Convertimos NodeList a Array
+
+    // Función para mezclar el array aleatoriamente
+    function shuffle(array) {
+        for (let i = array.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [array[i], array[j]] = [array[j], array[i]];
+        }
+        return array;
+    }
+
+    // Mezclamos los selects
+    const shuffledSelects = shuffle(selects);
 
     // Primera etapa: Asignar usuarios a sitios específicos
-    selects.forEach(select => {
+    shuffledSelects.forEach(select => {
         const workSite = select.closest('tr').querySelector('.work-site').innerText.toLowerCase();
 
         if (workSite.includes('largo') && (workSite.includes('imágenes') || workSite.includes('centenario')) && !select.value && !select.disabled) {
             const availableUsers = Array.from(select.options)
-                .filter(option => option.value && !Array.from(selects).some(otherSelect => {
+                .filter(option => option.value && !Array.from(shuffledSelects).some(otherSelect => {
                     return otherSelect !== select && otherSelect.value === option.value && otherSelect.closest('td').cellIndex === dayColumnIndex;
                 }))
                 .map(option => {
@@ -277,7 +313,7 @@ export function autoAssignLongDayWorkersByDay(dayIndex, users) {
             }
         } else if (workSite.includes('largo') && (workSite.includes('fundación') || workSite.includes('cmac') || workSite.includes('allen')) && !select.value && !select.disabled) {
             const availableUsers = Array.from(select.options)
-                .filter(option => option.value && !Array.from(selects).some(otherSelect => {
+                .filter(option => option.value && !Array.from(shuffledSelects).some(otherSelect => {
                     return otherSelect !== select && otherSelect.value === option.value && otherSelect.closest('td').cellIndex === dayColumnIndex;
                 }))
                 .map(option => {
@@ -297,12 +333,12 @@ export function autoAssignLongDayWorkersByDay(dayIndex, users) {
     });
 
     // Segunda etapa: Asignar usuarios a los sitios restantes
-    selects.forEach(select => {
+    shuffledSelects.forEach(select => {
         const workSite = select.closest('tr').querySelector('.work-site').innerText.toLowerCase();
 
         if (workSite.includes('largo') && !select.value && !select.disabled) {
             const availableUsers = Array.from(select.options)
-                .filter(option => option.value && !Array.from(selects).some(otherSelect => {
+                .filter(option => option.value && !Array.from(shuffledSelects).some(otherSelect => {
                     return otherSelect !== select && otherSelect.value === option.value && otherSelect.closest('td').cellIndex === dayColumnIndex;
                 }))
                 .map(option => {
@@ -338,15 +374,27 @@ export function autoAssignRemainingSlotsByDay(dayIndex, users) {
     }
 
     const dayColumnIndex = Array.from(dayHeader.parentElement.children).indexOf(dayHeader);
-    const selects = document.querySelectorAll(`td:nth-child(${dayColumnIndex + 1}) select`); // +1 porque nth-child es 1-indexed
+    const selects = Array.from(document.querySelectorAll(`td:nth-child(${dayColumnIndex + 1}) select`)); // Convertimos NodeList a Array
+
+    // Función para mezclar el array aleatoriamente
+    function shuffle(array) {
+        for (let i = array.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [array[i], array[j]] = [array[j], array[i]];
+        }
+        return array;
+    }
+
+    // Mezclamos los selects
+    const shuffledSelects = shuffle(selects);
 
     // Primera etapa: Asignar usuarios a sitios específicos
-    selects.forEach(select => {
+    shuffledSelects.forEach(select => {
         const workSite = select.closest('tr').querySelector('.work-site').innerText.toLowerCase();
 
         if ((workSite.includes('imágenes') || workSite.includes('coi') || workSite.includes('heller') || workSite.includes('plottier') || workSite.includes('centenario')) && !select.value && !select.disabled) {
             const availableUsers = Array.from(select.options)
-                .filter(option => option.value && !Array.from(selects).some(otherSelect => {
+                .filter(option => option.value && !Array.from(shuffledSelects).some(otherSelect => {
                     return otherSelect !== select && otherSelect.value === option.value && otherSelect.closest('td').cellIndex === dayColumnIndex;
                 }))
                 .map(option => {
@@ -364,7 +412,7 @@ export function autoAssignRemainingSlotsByDay(dayIndex, users) {
             }
         } else if ((workSite.includes('fundación') || workSite.includes('cmac') || workSite.includes('allen') || workSite.includes('cipolletti')) && !select.value && !select.disabled) {
             const availableUsers = Array.from(select.options)
-                .filter(option => option.value && !Array.from(selects).some(otherSelect => {
+                .filter(option => option.value && !Array.from(shuffledSelects).some(otherSelect => {
                     return otherSelect !== select && otherSelect.value === option.value && otherSelect.closest('td').cellIndex === dayColumnIndex;
                 }))
                 .map(option => {
@@ -384,12 +432,12 @@ export function autoAssignRemainingSlotsByDay(dayIndex, users) {
     });
 
     // Segunda etapa: Asignar usuarios a los sitios restantes
-    selects.forEach(select => {
+    shuffledSelects.forEach(select => {
         const workSite = select.closest('tr').querySelector('.work-site').innerText.toLowerCase();
 
         if (!select.value && !select.disabled) {
             const availableUsers = Array.from(select.options)
-                .filter(option => option.value && !Array.from(selects).some(otherSelect => {
+                .filter(option => option.value && !Array.from(shuffledSelects).some(otherSelect => {
                     return otherSelect !== select && otherSelect.value === option.value && otherSelect.closest('td').cellIndex === dayColumnIndex;
                 }))
                 .map(option => {

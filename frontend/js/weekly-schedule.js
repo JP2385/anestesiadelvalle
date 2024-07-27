@@ -250,39 +250,38 @@ document.addEventListener('DOMContentLoaded', async function() {
         });
     }    
 
-        function handleSelectChange(event) {
-            const select = event.target;
-            const selectedUserId = select.value;
-            const dayIndex = select.closest('td').cellIndex - 1;
-            const selects = document.querySelectorAll(`td:nth-child(${dayIndex + 2}) select`);
-        
-            let userAlreadyAssigned = false;
-        
-            if (selectedUserId !== '') { // Solo verificar si no es la opción por defecto
-                selects.forEach(otherSelect => {
-                    if (otherSelect !== select && otherSelect.value === selectedUserId) {
-                        userAlreadyAssigned = true;
-                    }
-
-                });
-
-                if (userAlreadyAssigned) {
-                    alert('El usuario que se intenta asignar ya tiene otro lugar asignado en este día.');
-                    select.value = '';
+    async function handleSelectChange(event) {
+        const select = event.target;
+        const selectedUserId = select.value;
+        const dayIndex = select.closest('td').cellIndex - 1;
+        const selects = document.querySelectorAll(`td:nth-child(${dayIndex + 2}) select`);
+    
+        let userAlreadyAssigned = false;
+    
+        if (selectedUserId !== '') { // Solo verificar si no es la opción por defecto
+            selects.forEach(otherSelect => {
+                if (otherSelect !== select && otherSelect.value === selectedUserId) {
+                    userAlreadyAssigned = true;
                 }
+            });
+    
+            if (userAlreadyAssigned) {
+                alert('El usuario que se intenta asignar ya tiene otro lugar asignado en este día.');
+                select.value = '';
             }
-        
-            if (select.value === '') {
-                select.classList.add('default');
-                select.classList.remove('assigned');
-            } else {
-                select.classList.add('assigned');
-                select.classList.remove('default');
-            }
-            compareAvailabilitiesForEachDay(dayIndex);
-
-            autoAssignReportBgColorsUpdate(dayIndex);
-        }        
+        }
+    
+        if (select.value === '') {
+            select.classList.add('default');
+            select.classList.remove('assigned');
+        } else {
+            select.classList.add('assigned');
+            select.classList.remove('default');
+        }
+    
+        await compareAvailabilitiesForEachDay(dayIndex);
+        autoAssignReportBgColorsUpdate(dayIndex);
+    }    
 
     document.querySelectorAll('select').forEach(select => {
         select.classList.add('default');
