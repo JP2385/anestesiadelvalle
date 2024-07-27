@@ -3,7 +3,7 @@ const User = require('../models/userModel');
 const getUsersAvailability = async (req, res) => {
     try {
         ('Fetching users with their work schedules and vacations');
-        const users = await User.find({}, 'username workSchedule vacations');
+        const users = await User.find({}, 'username workSchedule vacations worksInCmacOnly worksInPrivateRioNegro worksInPublicRioNegro worksInPublicNeuquen worksInPrivateNeuquen doesCardio doesRNM');
         ('Users:', users);
 
         const availability = {
@@ -43,25 +43,38 @@ const getUsersAvailability = async (req, res) => {
                 return day >= start && day <= end;
             });
 
+            const userData = {
+                _id: user._id,
+                username: user.username,
+                workSchedule: user.workSchedule,
+                worksInCmacOnly: user.worksInCmacOnly,
+                worksInPrivateRioNegro: user.worksInPrivateRioNegro,
+                worksInPublicRioNegro: user.worksInPublicRioNegro,
+                worksInPublicNeuquen: user.worksInPublicNeuquen,
+                worksInPrivateNeuquen: user.worksInPrivateNeuquen,
+                doesCardio: user.doesCardio,
+                doesRNM: user.doesRNM
+            };
+
             if (user.workSchedule.monday !== 'No trabaja' && !onVacation(daysOfWeek[0])) {
                 (`User ${user.username} is available on Monday`);
-                availability.monday.push(user.username);
+                availability.monday.push(userData);
             }
             if (user.workSchedule.tuesday !== 'No trabaja' && !onVacation(daysOfWeek[1])) {
                 (`User ${user.username} is available on Tuesday`);
-                availability.tuesday.push(user.username);
+                availability.tuesday.push(userData);
             }
             if (user.workSchedule.wednesday !== 'No trabaja' && !onVacation(daysOfWeek[2])) {
                 (`User ${user.username} is available on Wednesday`);
-                availability.wednesday.push(user.username);
+                availability.wednesday.push(userData);
             }
             if (user.workSchedule.thursday !== 'No trabaja' && !onVacation(daysOfWeek[3])) {
                 (`User ${user.username} is available on Thursday`);
-                availability.thursday.push(user.username);
+                availability.thursday.push(userData);
             }
             if (user.workSchedule.friday !== 'No trabaja' && !onVacation(daysOfWeek[4])) {
                 (`User ${user.username} is available on Friday`);
-                availability.friday.push(user.username);
+                availability.friday.push(userData);
             }
         });
 

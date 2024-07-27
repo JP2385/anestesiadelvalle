@@ -80,7 +80,6 @@ export async function fetchAvailability() {
     }
 }
 
-
 function updateAvailability(availabilityCount) {
     const container = document.getElementById('availability-container');
     if (!container) {
@@ -90,9 +89,39 @@ function updateAvailability(availabilityCount) {
 
     ('Updating availability in DOM with:', availabilityCount);
 
-    document.getElementById('monday-available').innerText = availabilityCount.monday;
-    document.getElementById('tuesday-available').innerText = availabilityCount.tuesday;
-    document.getElementById('wednesday-available').innerText = availabilityCount.wednesday;
-    document.getElementById('thursday-available').innerText = availabilityCount.thursday;
-    document.getElementById('friday-available').innerText = availabilityCount.friday;
+    const mondayAvailable = document.getElementById('monday-available');
+    const tuesdayAvailable = document.getElementById('tuesday-available');
+    const wednesdayAvailable = document.getElementById('wednesday-available');
+    const thursdayAvailable = document.getElementById('thursday-available');
+    const fridayAvailable = document.getElementById('friday-available');
+
+    if (mondayAvailable) {
+        mondayAvailable.innerText = availabilityCount.monday;
+    } else {
+        console.error('No se encontró el elemento monday-available');
+    }
+
+    if (tuesdayAvailable) {
+        tuesdayAvailable.innerText = availabilityCount.tuesday;
+    } else {
+        console.error('No se encontró el elemento tuesday-available');
+    }
+
+    if (wednesdayAvailable) {
+        wednesdayAvailable.innerText = availabilityCount.wednesday;
+    } else {
+        console.error('No se encontró el elemento wednesday-available');
+    }
+
+    if (thursdayAvailable) {
+        thursdayAvailable.innerText = availabilityCount.thursday;
+    } else {
+        console.error('No se encontró el elemento thursday-available');
+    }
+
+    if (fridayAvailable) {
+        fridayAvailable.innerText = availabilityCount.friday;
+    } else {
+        console.error('No se encontró el elemento friday-available');
+    }
 }

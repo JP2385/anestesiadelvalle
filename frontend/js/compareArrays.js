@@ -6,7 +6,8 @@ export async function compareAvailabilities() {
         const serverAvailability = await fetchAvailability();
         const { contents: clientAvailability } = await countAssignmentsByDay();
 
-        const differences = compareUserAvailability(serverAvailability, clientAvailability);
+        const serverUsernames = extractUsernamesFromAvailability(serverAvailability);
+        const differences = compareUserAvailability(serverUsernames, clientAvailability);
 
         updateDOMWithDifferences(differences);
     } catch (error) {
@@ -24,7 +25,8 @@ export async function compareAvailabilitiesForEachDay(dayIndex) {
         const { contents: clientAvailability } = await countAssignmentsByDay();
         (`Client availability for day index ${dayIndex}:`, clientAvailability);
         
-        const differences = compareUserAvailabilityForDay(serverAvailability, clientAvailability, dayIndex);
+        const serverUsernames = extractUsernamesFromAvailability(serverAvailability);
+        const differences = compareUserAvailabilityForDay(serverUsernames, clientAvailability, dayIndex);
         (`Differences for day index ${dayIndex}:`, differences);
         
         updateDOMWithDifferencesForDay(differences, dayIndex);
@@ -35,6 +37,13 @@ export async function compareAvailabilitiesForEachDay(dayIndex) {
     }
 }
 
+function extractUsernamesFromAvailability(availability) {
+    const usernames = {};
+    for (const day in availability) {
+        usernames[day] = availability[day].map(userObj => userObj.username);
+    }
+    return usernames;
+}
 
 function compareUserAvailability(serverData, clientData) {
     const differences = {};
@@ -171,5 +180,3 @@ function updateDOMWithDifferencesForDay(differences, dayIndex) {
         console.error(`Element with id ${day}-compare not found.`);
     }
 }
-
-
