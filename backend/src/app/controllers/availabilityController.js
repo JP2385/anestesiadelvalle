@@ -44,7 +44,6 @@ const getUsersAvailability = async (req, res) => {
             });
 
             const userData = {
-                _id: user._id,
                 username: user.username,
                 workSchedule: user.workSchedule,
                 worksInCmacOnly: user.worksInCmacOnly,
