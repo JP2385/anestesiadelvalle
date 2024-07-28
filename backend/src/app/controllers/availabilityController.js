@@ -31,7 +31,7 @@ const getUsersAvailability = async (req, res) => {
             new Date(new Date(startOfWeek).setDate(startOfWeek.getDate() + 5)) // Friday
         ];
 
-        console.log('Days of the week being processed:', daysOfWeek);
+        // console.log('Days of the week being processed:', daysOfWeek);
 
         const adjustForTimezone = (date) => {
             const adjustedDate = new Date(date);
