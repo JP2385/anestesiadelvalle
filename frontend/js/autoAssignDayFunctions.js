@@ -54,14 +54,8 @@ export function assignSpecificUsersByDay(dayIndex, scheme, user) {
                         select.value = option.value;
                         select.classList.add('assigned');
                         select.classList.remove('default');
-                    } else {
-                        console.log(`Option for user: ${user.username} not found in select`);
                     }
-                } else {
-                    console.log(`Select not found or disabled for workSite: ${workSite}, dayIndex: ${dayIndex}`);
                 }
-            } else {
-                console.log(`Row for workSite: ${workSite} not found`);
             }
         }
     });
