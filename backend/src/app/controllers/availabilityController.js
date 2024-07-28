@@ -18,23 +18,17 @@ const getUsersAvailability = async (req, res) => {
         // Check if today is Saturday (6) or Sunday (0) and adjust startOfWeek accordingly
         const todayDay = currentDate.getDay();
         if (todayDay === 6) { // If today is Saturday
-            startOfWeek.setDate(currentDate.getDate() - currentDate.getDay() + 8); // Next Monday
-        } else if (todayDay === 0) { // If today is Sunday
-            startOfWeek.setDate(currentDate.getDate() - currentDate.getDay() + 7); // Next Monday
-        } else {
-            startOfWeek.setDate(currentDate.getDate() - currentDate.getDay() + 1); // This Monday
-        } else {
-            startOfWeek.setDate(currentDate.getDate() - currentDate.getDay()); // This Monday
-        }
-        
+            startOfWeek.setDate(currentDate.getDate() - currentDate.getDay() + 7);
+        } // Next Sunday
+
         startOfWeek.setHours(0, 0, 0, 0);
 
         const daysOfWeek = [
-            new Date(startOfWeek), // Monday
-            new Date(new Date(startOfWeek).setDate(startOfWeek.getDate() + 1)), // Tuesday
-            new Date(new Date(startOfWeek).setDate(startOfWeek.getDate() + 2)), // Wednesday
-            new Date(new Date(startOfWeek).setDate(startOfWeek.getDate() + 3)), // Thursday
-            new Date(new Date(startOfWeek).setDate(startOfWeek.getDate() + 4)) // Friday
+            new Date(new Date(startOfWeek).setDate(startOfWeek.getDate() + 1)), // Monday
+            new Date(new Date(startOfWeek).setDate(startOfWeek.getDate() + 2)), // Tuesday
+            new Date(new Date(startOfWeek).setDate(startOfWeek.getDate() + 3)), // Wednesday
+            new Date(new Date(startOfWeek).setDate(startOfWeek.getDate() + 4)), // Thursday
+            new Date(new Date(startOfWeek).setDate(startOfWeek.getDate() + 5)) // Friday
         ];
 
         console.log('Days of the week being processed:', daysOfWeek);
