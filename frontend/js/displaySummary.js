@@ -165,19 +165,20 @@ function applySeparators(table) {
     return table;
 }
 
+// Función para formatear la fecha y hora
 function formatTimestamp(timestamp) {
     const date = new Date(timestamp);
-    const days = ['domingo', 'lunes', 'martes', 'miércoles', 'jueves', 'viernes', 'sábado'];
-    const months = ['enero', 'febrero', 'marzo', 'abril', 'mayo', 'junio', 'julio', 'agosto', 'septiembre', 'octubre', 'noviembre', 'diciembre'];
+    const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+    let formattedDate = date.toLocaleDateString('es-ES', options);
+    
+    // Eliminar la coma después del día de la semana
+    formattedDate = formattedDate.replace(/,\s/, ' ');
 
-    const dayName = days[date.getDay()];
-    const day = date.getDate();
-    const month = months[date.getMonth()];
-    const year = date.getFullYear();
-    const hours = String(date.getHours()).padStart(2, '0');
-    const minutes = String(date.getMinutes()).padStart(2, '0');
-
-    return `${dayName} ${day} de ${month} de ${year} a las ${hours}:${minutes} hs.`;
+    // Formato 24 horas
+    const hours = date.getHours().toString().padStart(2, '0');
+    const minutes = date.getMinutes().toString().padStart(2, '0');
+    
+    return `${formattedDate} a las ${hours}:${minutes} hs.`;
 }
 
 function downloadTableAsImage(container) {
