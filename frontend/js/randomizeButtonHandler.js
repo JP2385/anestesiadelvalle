@@ -42,7 +42,9 @@ export async function handleRandomizeButtonClick(apiUrl, dayIndex) {
         return;
     }
 
-    for (let i = 1; i <= 100; i++) {
+    const assignments = [];
+
+    for (let i = 1; i <= 10; i++) {
         unassignUsersByDay(dayIndex);
         await autoAssignCaroSandraGabiByDay(apiUrl, dayIndex, availability);
         await autoAssignPublicHospitalsByDay(apiUrl, dayIndex, availability);
@@ -53,10 +55,11 @@ export async function handleRandomizeButtonClick(apiUrl, dayIndex) {
 
         const { counts } = await countAssignmentsByDay();
         const assignmentCount = Object.values(counts)[dayIndex];
-        collectAssignmentsForDay(dayIndex, i + 1, assignmentCount);
+        assignments.push({ iteration: i + 1, data: collectAssignmentsData(dayIndex), assignmentCount });
     }
 
-    await applyBestAssignments(dayIndex);
+    const { bestAssignments } = findBestIterationFromMemory(assignments);
+    applyBestAssignmentsToDOM(dayIndex, bestAssignments);
 
     // Verificar el conteo de asignaciones después de aplicar las mejores asignaciones
     const { counts: finalCounts } = await countAssignmentsByDay();
@@ -67,7 +70,7 @@ export async function handleRandomizeButtonClick(apiUrl, dayIndex) {
     clearLocalStorageForDay(dayIndex); // Limpia el localStorage al final de la ejecución
 }
 
-function collectAssignmentsForDay(dayIndex, iteration, assignmentCount) {
+function collectAssignmentsData(dayIndex) {
     const assignments = [];
     const scheduleBody = document.getElementById('schedule-body');
     const rows = scheduleBody.getElementsByTagName('tr');
@@ -88,39 +91,24 @@ function collectAssignmentsForDay(dayIndex, iteration, assignmentCount) {
         }
     }
 
-    const dayNames = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday'];
-    const storageKey = `assignments_${dayNames[dayIndex]}_iteration_${iteration}`;
-    const dataToStore = {
-        assignments: assignments,
-        assignmentCount: assignmentCount
-    };
-
-    localStorage.setItem(storageKey, JSON.stringify(dataToStore));
+    return assignments;
 }
 
-function findBestIteration(dayIndex) {
-    const dayNames = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday'];
-    const dayName = dayNames[dayIndex];
+function findBestIterationFromMemory(assignments) {
     let maxAssignments = 0;
-    let bestIteration = 0;
     let bestAssignments = [];
 
-    for (let i = 1; i <= 100; i++) {
-        const storageKey = `assignments_${dayName}_iteration_${i}`;
-        const storedData = JSON.parse(localStorage.getItem(storageKey));
-
-        if (storedData && storedData.assignmentCount >= maxAssignments) {
-            maxAssignments = storedData.assignmentCount;
-            bestIteration = i;
-            bestAssignments = storedData.assignments;
+    assignments.forEach(({ data, assignmentCount }) => {
+        if (assignmentCount >= maxAssignments) {
+            maxAssignments = assignmentCount;
+            bestAssignments = data;
         }
-    }
+    });
 
-    return { bestIteration, bestAssignments };
+    return { bestAssignments };
 }
 
-async function applyBestAssignments(dayIndex) {
-    const {bestAssignments } = findBestIteration(dayIndex);
+function applyBestAssignmentsToDOM(dayIndex, bestAssignments) {
     const scheduleBody = document.getElementById('schedule-body');
     const rows = scheduleBody.getElementsByTagName('tr');
 
@@ -143,7 +131,7 @@ async function applyBestAssignments(dayIndex) {
 function clearLocalStorageForDay(dayIndex) {
     const dayNames = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday'];
     const dayName = dayNames[dayIndex];
-    for (let i = 1; i <= 100; i++) {
+    for (let i = 1; i <= 10; i++) {
         const storageKey = `assignments_${dayName}_iteration_${i}`;
         localStorage.removeItem(storageKey);
     }
