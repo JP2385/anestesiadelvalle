@@ -24,8 +24,25 @@ document.addEventListener('DOMContentLoaded', async function() {
     for (const dayIndex of dayIndices) {
         try {
             showSpinner();
-            await autoAssignCaroSandraGabiByDay(apiUrl, dayIndex);
-            await autoAssignPublicHospitalsByDay(apiUrl, dayIndex);
+
+            const response = await fetch(`${apiUrl}/availability`, {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': 'Bearer ' + localStorage.getItem('token')
+                }
+            });
+        
+            if (!response.ok) {
+                const errorData = await response.json();
+                alert(`Error: ${errorData.message}`);
+                return;
+            }
+        
+            const availability = await response.json();
+
+            await autoAssignCaroSandraGabiByDay(apiUrl, dayIndex, availability);
+            await autoAssignPublicHospitalsByDay(apiUrl, dayIndex, availability);
             await countAssignmentsByDay(dayIndex);
             autoAssignReportBgColorsUpdate(dayIndex);
         } finally {

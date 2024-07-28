@@ -1,53 +1,19 @@
 import { updateSelectBackgroundColors } from './assignUtils.js';
-import { autoAssignLongDayWorkers} from './autoAssignFunctions.js';
 import { autoAssignLongDayWorkersByDay } from './autoAssignDayFunctions.js';
 
-export async function autoAssignLongDays(apiUrl) {
+export async function autoAssignLongDaysByDay(apiUrl, dayIndex, availability) {
     try {
-        const response = await fetch(`${apiUrl}/auth/users`, {
-            method: 'GET',
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': 'Bearer ' + localStorage.getItem('token')
-            }
-        });
+        const dayNames = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday'];
+        const dayName = dayNames[dayIndex];
 
-        if (response.ok) {
-            const users = await response.json();
-
-            autoAssignLongDayWorkers(users);
-
-            // Actualizar colores de fondo después de la asignación automática
-            updateSelectBackgroundColors();
-
-        } else {
-            const errorData = await response.json();
-            alert(`Error: ${errorData.message}`);
+        if (!availability || !availability[dayName]) {
+            console.error(`Day name ${dayName} does not exist in availability.`);
+            return;
         }
-    } catch (error) {
-        alert('Hubo un problema con la solicitud: ' + error.message);
-    }
-}
 
-export async function autoAssignLongDaysByDay(apiUrl, dayIndex) {
-    try {
-        const response = await fetch(`${apiUrl}/availability`, {
-            method: 'GET',
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': 'Bearer ' + localStorage.getItem('token')
-            }
-        });
-
-        if (response.ok) {
-            const availability = await response.json();
-            const availableUsers = availability[Object.keys(availability)[dayIndex]];
-            autoAssignLongDayWorkersByDay(dayIndex, availableUsers);
-            updateSelectBackgroundColors();
-        } else {
-            const errorData = await response.json();
-            alert(`Error: ${errorData.message}`);
-        }
+        const availableUsers = availability[dayName];
+        autoAssignLongDayWorkersByDay(dayIndex, availableUsers);
+        updateSelectBackgroundColors();
     } catch (error) {
         alert('Hubo un problema con la solicitud: ' + error.message);
     }

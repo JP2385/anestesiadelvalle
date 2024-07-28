@@ -12,44 +12,65 @@ import { compareAvailabilitiesForEachDay } from './compareArrays.js';
 import { validateAssignmentForDay } from './autoAssignValidation.js';
 
 export async function handleRandomizeButtonClick(apiUrl, dayIndex) {
-    (`Starting randomize process for day index: ${dayIndex}`);
+    console.log(`Starting randomize process for day index: ${dayIndex}`);
+
+    // Obtener la disponibilidad una sola vez
+    let availability;
+    try {
+        const response = await fetch(`${apiUrl}/availability`, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': 'Bearer ' + localStorage.getItem('token')
+            }
+        });
+
+        if (response.ok) {
+            availability = await response.json();
+        } else {
+            const errorData = await response.json();
+            alert(`Error: ${errorData.message}`);
+            return;
+        }
+    } catch (error) {
+        alert('Hubo un problema con la solicitud: ' + error.message);
+        return;
+    }
 
     // Validar antes de iterar
     const isValid = await validateAssignmentForDay(dayIndex);
     if (!isValid) {
-        (`Validation failed for day index: ${dayIndex}`);
+        console.log(`Validation failed for day index: ${dayIndex}`);
         return;
     }
 
-    for (let i = 1; i <= 8; i++) {
-        // for (let i = 1; i <= 1; i++) {
-        (`Iteration ${i + 1} for day index: ${dayIndex}`);
+    for (let i = 1; i <= 10; i++) {
+        console.log(`Iteration ${i + 1} for day index: ${dayIndex}`);
         unassignUsersByDay(dayIndex);
-        await autoAssignCaroSandraGabiByDay(apiUrl, dayIndex);
-        await autoAssignPublicHospitalsByDay(apiUrl, dayIndex);
-        await autoAssignMorningsByDay(apiUrl, dayIndex);
-        await autoAssignAfternoonsByDay(apiUrl, dayIndex);
-        await autoAssignLongDaysByDay(apiUrl, dayIndex);
-        await autoAssignRemainingsByDay(apiUrl, dayIndex);
+        await autoAssignCaroSandraGabiByDay(apiUrl, dayIndex, availability);
+        await autoAssignPublicHospitalsByDay(apiUrl, dayIndex, availability);
+        await autoAssignMorningsByDay(apiUrl, dayIndex, availability);
+        await autoAssignAfternoonsByDay(apiUrl, dayIndex, availability);
+        await autoAssignLongDaysByDay(apiUrl, dayIndex, availability);
+        await autoAssignRemainingsByDay(apiUrl, dayIndex, availability);
 
         const { counts } = await countAssignmentsByDay();
         const assignmentCount = Object.values(counts)[dayIndex];
-        (`Assignment count for iteration ${i + 1}: ${assignmentCount}`);
+        console.log(`Assignment count for iteration ${i + 1}: ${assignmentCount}`);
         collectAssignmentsForDay(dayIndex, i + 1, assignmentCount);
     }
 
     await applyBestAssignments(dayIndex);
-    (`Best assignments applied for day index: ${dayIndex}`);
+    console.log(`Best assignments applied for day index: ${dayIndex}`);
 
     // Verificar el conteo de asignaciones después de aplicar las mejores asignaciones
     const { counts: finalCounts } = await countAssignmentsByDay();
     const finalAssignmentCount = Object.values(finalCounts)[dayIndex];
-    (`Final assignment count for day index ${dayIndex}: ${finalAssignmentCount}`);
+    console.log(`Final assignment count for day index ${dayIndex}: ${finalAssignmentCount}`);
 
     compareAvailabilitiesForEachDay(dayIndex);
     clearLocalStorageForDay(dayIndex); // Limpia el localStorage al final de la ejecución
 }
-
 
 function collectAssignmentsForDay(dayIndex, iteration, assignmentCount) {
     const assignments = [];
@@ -89,8 +110,7 @@ function findBestIteration(dayIndex) {
     let bestIteration = 0;
     let bestAssignments = [];
 
-    for (let i = 1; i <= 8; i++) {
-        // for (let i = 1; i <= 1; i++) {
+    for (let i = 1; i <= 10; i++) {
         const storageKey = `assignments_${dayName}_iteration_${i}`;
         const storedData = JSON.parse(localStorage.getItem(storageKey));
 
@@ -128,8 +148,7 @@ async function applyBestAssignments(dayIndex) {
 function clearLocalStorageForDay(dayIndex) {
     const dayNames = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday'];
     const dayName = dayNames[dayIndex];
-    for (let i = 1; i <= 8; i++) {
-        // for (let i = 1; i <= 1; i++) {
+    for (let i = 1; i <= 10; i++) {
         const storageKey = `assignments_${dayName}_iteration_${i}`;
         localStorage.removeItem(storageKey);
     }
