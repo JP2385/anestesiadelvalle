@@ -20,6 +20,8 @@ const getUsersAvailability = async (req, res) => {
         if (todayDay === 6) { // If today is Saturday
             startOfWeek.setDate(currentDate.getDate() - currentDate.getDay() + 8); // Next Monday
         } else if (todayDay === 0) { // If today is Sunday
+            startOfWeek.setDate(currentDate.getDate() - currentDate.getDay() + 7); // Next Monday
+        } else {
             startOfWeek.setDate(currentDate.getDate() - currentDate.getDay() + 1); // This Monday
         } else {
             startOfWeek.setDate(currentDate.getDate() - currentDate.getDay()); // This Monday
