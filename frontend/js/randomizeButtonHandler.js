@@ -44,7 +44,7 @@ export async function handleRandomizeButtonClick(apiUrl, dayIndex) {
 
     const assignments = [];
 
-    for (let i = 1; i <= 10; i++) {
+    for (let i = 1; i <= 20; i++) {
         unassignUsersByDay(dayIndex);
         await autoAssignCaroSandraGabiByDay(apiUrl, dayIndex, availability);
         await autoAssignPublicHospitalsByDay(apiUrl, dayIndex, availability);
@@ -131,7 +131,7 @@ function applyBestAssignmentsToDOM(dayIndex, bestAssignments) {
 function clearLocalStorageForDay(dayIndex) {
     const dayNames = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday'];
     const dayName = dayNames[dayIndex];
-    for (let i = 1; i <= 10; i++) {
+    for (let i = 1; i <= 20; i++) {
         const storageKey = `assignments_${dayName}_iteration_${i}`;
         localStorage.removeItem(storageKey);
     }
