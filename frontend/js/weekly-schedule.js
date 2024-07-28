@@ -218,23 +218,45 @@ document.addEventListener('DOMContentLoaded', async function() {
             const button = document.createElement('button');
             button.classList.add('lock-button');
             button.textContent = select.disabled ? '🔓' : '🔒';
-            
+    
             // Obtener el índice del día
             const dayIndex = cell.closest('td').cellIndex - 1;
             button.setAttribute('data-day-index', dayIndex); // Añadir el índice del día como un atributo de datos
             
             button.addEventListener('click', () => {
+                // Cambiar el estado del select actual
                 select.disabled = !select.disabled;
                 button.textContent = select.disabled ? '🔓' : '🔒';
-                countEnabledSelectsByDay();
                 
+                // Obtener el id del select actual
+                const selectId = select.id;
+    
+                // Determinar si es 'short' o 'long'
+                const isShort = selectId.includes('short');
+                const baseId = selectId.replace('-short', '').replace('-long', '');
+    
+                // Desactivar los selects relacionados
+                const relatedIds = isShort ? document.querySelectorAll(`select[id^="${baseId}"][id$="long"]`)
+                                           : document.querySelectorAll(`select[id^="${baseId}"][id$="short"]`);
+    
+                relatedIds.forEach(relatedSelect => {
+                    relatedSelect.disabled = true;
+                    const relatedButton = relatedSelect.closest('td').querySelector('.lock-button');
+                    if (relatedButton) {
+                        relatedButton.textContent = '🔓';
+                    }
+                });
+    
+                countEnabledSelectsByDay();
+    
                 // Recuperar el índice del día desde el atributo de datos
                 const dayIndex = button.getAttribute('data-day-index');
                 autoAssignReportBgColorsUpdate(dayIndex);
             });
             cell.appendChild(button);
         });
-    }    
+    }
+    
 
     async function handleSelectChange(event) {
         const select = event.target;
