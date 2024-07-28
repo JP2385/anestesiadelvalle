@@ -6,7 +6,6 @@
     padding: 5px 10px;
     border-radius: 5px;
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
-    font-size: 1rem; /* Tamaño de letra más grande */
     max-width: 150px; /* Ancho máximo de 100 px */
     z-index: 1000; /* Asegura que el tooltip esté por encima de otros elementos */
     word-wrap: break-word;
