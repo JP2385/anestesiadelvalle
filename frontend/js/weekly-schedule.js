@@ -84,14 +84,14 @@ document.addEventListener('DOMContentLoaded', async function() {
         const currentDay = currentDate.getDay();
         let nextMondayDate;
     
-        if (currentDay === 6) { // Si hoy es sábado
-            // Calcular el próximo lunes
+        if (currentDay === 6) { // Si hoy es sábado (6) o domingo (0)
+            // Calcular el lunes de la próxima semana
             nextMondayDate = new Date(currentDate);
-            nextMondayDate.setDate(currentDate.getDate() + (8 - currentDay));
+            nextMondayDate.setDate(currentDate.getDate() + (8 - currentDay)); 
         } else {
             // Calcular el lunes de esta semana
             nextMondayDate = new Date(currentDate);
-            nextMondayDate.setDate(currentDate.getDate() - (currentDay === 0 ? 6 : currentDay - 1));
+            nextMondayDate.setDate(currentDate.getDate() - (currentDay - 1));
         }
     
         const dateOptions = { day: 'numeric' };
