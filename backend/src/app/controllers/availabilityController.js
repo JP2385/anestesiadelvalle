@@ -20,9 +20,9 @@ const getUsersAvailability = async (req, res) => {
         if (todayDay === 6) { // If today is Saturday
             startOfWeek.setDate(currentDate.getDate() - currentDate.getDay() + 8); // Next Monday
         } else if (todayDay === 0) { // If today is Sunday
-            startOfWeek.setDate(currentDate.getDate() - currentDate.getDay() + 7); // Next Monday
-        } else {
             startOfWeek.setDate(currentDate.getDate() - currentDate.getDay() + 1); // This Monday
+        } else {
+            startOfWeek.setDate(currentDate.getDate() - currentDate.getDay()); // This Monday
         }
         
         startOfWeek.setHours(0, 0, 0, 0);
@@ -35,6 +35,8 @@ const getUsersAvailability = async (req, res) => {
             new Date(new Date(startOfWeek).setDate(startOfWeek.getDate() + 4)) // Friday
         ];
 
+        console.log('Days of the week being processed:', daysOfWeek);
+
         const adjustForTimezone = (date) => {
             const adjustedDate = new Date(date);
             adjustedDate.setHours(adjustedDate.getHours() + 3);
@@ -46,6 +48,7 @@ const getUsersAvailability = async (req, res) => {
                 const start = adjustForTimezone(new Date(vacation.startDate));
                 const end = adjustForTimezone(new Date(vacation.endDate));
                 const isOnVacation = day >= start && day <= end;
+                // console.log(`User ${user.username} checking vacation for day: ${day}, vacation start: ${start}, vacation end: ${end}, isOnVacation: ${isOnVacation}`);
                 return isOnVacation;
             });
 
@@ -63,22 +66,28 @@ const getUsersAvailability = async (req, res) => {
             };
 
             if (user.workSchedule.monday !== 'No trabaja' && !onVacation(daysOfWeek[0])) {
+                // console.log(`User ${user.username} is available on Monday`);
                 availability.monday.push(userData);
             }
             if (user.workSchedule.tuesday !== 'No trabaja' && !onVacation(daysOfWeek[1])) {
+                // console.log(`User ${user.username} is available on Tuesday`);
                 availability.tuesday.push(userData);
             }
             if (user.workSchedule.wednesday !== 'No trabaja' && !onVacation(daysOfWeek[2])) {
+                // console.log(`User ${user.username} is available on Wednesday`);
                 availability.wednesday.push(userData);
             }
             if (user.workSchedule.thursday !== 'No trabaja' && !onVacation(daysOfWeek[3])) {
+                // console.log(`User ${user.username} is available on Thursday`);
                 availability.thursday.push(userData);
             }
             if (user.workSchedule.friday !== 'No trabaja' && !onVacation(daysOfWeek[4])) {
+                // console.log(`User ${user.username} is available on Friday`);
                 availability.friday.push(userData);
             }
         });
 
+        // console.log('Final Availability:', availability);
         res.status(200).json(availability);
     } catch (error) {
         console.error('Error:', error);
