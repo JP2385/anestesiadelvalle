@@ -23,11 +23,10 @@ document.addEventListener('DOMContentLoaded', function() {
 
     if (!token) {
         alert('No has iniciado sesión.');
-        localStorage.removeItem('token');  // Asegúrate de limpiar cualquier token residual
+        localStorage.removeItem('token');  
         sessionStorage.removeItem('token');
         sessionStorage.removeItem('sessionExpiry');
         window.location.href = 'login.html';
-        return; // Asegúrate de que el script no continúe ejecutándose
     } else {
         const sessionExpiry = sessionStorage.getItem('sessionExpiry');
         if (sessionExpiry && Date.now() > sessionExpiry) {
@@ -36,7 +35,6 @@ document.addEventListener('DOMContentLoaded', function() {
             sessionStorage.removeItem('token');
             sessionStorage.removeItem('sessionExpiry');
             window.location.href = 'login.html';
-            return; // Asegúrate de que el script no continúe ejecutándose
         } else {
             resetIdleTimer(); // Inicializar el tiempo de expiración de la sesión
         }
@@ -53,3 +51,4 @@ document.addEventListener('DOMContentLoaded', function() {
     // Verificar el tiempo de inactividad cada segundo
     setInterval(checkIdleTime, 1000);
 });
+
