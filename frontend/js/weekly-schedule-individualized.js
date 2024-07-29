@@ -3,12 +3,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const userAssignmentsContainer = document.getElementById('user-assignments');
     const token = localStorage.getItem('token');
 
-    if (!token) {
-        alert('No has iniciado sesión.');
-        window.location.href = 'login.html';
-        return;
-    }
-
     fetch(`${apiUrl}/auth/profile`, {
         method: 'GET',
         headers: {

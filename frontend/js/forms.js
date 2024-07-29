@@ -193,12 +193,6 @@ document.addEventListener('DOMContentLoaded', function() {
     // Obtener y mostrar los datos del perfil del usuario
     const profileInfo = document.getElementById('profile-info');
     if (profileInfo) {
-        const token = localStorage.getItem('token');
-        if (!token) {
-            alert('No has iniciado sesión.');
-            window.location.href = 'login.html';
-            return;
-        }
     
         fetch(`${apiUrl}/auth/profile`, {
             method: 'GET',
