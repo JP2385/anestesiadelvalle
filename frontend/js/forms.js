@@ -2,41 +2,41 @@ document.addEventListener('DOMContentLoaded', function() {
     const apiUrl = window.location.hostname === 'localhost' ? 'http://localhost:3000' : 'https://adv-37d5b772f5fd.herokuapp.com';
     // Login form submission
     const loginForm = document.getElementById('login-form');
-    if (loginForm) {
-        loginForm.addEventListener('submit', async (event) => {
-            event.preventDefault();
-            const username = document.getElementById('username').value.toLowerCase();
-            const password = document.getElementById('password').value;
-            const rememberMe = document.getElementById('remember-me').checked;
+if (loginForm) {
+    loginForm.addEventListener('submit', async (event) => {
+        event.preventDefault();
+        const username = document.getElementById('username').value.toLowerCase();
+        const password = document.getElementById('password').value;
+        const rememberMe = document.getElementById('remember-me').checked;
 
-            try {
-                const response = await fetch(`${apiUrl}/auth/login`, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({ username, password })
-                });
+        try {
+            const response = await fetch(`${apiUrl}/auth/login`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ username, password })
+            });
 
-                if (response.ok) {
-                    const data = await response.json();
-                    if (rememberMe) {
-                        localStorage.setItem('token', data.token); // Guardar el token indefinidamente en dispositivos móviles
-                    } else {
-                        sessionStorage.setItem('token', data.token); // Guardar el token temporalmente en la sesión del navegador
-                    }
-                    alert('Inicio de sesión exitoso');
-                    window.location.href = 'index.html';
+            if (response.ok) {
+                const data = await response.json();
+                if (rememberMe) {
+                    localStorage.setItem('token', data.token);
                 } else {
-                    const errorData = await response.json();
-                    alert(`Error: ${errorData.message}`);
+                    sessionStorage.setItem('token', data.token);
                 }
-            } catch (error) {
-                alert('Hubo un problema con la solicitud: ' + error.message);
+                alert('Inicio de sesión exitoso');
+                window.location.href = 'index.html';
+            } else {
+                const errorData = await response.json();
+                alert(`Error: ${errorData.message}`);
             }
-        });
-    }
-    
+        } catch (error) {
+            alert('Hubo un problema con la solicitud: ' + error.message);
+        }
+    });
+}
+
     // Register form submission
     const registerForm = document.getElementById('register-form');
     if (registerForm) {
