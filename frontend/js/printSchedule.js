@@ -28,25 +28,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
                 if (response.ok) {
                     console.log('Datos guardados correctamente en el backend');
-                    // Verificar si el Service Worker está controlando la página
-                    if (navigator.serviceWorker.controller) {
-                        console.log('Service Worker está controlando la página');
-                        // Verificar si el permiso de notificación está concedido
-                        if (Notification.permission === 'granted') {
-                            console.log('Permiso de notificación concedido');
-                            console.log('Enviando mensaje al Service Worker para mostrar notificación');
-                            navigator.serviceWorker.controller.postMessage({
-                                type: 'SHOW_NOTIFICATION',
-                                title: 'Programación actualizada',
-                                body: 'La programación ha sido actualizada. Por favor revise sus quirófanos asignados.'
-                            });
-                            console.log('Mensaje enviado al Service Worker');
-                        } else {
-                            console.log('Permiso de notificación no concedido');
-                        }
-                    } else {
-                        console.log('Service Worker controller no está disponible');
-                    }
                 } else {
                     console.error('Error al guardar los datos en la base de datos');
                 }

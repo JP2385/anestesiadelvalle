@@ -1,41 +1,42 @@
 document.addEventListener('DOMContentLoaded', function() {
     const apiUrl = window.location.hostname === 'localhost' ? 'http://localhost:3000' : 'https://adv-37d5b772f5fd.herokuapp.com';
+
     // Login form submission
     const loginForm = document.getElementById('login-form');
-if (loginForm) {
-    loginForm.addEventListener('submit', async (event) => {
-        event.preventDefault();
-        const username = document.getElementById('username').value.toLowerCase();
-        const password = document.getElementById('password').value;
-        const rememberMe = document.getElementById('remember-me').checked;
+    if (loginForm) {
+        loginForm.addEventListener('submit', async (event) => {
+            event.preventDefault();
+            const username = document.getElementById('username').value.toLowerCase();
+            const password = document.getElementById('password').value;
+            const rememberMe = document.getElementById('remember-me').checked;
 
-        try {
-            const response = await fetch(`${apiUrl}/auth/login`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({ username, password })
-            });
+            try {
+                const response = await fetch(`${apiUrl}/auth/login`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ username, password })
+                });
 
-            if (response.ok) {
-                const data = await response.json();
-                if (rememberMe) {
-                    localStorage.setItem('token', data.token);
+                if (response.ok) {
+                    const data = await response.json();
+                    if (rememberMe) {
+                        localStorage.setItem('token', data.token);
+                    } else {
+                        sessionStorage.setItem('token', data.token);
+                    }
+                    alert('Inicio de sesión exitoso');
+                    window.location.href = 'index.html';
                 } else {
-                    sessionStorage.setItem('token', data.token);
+                    const errorData = await response.json();
+                    alert(`Error: ${errorData.message}`);
                 }
-                alert('Inicio de sesión exitoso');
-                window.location.href = 'index.html';
-            } else {
-                const errorData = await response.json();
-                alert(`Error: ${errorData.message}`);
+            } catch (error) {
+                alert('Hubo un problema con la solicitud: ' + error.message);
             }
-        } catch (error) {
-            alert('Hubo un problema con la solicitud: ' + error.message);
-        }
-    });
-}
+        });
+    }
 
     // Register form submission
     const registerForm = document.getElementById('register-form');
@@ -52,7 +53,6 @@ if (loginForm) {
                 return;
             }
 
-            // Deshabilitar el botón para prevenir envíos múltiples
             const submitButton = registerForm.querySelector('button[type="submit"]');
             submitButton.disabled = true;
 
@@ -67,7 +67,7 @@ if (loginForm) {
 
                 if (response.ok) {
                     alert('Registro exitoso, ahora puedes loguearte!');
-                    window.location.href = 'login.html'; // Redirigir al usuario a la página de inicio de sesión
+                    window.location.href = 'login.html';
                 } else {
                     const errorData = await response.json();
                     alert(`Error: ${errorData.message}`);
@@ -75,12 +75,11 @@ if (loginForm) {
             } catch (error) {
                 alert('Hubo un problema con la solicitud: ' + error.message);
             } finally {
-                // Rehabilitar el botón
                 submitButton.disabled = false;
             }
         });
     }
-    
+
     // Profile form submission
     const changePasswordForm = document.getElementById('change-password-form');
     if (changePasswordForm) {
@@ -107,7 +106,7 @@ if (loginForm) {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
-                        'Authorization': 'Bearer ' + localStorage.getItem('token')
+                        'Authorization': 'Bearer ' + (localStorage.getItem('token') || sessionStorage.getItem('token'))
                     },
                     body: JSON.stringify({ currentPassword, newPassword })
                 });
@@ -193,7 +192,13 @@ if (loginForm) {
     // Obtener y mostrar los datos del perfil del usuario
     const profileInfo = document.getElementById('profile-info');
     if (profileInfo) {
-    
+        const token = localStorage.getItem('token') || sessionStorage.getItem('token');
+        if (!token) {
+            alert('No se encontró el token de autenticación. Por favor, inicie sesión.');
+            window.location.href = 'login.html';
+            return;
+        }
+
         fetch(`${apiUrl}/auth/profile`, {
             method: 'GET',
             headers: {
@@ -222,8 +227,7 @@ if (loginForm) {
                 document.getElementById('workSchedule-wednesday').textContent = data.workSchedule.wednesday;
                 document.getElementById('workSchedule-thursday').textContent = data.workSchedule.thursday;
                 document.getElementById('workSchedule-friday').textContent = data.workSchedule.friday;
-    
-                // Llenar el formulario de vacaciones
+
                 const vacationList = document.getElementById('vacation-list');
                 vacationList.innerHTML = '';
                 data.vacations.forEach(vacation => {
@@ -238,7 +242,6 @@ if (loginForm) {
             window.location.href = 'login.html';
         });
     }
-    
 
     // Toggle password visibility
     window.togglePasswordVisibility = function(inputId) {

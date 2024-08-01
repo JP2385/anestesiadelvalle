@@ -14,36 +14,44 @@ const getUsersAvailability = async (req, res) => {
 
         const currentDate = new Date();
         let startOfWeek = new Date(currentDate);
-        
-        // Check if today is Saturday (6) or Sunday (0) and adjust startOfWeek accordingly
+
+        // Check if today is Saturday (6) and adjust startOfWeek accordingly
         const todayDay = currentDate.getDay();
         if (todayDay === 6) { // If today is Saturday
-            startOfWeek.setDate(currentDate.getDate() - currentDate.getDay() + 7);
-        } // Next Sunday
+            startOfWeek.setDate(currentDate.getDate() + 2); // Set to next Monday
+        } else {
+            startOfWeek.setDate(currentDate.getDate() - currentDate.getDay() + 1); // Set to current Monday
+        }
 
         startOfWeek.setHours(0, 0, 0, 0);
 
         const daysOfWeek = [
-            new Date(new Date(startOfWeek).setDate(startOfWeek.getDate() + 1)), // Monday
-            new Date(new Date(startOfWeek).setDate(startOfWeek.getDate() + 2)), // Tuesday
-            new Date(new Date(startOfWeek).setDate(startOfWeek.getDate() + 3)), // Wednesday
-            new Date(new Date(startOfWeek).setDate(startOfWeek.getDate() + 4)), // Thursday
-            new Date(new Date(startOfWeek).setDate(startOfWeek.getDate() + 5)) // Friday
+            new Date(new Date(startOfWeek).setDate(startOfWeek.getDate())), // Monday
+            new Date(new Date(startOfWeek).setDate(startOfWeek.getDate() + 1)), // Tuesday
+            new Date(new Date(startOfWeek).setDate(startOfWeek.getDate() + 2)), // Wednesday
+            new Date(new Date(startOfWeek).setDate(startOfWeek.getDate() + 3)), // Thursday
+            new Date(new Date(startOfWeek).setDate(startOfWeek.getDate() + 4)) // Friday
         ];
 
         // console.log('Days of the week being processed:', daysOfWeek);
 
         const adjustForTimezone = (date) => {
             const adjustedDate = new Date(date);
-            adjustedDate.setHours(adjustedDate.getHours() + 3);
+            adjustedDate.setMinutes(adjustedDate.getMinutes() + adjustedDate.getTimezoneOffset());
             return adjustedDate;
+        };
+
+        const isSameDay = (date1, date2) => {
+            return date1.getFullYear() === date2.getFullYear() &&
+                   date1.getMonth() === date2.getMonth() &&
+                   date1.getDate() === date2.getDate();
         };
 
         users.forEach(user => {
             const onVacation = (day) => user.vacations.some(vacation => {
                 const start = adjustForTimezone(new Date(vacation.startDate));
                 const end = adjustForTimezone(new Date(vacation.endDate));
-                const isOnVacation = day >= start && day <= end;
+                const isOnVacation = (day >= start && day <= end) || isSameDay(day, start) || isSameDay(day, end);
                 // console.log(`User ${user.username} checking vacation for day: ${day}, vacation start: ${start}, vacation end: ${end}, isOnVacation: ${isOnVacation}`);
                 return isOnVacation;
             });
@@ -62,28 +70,22 @@ const getUsersAvailability = async (req, res) => {
             };
 
             if (user.workSchedule.monday !== 'No trabaja' && !onVacation(daysOfWeek[0])) {
-                // console.log(`User ${user.username} is available on Monday`);
                 availability.monday.push(userData);
             }
             if (user.workSchedule.tuesday !== 'No trabaja' && !onVacation(daysOfWeek[1])) {
-                // console.log(`User ${user.username} is available on Tuesday`);
                 availability.tuesday.push(userData);
             }
             if (user.workSchedule.wednesday !== 'No trabaja' && !onVacation(daysOfWeek[2])) {
-                // console.log(`User ${user.username} is available on Wednesday`);
                 availability.wednesday.push(userData);
             }
             if (user.workSchedule.thursday !== 'No trabaja' && !onVacation(daysOfWeek[3])) {
-                // console.log(`User ${user.username} is available on Thursday`);
                 availability.thursday.push(userData);
             }
             if (user.workSchedule.friday !== 'No trabaja' && !onVacation(daysOfWeek[4])) {
-                // console.log(`User ${user.username} is available on Friday`);
                 availability.friday.push(userData);
             }
         });
 
-        // console.log('Final Availability:', availability);
         res.status(200).json(availability);
     } catch (error) {
         console.error('Error:', error);
