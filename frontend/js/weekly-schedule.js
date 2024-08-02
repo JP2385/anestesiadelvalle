@@ -278,6 +278,7 @@ document.addEventListener('DOMContentLoaded', async function() {
     async function handleSelectChange(event) {
         const select = event.target;
         const selectedUserId = select.value;
+        const originalValue = select.getAttribute('data-original-value');
         const dayIndex = select.closest('td').cellIndex - 1;
         const selects = document.querySelectorAll(`td:nth-child(${dayIndex + 2}) select`);
     
@@ -292,9 +293,13 @@ document.addEventListener('DOMContentLoaded', async function() {
     
             if (userAlreadyAssigned) {
                 alert('El usuario que se intenta asignar ya tiene otro lugar asignado en este día.');
-                select.value = '';
+                select.value = originalValue; // Restaurar el valor original
+                return; // Salir de la función
             }
         }
+    
+        // Actualizar el valor original del select
+        select.setAttribute('data-original-value', selectedUserId);
     
         if (select.value === '') {
             select.classList.add('default');
@@ -306,10 +311,11 @@ document.addEventListener('DOMContentLoaded', async function() {
     
         await compareAvailabilitiesForEachDay(dayIndex);
         autoAssignReportBgColorsUpdate(dayIndex);
-    }    
-
+    }
+    
     document.querySelectorAll('select').forEach(select => {
         select.classList.add('default');
+        select.setAttribute('data-original-value', select.value); // Inicializar el valor original
         select.addEventListener('change', handleSelectChange);
     });
 });

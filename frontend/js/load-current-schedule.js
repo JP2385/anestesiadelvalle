@@ -24,8 +24,9 @@ document.addEventListener('DOMContentLoaded', () => {
                         if (assignment && assignment.user !== 'Select user') {
                             // Crear y seleccionar la opción correcta en el select
                             const option = document.createElement('option');
-                            option.value = assignment.user;
+                            option.value = assignment.userId; // Asigna el ID del usuario
                             option.textContent = assignment.user;
+                            option.setAttribute('data-username', assignment.username); // Asigna el username como data-attribute
                             option.selected = true;
                             select.appendChild(option);
                         }

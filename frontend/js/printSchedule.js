@@ -43,33 +43,38 @@ document.addEventListener('DOMContentLoaded', () => {
         const assignments = {};
         const scheduleBody = document.getElementById('schedule-body');
         const rows = scheduleBody.getElementsByTagName('tr');
-
+    
         for (let row of rows) {
             const workSiteElement = row.querySelector('.work-site');
             if (workSiteElement) {
                 const workSite = workSiteElement.textContent.trim();
                 const selects = row.querySelectorAll('select');
-
+    
                 selects.forEach((select, index) => {
                     const day = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday'][index];
-                    const selectedUser = select.options[select.selectedIndex].text;
-
+                    const selectedOption = select.options[select.selectedIndex];
+                    const selectedUser = selectedOption.text;
+                    const userId = selectedOption.value;
+                    const username = selectedOption.getAttribute('data-username');
+    
                     if (!assignments[day]) {
                         assignments[day] = [];
                     }
-
+    
                     if (selectedUser !== "") {
                         assignments[day].push({
                             workSite: workSite,
-                            user: selectedUser
+                            user: selectedUser,
+                            userId: userId,
+                            username: username
                         });
                     }
                 });
             }
         }
-
+    
         return assignments;
-    }
+    }    
 
     function collectDayHeaders() {
         const dayHeaders = {};
