@@ -1,7 +1,7 @@
 import { jwtDecode } from 'jwt-decode';
 
 document.addEventListener('DOMContentLoaded', function() {
-    const maxIdleTimePC = 10 * 1000; 
+    const maxIdleTimePC = 60 * 60 * 1000; 
     let idleTime = 0;
 
     function isMobileDevice() {
