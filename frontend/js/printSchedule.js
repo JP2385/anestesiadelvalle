@@ -28,6 +28,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
                 if (response.ok) {
                     console.log('Datos guardados correctamente en el backend');
+                    // Redirigir a print-view.html
+                    window.location.href = 'print-view.html';
                 } else {
                     console.error('Error al guardar los datos en la base de datos');
                 }
