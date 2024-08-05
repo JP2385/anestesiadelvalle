@@ -64,19 +64,23 @@ function transformAssignments(assignments) {
     const userAssignments = {};
 
     Object.keys(assignments).forEach(day => {
-        assignments[day].forEach(assignment => {
-            const { user, workSite } = assignment;
+        if (Array.isArray(assignments[day])) {
+            assignments[day].forEach(assignment => {
+                const { user, workSite } = assignment;
 
-            if (!userAssignments[user]) {
-                userAssignments[user] = {};
-            }
+                if (!userAssignments[user]) {
+                    userAssignments[user] = {};
+                }
 
-            if (!userAssignments[user][day]) {
-                userAssignments[user][day] = [];
-            }
+                if (!userAssignments[user][day]) {
+                    userAssignments[user][day] = [];
+                }
 
-            userAssignments[user][day].push(workSite);
-        });
+                userAssignments[user][day].push(workSite);
+            });
+        } else {
+            console.error(`Expected assignments[${day}] to be an array, but got:`, assignments[day]);
+        }
     });
 
     return userAssignments;

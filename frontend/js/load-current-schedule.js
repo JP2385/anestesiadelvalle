@@ -1,3 +1,5 @@
+import { updateSelectColors } from './updateSelectColors.js';
+
 document.addEventListener('DOMContentLoaded', () => {
     const apiUrl = window.location.hostname === 'localhost' ? 'http://localhost:3000' : 'https://adv-37d5b772f5fd.herokuapp.com';
     
@@ -35,8 +37,11 @@ document.addEventListener('DOMContentLoaded', () => {
                             select.disabled = config.disabled; // Aplicar configuración de enabled/disabled
                         }
                     });
-                for (let i = 0; i < 5; i++) {
-                }
+
+                    // Llamar a updateSelectColors para cada día de la semana
+                    for (let i = 0; i < 5; i++) {
+                        updateSelectColors(i, assignments); // Asegúrate de que `assignments` está disponible
+                    }
                 }
             }
         })
