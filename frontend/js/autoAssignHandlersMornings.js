@@ -1,4 +1,3 @@
-import { updateSelectBackgroundColors } from './assignUtils.js';
 import { autoAssignMorningWorkersByDay } from './autoAssignDayFunctions.js';
 
 export async function autoAssignMorningsByDay(apiUrl, dayIndex, availability) {
@@ -13,7 +12,6 @@ export async function autoAssignMorningsByDay(apiUrl, dayIndex, availability) {
 
         const availableUsers = availability[dayName];
         autoAssignMorningWorkersByDay(dayIndex, availableUsers, dayName);
-        updateSelectBackgroundColors();
     } catch (error) {
         alert('Hubo un problema con la solicitud: ' + error.message);
     }

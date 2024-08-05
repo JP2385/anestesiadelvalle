@@ -440,14 +440,14 @@ export async function countAssignmentsByDay() {
     return { counts, contents };
 }
 
-export async function countEnabledSelectsByDay() {
+export function countEnabledSelectsByDay() {
     const days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'];
     const counts = days.map(() => 0);
 
     const table = document.querySelector('table#schedule-assistant');
     if (!table) {
         console.error("Table with id 'schedule-assistant' not found");
-        return;
+        return { counts };
     }
 
     const rows = table.querySelectorAll('tbody tr');
@@ -466,6 +466,7 @@ export async function countEnabledSelectsByDay() {
     });
 
     updateSiteCounts(counts);
+    return { counts };
 }
 
 function updateSiteCounts(counts) {

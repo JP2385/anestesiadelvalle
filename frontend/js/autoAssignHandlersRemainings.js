@@ -13,7 +13,6 @@ export async function autoAssignRemainingsByDay(apiUrl, dayIndex, availability) 
 
         const availableUsers = availability[dayName];
         autoAssignRemainingSlotsByDay(dayIndex, availableUsers);
-        updateSelectBackgroundColors();
     } catch (error) {
         alert('Hubo un problema con la solicitud: ' + error.message);
     }

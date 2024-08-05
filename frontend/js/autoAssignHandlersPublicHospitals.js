@@ -24,9 +24,6 @@ export async function autoAssignPublicHospitalsByDay(apiUrl, dayIndex, availabil
         assignSpecificUsersByDay(dayIndex, lburgueñoScheme, lburgueño);
         assignSpecificUsersByDay(dayIndex, sdegreefScheme, sdegreef);
 
-        // Actualizar colores de fondo después de la asignación automática
-        updateSelectBackgroundColors();
-
     } catch (error) {
         alert('Hubo un problema con la solicitud: ' + error.message);
     }

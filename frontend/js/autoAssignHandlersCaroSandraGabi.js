@@ -1,4 +1,4 @@
-import { getWeekNumber, updateSelectBackgroundColors } from './assignUtils.js';
+import { getWeekNumber} from './assignUtils.js';
 import { assignSpecificUsersByDay } from './autoAssignDayFunctions.js';
 import { getWorkSchemes } from './workSchemes.js';
 
@@ -28,8 +28,6 @@ export async function autoAssignCaroSandraGabiByDay(apiUrl, dayIndex, availabili
         } else {
             console.error('ggudino not found in availability');
         }
-
-        updateSelectBackgroundColors();
 
     } catch (error) {
         alert('Hubo un problema con la solicitud: ' + error.message);

@@ -82,6 +82,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 });
             }
         }
+    
+        console.log('Recuento de días largos:', longDaysCount); // Log para verificar el recuento final
         return { assignments, longDaysCount };
     }
 

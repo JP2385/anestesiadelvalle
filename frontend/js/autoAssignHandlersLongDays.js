@@ -13,7 +13,6 @@ export async function autoAssignLongDaysByDay(apiUrl, dayIndex, availability) {
 
         const availableUsers = availability[dayName];
         autoAssignLongDayWorkersByDay(dayIndex, availableUsers);
-        updateSelectBackgroundColors();
     } catch (error) {
         alert('Hubo un problema con la solicitud: ' + error.message);
     }

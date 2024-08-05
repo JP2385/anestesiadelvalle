@@ -11,30 +11,9 @@ import { countAssignmentsByDay } from './autoAssignFunctions.js';
 import { compareAvailabilitiesForEachDay } from './compareArrays.js';
 import { validateAssignmentForDay } from './autoAssignValidation.js';
 import { updateSelectColors } from './updateSelectColors.js';
+import { countEnabledSelectsByDay } from './autoAssignFunctions.js'
 
-export async function handleRandomizeButtonClick(apiUrl, dayIndex) {
-    // Obtener la disponibilidad una sola vez
-    let availability;
-    try {
-        const response = await fetch(`${apiUrl}/availability`, {
-            method: 'GET',
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': 'Bearer ' + localStorage.getItem('token')
-            }
-        });
-
-        if (response.ok) {
-            availability = await response.json();
-        } else {
-            const errorData = await response.json();
-            alert(`Error: ${errorData.message}`);
-            return;
-        }
-    } catch (error) {
-        alert('Hubo un problema con la solicitud: ' + error.message);
-        return;
-    }
+export async function handleRandomizeButtonClick(apiUrl, availability, dayIndex) {
 
     // Validar antes de iterar
     const isValid = await validateAssignmentForDay(dayIndex);
@@ -43,8 +22,13 @@ export async function handleRandomizeButtonClick(apiUrl, dayIndex) {
     }
 
     const assignments = [];
+    const { counts: enabledSelectsCount } = countEnabledSelectsByDay();
+    const maxAssignments = enabledSelectsCount[dayIndex];
+    console.log(`Max assignments for day index ${dayIndex}: ${maxAssignments}`);
 
-    for (let i = 1; i <= 20; i++) {
+    let reachedMaxIterations = false;
+
+    for (let i = 1; i <= 100; i++) {
         unassignUsersByDay(dayIndex);
         await autoAssignCaroSandraGabiByDay(apiUrl, dayIndex, availability);
         await autoAssignPublicHospitalsByDay(apiUrl, dayIndex, availability);
@@ -56,6 +40,18 @@ export async function handleRandomizeButtonClick(apiUrl, dayIndex) {
         const { counts } = await countAssignmentsByDay();
         const assignmentCount = Object.values(counts)[dayIndex];
         assignments.push({ iteration: i + 1, data: collectAssignmentsData(dayIndex), assignmentCount });
+
+        if (assignmentCount >= maxAssignments) {
+            console.log(`All available work sites filled for day index ${dayIndex} after ${i} iterations.`);
+            break;
+        }
+        if (i === 100) {
+            reachedMaxIterations = true;
+        }
+    }
+
+    if (reachedMaxIterations) {
+        console.log(`Reached the maximum number of iterations (100) for day index ${dayIndex}.`);
     }
 
     const { bestAssignments } = findBestIterationFromMemory(assignments);
@@ -134,7 +130,7 @@ function applyBestAssignmentsToDOM(dayIndex, bestAssignments) {
 function clearLocalStorageForDay(dayIndex) {
     const dayNames = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday'];
     const dayName = dayNames[dayIndex];
-    for (let i = 1; i <= 20; i++) {
+    for (let i = 1; i <= 100; i++) {
         const storageKey = `assignments_${dayName}_iteration_${i}`;
         localStorage.removeItem(storageKey);
     }

@@ -13,7 +13,6 @@ export async function autoAssignAfternoonsByDay(apiUrl, dayIndex, availability) 
 
         const availableUsers = availability[dayName];
         autoAssignAfternoonWorkersByDay(dayIndex, availableUsers);
-        updateSelectBackgroundColors();
     } catch (error) {
         alert('Hubo un problema con la solicitud: ' + error.message);
     }
