@@ -1,4 +1,3 @@
-// backend/index.js
 require('dotenv').config({ path: './backend/.env' });
 
 const express = require('express');
@@ -8,6 +7,8 @@ const cors = require('cors');
 const authRoutes = require('./src/app/routes/authRoutes');
 const scheduleRoutes = require('./src/app/routes/scheduleRoutes');
 const path = require('path');
+const cron = require('node-cron');
+const Schedule = require('./src/app/models/scheduleModel'); // Asegúrate de que la ruta sea correcta
 const { getUsersAvailability } = require('./src/app/controllers/availabilityController');
 
 const app = express();

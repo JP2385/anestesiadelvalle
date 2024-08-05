@@ -10,9 +10,9 @@ import { autoAssignRemainingsByDay } from './autoAssignHandlersRemainings.js';
 import { countAssignmentsByDay } from './autoAssignFunctions.js';
 import { compareAvailabilitiesForEachDay } from './compareArrays.js';
 import { validateAssignmentForDay } from './autoAssignValidation.js';
+import { updateSelectColors } from './updateSelectColors.js';
 
 export async function handleRandomizeButtonClick(apiUrl, dayIndex) {
-
     // Obtener la disponibilidad una sola vez
     let availability;
     try {
@@ -59,7 +59,7 @@ export async function handleRandomizeButtonClick(apiUrl, dayIndex) {
     }
 
     const { bestAssignments } = findBestIterationFromMemory(assignments);
-    applyBestAssignmentsToDOM(dayIndex, bestAssignments);
+    await applyBestAssignmentsToDOM(dayIndex, bestAssignments);
 
     // Verificar el conteo de asignaciones después de aplicar las mejores asignaciones
     const { counts: finalCounts } = await countAssignmentsByDay();
@@ -68,6 +68,9 @@ export async function handleRandomizeButtonClick(apiUrl, dayIndex) {
 
     compareAvailabilitiesForEachDay(dayIndex);
     clearLocalStorageForDay(dayIndex); // Limpia el localStorage al final de la ejecución
+
+    // Actualizar los colores de los select
+    updateSelectColors(dayIndex, availability);
 }
 
 function collectAssignmentsData(dayIndex) {

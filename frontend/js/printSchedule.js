@@ -16,6 +16,8 @@ document.addEventListener('DOMContentLoaded', () => {
         console.log('Datos recolectados:', { timestamp, assignments, dayHeaders, selectConfig });
 
         if (assignments) {
+            console.log('Recuento de días largos:', assignments.longDaysCount); // Imprimir recuento de días largos en la consola
+
             try {
                 // Enviar los datos al backend
                 const response = await fetch(`${apiUrl}/schedule/save-schedule`, {
@@ -29,7 +31,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (response.ok) {
                     console.log('Datos guardados correctamente en el backend');
                     // Redirigir a print-view.html
-                    window.location.href = 'print-view.html';
+                    // window.location.href = 'print-view.html';
                 } else {
                     console.error('Error al guardar los datos en la base de datos');
                 }
@@ -41,26 +43,35 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function collectAssignments() {
         const assignments = {};
+        const longDaysCount = {}; // Para almacenar el recuento de días largos
         const scheduleBody = document.getElementById('schedule-body');
         const rows = scheduleBody.getElementsByTagName('tr');
-    
+
         for (let row of rows) {
             const workSiteElement = row.querySelector('.work-site');
             if (workSiteElement) {
                 const workSite = workSiteElement.textContent.trim();
                 const selects = row.querySelectorAll('select');
-    
+
                 selects.forEach((select, index) => {
                     const day = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday'][index];
                     const selectedOption = select.options[select.selectedIndex];
                     const selectedUser = selectedOption.text;
                     const userId = selectedOption.value;
-                    const username = selectedOption.getAttribute('data-username');
-    
+                    const username = selectedOption.getAttribute('data-username') || selectedUser;
+
+                    // Saltar si el usuario seleccionado es "Select user"
+                    if (selectedUser === "Select user") {
+                        console.log(`Skipping default option for ${workSite} on ${day}`);
+                        return;
+                    }
+
+                    console.log(`Selected User: ${selectedUser}, User ID: ${userId}, Username: ${username}`);
+
                     if (!assignments[day]) {
                         assignments[day] = [];
                     }
-    
+
                     if (selectedUser !== "") {
                         assignments[day].push({
                             workSite: workSite,
@@ -68,13 +79,26 @@ document.addEventListener('DOMContentLoaded', () => {
                             userId: userId,
                             username: username
                         });
+
+                        // Contar los días largos asignados
+                        if (workSite.toLowerCase().includes('largo')) {
+                            if (!longDaysCount[userId]) {
+                                longDaysCount[userId] = { username: username, count: 0 };
+                            }
+                            longDaysCount[userId].count++;
+                        }
                     }
                 });
             }
         }
-    
+
+        // Añadir el recuento de días largos a las asignaciones
+        assignments.longDaysCount = longDaysCount;
+
+        console.log('Recuento de días largos:', longDaysCount); // Log para verificar el recuento final
         return assignments;
-    }    
+    }
+     
 
     function collectDayHeaders() {
         const dayHeaders = {};

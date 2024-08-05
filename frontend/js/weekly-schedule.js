@@ -7,6 +7,7 @@ import { compareAvailabilities } from './compareArrays.js';
 import { validateAllDays } from './autoAssignValidation.js';
 import { autoAssignReportBgColorsUpdate } from './autoAssignReportBgColorsUpdate.js';
 import { compareAvailabilitiesForEachDay } from './compareArrays.js';
+import { updateSelectColors } from './updateSelectColors.js';
 
 document.addEventListener('DOMContentLoaded', async function() {
     const apiUrl = window.location.hostname === 'localhost' ? 'http://localhost:3000' : 'https://adv-37d5b772f5fd.herokuapp.com';
@@ -45,6 +46,8 @@ document.addEventListener('DOMContentLoaded', async function() {
             await autoAssignPublicHospitalsByDay(apiUrl, dayIndex, availability);
             await countAssignmentsByDay(dayIndex);
             autoAssignReportBgColorsUpdate(dayIndex);
+            updateSelectColors(dayIndex, availability);
+            
         } finally {
             hideSpinner();
         }
@@ -163,7 +166,7 @@ document.addEventListener('DOMContentLoaded', async function() {
                     select.innerHTML = '<option value="">Select user</option>';
     
                     const availableUsers = availability[dayName];
-
+    
                     availableUsers.forEach(user => {
                         if (user.worksInCmacOnly && !workSite.includes('CMAC')) return;
     
@@ -200,6 +203,15 @@ document.addEventListener('DOMContentLoaded', async function() {
                         option.value = user._id || user.username; // Asegurarse de usar user._id si está disponible
                         option.textContent = user.username;
     
+                        // Asignar clases CSS según el horario de trabajo
+                        if (user.workSchedule[dayName] === 'Mañana') {
+                            option.classList.add('option-morning');
+                        } else if (user.workSchedule[dayName] === 'Tarde') {
+                            option.classList.add('option-afternoon');
+                        } else if (user.workSchedule[dayName] === 'Variable') {
+                            option.classList.add('option-long');
+                        }
+    
                         if (workSite.includes('Fundación Q1') || workSite.includes('Fundación Hemo')) {
                             if (user.doesCardio) {
                                 select.appendChild(option);
@@ -227,6 +239,7 @@ document.addEventListener('DOMContentLoaded', async function() {
             alert('Hubo un problema con la solicitud: ' + error.message);
         }
     }
+    
     
     function initializeLockButtons() {
         const droppableCells = document.querySelectorAll('.droppable');
@@ -301,17 +314,42 @@ document.addEventListener('DOMContentLoaded', async function() {
         // Actualizar el valor original del select
         select.setAttribute('data-original-value', selectedUserId);
     
+        // Eliminar las clases CSS previas
+        select.classList.remove('option-morning', 'option-afternoon', 'option-long', 'default', 'assigned');
+    
         if (select.value === '') {
             select.classList.add('default');
-            select.classList.remove('assigned');
         } else {
             select.classList.add('assigned');
-            select.classList.remove('default');
+            
+            // Obtener la disponibilidad del usuario seleccionado
+            const availability = await fetch(`${apiUrl}/availability`, {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': 'Bearer ' + localStorage.getItem('token')
+                }
+            }).then(response => response.json());
+    
+            // Obtener el horario de trabajo del usuario seleccionado
+            const dayName = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday'][dayIndex];
+            const user = availability[dayName].find(user => user._id === selectedUserId || user.username === selectedUserId);
+    
+            // Asignar la clase CSS correspondiente al horario de trabajo
+            if (user) {
+                if (user.workSchedule[dayName] === 'Mañana') {
+                    select.classList.add('option-morning');
+                } else if (user.workSchedule[dayName] === 'Tarde') {
+                    select.classList.add('option-afternoon');
+                } else if (user.workSchedule[dayName] === 'Variable') {
+                    select.classList.add('option-long');
+                }
+            }
         }
     
         await compareAvailabilitiesForEachDay(dayIndex);
         autoAssignReportBgColorsUpdate(dayIndex);
-    }
+    }    
     
     document.querySelectorAll('select').forEach(select => {
         select.classList.add('default');

@@ -35,6 +35,8 @@ document.addEventListener('DOMContentLoaded', () => {
                             select.disabled = config.disabled; // Aplicar configuración de enabled/disabled
                         }
                     });
+                for (let i = 0; i < 5; i++) {
+                }
                 }
             }
         })

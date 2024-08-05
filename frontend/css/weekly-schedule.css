@@ -170,12 +170,25 @@ select {
     margin-left: 5px;
 }
 
-select.default {
+/* select.default {
     background-color: rgb(254, 254, 254);
 }
 
 select.assigned {
     background-color: rgb(238, 230, 144); 
+} */
+
+/* Colores para el select */
+.select-morning {
+    background-color: rgb(144, 202, 238); /* Color azul análogo */
+}
+
+.select-afternoon {
+    background-color: rgb(144, 238, 144); /* Color verde análogo */
+}
+
+.select-long {
+    background-color: rgb(238, 230, 144); /* Color amarillo para largo */
 }
 
 .inform {
@@ -217,4 +230,16 @@ select.assigned {
 
 .hidden {
     display: none;
+}
+
+.option-morning {
+    background-color: rgb(144, 202, 238); /* Color azul análogo */
+}
+
+.option-afternoon {
+    background-color: rgb(144, 238, 144); /* Color verde análogo */
+}
+
+.option-long {
+    background-color: rgb(238, 230, 144); /* Color amarillo para largo */
 }
