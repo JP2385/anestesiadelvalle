@@ -1,16 +1,24 @@
 document.addEventListener('DOMContentLoaded', async () => {
     const apiUrl = window.location.hostname === 'localhost' ? 'http://localhost:3000' : 'https://adv-37d5b772f5fd.herokuapp.com';
 
-    // Fetch users and long days count data
+    console.log('Fetching users...');
     const users = await fetchUsers(apiUrl);
-    const lastSchedule = await fetchLongDaysCount(apiUrl);
-    const longDaysCount = lastSchedule.assignments.longDaysCount || {};
-    const weekYear = getWeekYearFromSchedule(lastSchedule);
+    console.log('Users fetched:', users);
 
-    // Generate table headers
+    console.log('Fetching last schedule...');
+    const lastSchedule = await fetchLongDaysCount(apiUrl);
+    console.log('Last schedule fetched:', lastSchedule);
+
+    const longDaysCount = lastSchedule.longDaysCount || {};
+    console.log('Long days count:', longDaysCount);
+
+    const weekYear = getWeekYearFromSchedule(lastSchedule);
+    console.log('Week/Year from schedule:', weekYear);
+
+    console.log('Generating table headers...');
     generateTableHeaders(users);
 
-    // Generate table rows
+    console.log('Generating table rows...');
     generateTableRows(longDaysCount, users, weekYear);
 });
 
@@ -29,11 +37,11 @@ async function fetchUsers(apiUrl) {
             return await response.json();
         } else {
             const errorData = await response.json();
-            console.error(`Error: ${errorData.message}`);
+            console.error(`Error fetching users: ${errorData.message}`);
             return [];
         }
     } catch (error) {
-        console.error('Hubo un problema con la solicitud: ' + error.message);
+        console.error('Error fetching users:', error);
         return [];
     }
 }
@@ -53,7 +61,7 @@ async function fetchLongDaysCount(apiUrl) {
             return await response.json();
         } else {
             const errorData = await response.json();
-            console.error(`Error: ${errorData.message}`);
+            console.error(`Error fetching last schedule: ${errorData.message}`);
             return {};
         }
     } catch (error) {

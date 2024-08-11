@@ -47,15 +47,17 @@ document.addEventListener('DOMContentLoaded', async function() {
 
     autoAssignButton.addEventListener('click', async () => {
         showSpinner();
-        
         try {
             const isValid = await validateAllDays();
-            if (!isValid) return;
+            if (!isValid) {
+                hideSpinner();
+                return;
+            }
     
             const allLongDaysCounts = [];
     
             // Iterar 20 veces
-            for (let i = 0; i < 20; i++) {
+            for (let i = 0; i < 200; i++) {
                 // Crear una array de promesas para ejecutar handleRandomizeButtonClick simultáneamente para todos los días
                 const promises = dayIndices.map(dayIndex =>
                     handleRandomizeButtonClickForWeek(apiUrl, dayIndex, availability)
@@ -69,7 +71,7 @@ document.addEventListener('DOMContentLoaded', async function() {
                 allLongDaysCounts.push(longDaysCount);
             }
     
-            // Seleccionar la configuración con menor dispersión de días largos
+            // Seleccionar la configuración con menor número de usuarios con dos días largos
             const bestConfiguration = selectBestConfiguration(allLongDaysCounts);
             console.log('Best configuration selected:', bestConfiguration);
     

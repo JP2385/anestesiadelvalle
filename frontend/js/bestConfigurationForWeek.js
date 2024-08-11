@@ -28,23 +28,28 @@ export function countLongDays() {
 }
 
 export function selectBestConfiguration(allLongDaysCounts) {
-    let minTwoDayUsers = Infinity;
-    let bestConfigurationIndex = null;
+    let minTwoLongDaysUsers = Infinity;
+    let bestConfigurations = [];
 
     allLongDaysCounts.forEach((longDaysCount, index) => {
-        const twoDayUsersCount = countTwoDayUsers(longDaysCount);
-
-        if (twoDayUsersCount < minTwoDayUsers) {
-            minTwoDayUsers = twoDayUsersCount;
-            bestConfigurationIndex = index;
+        const twoLongDaysUsers = countUsersWithTwoLongDays(longDaysCount);
+        if (twoLongDaysUsers < minTwoLongDaysUsers) {
+            minTwoLongDaysUsers = twoLongDaysUsers;
+            bestConfigurations = [index]; // Reiniciar la lista con la nueva mejor configuración
+        } else if (twoLongDaysUsers === minTwoLongDaysUsers) {
+            bestConfigurations.push(index); // Añadir la configuración a la lista
         }
     });
 
-    return allLongDaysCounts[bestConfigurationIndex];
+    console.log(`Best configurations with ${minTwoLongDaysUsers} users having two long days:`, bestConfigurations);
+
+    // Seleccionar una configuración al azar de las mejores configuraciones
+    const randomIndex = bestConfigurations[Math.floor(Math.random() * bestConfigurations.length)];
+    console.log(`Selected configuration at index: ${randomIndex}`);
+    return allLongDaysCounts[randomIndex];
 }
 
-// Función para contar usuarios con 2 días largos
-function countTwoDayUsers(longDaysCount) {
+function countUsersWithTwoLongDays(longDaysCount) {
     return Object.values(longDaysCount).filter(user => user.count === 2).length;
 }
 

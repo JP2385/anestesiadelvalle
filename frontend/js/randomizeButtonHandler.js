@@ -1,5 +1,3 @@
-// randomizeButtonHandler.js
-
 import { unassignUsersByDay } from './autoAssignDayFunctions.js';
 import { autoAssignCaroSandraGabiByDay } from './autoAssignHandlersCaroSandraGabi.js';
 import { autoAssignPublicHospitalsByDay } from './autoAssignHandlersPublicHospitals.js';
@@ -18,13 +16,13 @@ export async function handleRandomizeButtonClick(apiUrl, availability, dayIndex)
     // Validar antes de iterar
     const isValid = await validateAssignmentForDay(dayIndex);
     if (!isValid) {
+        console.log(`Validation failed for day index: ${dayIndex}`);
         return;
     }
 
     const assignments = [];
     const { counts: enabledSelectsCount } = countEnabledSelectsByDay();
     const maxAssignments = enabledSelectsCount[dayIndex];
-    console.log(`Max assignments for day index ${dayIndex}: ${maxAssignments}`);
 
     let reachedMaxIterations = false;
 
@@ -39,10 +37,9 @@ export async function handleRandomizeButtonClick(apiUrl, availability, dayIndex)
 
         const { counts } = await countAssignmentsByDay();
         const assignmentCount = Object.values(counts)[dayIndex];
-        assignments.push({ iteration: i + 1, data: collectAssignmentsData(dayIndex), assignmentCount });
+        assignments.push({ iteration: i, data: collectAssignmentsData(dayIndex), assignmentCount });
 
         if (assignmentCount >= maxAssignments) {
-            console.log(`All available work sites filled for day index ${dayIndex} after ${i} iterations.`);
             break;
         }
         if (i === 100) {
@@ -51,22 +48,24 @@ export async function handleRandomizeButtonClick(apiUrl, availability, dayIndex)
     }
 
     if (reachedMaxIterations) {
-        console.log(`Reached the maximum number of iterations (100) for day index ${dayIndex}.`);
+        console.log(`Reached max iterations for day index ${dayIndex}.`);
     }
+
+    const bestAssignment = assignments.reduce((max, assignment) => 
+        assignment.assignmentCount > max.assignmentCount ? assignment : max, 
+        { assignmentCount: -1 }
+    );
 
     const { bestAssignments } = findBestIterationFromMemory(assignments);
     await applyBestAssignmentsToDOM(dayIndex, bestAssignments);
-
-    // Verificar el conteo de asignaciones después de aplicar las mejores asignaciones
-    const { counts: finalCounts } = await countAssignmentsByDay();
-    const finalAssignmentCount = Object.values(finalCounts)[dayIndex];
-    console.log(`Final assignment count for day index ${dayIndex}: ${finalAssignmentCount}`);
 
     compareAvailabilitiesForEachDay(dayIndex);
     clearLocalStorageForDay(dayIndex); // Limpia el localStorage al final de la ejecución
 
     // Actualizar los colores de los select
     updateSelectColors(dayIndex, availability);
+
+    return bestAssignment;
 }
 
 function collectAssignmentsData(dayIndex) {

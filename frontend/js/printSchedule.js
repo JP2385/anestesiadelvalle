@@ -25,7 +25,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
                 if (response.ok) {
                     // Redirigir a print-view.html
-                    // window.location.href = 'print-view.html';
+                    window.location.href = 'print-view.html';
                 } else {
                     console.error('Error al guardar los datos en la base de datos');
                 }
@@ -83,7 +83,6 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         }
     
-        console.log('Recuento de días largos:', longDaysCount); // Log para verificar el recuento final
         return { assignments, longDaysCount };
     }
 

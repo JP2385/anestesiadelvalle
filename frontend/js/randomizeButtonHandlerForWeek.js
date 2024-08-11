@@ -1,3 +1,5 @@
+// randomizeButtonHandlerForWeek.js
+
 import { unassignUsersByDay } from './autoAssignDayFunctions.js';
 import { autoAssignCaroSandraGabiByDay } from './autoAssignHandlersCaroSandraGabi.js';
 import { autoAssignPublicHospitalsByDay } from './autoAssignHandlersPublicHospitals.js';
@@ -9,13 +11,10 @@ import { countAssignmentsByDay } from './autoAssignFunctions.js';
 import { countEnabledSelectsByDay } from './autoAssignFunctions.js';
 
 export async function handleRandomizeButtonClickForWeek(apiUrl, dayIndex, availability) {
-    console.log(`Handling randomize button click for day index: ${dayIndex}`);
-    console.log('Availability:', availability);
 
     const assignments = [];
     const enabledSelectsCount = countEnabledSelectsByDay();
     const maxAssignments = enabledSelectsCount.counts[dayIndex];
-    console.log(`Max assignments for day index ${dayIndex}: ${maxAssignments}`);
 
     let reachedMaxIterations = false;
 
@@ -33,7 +32,6 @@ export async function handleRandomizeButtonClickForWeek(apiUrl, dayIndex, availa
         assignments.push({ iteration: i + 1, data: collectAssignmentsData(dayIndex), assignmentCount });
 
         if (assignmentCount >= maxAssignments) {
-            console.log(`All available work sites filled for day index ${dayIndex} after ${i} iterations.`);
             break;
         }
         if (i === 100) {
@@ -42,10 +40,15 @@ export async function handleRandomizeButtonClickForWeek(apiUrl, dayIndex, availa
     }
 
     if (reachedMaxIterations) {
-        console.log(`Reached the maximum number of iterations (100) for day index ${dayIndex}.`);
     }
 
-    return assignments;
+    // Find the assignment with the highest assignmentCount
+    const bestAssignment = assignments.reduce((max, assignment) => 
+        assignment.assignmentCount > max.assignmentCount ? assignment : max, 
+        { assignmentCount: -1 }
+    );
+
+    return bestAssignment;
 }
 
 function collectAssignmentsData(dayIndex) {
