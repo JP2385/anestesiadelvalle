@@ -56,18 +56,18 @@ document.addEventListener('DOMContentLoaded', async function() {
     
             const allLongDaysCounts = [];
     
-            // Iterar 20 veces
+            // Iterar 200 veces
             for (let i = 0; i < 200; i++) {
                 // Crear una array de promesas para ejecutar handleRandomizeButtonClick simultáneamente para todos los días
                 const promises = dayIndices.map(dayIndex =>
                     handleRandomizeButtonClickForWeek(apiUrl, dayIndex, availability)
                 );
-    
                 // Esperar a que todas las promesas se resuelvan
                 await Promise.all(promises);
     
                 // Contar los días largos después de cada iteración
                 const longDaysCount = countLongDays();
+                console.log(`Resultado de la iteración ${i + 1}:`, longDaysCount);
                 allLongDaysCounts.push(longDaysCount);
             }
     
