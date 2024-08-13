@@ -9,6 +9,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const assignments = data.assignments;
             const dayHeaders = data.dayHeaders;
             const timestamp = data.timestamp;
+            const selectConfig = data.selectConfig; // Obtener selectConfig
 
             // Limpiar los encabezados de cualquier símbolo de actualización
             const cleanedDayHeaders = {
@@ -19,8 +20,14 @@ document.addEventListener('DOMContentLoaded', () => {
                 friday: dayHeaders.friday.replace(/🔄/g, '')
             };
 
-            // Generar la tabla de resumen
-            let summaryTable = generateSummaryTable(assignments, cleanedDayHeaders);
+            // Generar la tabla de resumen basada en selectConfig
+            let summaryTable = generateSummaryTable(cleanedDayHeaders, selectConfig.monday);
+
+            // Poblar la tabla con los assignments
+            populateAssignments(assignments, summaryTable);
+
+            // Eliminar filas vacías
+            removeEmptyRows(summaryTable);
 
             // Formatear la fecha de impresión
             const formattedTimestamp = formatTimestamp(timestamp);
@@ -68,7 +75,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
 });
 
-function generateSummaryTable(assignments, dayHeaders) {
+function generateSummaryTable(dayHeaders, selectConfig) {
     const table = document.createElement('table');
     const thead = document.createElement('thead');
     const tbody = document.createElement('tbody');
@@ -86,42 +93,59 @@ function generateSummaryTable(assignments, dayHeaders) {
     });
     thead.appendChild(headerRow);
 
-    // Crear las filas del cuerpo de la tabla basadas en las asignaciones
-    const workSites = [...new Set(Object.values(assignments).flat().map(a => a.workSite))];
+    selectConfig.forEach(config => {
+        const workSite = config.workSite;
+        const row = document.createElement('tr');
+        const workSiteCell = document.createElement('td');
+        workSiteCell.className = 'work-site';
+        workSiteCell.textContent = workSite;
+        row.appendChild(workSiteCell);
 
-    workSites.forEach(workSite => {
-        // Verificar si hay asignaciones para este sitio de trabajo en cualquier día de la semana
-        const hasAssignments = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday'].some(day => 
-            assignments[day]?.some(a => a.workSite === workSite && a.user !== 'Select user')
-        );
+        // Crear celdas vacías para cada día de la semana
+        ['monday', 'tuesday', 'wednesday', 'thursday', 'friday'].forEach(day => {
+            const cell = document.createElement('td');
+            row.appendChild(cell);
+        });
 
-        if (hasAssignments) {
-            const row = document.createElement('tr');
-            const workSiteCell = document.createElement('td');
-            workSiteCell.className = 'work-site';  // Añadir la clase 'work-site'
-            workSiteCell.textContent = workSite;
-            row.appendChild(workSiteCell);
-
-            ['monday', 'tuesday', 'wednesday', 'thursday', 'friday'].forEach(day => {
-                const cell = document.createElement('td');
-                const assignment = assignments[day]?.find(a => a.workSite === workSite);
-                if (assignment && assignment.user !== 'Select user') {
-                    cell.textContent = assignment.user;
-                    cell.style.backgroundColor = 'rgb(248, 240, 184)';
-                } else {
-                    cell.textContent = '';
-                }
-                row.appendChild(cell);
-            });
-
-            tbody.appendChild(row);
-        }
+        tbody.appendChild(row);
     });
 
     table.appendChild(thead);
     table.appendChild(tbody);
 
     return table;
+}
+
+function populateAssignments(assignments, table) {
+    const tbody = table.querySelector('tbody');
+    const rows = Array.from(tbody.getElementsByTagName('tr'));
+
+    rows.forEach(row => {
+        const workSiteCell = row.querySelector('.work-site');
+        const workSite = workSiteCell.textContent.trim();
+
+        ['monday', 'tuesday', 'wednesday', 'thursday', 'friday'].forEach((day, index) => {
+            const cell = row.getElementsByTagName('td')[index + 1]; // Saltar la primera celda (work-site)
+            const assignment = assignments[day]?.find(a => a.workSite === workSite);
+            if (assignment && assignment.user !== 'Select user') {
+                cell.textContent = assignment.user;
+                cell.style.backgroundColor = 'rgb(248, 240, 184)';
+            }
+        });
+    });
+}
+
+function removeEmptyRows(table) {
+    const tbody = table.querySelector('tbody');
+    const rows = Array.from(tbody.getElementsByTagName('tr'));
+
+    rows.forEach(row => {
+        const cells = Array.from(row.getElementsByTagName('td')).slice(1); // Excluir la celda work-site
+        const hasAssignment = cells.some(cell => cell.textContent.trim() !== '');
+        if (!hasAssignment) {
+            tbody.removeChild(row);
+        }
+    });
 }
 
 function applySeparators(table) {
@@ -139,7 +163,10 @@ function applySeparators(table) {
 
             if (i > 0) {  // Evitar separadores antes de la primera fila
                 if (firstWord !== previousFirstWord) {
+
                     // Insertar separador thick cuando cambia la primera palabra
+                    console.log(`Comparando: ${firstWord} con ${previousFirstWord}`);
+                    console.log('Insertando separador thick');
                     const separatorRow = document.createElement('tr');
                     const separatorCell = document.createElement('td');
                     separatorCell.className = 'separator-thick';
@@ -148,6 +175,8 @@ function applySeparators(table) {
                     tbody.insertBefore(separatorRow, rows[i]);
                 } else if (secondWord !== previousSecondWord) {
                     // Insertar separador thin cuando cambia solo la segunda palabra
+                    console.log(`Comparando: ${firstWord} con ${previousFirstWord}`);
+                    console.log('Insertando separador thin');
                     const separatorRow = document.createElement('tr');
                     const separatorCell = document.createElement('td');
                     separatorCell.className = 'separator-thin';
@@ -159,6 +188,8 @@ function applySeparators(table) {
 
             previousFirstWord = firstWord;
             previousSecondWord = secondWord;
+
+            
         }
     }
 

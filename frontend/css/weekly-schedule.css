@@ -44,7 +44,7 @@ td.droppable {
 }
 
 td.separator-thin {
-    border-top: 2px solid #ddd;
+    border-top: 1px solid #ddd;
     background-color: #fff;
     padding: 0;
     height: 0;
