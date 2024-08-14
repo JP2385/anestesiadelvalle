@@ -95,7 +95,10 @@ export function autoAssignMorningWorkersByDay(dayIndex, users) {
     shuffledSelects.forEach(select => {
         const workSite = select.closest('tr').querySelector('.work-site').innerText.toLowerCase();
 
-        if (workSite.includes('matutino') && (workSite.includes('imágenes') || workSite.includes('coi') || workSite.includes('heller') || workSite.includes('plottier') || workSite.includes('centenario')) && !select.value && !select.disabled) {
+        if (workSite.includes('matutino') 
+        && (workSite.includes('imágenes') || workSite.includes('coi') || workSite.includes('heller') 
+        || workSite.includes('plottier') || workSite.includes('centenario') || workSite.includes('castro')) 
+        && !select.value && !select.disabled) {
             const availableUsers = Array.from(select.options)
                 .filter(option => option.value && !Array.from(shuffledSelects).some(otherSelect => {
                     return otherSelect !== select && otherSelect.value === option.value && otherSelect.closest('td').cellIndex === dayColumnIndex;
@@ -113,7 +116,10 @@ export function autoAssignMorningWorkersByDay(dayIndex, users) {
                 const randomUser = availableUsers[Math.floor(Math.random() * availableUsers.length)];
                 select.value = randomUser._id;
             }
-        } else if (workSite.includes('matutino') && (workSite.includes('fundación') || workSite.includes('cmac') || workSite.includes('cipolletti')) && !select.value && !select.disabled) {
+        } else if (workSite.includes('matutino') 
+        && (workSite.includes('fundación') || workSite.includes('cmac') || workSite.includes('allen') 
+        || workSite.includes('cipolletti')) 
+        && !select.value && !select.disabled) {
             const availableUsers = Array.from(select.options)
                 .filter(option => option.value && !Array.from(shuffledSelects).some(otherSelect => {
                     return otherSelect !== select && otherSelect.value === option.value && otherSelect.closest('td').cellIndex === dayColumnIndex;
@@ -194,7 +200,10 @@ export function autoAssignAfternoonWorkersByDay(dayIndex, users) {
     shuffledSelects.forEach(select => {
         const workSite = select.closest('tr').querySelector('.work-site').innerText.toLowerCase();
 
-        if (workSite.includes('vespertino') && (workSite.includes('imágenes') || workSite.includes('coi') || workSite.includes('heller') || workSite.includes('plottier') || workSite.includes('centenario')) && !select.value && !select.disabled) {
+        if (workSite.includes('matutino') 
+            && (workSite.includes('imágenes') || workSite.includes('coi') || workSite.includes('heller') 
+            || workSite.includes('plottier') || workSite.includes('centenario') || workSite.includes('castro')) 
+            && !select.value && !select.disabled) {
             const availableUsers = Array.from(select.options)
                 .filter(option => option.value && !Array.from(shuffledSelects).some(otherSelect => {
                     return otherSelect !== select && otherSelect.value === option.value && otherSelect.closest('td').cellIndex === dayColumnIndex;
@@ -212,7 +221,10 @@ export function autoAssignAfternoonWorkersByDay(dayIndex, users) {
                 const randomUser = availableUsers[Math.floor(Math.random() * availableUsers.length)];
                 select.value = randomUser._id;
             }
-        } else if (workSite.includes('vespertino') && (workSite.includes('fundación') || workSite.includes('cmac') || workSite.includes('cipolletti')) && !select.value && !select.disabled) {
+        } else if (workSite.includes('vespertino') 
+            && (workSite.includes('fundación') || workSite.includes('cmac') || workSite.includes('allen') 
+            || workSite.includes('cipolletti')) 
+            && !select.value && !select.disabled) {
             const availableUsers = Array.from(select.options)
                 .filter(option => option.value && !Array.from(shuffledSelects).some(otherSelect => {
                     return otherSelect !== select && otherSelect.value === option.value && otherSelect.closest('td').cellIndex === dayColumnIndex;
@@ -293,7 +305,10 @@ export function autoAssignLongDayWorkersByDay(dayIndex, users) {
     shuffledSelects.forEach(select => {
         const workSite = select.closest('tr').querySelector('.work-site').innerText.toLowerCase();
 
-        if (workSite.includes('largo') && (workSite.includes('imágenes') || workSite.includes('centenario')) && !select.value && !select.disabled) {
+        if (workSite.includes('largo') 
+            && (workSite.includes('imágenes') || workSite.includes('coi') || workSite.includes('heller') 
+            || workSite.includes('plottier') || workSite.includes('centenario') || workSite.includes('castro')) 
+            && !select.value && !select.disabled) {
             const availableUsers = Array.from(select.options)
                 .filter(option => option.value && !Array.from(shuffledSelects).some(otherSelect => {
                     return otherSelect !== select && otherSelect.value === option.value && otherSelect.closest('td').cellIndex === dayColumnIndex;
@@ -311,7 +326,9 @@ export function autoAssignLongDayWorkersByDay(dayIndex, users) {
                 const randomUser = availableUsers[Math.floor(Math.random() * availableUsers.length)];
                 select.value = randomUser._id;
             }
-        } else if (workSite.includes('largo') && (workSite.includes('fundación') || workSite.includes('cmac') || workSite.includes('allen')) && !select.value && !select.disabled) {
+        } else if (workSite.includes('largo') 
+            && (workSite.includes('fundación') || workSite.includes('cmac') || workSite.includes('allen') 
+            || workSite.includes('cipolletti')) && !select.value && !select.disabled) {
             const availableUsers = Array.from(select.options)
                 .filter(option => option.value && !Array.from(shuffledSelects).some(otherSelect => {
                     return otherSelect !== select && otherSelect.value === option.value && otherSelect.closest('td').cellIndex === dayColumnIndex;
@@ -392,7 +409,9 @@ export function autoAssignRemainingSlotsByDay(dayIndex, users) {
     shuffledSelects.forEach(select => {
         const workSite = select.closest('tr').querySelector('.work-site').innerText.toLowerCase();
 
-        if ((workSite.includes('imágenes') || workSite.includes('coi') || workSite.includes('heller') || workSite.includes('plottier') || workSite.includes('centenario')) && !select.value && !select.disabled) {
+        if ((workSite.includes('imágenes') || workSite.includes('coi') || workSite.includes('heller') 
+            || workSite.includes('plottier') || workSite.includes('centenario')  || workSite.includes('castro')) 
+            && !select.value && !select.disabled) {
             const availableUsers = Array.from(select.options)
                 .filter(option => option.value && !Array.from(shuffledSelects).some(otherSelect => {
                     return otherSelect !== select && otherSelect.value === option.value && otherSelect.closest('td').cellIndex === dayColumnIndex;
@@ -410,7 +429,8 @@ export function autoAssignRemainingSlotsByDay(dayIndex, users) {
                 const randomUser = availableUsers[Math.floor(Math.random() * availableUsers.length)];
                 select.value = randomUser._id;
             }
-        } else if ((workSite.includes('fundación') || workSite.includes('cmac') || workSite.includes('allen') || workSite.includes('cipolletti')) && !select.value && !select.disabled) {
+        } else if ((workSite.includes('fundación') || workSite.includes('cmac') || workSite.includes('allen') 
+            || workSite.includes('cipolletti')) && !select.value && !select.disabled) {
             const availableUsers = Array.from(select.options)
                 .filter(option => option.value && !Array.from(shuffledSelects).some(otherSelect => {
                     return otherSelect !== select && otherSelect.value === option.value && otherSelect.closest('td').cellIndex === dayColumnIndex;

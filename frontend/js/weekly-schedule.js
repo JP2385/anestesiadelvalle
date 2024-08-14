@@ -176,29 +176,32 @@ document.addEventListener('DOMContentLoaded', async function() {
                     const availableUsers = availability[dayName];
 
                     availableUsers.forEach(user => {
+                        // Excluir si el workSite incluye '4to piso' y el username es 'lespinosa'
+                        if (workSite.includes('4to piso') && user.username === 'lespinosa') return;
+                    
                         if (user.worksInCmacOnly && !workSite.includes('CMAC')) return;
-
+                    
                         if ((workSite.includes('Fundación Q2') || workSite.includes('Fundación 3') || workSite.includes('CMAC Q'))) {
                             if (!user.worksInPrivateRioNegro) return;
                         }
-
+                    
                         if (workSite.includes('Hospital Cipolletti') || workSite.includes('Hospital Allen')) {
                             if (!user.worksInPublicRioNegro) return;
                         }
-
+                    
                         if (workSite.includes('Hospital Heller') || workSite.includes('Hospital Plottier') || workSite.includes('Hospital Centenario') || workSite.includes('Hospital Castro Rendon')) {
                             if (!user.worksInPublicNeuquen) return;
                         }
-
+                    
                         if ((workSite.includes('Imágenes') || workSite.includes('COI')) && !workSite.includes('4to piso')) {
                             if (!user.worksInPrivateNeuquen) return;
                         }
-
+                    
                         if (workSite.includes('Matutino') && user.workSchedule[dayName] === 'Tarde') return;
                         if (workSite.includes('Vespertino') && user.workSchedule[dayName] === 'Mañana') return;
                         if (workSite.includes('Largo') && user.workSchedule[dayName] === 'Mañana') return;
                         if (workSite.includes('Largo') && user.workSchedule[dayName] === 'Tarde') return;
-
+                    
                         if (workSite.includes('CMAC Endoscopia')) {
                             if (user.worksInPrivateRioNegro || user.username === 'mgioja') {
                                 // Incluir este usuario
@@ -206,6 +209,7 @@ document.addEventListener('DOMContentLoaded', async function() {
                                 return;
                             }
                         }
+                    
 
                         const option = document.createElement('option');
                         option.value = user._id || user.username; // Asegurarse de usar user._id si está disponible
