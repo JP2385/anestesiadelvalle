@@ -436,7 +436,7 @@ export function autoAssignRemainingSlotsByDay(dayIndex, users) {
                     return otherSelect !== select && otherSelect.value === option.value && otherSelect.closest('td').cellIndex === dayColumnIndex;
                 }))
                 .map(option => {
-                    const user = users.find(user => user && user._id === option.value && !user.worksInPrivateRioNegro);
+                    const user = users.find(user => user && user._id === option.value && !user.worksInPrivateNeuquen);
                     if (user && user.workSchedule[dayHeaderId.split('-')[0]] === 'Variable') {
                         return user;
                     }
