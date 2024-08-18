@@ -11,8 +11,8 @@ if (loginForm) {
         const password = document.getElementById('password').value;
         const rememberMe = document.getElementById('remember-me').checked;
 
-        console.log(`Username: ${username}`);
-        console.log(`Remember me is checked: ${rememberMe}`);
+        // console.log(`Username: ${username}`);
+        // console.log(`Remember me is checked: ${rememberMe}`);
 
         try {
             const response = await fetch(`${apiUrl}/auth/login`, {
@@ -25,14 +25,14 @@ if (loginForm) {
 
             if (response.ok) {
                 const data = await response.json();
-                console.log('Login response:', data);
+                // console.log('Login response:', data);
                 
                 if (rememberMe) {
                     localStorage.setItem('token', data.token); // Solo si selecciona "Recordar"
-                    console.log('Token saved in localStorage:', data.token);
+                    // console.log('Token saved in localStorage:', data.token);
                 } else {
                     sessionStorage.setItem('token', data.token); // Solo para la sesión actual
-                    console.log('Token saved in sessionStorage:', data.token);
+                    // console.log('Token saved in sessionStorage:', data.token);
                 }
 
                 alert('Inicio de sesión exitoso');
