@@ -171,6 +171,10 @@ select {
 }
 
 /* Colores para el select */
+select.default {
+    background-color: ' ';
+}
+
 .select-morning {
     background-color: rgb(144, 202, 238); /* Color azul análogo */
 }
