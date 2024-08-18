@@ -22,9 +22,9 @@ document.addEventListener('DOMContentLoaded', function() {
                 if (response.ok) {
                     const data = await response.json();
                     if (rememberMe) {
-                        localStorage.setItem('token', data.token);
+                        localStorage.setItem('token', data.token); // Solo si selecciona "Recordar"
                     } else {
-                        sessionStorage.setItem('token', data.token);
+                        sessionStorage.setItem('token', data.token); // Solo para la sesión actual
                     }
                     alert('Inicio de sesión exitoso');
                     window.location.href = 'index.html';
@@ -37,6 +37,7 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
     }
+
 
     // Register form submission
     const registerForm = document.getElementById('register-form');
