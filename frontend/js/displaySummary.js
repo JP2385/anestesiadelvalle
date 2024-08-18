@@ -11,64 +11,72 @@ document.addEventListener('DOMContentLoaded', () => {
             const timestamp = data.timestamp;
             const selectConfig = data.selectConfig; // Obtener selectConfig
 
-            // Limpiar los encabezados de cualquier símbolo de actualización
-            const cleanedDayHeaders = {
-                monday: dayHeaders.monday.replace(/🔄/g, ''),
-                tuesday: dayHeaders.tuesday.replace(/🔄/g, ''),
-                wednesday: dayHeaders.wednesday.replace(/🔄/g, ''),
-                thursday: dayHeaders.thursday.replace(/🔄/g, ''),
-                friday: dayHeaders.friday.replace(/🔄/g, '')
-            };
+            // Hacer una solicitud para obtener la disponibilidad
+            fetch(`${apiUrl}/availability`)
+                .then(response => response.json())
+                .then(availability => {
+                    // Limpiar los encabezados de cualquier símbolo de actualización
+                    const cleanedDayHeaders = {
+                        monday: dayHeaders.monday.replace(/🔄/g, ''),
+                        tuesday: dayHeaders.tuesday.replace(/🔄/g, ''),
+                        wednesday: dayHeaders.wednesday.replace(/🔄/g, ''),
+                        thursday: dayHeaders.thursday.replace(/🔄/g, ''),
+                        friday: dayHeaders.friday.replace(/🔄/g, '')
+                    };
 
-            // Generar la tabla de resumen basada en selectConfig
-            let summaryTable = generateSummaryTable(cleanedDayHeaders, selectConfig.monday);
+                    // Generar la tabla de resumen basada en selectConfig
+                    let summaryTable = generateSummaryTable(cleanedDayHeaders, selectConfig.monday);
 
-            // Poblar la tabla con los assignments
-            populateAssignments(assignments, summaryTable);
+                    // Poblar la tabla con los assignments y availability
+                    populateAssignments(assignments, summaryTable, availability);
 
-            // Eliminar filas vacías
-            removeEmptyRows(summaryTable);
+                    // Eliminar filas vacías
+                    removeEmptyRows(summaryTable);
 
-            // Formatear la fecha de impresión
-            const formattedTimestamp = formatTimestamp(timestamp);
+                    // Formatear la fecha de impresión
+                    const formattedTimestamp = formatTimestamp(timestamp);
 
-            // Crear el contenedor para la fecha y el botón de descarga
-            const headerDiv = document.createElement('div');
-            headerDiv.className = 'header-div';
+                    // Crear el contenedor para la fecha y el botón de descarga
+                    const headerDiv = document.createElement('div');
+                    headerDiv.className = 'header-div';
 
-            // Crear el div para la fecha de impresión
-            const timestampDiv = document.createElement('div');
-            timestampDiv.className = 'timestamp-div';
+                    // Crear el div para la fecha de impresión
+                    const timestampDiv = document.createElement('div');
+                    timestampDiv.className = 'timestamp-div';
 
-            // Crear el elemento de fecha de impresión
-            const timestampElement = document.createElement('p');
-            timestampElement.textContent = `Programación generada el ${formattedTimestamp}`;
-            timestampElement.className = 'timestamp';
+                    // Crear el elemento de fecha de impresión
+                    const timestampElement = document.createElement('p');
+                    timestampElement.textContent = `Programación generada el ${formattedTimestamp}`;
+                    timestampElement.className = 'timestamp';
 
-            // Añadir el elemento de fecha al div de la fecha
-            timestampDiv.appendChild(timestampElement);
+                    // Añadir el elemento de fecha al div de la fecha
+                    timestampDiv.appendChild(timestampElement);
 
-            // Crear el botón de descarga
-            const downloadButton = document.createElement('button');
-            downloadButton.id = 'download-button';
-            downloadButton.textContent = 'Descargar como imagen'; // Texto del botón de descarga
-            downloadButton.className = 'download-button';
+                    // Crear el botón de descarga
+                    const downloadButton = document.createElement('button');
+                    downloadButton.id = 'download-button';
+                    downloadButton.textContent = 'Descargar como imagen'; // Texto del botón de descarga
+                    downloadButton.className = 'download-button';
 
-            // Añadir la fecha de impresión y el botón al contenedor
-            headerDiv.appendChild(timestampDiv);
-            headerDiv.appendChild(downloadButton);
+                    // Añadir la fecha de impresión y el botón al contenedor
+                    headerDiv.appendChild(timestampDiv);
+                    headerDiv.appendChild(downloadButton);
 
-            // Añadir el contenedor de la cabecera y la tabla al contenedor principal
-            summaryContainer.appendChild(headerDiv);
-            summaryContainer.appendChild(summaryTable);
+                    // Añadir el contenedor de la cabecera y la tabla al contenedor principal
+                    summaryContainer.appendChild(headerDiv);
+                    summaryContainer.appendChild(summaryTable);
 
-            // Aplicar separadores después de eliminar filas innecesarias
-            summaryTable = applySeparators(summaryTable);
+                    // Aplicar separadores después de eliminar filas innecesarias
+                    summaryTable = applySeparators(summaryTable);
 
-            // Agregar evento al botón de descarga
-            downloadButton.addEventListener('click', () => {
-                downloadTableAsImage(summaryContainer);
-            });
+                    // Agregar evento al botón de descarga
+                    downloadButton.addEventListener('click', () => {
+                        downloadTableAsImage(summaryContainer);
+                    });
+                })
+                .catch(error => {
+                    console.error('Error fetching availability:', error);
+                });
         })
         .catch(error => {
             console.error('Error fetching schedule:', error);
@@ -116,7 +124,7 @@ function generateSummaryTable(dayHeaders, selectConfig) {
     return table;
 }
 
-function populateAssignments(assignments, table) {
+function populateAssignments(assignments, table, availability) {
     const tbody = table.querySelector('tbody');
     const rows = Array.from(tbody.getElementsByTagName('tr'));
 
@@ -124,12 +132,28 @@ function populateAssignments(assignments, table) {
         const workSiteCell = row.querySelector('.work-site');
         const workSite = workSiteCell.textContent.trim();
 
+        // Iterar sobre cada día de la semana
         ['monday', 'tuesday', 'wednesday', 'thursday', 'friday'].forEach((day, index) => {
             const cell = row.getElementsByTagName('td')[index + 1]; // Saltar la primera celda (work-site)
             const assignment = assignments[day]?.find(a => a.workSite === workSite);
+            
+            // Asignar el nombre del usuario y color de fondo
             if (assignment && assignment.user !== 'Select user') {
                 cell.textContent = assignment.user;
-                cell.style.backgroundColor = 'rgb(248, 240, 184)';
+
+                // Obtener el usuario en la disponibilidad para aplicar la clase CSS correspondiente
+                const user = availability[day]?.find(u => u._id === assignment.user || u.username === assignment.user);
+
+                if (user) {
+                    // Asignar la clase CSS correspondiente al horario de trabajo
+                    if (user.workSchedule[day] === 'Mañana') {
+                        cell.classList.add('option-morning');
+                    } else if (user.workSchedule[day] === 'Tarde') {
+                        cell.classList.add('option-afternoon');
+                    } else if (user.workSchedule[day] === 'Variable') {
+                        cell.classList.add('option-long');
+                    }
+                }
             }
         });
     });
@@ -163,10 +187,6 @@ function applySeparators(table) {
 
             if (i > 0) {  // Evitar separadores antes de la primera fila
                 if (firstWord !== previousFirstWord) {
-
-                    // Insertar separador thick cuando cambia la primera palabra
-                    console.log(`Comparando: ${firstWord} con ${previousFirstWord}`);
-                    console.log('Insertando separador thick');
                     const separatorRow = document.createElement('tr');
                     const separatorCell = document.createElement('td');
                     separatorCell.className = 'separator-thick';
@@ -174,9 +194,6 @@ function applySeparators(table) {
                     separatorRow.appendChild(separatorCell);
                     tbody.insertBefore(separatorRow, rows[i]);
                 } else if (secondWord !== previousSecondWord) {
-                    // Insertar separador thin cuando cambia solo la segunda palabra
-                    console.log(`Comparando: ${firstWord} con ${previousFirstWord}`);
-                    console.log('Insertando separador thin');
                     const separatorRow = document.createElement('tr');
                     const separatorCell = document.createElement('td');
                     separatorCell.className = 'separator-thin';
@@ -188,24 +205,18 @@ function applySeparators(table) {
 
             previousFirstWord = firstWord;
             previousSecondWord = secondWord;
-
-            
         }
     }
 
     return table;
 }
 
-// Función para formatear la fecha y hora
 function formatTimestamp(timestamp) {
     const date = new Date(timestamp);
     const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
     let formattedDate = date.toLocaleDateString('es-ES', options);
-    
-    // Eliminar la coma después del día de la semana
     formattedDate = formattedDate.replace(/,\s/, ' ');
 
-    // Formato 24 horas
     const hours = date.getHours().toString().padStart(2, '0');
     const minutes = date.getMinutes().toString().padStart(2, '0');
     
