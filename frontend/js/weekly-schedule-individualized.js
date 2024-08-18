@@ -1,7 +1,7 @@
 document.addEventListener('DOMContentLoaded', () => {
     const apiUrl = window.location.hostname === 'localhost' ? 'http://localhost:3000' : 'https://adv-37d5b772f5fd.herokuapp.com';
     const userAssignmentsContainer = document.getElementById('user-assignments');
-    const token = localStorage.getItem('token');
+    const token = localStorage.getItem('token') || sessionStorage.getItem('token');
 
     fetch(`${apiUrl}/auth/profile`, {
         method: 'GET',

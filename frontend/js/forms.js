@@ -3,40 +3,52 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Login form submission
     const loginForm = document.getElementById('login-form');
-    if (loginForm) {
-        loginForm.addEventListener('submit', async (event) => {
-            event.preventDefault();
-            const username = document.getElementById('username').value.toLowerCase();
-            const password = document.getElementById('password').value;
-            const rememberMe = document.getElementById('remember-me').checked;
+if (loginForm) {
+    loginForm.addEventListener('submit', async (event) => {
+        event.preventDefault();
+        
+        const username = document.getElementById('username').value.toLowerCase();
+        const password = document.getElementById('password').value;
+        const rememberMe = document.getElementById('remember-me').checked;
 
-            try {
-                const response = await fetch(`${apiUrl}/auth/login`, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({ username, password })
-                });
+        console.log(`Username: ${username}`);
+        console.log(`Remember me is checked: ${rememberMe}`);
 
-                if (response.ok) {
-                    const data = await response.json();
-                    if (rememberMe) {
-                        localStorage.setItem('token', data.token); // Solo si selecciona "Recordar"
-                    } else {
-                        sessionStorage.setItem('token', data.token); // Solo para la sesión actual
-                    }
-                    alert('Inicio de sesión exitoso');
-                    window.location.href = 'index.html';
+        try {
+            const response = await fetch(`${apiUrl}/auth/login`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ username, password })
+            });
+
+            if (response.ok) {
+                const data = await response.json();
+                console.log('Login response:', data);
+                
+                if (rememberMe) {
+                    localStorage.setItem('token', data.token); // Solo si selecciona "Recordar"
+                    console.log('Token saved in localStorage:', data.token);
                 } else {
-                    const errorData = await response.json();
-                    alert(`Error: ${errorData.message}`);
+                    sessionStorage.setItem('token', data.token); // Solo para la sesión actual
+                    console.log('Token saved in sessionStorage:', data.token);
                 }
-            } catch (error) {
-                alert('Hubo un problema con la solicitud: ' + error.message);
+
+                alert('Inicio de sesión exitoso');
+                window.location.href = 'index.html';
+            } else {
+                const errorData = await response.json();
+                console.log('Error response:', errorData);
+                alert(`Error: ${errorData.message}`);
             }
-        });
-    }
+        } catch (error) {
+            console.log('Fetch error:', error.message);
+            alert('Hubo un problema con la solicitud: ' + error.message);
+        }
+    });
+}
+
 
 
     // Register form submission

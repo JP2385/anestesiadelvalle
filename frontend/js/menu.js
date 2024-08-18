@@ -12,6 +12,15 @@ document.addEventListener('DOMContentLoaded', function() {
     const logoutLink = document.getElementById('logout');
     logoutLink.addEventListener('click', (e) => {
         e.preventDefault();
+        
+        // Eliminar el token de localStorage y sessionStorage
+        localStorage.removeItem('token');
+        sessionStorage.removeItem('token');
+        
+        // Mensaje opcional para confirmar el logout
+        alert('Cierre de sesión exitoso.');
+        
+        // Redirigir al usuario a la página de login
         window.location.href = 'login.html';
     });
 
