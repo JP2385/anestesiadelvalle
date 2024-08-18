@@ -136,7 +136,7 @@ function populateAssignments(assignments, table, availability) {
         ['monday', 'tuesday', 'wednesday', 'thursday', 'friday'].forEach((day, index) => {
             const cell = row.getElementsByTagName('td')[index + 1]; // Saltar la primera celda (work-site)
             const assignment = assignments[day]?.find(a => a.workSite === workSite);
-            
+
             // Hacer la celda editable
             cell.setAttribute('contenteditable', 'true');
 
@@ -159,12 +159,19 @@ function populateAssignments(assignments, table, availability) {
                 }
             }
 
-            // Guardar cambios al perder el foco y cambiar el fondo a rojo
+            let initialValue = ''; // Variable para almacenar el valor inicial de la celda
+
+            // Guardar el valor inicial cuando el usuario comienza a editar
+            cell.addEventListener('focus', () => {
+                initialValue = cell.textContent.trim(); // Guardar el valor inicial antes de cualquier cambio
+            });
+
+            // Guardar cambios al perder el foco y cambiar el fondo a rojo si el valor ha cambiado
             cell.addEventListener('blur', () => {
                 const newValue = cell.textContent.trim();
-                
-                // Cambiar el fondo a rojo si el valor cambió
-                if (newValue !== assignment?.user) {
+
+                // Solo cambiar el color si el valor ha cambiado
+                if (newValue !== initialValue) {
                     cell.style.backgroundColor = 'red';
                 }
 
@@ -174,7 +181,6 @@ function populateAssignments(assignments, table, availability) {
         });
     });
 }
-
 
 
 function removeEmptyRows(table) {
