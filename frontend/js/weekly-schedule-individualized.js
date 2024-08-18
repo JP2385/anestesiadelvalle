@@ -89,7 +89,16 @@ function transformAssignments(assignments) {
 function generateAssignmentList(userAssignments, dayHeaders) {
     const list = document.createElement('ul');
 
-    Object.keys(userAssignments).forEach(day => {
+    // Definir el orden de los días de la semana
+    const dayOrder = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday'];
+
+    // Obtener las claves de userAssignments y ordenarlas según dayOrder
+    const sortedDays = Object.keys(userAssignments).sort((a, b) => {
+        return dayOrder.indexOf(a) - dayOrder.indexOf(b);
+    });
+
+    // Generar la lista de asignaciones en orden
+    sortedDays.forEach(day => {
         const dayHeader = dayHeaders[day];
         const workSites = userAssignments[day];
 
@@ -102,3 +111,4 @@ function generateAssignmentList(userAssignments, dayHeaders) {
 
     return list;
 }
+
