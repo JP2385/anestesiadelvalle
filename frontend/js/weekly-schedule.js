@@ -269,38 +269,57 @@ document.addEventListener('DOMContentLoaded', async function() {
                 // Cambiar el estado del select actual
                 select.disabled = !select.disabled;
                 button.textContent = select.disabled ? '🔓' : '🔒';
-    
+            
                 if (select.disabled) {
                     // Cambiar el select a su valor por defecto (primera opción)
                     select.selectedIndex = 0;
                     
                     // Eliminar las clases previas y agregar la clase default
-                    select.classList.remove('option-morning', 'option-afternoon', 'option-long', 'assigned');
+                    select.classList.remove(
+                        'option-morning', 
+                        'option-afternoon', 
+                        'option-long', 
+                        'select-morning', 
+                        'select-afternoon', 
+                        'select-long', 
+                        'default', 
+                        'assigned'
+                    );
                     select.classList.add('default'); // Añadir la clase default
                 } else {
                     // Si el select se desbloquea, eliminar la clase default
                     select.classList.remove('default');
                 }
-    
+            
                 // Obtener el id del select actual
                 const selectId = select.id;
-    
+            
                 // Determinar si es 'short' o 'long'
                 const isShort = selectId.includes('short');
                 const baseId = selectId.replace('-short', '').replace('-long', '');
-    
+            
                 // Desactivar los selects relacionados
-                const relatedIds = isShort ? document.querySelectorAll(`select[id^="${baseId}"][id$="long"]`)
-                                           : document.querySelectorAll(`select[id^="${baseId}"][id$="short"]`);
-    
+                const relatedIds = isShort 
+                    ? document.querySelectorAll(`select[id^="${baseId}"][id$="long"]`)
+                    : document.querySelectorAll(`select[id^="${baseId}"][id$="short"]`);
+            
                 relatedIds.forEach(relatedSelect => {
                     relatedSelect.disabled = true;
                     relatedSelect.selectedIndex = 0; // También cambiar el select relacionado a su valor por defecto
-                    
+            
                     // Eliminar clases previas y añadir la clase default
-                    relatedSelect.classList.remove('option-morning', 'option-afternoon', 'option-long', 'assigned');
+                    relatedSelect.classList.remove(
+                        'option-morning', 
+                        'option-afternoon', 
+                        'option-long', 
+                        'select-morning', 
+                        'select-afternoon', 
+                        'select-long', 
+                        'default', 
+                        'assigned'
+                    );
                     relatedSelect.classList.add('default');
-    
+            
                     const relatedButton = relatedSelect.closest('td').querySelector('.lock-button');
                     if (relatedButton) {
                         relatedButton.textContent = '🔓';

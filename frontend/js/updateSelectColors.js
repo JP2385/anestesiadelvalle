@@ -9,8 +9,8 @@ export function updateSelectColors(dayIndex, availability) {
         if (select) {
             const selectedUserId = select.value;
             if (selectedUserId !== '') {
-                // Eliminar las clases CSS previas
-                select.classList.remove('select-morning', 'select-afternoon', 'select-long', 'default', 'assigned');
+                // Eliminar clases previas (puedes comentar o eliminar esta línea)
+                // select.classList.remove('select-morning', 'select-afternoon', 'select-long', 'default', 'assigned');
 
                 // Obtener el horario de trabajo del usuario seleccionado
                 const user = availability[dayName].find(user => user._id === selectedUserId || user.username === selectedUserId);
