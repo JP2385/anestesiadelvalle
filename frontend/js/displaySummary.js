@@ -10,6 +10,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const dayHeaders = data.dayHeaders;
             const timestamp = data.timestamp;
             const selectConfig = data.selectConfig; // Obtener selectConfig
+            const generatedBy = data.printedBy;
 
             // Hacer una solicitud para obtener la disponibilidad
             fetch(`${apiUrl}/availability`)
@@ -40,14 +41,14 @@ document.addEventListener('DOMContentLoaded', () => {
                     const headerDiv = document.createElement('div');
                     headerDiv.className = 'header-div';
 
-                    // Crear el div para la fecha de impresión
-                    const timestampDiv = document.createElement('div');
-                    timestampDiv.className = 'timestamp-div';
+                        // Crear el div para la fecha de impresión
+                        const timestampDiv = document.createElement('div');
+                        timestampDiv.className = 'timestamp-div';
 
-                    // Crear el elemento de fecha de impresión
-                    const timestampElement = document.createElement('p');
-                    timestampElement.textContent = `Programación generada el ${formattedTimestamp}`;
-                    timestampElement.className = 'timestamp';
+                        // Crear el elemento de fecha de impresión
+                        const timestampElement = document.createElement('p');
+                        timestampElement.textContent = `Programación generada el ${formattedTimestamp} por ${generatedBy}`;
+                        timestampElement.className = 'timestamp';
 
                     // Añadir el elemento de fecha al div de la fecha
                     timestampDiv.appendChild(timestampElement);

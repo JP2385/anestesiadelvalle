@@ -16,6 +16,10 @@ document.addEventListener('DOMContentLoaded', function() {
     })
     .then(response => response.json())
     .then(users => {
+        // Ordenar usuarios alfabéticamente por nombre de usuario
+        users.sort((a, b) => a.username.localeCompare(b.username));
+
+        // Crear las opciones para el select
         users.forEach(user => {
             const option = document.createElement('option');
             option.value = user._id;
@@ -32,6 +36,7 @@ document.addEventListener('DOMContentLoaded', function() {
     .catch(error => {
         alert('Hubo un problema al obtener la lista de usuarios: ' + error.message);
     });
+
 
     // Manejar la selección de usuario
     userSelect.addEventListener('change', () => {
@@ -93,27 +98,37 @@ document.addEventListener('DOMContentLoaded', function() {
     addVacationButton.addEventListener('click', () => {
         const startDate = document.getElementById('vacation-start').value;
         const endDate = document.getElementById('vacation-end').value;
-
+    
         if (!startDate || !endDate) {
             alert('Por favor, ingresa ambas fechas de inicio y fin.');
             return;
         }
-
+    
         const vacationItem = document.createElement('li');
         vacationItem.innerHTML = `
             Del <input type="date" class="vacation-start" value="${startDate}"> 
             al <input type="date" class="vacation-end" value="${endDate}">
             <button class="delete-vacation">❌</button>
         `;
-
+    
         vacationItem.querySelector('.delete-vacation').addEventListener('click', () => vacationItem.remove());
-
-        vacationList.appendChild(vacationItem);
-
+    
+        // Insertar el nuevo elemento al principio de la lista
+        vacationList.insertBefore(vacationItem, vacationList.firstChild);
+    
+        // Limitar la visibilidad a 6 elementos
+        const vacationItems = Array.from(vacationList.children);
+        if (vacationItems.length > 6) {
+            vacationItems.slice(6).forEach(item => {
+                item.style.display = 'none'; // Ocultar los elementos adicionales
+            });
+        }
+    
         // Clear input fields
         document.getElementById('vacation-start').value = '';
         document.getElementById('vacation-end').value = '';
     });
+    
 
     // Función para cargar los datos del usuario seleccionado
     async function loadUserData(userId) {
