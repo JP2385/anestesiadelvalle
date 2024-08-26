@@ -5,6 +5,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const adminForm = document.getElementById('admin-form');
     const vacationList = document.getElementById('vacation-list');
     const addVacationButton = document.getElementById('add-vacation');
+    const beginningDateElement= document.getElementById('beginningDate');
 
     // Obtener la lista de usuarios
     fetch(`${apiUrl}/auth/users`, {
@@ -156,6 +157,18 @@ document.addEventListener('DOMContentLoaded', function() {
                 document.getElementById('workSchedule-wednesday').value = user.workSchedule.wednesday || 'No trabaja';
                 document.getElementById('workSchedule-thursday').value = user.workSchedule.thursday || 'No trabaja';
                 document.getElementById('workSchedule-friday').value = user.workSchedule.friday || 'No trabaja';
+
+                if (user.beginningDate) {
+                    // Crear una nueva fecha y sumarle 3 horas (3 * 60 * 60 * 1000 milisegundos)
+                    const correctedDate = new Date(new Date(user.beginningDate).getTime() + 3 * 60 * 60 * 1000);
+                    
+                    // Formatear la fecha corregida
+                    const formattedDate = correctedDate.toLocaleDateString('es-ES');
+                    
+                    beginningDateElement.textContent = formattedDate;
+                } else {
+                    beginningDateElement.textContent = 'No disponible';
+                }
 
                 // Cargar vacaciones
                 vacationList.innerHTML = '';

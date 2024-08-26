@@ -33,6 +33,9 @@ const userSchema = new Schema({
         type: Boolean,
         default: false
     },
+    beginningDate: {
+        type: Date,
+    },
     doesCardio: {
         type: Boolean,
         default: false

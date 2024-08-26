@@ -11,6 +11,7 @@
     <link rel="stylesheet" href="css/nav.css">
     <link rel="stylesheet" href="css/main.css">
     <link rel="stylesheet" href="css/spinner.css">
+    <link rel="stylesheet" href="css/admin.css">
     <script defer src="js/bundle.js"></script>
     <script defer src="js/admin.js"></script>
     <script defer src="js/spinner.js"></script>
@@ -21,50 +22,52 @@
         <a href="index.html" class="app-logo-link">
             <img src="images/logo/logo.png" alt="Logo Anestesiólogos del Valle" class="app-logo">
         </a>
-        <a href="index.html" class="back-to-main-menu" title="Volver al menú principal">
-            <img src="images/icons/back-icon.svg" alt="Volver" class="back-icon">
-        </a>
         <h1>Administrar Usuarios</h1>
     </header>
     <main class="form-container">
         <h2>Seleccionar Usuario</h2>
         <select id="user-select"></select>
+        <div class="admin-input-group">
+            <label for="beginningDate">Fecha de Ingreso:</label>
+            <p id="beginningDate">No disponible</p> <!-- Se actualiza dinámicamente -->
+        </div>
         <form id="admin-form">
             <h3>Actualizar perfil para la asignación de trabajo programado:</h3>
-            <div class="input-group">
+            
+            <div class="admin-input-group">
                 <label for="doesCardio">Hace Cardio</label>
                 <input type="checkbox" id="doesCardio" name="doesCardio">
             </div>
-            <div class="input-group">
+            <div class="admin-input-group">
                 <label for="doesPediatrics">Hace Pediatría</label>
                 <input type="checkbox" id="doesPediatrics" name="doesPediatrics">
             </div>
-            <div class="input-group">
+            <div class="admin-input-group">
                 <label for="doesRNM">Hace RNM</label>
                 <input type="checkbox" id="doesRNM" name="doesRNM">
             </div>
-            <div class="input-group">
+            <div class="admin-input-group">
                 <label for="worksInPublicNeuquen">Trabaja en público Neuquén</label>
                 <input type="checkbox" id="worksInPublicNeuquen" name="worksInPublicNeuquen">
             </div>
-            <div class="input-group">
+            <div class="admin-input-group">
                 <label for="worksInPrivateNeuquen">Trabaja en privado Neuquén</label>
                 <input type="checkbox" id="worksInPrivateNeuquen" name="worksInPrivateNeuquen">
             </div>
-            <div class="input-group">
+            <div class="admin-input-group">
                 <label for="worksInPublicRioNegro">Trabaja en público Río Negro</label>
                 <input type="checkbox" id="worksInPublicRioNegro" name="worksInPublicRioNegro">
             </div>
-            <div class="input-group">
+            <div class="admin-input-group">
                 <label for="worksInPrivateRioNegro">Trabaja en privado Río Negro</label>
                 <input type="checkbox" id="worksInPrivateRioNegro" name="worksInPrivateRioNegro">
             </div>
-            <div class="input-group">
+            <div class="admin-input-group">
                 <label for="worksInCmacOnly">Trabaja sólo en CMAC</label>
                 <input type="checkbox" id="worksInCmacOnly" name="worksInCmacOnly">
             </div>
             <h3>Esquema de trabajo programado:</h3>
-            <div class="input-group">
+            <div class="admin-input-group">
                 <label for="workSchedule-monday">Horario Lunes</label>
                 <select id="workSchedule-monday" name="workSchedule-monday">
                     <option value="Mañana">Mañana</option>
@@ -73,7 +76,7 @@
                     <option value="No trabaja">No trabaja</option>
                 </select>
             </div>
-            <div class="input-group">
+            <div class="admin-input-group">
                 <label for="workSchedule-tuesday">Horario Martes</label>
                 <select id="workSchedule-tuesday" name="workSchedule-tuesday">
                     <option value="Mañana">Mañana</option>
@@ -82,7 +85,7 @@
                     <option value="No trabaja">No trabaja</option>
                 </select>
             </div>
-            <div class="input-group">
+            <div class="admin-input-group">
                 <label for="workSchedule-wednesday">Horario Miércoles</label>
                 <select id="workSchedule-wednesday" name="workSchedule-wednesday">
                     <option value="Mañana">Mañana</option>
@@ -91,7 +94,7 @@
                     <option value="No trabaja">No trabaja</option>
                 </select>
             </div>
-            <div class="input-group">
+            <div class="admin-input-group">
                 <label for="workSchedule-thursday">Horario Jueves</label>
                 <select id="workSchedule-thursday" name="workSchedule-thursday">
                     <option value="Mañana">Mañana</option>
@@ -100,7 +103,7 @@
                     <option value="No trabaja">No trabaja</option>
                 </select>
             </div>
-            <div class="input-group">
+            <div class="admin-input-group">
                 <label for="workSchedule-friday">Horario Viernes</label>
                 <select id="workSchedule-friday" name="workSchedule-friday">
                     <option value="Mañana">Mañana</option>
@@ -111,17 +114,16 @@
             </div>
 
             <h3>Vacaciones Programadas:</h3>
-            <div class="input-group">
+            <div class="admin-input-group">
                 <label for="vacation-start">Fecha de Inicio</label>
                 <input type="date" id="vacation-start" name="vacation-start">
             </div>
-            <div class="input-group">
+            <div class="admin-input-group">
                 <label for="vacation-end">Fecha de Fin</label>
                 <input type="date" id="vacation-end" name="vacation-end">
             </div>
             <button type="button" id="add-vacation" class="main-menu-button">Agregar Vacaciones</button>
             <ul id="vacation-list"></ul>
-
             <button type="submit" class="main-menu-button">Actualizar Usuario</button>
         </form>
     </main>
