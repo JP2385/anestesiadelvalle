@@ -67,13 +67,13 @@ document.addEventListener('DOMContentLoaded', async function() {
     
                 // Contar los días largos después de cada iteración
                 const longDaysCount = countLongDays();
-                console.log(`Resultado de la iteración ${i + 1}:`, longDaysCount);
+                // console.log(`Resultado de la iteración ${i + 1}:`, longDaysCount);
                 allLongDaysCounts.push(longDaysCount);
             }
     
             // Seleccionar la configuración con menor número de usuarios con dos días largos
             const bestConfiguration = selectBestConfiguration(allLongDaysCounts);
-            console.log('Best configuration selected:', bestConfiguration);
+            // console.log('Best configuration selected:', bestConfiguration);
     
             // Aplicar la mejor configuración
             applyBestConfiguration(bestConfiguration);

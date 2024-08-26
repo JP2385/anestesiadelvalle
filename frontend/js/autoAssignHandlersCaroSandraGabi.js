@@ -2,8 +2,6 @@ import { getWeekNumber} from './assignUtils.js';
 import { assignSpecificUsersByDay } from './autoAssignDayFunctions.js';
 import { getWorkSchemes } from './workSchemes.js';
 
-// autoAssignHandlersCaroSandraGabi.js
-
 export async function autoAssignCaroSandraGabiByDay(apiUrl, dayIndex, availability) {
     try {
         const montesEsposito = availability[Object.keys(availability)[dayIndex]].find(user => user.username === 'montes_esposito');
@@ -17,19 +15,17 @@ export async function autoAssignCaroSandraGabiByDay(apiUrl, dayIndex, availabili
             ggudinoScheme,
         } = getWorkSchemes(isOddWeek);
 
+        // Asignar a montes_esposito si está disponible
         if (montesEsposito) {
             assignSpecificUsersByDay(dayIndex, montesEspositoScheme, montesEsposito);
-        } else {
-            console.error('montes_esposito not found in availability');
         }
 
+        // Asignar a ggudino si está disponible
         if (ggudino) {
             assignSpecificUsersByDay(dayIndex, ggudinoScheme, ggudino);
-        } else {
-            console.error('ggudino not found in availability');
         }
 
     } catch (error) {
-        alert('Hubo un problema con la solicitud: ' + error.message);
+        console.error('Hubo un problema con la solicitud:', error.message);
     }
 }

@@ -31,6 +31,7 @@ export function selectBestConfiguration(allLongDaysCounts) {
     let minTwoLongDaysUsers = Infinity;
     let bestConfigurations = [];
 
+    // Encontrar las configuraciones con el menor número de usuarios con 2 días largos
     allLongDaysCounts.forEach((longDaysCount, index) => {
         const twoLongDaysUsers = countUsersWithTwoLongDays(longDaysCount);
         if (twoLongDaysUsers < minTwoLongDaysUsers) {
@@ -41,12 +42,48 @@ export function selectBestConfiguration(allLongDaysCounts) {
         }
     });
 
-    console.log(`Best configurations with ${minTwoLongDaysUsers} users having two long days:`, bestConfigurations);
-
     // Seleccionar una configuración al azar de las mejores configuraciones
-    const randomIndex = bestConfigurations[Math.floor(Math.random() * bestConfigurations.length)];
-    console.log(`Selected configuration at index: ${randomIndex}`);
-    return allLongDaysCounts[randomIndex];
+    const randomIndexInBest = Math.floor(Math.random() * bestConfigurations.length); // Índice aleatorio en el array bestConfigurations
+    const selectedConfigIndex = bestConfigurations[randomIndexInBest]; // Índice real de la configuración seleccionada en allLongDaysCounts
+    const selectedLongDaysCount = allLongDaysCounts[selectedConfigIndex]; // Obtener el longDaysCount para la configuración seleccionada
+
+    // Filtrar los usuarios con 2 días largos
+    const usersWithTwoLongDays = Object.values(selectedLongDaysCount)
+        .filter(user => user.count === 2)
+        .map(user => user.username);
+
+    // Construir el mensaje dinámico
+    const informSpan = document.getElementById('long-days-inform');
+    if (informSpan) {
+        // Crear el elemento <ul>
+        const ul = document.createElement('ul');
+
+        // Crear los elementos <li> para cada mensaje
+        const configurationsMessage = `- De los 200 esquemas de programación analizados hubo ${bestConfigurations.length} esquemas con ${minTwoLongDaysUsers} usuarios trabajando 2 días largos.`;
+        const selectedConfigurationMessage = `- Se seleccionó uno de ellos en forma aleatoria, el número ${randomIndexInBest + 1}.`;
+        const usersMessage = `- Los usuarios con 2 días largos son: ${usersWithTwoLongDays.join(', ') || 'Ninguno'}.`;
+
+        const li1 = document.createElement('li');
+        li1.innerText = configurationsMessage;
+
+        const li2 = document.createElement('li');
+        li2.innerText = selectedConfigurationMessage;
+
+        const li3 = document.createElement('li');
+        li3.innerText = usersMessage;
+
+        // Agregar los <li> al <ul>
+        ul.appendChild(li1);
+        ul.appendChild(li2);
+        ul.appendChild(li3);
+
+        // Limpiar el contenido anterior y agregar el <ul> al elemento <span>
+        informSpan.innerHTML = '';
+        informSpan.appendChild(ul);
+    }
+
+    // Devolver la mejor configuración seleccionada
+    return allLongDaysCounts[selectedConfigIndex];
 }
 
 function countUsersWithTwoLongDays(longDaysCount) {

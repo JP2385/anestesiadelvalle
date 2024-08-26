@@ -19,12 +19,28 @@ export async function autoAssignPublicHospitalsByDay(apiUrl, dayIndex, availabil
             sdegreefScheme
         } = getWorkSchemes(isOddWeek);
 
-        assignSpecificUsersByDay(dayIndex, lalvarezScheme, lalvarez);
-        assignSpecificUsersByDay(dayIndex, ltotisScheme, ltotis);
-        assignSpecificUsersByDay(dayIndex, lburgueñoScheme, lburgueño);
-        assignSpecificUsersByDay(dayIndex, sdegreefScheme, sdegreef);
+        // Asignar a lalvarez si está disponible
+        if (lalvarez) {
+            assignSpecificUsersByDay(dayIndex, lalvarezScheme, lalvarez);
+        }
+
+        // Asignar a ltotis si está disponible
+        if (ltotis) {
+            assignSpecificUsersByDay(dayIndex, ltotisScheme, ltotis);
+        }
+
+        // Asignar a lburgueño si está disponible
+        if (lburgueño) {
+            assignSpecificUsersByDay(dayIndex, lburgueñoScheme, lburgueño);
+        }
+
+        // Asignar a sdegreef si está disponible
+        if (sdegreef) {
+            assignSpecificUsersByDay(dayIndex, sdegreefScheme, sdegreef);
+        }
 
     } catch (error) {
-        alert('Hubo un problema con la solicitud: ' + error.message);
+        console.error('Hubo un problema con la solicitud:', error.message);
     }
 }
+
