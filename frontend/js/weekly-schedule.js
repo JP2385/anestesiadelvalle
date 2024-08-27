@@ -176,6 +176,13 @@ document.addEventListener('DOMContentLoaded', async function() {
                     const availableUsers = availability[dayName];
 
                     availableUsers.forEach(user => {
+                        // Restricción adicional para miércoles en "Imágenes Quirofano 1 Matutino"
+                        if (dayName === 'wednesday' && workSite.includes('Imágenes Q1') && workSite.includes('Matutino')) {
+                            if (!user.doesCardio) {
+                                return; // Saltar usuarios que no hacen cardio
+                            }
+                        }
+
                         // Excluir si el workSite incluye '4to piso' y el username es 'lespinosa'
                         if (workSite.includes('4to piso') && user.username === 'lespinosa') return;
                     
