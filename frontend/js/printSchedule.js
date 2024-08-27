@@ -34,6 +34,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const { assignments, longDaysCount } = collectAssignments();
         const dayHeaders = collectDayHeaders();
         const selectConfig = collectSelectConfig(); // Recolectar configuración de los selects
+        const longDaysInform = collectLongDaysInform();
 
         if (assignments && currentUser) {
 
@@ -50,6 +51,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         dayHeaders, 
                         selectConfig, 
                         longDaysCount,
+                        longDaysInform,
                         printedBy: currentUser // Incluir el usuario que hace la acción
                     })
                 });
@@ -160,5 +162,11 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         return selectConfig;
+    }
+
+    function collectLongDaysInform() {
+        // Obtener el contenido del span con id 'long-days-inform'
+        const longDaysSpan = document.getElementById('long-days-inform');
+        return longDaysSpan ? longDaysSpan.textContent.trim() : '';
     }
 });

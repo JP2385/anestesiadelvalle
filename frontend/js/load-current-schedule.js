@@ -9,8 +9,29 @@ document.addEventListener('DOMContentLoaded', () => {
         .then(schedule => {
             const assignments = schedule.assignments;
             const selectConfig = schedule.selectConfig;
+            const longDaysInform = schedule.longDaysInform;
             const scheduleBody = document.getElementById('schedule-body');
             const rows = scheduleBody.getElementsByTagName('tr');
+
+            const longDaysSpan = document.getElementById('long-days-inform');
+            if (longDaysSpan && longDaysInform) {
+                // Dividir el contenido de longDaysInform por los guiones " - "
+                const items = longDaysInform.split('.').map(item => item.trim()).filter(item => item.length > 0);
+
+                // Crear el elemento ul
+                const ul = document.createElement('ul');
+
+                // Crear los elementos li y agregarlos a la ul
+                items.forEach(item => {
+                    const li = document.createElement('li');
+                    li.textContent = item.trim(); // Añadir el texto de cada ítem precedido por un guion
+                    ul.appendChild(li);
+                });
+
+                // Limpiar el contenido previo del span y añadir la nueva ul
+                longDaysSpan.innerHTML = ''; // Limpiar el contenido previo
+                longDaysSpan.appendChild(ul); // Insertar la lista
+            }
 
             for (let row of rows) {
                 const workSiteElement = row.querySelector('.work-site');

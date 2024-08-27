@@ -9,6 +9,7 @@ const scheduleSchema = new mongoose.Schema({
     longDaysCount: { type: Object, required: true }, // Agregamos el recuento de días largos
     createdAt: { type: Date, default: Date.now, expires: '7d' }, // Campo de expiración
     printedBy: { type: String, required: true },
+    longDaysInform: {type: String, required: true}
 });
 
 // Creamos el modelo basado en el esquema

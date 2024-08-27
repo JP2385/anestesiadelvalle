@@ -2,11 +2,11 @@
 const Schedule = require('../models/scheduleModel');
 
 const saveSchedule = async (req, res) => {
-    const { timestamp, assignments, dayHeaders, selectConfig, longDaysCount, printedBy } = req.body; // Incluir printedBy
+    const { timestamp, assignments, dayHeaders, selectConfig, longDaysCount, printedBy, longDaysInform } = req.body; // Incluir printedBy
 
     try {
         // Crear un nuevo documento en la colección de schedules
-        const newSchedule = new Schedule({ timestamp, assignments, dayHeaders, selectConfig, longDaysCount, printedBy });
+        const newSchedule = new Schedule({ timestamp, assignments, dayHeaders, selectConfig, longDaysCount, printedBy, longDaysInform, });
         await newSchedule.save();
         res.status(201).send('Schedule saved successfully');
     } catch (error) {
