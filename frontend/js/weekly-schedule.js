@@ -282,16 +282,7 @@ document.addEventListener('DOMContentLoaded', async function() {
                     select.selectedIndex = 0;
                     
                     // Eliminar las clases previas y agregar la clase default
-                    select.classList.remove(
-                        'option-morning', 
-                        'option-afternoon', 
-                        'option-long', 
-                        'select-morning', 
-                        'select-afternoon', 
-                        'select-long', 
-                        'default', 
-                        'assigned'
-                    );
+                    select.classList = ' ';
                     select.classList.add('default'); // Añadir la clase default
                 } else {
                     // Si el select se desbloquea, eliminar la clase default
@@ -315,16 +306,7 @@ document.addEventListener('DOMContentLoaded', async function() {
                     relatedSelect.selectedIndex = 0; // También cambiar el select relacionado a su valor por defecto
             
                     // Eliminar clases previas y añadir la clase default
-                    relatedSelect.classList.remove(
-                        'option-morning', 
-                        'option-afternoon', 
-                        'option-long', 
-                        'select-morning', 
-                        'select-afternoon', 
-                        'select-long', 
-                        'default', 
-                        'assigned'
-                    );
+                    relatedSelect.classList = ' ';
                     relatedSelect.classList.add('default');
             
                     const relatedButton = relatedSelect.closest('td').querySelector('.lock-button');
@@ -372,7 +354,7 @@ document.addEventListener('DOMContentLoaded', async function() {
         select.setAttribute('data-original-value', selectedUserId);
 
         // Eliminar las clases CSS previas
-        select.classList.remove('option-morning', 'option-afternoon', 'option-long', 'default', 'assigned');
+        select.classList=' ';
 
         if (select.value === '') {
             select.classList.add('default');
