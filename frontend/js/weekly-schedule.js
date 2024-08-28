@@ -176,6 +176,11 @@ document.addEventListener('DOMContentLoaded', async function() {
                     const availableUsers = availability[dayName];
 
                     availableUsers.forEach(user => {
+                        // Exclusión de "mgioja" en sitios que contienen "Fundación"
+                        if (user.username === 'mgioja' && workSite.includes('Fundación')) {
+                            return; // Excluir "mgioja" si el sitio contiene "Fundación"
+                        }
+
                         // Restricción adicional para miércoles en "Imágenes Quirofano 1 Matutino"
                         if (dayName === 'wednesday' && workSite.includes('Imágenes Q1') && workSite.includes('Matutino')) {
                             if (!user.doesCardio) {

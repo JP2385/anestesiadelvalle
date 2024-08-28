@@ -1,10 +1,9 @@
-import { getWeekNumber, updateSelectBackgroundColors } from './assignUtils.js';
+import { getWeekNumber } from './assignUtils.js';
 import { assignSpecificUsersByDay } from './autoAssignDayFunctions.js';
 import { getWorkSchemes } from './workSchemes.js';
 
 export async function autoAssignPublicHospitalsByDay(apiUrl, dayIndex, availability) {
     try {
-        const lalvarez = availability[Object.keys(availability)[dayIndex]].find(user => user.username === 'lalvarez');
         const ltotis = availability[Object.keys(availability)[dayIndex]].find(user => user.username === 'ltotis');
         const lburgueño = availability[Object.keys(availability)[dayIndex]].find(user => user.username === 'lburgueño');
         const sdegreef = availability[Object.keys(availability)[dayIndex]].find(user => user.username === 'sdegreef');
@@ -13,16 +12,10 @@ export async function autoAssignPublicHospitalsByDay(apiUrl, dayIndex, availabil
         const isOddWeek = currentWeekNumber % 2 !== 0;
 
         const {
-            lalvarezScheme,
             ltotisScheme,
             lburgueñoScheme,
             sdegreefScheme
         } = getWorkSchemes(isOddWeek);
-
-        // Asignar a lalvarez si está disponible
-        if (lalvarez) {
-            assignSpecificUsersByDay(dayIndex, lalvarezScheme, lalvarez);
-        }
 
         // Asignar a ltotis si está disponible
         if (ltotis) {

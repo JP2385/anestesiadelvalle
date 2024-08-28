@@ -42,20 +42,42 @@ export function assignSpecificUsersByDay(dayIndex, scheme, user) {
 
     const dayColumnIndex = Array.from(dayHeader.parentElement.children).indexOf(dayHeader) + 1; // +1 because nth-child is 1-based
 
-    Object.entries(scheme).forEach(([headerId, workSite]) => {
+    Object.entries(scheme).forEach(([headerId, workSites]) => {
         if (headerId === dayHeaderId) {
-            const row = Array.from(document.querySelectorAll('.work-site')).find(row => row.innerText.trim() === workSite);
-            if (row) {
-                const selectCell = row.closest('tr').querySelector(`td:nth-child(${dayColumnIndex})`);
-                const select = selectCell.querySelector('select');
-                if (select && !select.disabled) {
-                    const option = Array.from(select.options).find(option => option.text === user.username); // Use text for comparison
-                    if (option) {
-                        select.value = option.value;
-                        select.classList.add('assigned');
-                        select.classList.remove('default');
+            const workSiteList = Array.isArray(workSites) ? workSites : [workSites];
+            // console.log(`Worksites for ${headerId}: ${workSiteList.join(', ')}`);
+
+            let foundMatch = false;
+
+            // Iterar sobre todas las filas
+            for (let row of document.querySelectorAll('.work-site')) {
+                const workSiteText = row.innerText.trim();
+                // console.log(`Checking row: ${workSiteText}`);
+
+                if (workSiteList.includes(workSiteText)) {
+                    // console.log(`Found matching row for worksite: ${workSiteText}`);
+                    const selectCell = row.closest('tr').querySelector(`td:nth-child(${dayColumnIndex})`);
+                    const select = selectCell.querySelector('select');
+                    if (select && !select.disabled) {
+                        const option = Array.from(select.options).find(option => option.text === user.username);
+                        if (option) {
+                            select.value = option.value;
+                            select.classList.add('assigned');
+                            select.classList.remove('default');
+                            // console.log(`Assigned user ${user.username} to select`);
+                            foundMatch = true; // Se encontró y asignó a un `select`
+                            break; // Salir del bucle
+                        } else {
+                            // console.error(`Option with username ${user.username} not found in select`);
+                        }
+                    } else {
+                        // console.error(`Select element not found or is disabled for worksite ${workSiteText}`);
                     }
                 }
+            }
+
+            if (!foundMatch) {
+                console.error(`No valid select found for worksites ${workSiteList.join(', ')}`);
             }
         }
     });

@@ -14,16 +14,11 @@ export function getWorkSchemes(isOddWeek) {
     };
 
     const ggudinoScheme = {
-        'monday-header': 'COI Vespertino',
-        'tuesday-header': 'COI Largo',
-        'wednesday-header': 'COI Matutino',
-        'thursday-header': 'COI Matutino',
-        'friday-header': 'COI Matutino'
-    };
-
-    const lalvarezScheme = {
-        'monday-header': 'Hospital Cipolletti Vespertino',
-        'wednesday-header': 'Hospital Cipolletti Matutino'
+        'monday-header': ['COI Largo', 'COI Matutino', 'COI Vespertino'],
+        'tuesday-header': ['COI Largo', 'COI Matutino', 'COI Vespertino'],
+        'wednesday-header': ['COI Largo', 'COI Matutino', 'COI Vespertino'],
+        'thursday-header': ['COI Largo', 'COI Matutino', 'COI Vespertino'],
+        'friday-header': ['COI Largo', 'COI Matutino', 'COI Vespertino']
     };
 
     const ltotisScheme = {
@@ -41,7 +36,6 @@ export function getWorkSchemes(isOddWeek) {
     return {
         montesEspositoScheme,
         ggudinoScheme,
-        lalvarezScheme,
         ltotisScheme,
         lburgueñoScheme,
         sdegreefScheme
