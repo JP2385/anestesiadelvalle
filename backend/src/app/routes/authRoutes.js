@@ -1,6 +1,5 @@
-// backend/src/app/routes/authRoutes.js
 const express = require('express');
-const { register, login, changePassword, getProfile, recoverPassword, resetPassword } = require('../controllers/authController');
+const { register, login, changePassword, getProfile, recoverPassword, resetPassword, refreshToken } = require('../controllers/authController');
 const { getAllUsers, updateUser, getUserById } = require('../controllers/userController');
 const { getUsersAvailability } = require('../controllers/availabilityController');
 const authMiddleware = require('../middlewares/authMiddleware');
@@ -18,5 +17,8 @@ router.put('/user/:userId', authMiddleware, updateUser);
 // Rutas de administración
 router.get('/users', authMiddleware, getAllUsers);
 router.get('/availability', authMiddleware, getUsersAvailability);
+
+// Nueva ruta para refrescar el token
+router.post('/refresh-token', refreshToken);
 
 module.exports = router;
