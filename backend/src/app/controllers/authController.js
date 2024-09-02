@@ -36,46 +36,10 @@ exports.login = async (req, res) => {
         if (!user || !(await user.comparePassword(password))) {
             throw new Error('Invalid username or password');
         }
-
-        // Generar Access Token con expiración corta (1 hora)
-        const accessToken = jwt.sign({ userId: user._id }, config.jwtSecret, { expiresIn: '1h' });
-
-        // Generar Refresh Token con expiración larga (30 días)
-        const refreshToken = jwt.sign({ userId: user._id }, config.jwtRefreshSecret, { expiresIn: '30d' });
-
-        // (Opcional) Guardar el refresh token en la base de datos si deseas rastrear los tokens emitidos.
-        // user.refreshToken = refreshToken;
-        // await user.save();
-
-        res.send({ accessToken, refreshToken });
+        const token = jwt.sign({ userId: user._id }, config.jwtSecret, { expiresIn: '6h' });
+        res.send({ token });
     } catch (error) {
         res.status(400).send({ message: error.message });
-    }
-};
-
-exports.refreshToken = async (req, res) => {
-    const { refreshToken } = req.body;
-
-    if (!refreshToken) {
-        return res.status(401).send({ message: 'Refresh token is required' });
-    }
-
-    try {
-        // Verificar y decodificar el Refresh Token
-        const decoded = jwt.verify(refreshToken, config.jwtRefreshSecret);
-        
-        // Verificar si el usuario existe y si el token es válido (opcional)
-        const user = await User.findById(decoded.userId);
-        if (!user) {
-            throw new Error('User not found');
-        }
-
-        // Generar un nuevo Access Token
-        const newAccessToken = jwt.sign({ userId: user._id }, config.jwtSecret, { expiresIn: '1h' });
-
-        res.send({ accessToken: newAccessToken });
-    } catch (error) {
-        res.status(403).send({ message: 'Invalid refresh token' });
     }
 };
 
