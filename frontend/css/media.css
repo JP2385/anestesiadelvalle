@@ -41,7 +41,7 @@
 
     th, td {
         font-size: 0.875rem; /* Reduce el tamaño de la fuente */
-        padding: 4px; /* Reduce el padding */
+        padding: 2px; /* Reduce el padding */
     }
 
     th.work-site {
@@ -49,7 +49,7 @@
     }
 
     th:not(.work-site) {
-        width: auto; /* Permite que las demás columnas se ajusten automáticamente */
+        width: 125px; /* Permite que las demás columnas se ajusten automáticamente */
     }
 
     td.work-site {
@@ -58,7 +58,6 @@
 
     td.droppable {
         background-color: #f0f0f0;
-        white-space: nowrap; /* Evita el desbordamiento de texto */
     }
 
     .instructions button {
@@ -119,12 +118,12 @@
     /* Estilos responsivos para las tablas */
     table {
         width: 100%;
-        table-layout: auto; /* Cambia a auto para permitir la expansión */
+        table-layout: fixed;
     }
 
     th, td {
         font-size: 0.75rem; /* Reduce aún más el tamaño de la fuente */
-        padding: 4px; /* Reduce el padding */
+        padding: 2px; /* Reduce el padding */
     }
 
     th.work-site {
