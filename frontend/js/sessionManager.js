@@ -1,7 +1,7 @@
 import { jwtDecode } from 'jwt-decode';
 
 document.addEventListener('DOMContentLoaded', function() {
-    const maxIdleTimePC = 2 * 60 * 60 * 1000; // 2 horas para PC
+    const maxIdleTimePC = 3 * 60 * 60 * 1000; // 3 horas para PC
     let idleTime = 0;
 
     function isMobileDevice() {
@@ -15,7 +15,7 @@ document.addEventListener('DOMContentLoaded', function() {
             idleTime = 0;
             const sessionExpiry = Date.now() + maxIdleTime;
             sessionStorage.setItem('sessionExpiry', sessionExpiry);
-            // console.log(`Idle timer reset. Session expiry set to: ${new Date(sessionExpiry).toUTCString()}`);
+            console.log(`Idle timer reset. Session expiry set to: ${new Date(sessionExpiry).toUTCString()}`);
         }
     }
 
