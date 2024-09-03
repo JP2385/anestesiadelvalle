@@ -1,3 +1,25 @@
+@media (max-width: 1024px) {
+    table {
+        width: 100%;
+        table-layout: auto; /* Cambia a auto para permitir la expansión */
+    }
+    th, td {
+        font-size: 0.875rem; /* Reduce el tamaño de la fuente */
+        padding: 2px; /* Reduce el padding */
+    }
+    th.work-site {
+        width: auto; /* Permite que la primera columna se ajuste automáticamente */
+    }
+
+    th:not(.work-site) {
+        width: 125px; /* Permite que las demás columnas se ajusten automáticamente */
+    }
+
+    td.work-site {
+        width: auto; /* Permite que la primera columna se ajuste automáticamente */
+    }
+}
+
 @media (max-width: 768px) {
     header {
         justify-content: space-between;
