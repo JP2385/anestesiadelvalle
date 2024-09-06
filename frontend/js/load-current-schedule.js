@@ -60,22 +60,22 @@ document.addEventListener('DOMContentLoaded', async function() {
                     const availableElement = document.getElementById(`${day}-available`);
                     const assignmentsElement = document.getElementById(`${day}-assignments`);
                     const compareElement = document.getElementById(`${day}-compare`);
-
+            
                     // Solo actualizamos si los elementos existen
                     if (sitesElement && availableElement && assignmentsElement && compareElement) {
                         const sitesTd = sitesElement.closest('td');
                         const availableTd = availableElement.closest('td');
                         const assignmentsTd = assignmentsElement.closest('td');
                         const compareTd = compareElement.closest('td');
-
+            
                         // Actualizar valores de texto
                         sitesElement.textContent = availabilityInform[day].sitesEnabled.value || 0;
                         availableElement.textContent = availabilityInform[day].available.value || 0;
                         assignmentsElement.textContent = availabilityInform[day].assigned.value || 0;
-
-                        // Para el campo compare, usamos innerText para conservar espacios
-                        compareElement.innerText = availabilityInform[day].unassigned.value || 0;
-
+            
+                        // Para el campo compare, usamos innerHTML para que los <br> se interpreten correctamente
+                        compareElement.innerHTML = availabilityInform[day].unassigned.value || '';
+            
                         // Actualizar backgroundColor y tooltips (con verificación de existencia y vacío)
                         if (sitesTd) {
                             sitesTd.style.backgroundColor = availabilityInform[day].sitesEnabled.backgroundColor || 'transparent';
@@ -115,9 +115,7 @@ document.addEventListener('DOMContentLoaded', async function() {
                         }
                     }
                 });
-            }
-
-
+            }            
 
             // Procesar las filas de trabajo y los selects
             for (let row of rows) {
