@@ -18,7 +18,7 @@ document.addEventListener('DOMContentLoaded', async function() {
     const dayIndices = [0, 1, 2, 3, 4]; // Índices para lunes a viernes
     const autoAssignButton = document.getElementById('autoAssign-button');
     autoAssignButton.addEventListener('click', async () => {
-        await handleAutoAssignForWeek(apiUrl, dayIndices, availability); // Usar la función independiente
+        await handleAutoAssignForWeek(apiUrl, dayIndices, availability);
     });
 
     document.querySelectorAll('select').forEach(select => {
@@ -27,15 +27,14 @@ document.addEventListener('DOMContentLoaded', async function() {
         select.addEventListener('change', (event) => handleSelectChange(event, availability));
     });
 
+    // Recuperar el último horario guardado
     fetch(`${apiUrl}/schedule/last-schedule`)
-        .then(response => {
-            return response.json();
-        })
+        .then(response => response.json())
         .then(schedule => {
             const assignments = schedule.assignments;
             const selectConfig = schedule.selectConfig;
             const longDaysInform = schedule.longDaysInform;
-            const availabilityInform = schedule.availabilityInform; // Obtener availabilityInform
+            const availabilityInform = schedule.availabilityInform;
 
             const scheduleBody = document.getElementById('schedule-body');
             const rows = scheduleBody.getElementsByTagName('tr');
@@ -55,14 +54,68 @@ document.addEventListener('DOMContentLoaded', async function() {
             }
 
             // Actualizar availabilityInform
+            // Actualizar availabilityInform
             if (availabilityInform) {
                 ['monday', 'tuesday', 'wednesday', 'thursday', 'friday'].forEach(day => {
-                    document.getElementById(`${day}-sites`).textContent = availabilityInform[day].sitesEnabled || 0;
-                    document.getElementById(`${day}-available`).textContent = availabilityInform[day].available || 0;
-                    document.getElementById(`${day}-assignments`).textContent = availabilityInform[day].assigned || 0;
-                    document.getElementById(`${day}-compare`).textContent = availabilityInform[day].unassigned || 0;
+                    const sitesElement = document.getElementById(`${day}-sites`);
+                    const availableElement = document.getElementById(`${day}-available`);
+                    const assignmentsElement = document.getElementById(`${day}-assignments`);
+                    const compareElement = document.getElementById(`${day}-compare`);
+
+                    // Solo actualizamos si los elementos existen
+                    if (sitesElement && availableElement && assignmentsElement && compareElement) {
+                        const sitesTd = sitesElement.closest('td');
+                        const availableTd = availableElement.closest('td');
+                        const assignmentsTd = assignmentsElement.closest('td');
+                        const compareTd = compareElement.closest('td');
+
+                        // Actualizar valores de texto
+                        sitesElement.textContent = availabilityInform[day].sitesEnabled.value || 0;
+                        availableElement.textContent = availabilityInform[day].available.value || 0;
+                        assignmentsElement.textContent = availabilityInform[day].assigned.value || 0;
+                        compareElement.textContent = availabilityInform[day].unassigned.value || 0;
+
+                        // Actualizar backgroundColor y tooltips (con verificación de existencia y vacío)
+                        if (sitesTd) {
+                            sitesTd.style.backgroundColor = availabilityInform[day].sitesEnabled.backgroundColor || 'transparent';
+                            const sitesTooltip = availabilityInform[day].sitesEnabled.tooltip || '';
+                            if (sitesTooltip) {
+                                sitesTd.querySelector('.tooltip-wrapper').setAttribute('data-tooltip', sitesTooltip);
+                            } else {
+                                sitesTd.querySelector('.tooltip-wrapper').removeAttribute('data-tooltip');
+                            }
+                        }
+                        if (availableTd) {
+                            availableTd.style.backgroundColor = availabilityInform[day].available.backgroundColor || 'transparent';
+                            const availableTooltip = availabilityInform[day].available.tooltip || '';
+                            if (availableTooltip) {
+                                availableTd.querySelector('.tooltip-wrapper').setAttribute('data-tooltip', availableTooltip);
+                            } else {
+                                availableTd.querySelector('.tooltip-wrapper').removeAttribute('data-tooltip');
+                            }
+                        }
+                        if (assignmentsTd) {
+                            assignmentsTd.style.backgroundColor = availabilityInform[day].assigned.backgroundColor || 'transparent';
+                            const assignmentsTooltip = availabilityInform[day].assigned.tooltip || '';
+                            if (assignmentsTooltip) {
+                                assignmentsTd.querySelector('.tooltip-wrapper').setAttribute('data-tooltip', assignmentsTooltip);
+                            } else {
+                                assignmentsTd.querySelector('.tooltip-wrapper').removeAttribute('data-tooltip');
+                            }
+                        }
+                        if (compareTd) {
+                            compareTd.style.backgroundColor = availabilityInform[day].unassigned.backgroundColor || 'transparent';
+                            const compareTooltip = availabilityInform[day].unassigned.tooltip || '';
+                            if (compareTooltip) {
+                                compareTd.querySelector('.tooltip-wrapper').setAttribute('data-tooltip', compareTooltip);
+                            } else {
+                                compareTd.querySelector('.tooltip-wrapper').removeAttribute('data-tooltip');
+                            }
+                        }
+                    }
                 });
             }
+
 
             // Procesar las filas de trabajo y los selects
             for (let row of rows) {
@@ -89,7 +142,7 @@ document.addEventListener('DOMContentLoaded', async function() {
                             select.disabled = config.disabled;
 
                             // Aplicar la clase almacenada en selectConfig           
-                            select.className = config.className; // Asigna la clase almacenada al select
+                            select.className = config.className;
                         }
                     });
                 }
@@ -98,4 +151,4 @@ document.addEventListener('DOMContentLoaded', async function() {
         .catch(error => {
             console.error('Error fetching schedule:', error);
         });
- });
+});

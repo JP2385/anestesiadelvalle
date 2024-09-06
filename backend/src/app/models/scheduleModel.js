@@ -7,12 +7,20 @@ const selectConfigSchema = new mongoose.Schema({
     className: { type: String, required: true } // Almacenamos la clase del select
 }, { _id: false }); // No necesitamos _id en los subdocumentos
 
+// Definimos el subesquema para los detalles de cada campo de disponibilidad
+const availabilityDetailSchema = new mongoose.Schema({
+    value: { type: mongoose.Schema.Types.Mixed, required: true }, // Aceptar tanto Number como String
+    backgroundColor: { type: String, required: false }, // El color de fondo de la celda
+    tooltip: { type: String, required: false } // El tooltip, puede ser opcional
+}, { _id: false });
+
+
 // Definimos el esquema para la información de disponibilidad por día
 const availabilitySchema = new mongoose.Schema({
-    sitesEnabled: { type: Number, required: true }, // Nro de lugares habilitados
-    available: { type: Number, required: true }, // Nro. de Anestesiólogos disponibles
-    assigned: { type: Number, required: true }, // Nro. de Anestesiólogos asignados
-    unassigned: { type: String, required: true } // Anestesiólogos no asignados (texto o lista)
+    sitesEnabled: { type: availabilityDetailSchema, required: true }, // Nro de lugares habilitados
+    available: { type: availabilityDetailSchema, required: true }, // Nro. de Anestesiólogos disponibles
+    assigned: { type: availabilityDetailSchema, required: true }, // Nro. de Anestesiólogos asignados
+    unassigned: { type: availabilityDetailSchema, required: true } // Anestesiólogos no asignados
 }, { _id: false });
 
 // Definimos el esquema de los schedules

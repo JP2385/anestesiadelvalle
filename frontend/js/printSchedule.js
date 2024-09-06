@@ -74,19 +74,56 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function collectAvailabilityInform() {
         const availabilityInform = {};
-
+    
         // Recolectar información por cada día
         ['monday', 'tuesday', 'wednesday', 'thursday', 'friday'].forEach(day => {
-            availabilityInform[day] = {
-                sitesEnabled: parseInt(document.getElementById(`${day}-sites`).textContent) || 0,
-                available: parseInt(document.getElementById(`${day}-available`).textContent) || 0,
-                assigned: parseInt(document.getElementById(`${day}-assignments`).textContent) || 0,
-                unassigned: document.getElementById(`${day}-compare`).textContent || 0
-            };
+            const sitesElement = document.getElementById(`${day}-sites`);
+            const availableElement = document.getElementById(`${day}-available`);
+            const assignmentsElement = document.getElementById(`${day}-assignments`);
+            const compareElement = document.getElementById(`${day}-compare`);
+    
+            if (sitesElement && availableElement && assignmentsElement && compareElement) {
+                const sitesTd = sitesElement.closest('td');
+                const availableTd = availableElement.closest('td');
+                const assignmentsTd = assignmentsElement.closest('td');
+                const compareTd = compareElement.closest('td');
+    
+                // Depuración de los tooltips desde data-tooltip
+                console.log(`Day: ${day}`);
+                console.log(`Sites Tooltip: ${sitesTd?.querySelector('.tooltip-wrapper')?.getAttribute('data-tooltip')}`);
+                console.log(`Available Tooltip: ${availableTd?.querySelector('.tooltip-wrapper')?.getAttribute('data-tooltip')}`);
+                console.log(`Assigned Tooltip: ${assignmentsTd?.querySelector('.tooltip-wrapper')?.getAttribute('data-tooltip')}`);
+                console.log(`Unassigned Tooltip: ${compareTd?.querySelector('.tooltip-wrapper')?.getAttribute('data-tooltip')}`);
+    
+                // Recolectar los datos con los tooltips correctos desde 'data-tooltip'
+                availabilityInform[day] = {
+                    sitesEnabled: {
+                        value: parseInt(sitesElement.textContent) || 0,
+                        backgroundColor: sitesTd ? getComputedStyle(sitesTd).backgroundColor : 'transparent',
+                        tooltip: sitesTd?.querySelector('.tooltip-wrapper')?.getAttribute('data-tooltip') || ''
+                    },
+                    available: {
+                        value: parseInt(availableElement.textContent) || 0,
+                        backgroundColor: availableTd ? getComputedStyle(availableTd).backgroundColor : 'transparent',
+                        tooltip: availableTd?.querySelector('.tooltip-wrapper')?.getAttribute('data-tooltip') || ''
+                    },
+                    assigned: {
+                        value: parseInt(assignmentsElement.textContent) || 0,
+                        backgroundColor: assignmentsTd ? getComputedStyle(assignmentsTd).backgroundColor : 'transparent',
+                        tooltip: assignmentsTd?.querySelector('.tooltip-wrapper')?.getAttribute('data-tooltip') || ''
+                    },
+                    unassigned: {
+                        value: compareElement.textContent || '',
+                        backgroundColor: compareTd ? getComputedStyle(compareTd).backgroundColor : 'transparent',
+                        tooltip: compareTd?.querySelector('.tooltip-wrapper')?.getAttribute('data-tooltip') || ''
+                    }
+                };
+            }
         });
-
+    
         return availabilityInform;
     }
+    
 
     function collectAssignments() {
         const assignments = {};
