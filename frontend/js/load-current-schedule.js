@@ -54,7 +54,6 @@ document.addEventListener('DOMContentLoaded', async function() {
             }
 
             // Actualizar availabilityInform
-            // Actualizar availabilityInform
             if (availabilityInform) {
                 ['monday', 'tuesday', 'wednesday', 'thursday', 'friday'].forEach(day => {
                     const sitesElement = document.getElementById(`${day}-sites`);
@@ -73,7 +72,9 @@ document.addEventListener('DOMContentLoaded', async function() {
                         sitesElement.textContent = availabilityInform[day].sitesEnabled.value || 0;
                         availableElement.textContent = availabilityInform[day].available.value || 0;
                         assignmentsElement.textContent = availabilityInform[day].assigned.value || 0;
-                        compareElement.textContent = availabilityInform[day].unassigned.value || 0;
+
+                        // Para el campo compare, usamos innerText para conservar espacios
+                        compareElement.innerText = availabilityInform[day].unassigned.value || 0;
 
                         // Actualizar backgroundColor y tooltips (con verificación de existencia y vacío)
                         if (sitesTd) {
@@ -115,6 +116,7 @@ document.addEventListener('DOMContentLoaded', async function() {
                     }
                 });
             }
+
 
 
             // Procesar las filas de trabajo y los selects

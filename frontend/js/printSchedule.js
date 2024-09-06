@@ -88,14 +88,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 const assignmentsTd = assignmentsElement.closest('td');
                 const compareTd = compareElement.closest('td');
     
-                // Depuración de los tooltips desde data-tooltip
-                console.log(`Day: ${day}`);
-                console.log(`Sites Tooltip: ${sitesTd?.querySelector('.tooltip-wrapper')?.getAttribute('data-tooltip')}`);
-                console.log(`Available Tooltip: ${availableTd?.querySelector('.tooltip-wrapper')?.getAttribute('data-tooltip')}`);
-                console.log(`Assigned Tooltip: ${assignmentsTd?.querySelector('.tooltip-wrapper')?.getAttribute('data-tooltip')}`);
-                console.log(`Unassigned Tooltip: ${compareTd?.querySelector('.tooltip-wrapper')?.getAttribute('data-tooltip')}`);
-    
-                // Recolectar los datos con los tooltips correctos desde 'data-tooltip'
+                // Recolectar los datos, incluyendo los <br> directamente en el HTML
                 availabilityInform[day] = {
                     sitesEnabled: {
                         value: parseInt(sitesElement.textContent) || 0,
@@ -113,7 +106,8 @@ document.addEventListener('DOMContentLoaded', () => {
                         tooltip: assignmentsTd?.querySelector('.tooltip-wrapper')?.getAttribute('data-tooltip') || ''
                     },
                     unassigned: {
-                        value: compareElement.textContent || '',
+                        // Usar innerHTML para mantener los <br> en lugar de reemplazarlos
+                        value: compareElement.innerHTML || '',
                         backgroundColor: compareTd ? getComputedStyle(compareTd).backgroundColor : 'transparent',
                         tooltip: compareTd?.querySelector('.tooltip-wrapper')?.getAttribute('data-tooltip') || ''
                     }
@@ -123,6 +117,7 @@ document.addEventListener('DOMContentLoaded', () => {
     
         return availabilityInform;
     }
+    
     
 
     function collectAssignments() {
