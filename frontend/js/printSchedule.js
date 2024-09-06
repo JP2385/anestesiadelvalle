@@ -35,6 +35,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const dayHeaders = collectDayHeaders();
         const selectConfig = collectSelectConfig(); // Recolectar configuración de los selects
         const longDaysInform = collectLongDaysInform();
+        const availabilityInform = collectAvailabilityInform(); // Recolectar información de disponibilidad
 
         if (assignments && currentUser) {
 
@@ -52,6 +53,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         selectConfig, 
                         longDaysCount,
                         longDaysInform,
+                        availabilityInform, // Enviar la información de disponibilidad
                         printedBy: currentUser // Incluir el usuario que hace la acción
                     })
                 });
@@ -69,6 +71,22 @@ document.addEventListener('DOMContentLoaded', () => {
             console.error('No se pudieron recolectar las asignaciones o el usuario no está disponible.');
         }
     });
+
+    function collectAvailabilityInform() {
+        const availabilityInform = {};
+
+        // Recolectar información por cada día
+        ['monday', 'tuesday', 'wednesday', 'thursday', 'friday'].forEach(day => {
+            availabilityInform[day] = {
+                sitesEnabled: parseInt(document.getElementById(`${day}-sites`).textContent) || 0,
+                available: parseInt(document.getElementById(`${day}-available`).textContent) || 0,
+                assigned: parseInt(document.getElementById(`${day}-assignments`).textContent) || 0,
+                unassigned: parseInt(document.getElementById(`${day}-compare`).textContent) || 0
+            };
+        });
+
+        return availabilityInform;
+    }
 
     function collectAssignments() {
         const assignments = {};
@@ -139,30 +157,31 @@ document.addEventListener('DOMContentLoaded', () => {
         const selectConfig = {};
         const scheduleBody = document.getElementById('schedule-body');
         const rows = scheduleBody.getElementsByTagName('tr');
-
+    
         for (let row of rows) {
             const workSiteElement = row.querySelector('.work-site');
             if (workSiteElement) {
                 const workSite = workSiteElement.textContent.trim();
                 const selects = row.querySelectorAll('select');
-
+    
                 selects.forEach((select, index) => {
                     const day = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday'][index];
                     
                     if (!selectConfig[day]) {
                         selectConfig[day] = [];
                     }
-
+    
                     selectConfig[day].push({
                         workSite: workSite,
-                        disabled: select.disabled
+                        disabled: select.disabled,
+                        className: select.className  // Almacenar la clase del select aquí
                     });
                 });
             }
         }
-
+    
         return selectConfig;
-    }
+    }    
 
     function collectLongDaysInform() {
         // Obtener el contenido del span con id 'long-days-inform'

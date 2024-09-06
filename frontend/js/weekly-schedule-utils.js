@@ -64,114 +64,99 @@ export function updateWeekDates(apiUrl, availability) {
 }
 
 
-export async function populateSelectOptions(apiUrl) {
+export async function populateSelectOptions(availability) {
     try {
-        const response = await fetch(`${apiUrl}/availability`, {
-            method: 'GET',
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': 'Bearer ' + localStorage.getItem('token')
-            }
-        });
+        const selects = document.querySelectorAll('select');
 
-        if (response.ok) {
-            const availability = await response.json();
-            const selects = document.querySelectorAll('select');
+        selects.forEach(select => {
+            const workSite = select.closest('tr').querySelector('.work-site').innerText;
+            const dayIndex = select.closest('td').cellIndex - 1;
+            const dayHeaderId = ['monday-header', 'tuesday-header', 'wednesday-header', 'thursday-header', 'friday-header'][dayIndex];
+            const dayName = dayHeaderId.split('-')[0];
 
-            selects.forEach(select => {
-                const workSite = select.closest('tr').querySelector('.work-site').innerText;
-                const dayIndex = select.closest('td').cellIndex - 1;
-                const dayHeaderId = ['monday-header', 'tuesday-header', 'wednesday-header', 'thursday-header', 'friday-header'][dayIndex];
-                const dayName = dayHeaderId.split('-')[0];
+            select.innerHTML = '<option value="">Select user</option>';
 
-                select.innerHTML = '<option value="">Select user</option>';
+            const availableUsers = availability[dayName];
 
-                const availableUsers = availability[dayName];
+            availableUsers.forEach(user => {
+                // Exclusión de "mgioja" en sitios que contienen "Fundación"
+                if (user.username === 'mgioja' && workSite.includes('Fundación')) {
+                    return; // Excluir "mgioja" si el sitio contiene "Fundación"
+                }
 
-                availableUsers.forEach(user => {
-                    // Exclusión de "mgioja" en sitios que contienen "Fundación"
-                    if (user.username === 'mgioja' && workSite.includes('Fundación')) {
-                        return; // Excluir "mgioja" si el sitio contiene "Fundación"
+                // Restricción adicional para miércoles en "Imágenes Quirofano 1 Matutino"
+                if (dayName === 'wednesday' && workSite.includes('Imágenes Q1') && workSite.includes('Matutino')) {
+                    if (!user.doesCardio) {
+                        return; // Saltar usuarios que no hacen cardio
                     }
+                }
 
-                    // Restricción adicional para miércoles en "Imágenes Quirofano 1 Matutino"
-                    if (dayName === 'wednesday' && workSite.includes('Imágenes Q1') && workSite.includes('Matutino')) {
-                        if (!user.doesCardio) {
-                            return; // Saltar usuarios que no hacen cardio
-                        }
-                    }
-
-                    // Excluir si el workSite incluye '4to piso' y el username es 'lespinosa'
-                    if (workSite.includes('4to piso') && user.username === 'lespinosa') return;
-                
-                    if (user.worksInCmacOnly && !workSite.includes('CMAC')) return;
-                
-                    if ((workSite.includes('Fundación Q2') || workSite.includes('Fundación 3') || workSite.includes('CMAC Q'))) {
-                        if (!user.worksInPrivateRioNegro) return;
-                    }
-                
-                    if (workSite.includes('Hospital Cipolletti') || workSite.includes('Hospital Allen')) {
-                        if (!user.worksInPublicRioNegro) return;
-                    }
-                
-                    if (workSite.includes('Hospital Heller') || workSite.includes('Hospital Plottier') || workSite.includes('Hospital Centenario') || workSite.includes('Hospital Castro Rendon')) {
-                        if (!user.worksInPublicNeuquen) return;
-                    }
-                
-                    if ((workSite.includes('Imágenes') || workSite.includes('COI')) && !workSite.includes('4to piso')) {
-                        if (!user.worksInPrivateNeuquen) return;
-                    }
-                
-                    if (workSite.includes('Matutino') && user.workSchedule[dayName] === 'Tarde') return;
-                    if (workSite.includes('Vespertino') && user.workSchedule[dayName] === 'Mañana') return;
-                    if (workSite.includes('Largo') && user.workSchedule[dayName] === 'Mañana') return;
-                    if (workSite.includes('Largo') && user.workSchedule[dayName] === 'Tarde') return;
-                
-                    if (workSite.includes('CMAC Endoscopia')) {
-                        if (user.worksInPrivateRioNegro || user.username === 'mgioja') {
-                            // Incluir este usuario
-                        } else {
-                            return;
-                        }
-                    }
-                
-
-                    const option = document.createElement('option');
-                    option.value = user._id || user.username; // Asegurarse de usar user._id si está disponible
-                    option.textContent = user.username;
-
-                    // Asignar clases CSS según el horario de trabajo
-                    if (user.workSchedule[dayName] === 'Mañana') {
-                        option.classList.add('option-morning');
-                    } else if (user.workSchedule[dayName] === 'Tarde') {
-                        option.classList.add('option-afternoon');
-                    } else if (user.workSchedule[dayName] === 'Variable') {
-                        option.classList.add('option-long');
-                    }
-
-                    if (workSite.includes('Fundación Q1') || workSite.includes('Fundación Hemo')) {
-                        if (user.doesCardio) {
-                            select.appendChild(option);
-                        }
-                    } else if (workSite.includes('Fundación RNM TAC') || workSite.includes('COI')) {
-                        if (user.doesRNM) {
-                            select.appendChild(option);
-                        }
+                // Excluir si el workSite incluye '4to piso' y el username es 'lespinosa'
+                if (workSite.includes('4to piso') && user.username === 'lespinosa') return;
+            
+                if (user.worksInCmacOnly && !workSite.includes('CMAC')) return;
+            
+                if ((workSite.includes('Fundación Q2') || workSite.includes('Fundación 3') || workSite.includes('CMAC Q'))) {
+                    if (!user.worksInPrivateRioNegro) return;
+                }
+            
+                if (workSite.includes('Hospital Cipolletti') || workSite.includes('Hospital Allen')) {
+                    if (!user.worksInPublicRioNegro) return;
+                }
+            
+                if (workSite.includes('Hospital Heller') || workSite.includes('Hospital Plottier') || workSite.includes('Hospital Centenario') || workSite.includes('Hospital Castro Rendon')) {
+                    if (!user.worksInPublicNeuquen) return;
+                }
+            
+                if ((workSite.includes('Imágenes') || workSite.includes('COI')) && !workSite.includes('4to piso')) {
+                    if (!user.worksInPrivateNeuquen) return;
+                }
+            
+                if (workSite.includes('Matutino') && user.workSchedule[dayName] === 'Tarde') return;
+                if (workSite.includes('Vespertino') && user.workSchedule[dayName] === 'Mañana') return;
+                if (workSite.includes('Largo') && user.workSchedule[dayName] === 'Mañana') return;
+                if (workSite.includes('Largo') && user.workSchedule[dayName] === 'Tarde') return;
+            
+                if (workSite.includes('CMAC Endoscopia')) {
+                    if (user.worksInPrivateRioNegro || user.username === 'mgioja') {
+                        // Incluir este usuario
                     } else {
+                        return;
+                    }
+                }
+            
+
+                const option = document.createElement('option');
+                option.value = user._id || user.username; // Asegurarse de usar user._id si está disponible
+                option.textContent = user.username;
+
+                // Asignar clases CSS según el horario de trabajo
+                if (user.workSchedule[dayName] === 'Mañana') {
+                    option.classList.add('option-morning');
+                } else if (user.workSchedule[dayName] === 'Tarde') {
+                    option.classList.add('option-afternoon');
+                } else if (user.workSchedule[dayName] === 'Variable') {
+                    option.classList.add('option-long');
+                }
+
+                if (workSite.includes('Fundación Q1') || workSite.includes('Fundación Hemo')) {
+                    if (user.doesCardio) {
                         select.appendChild(option);
                     }
-                });
+                } else if (workSite.includes('Fundación RNM TAC') || workSite.includes('COI')) {
+                    if (user.doesRNM) {
+                        select.appendChild(option);
+                    }
+                } else {
+                    select.appendChild(option);
+                }
             });
+        });
 
-            // Añadir eventos de cambio para los selectores
-            selects.forEach(select => {
-                select.addEventListener('change', handleSelectChange);
-            });
-
-        } else {
-            const errorData = await response.json();
-            alert(`Error: ${errorData.message}`);
-        }
+        // Añadir eventos de cambio para los selectores
+        selects.forEach(select => {
+            select.addEventListener('change', (event) => handleSelectChange(event, availability));
+        });
     } catch (error) {
         alert('Hubo un problema con la solicitud: ' + error.message);
     }
