@@ -2,6 +2,10 @@ import { handleRandomizeButtonClick } from './randomizeButtonHandler.js';
 import { countEnabledSelectsByDay } from './autoAssignFunctions.js';
 import { autoAssignReportBgColorsUpdate } from './autoAssignReportBgColorsUpdate.js';
 import { compareAvailabilitiesForEachDay } from './compareArrays.js';
+import { validateAllDays } from './autoAssignValidation.js';
+import { handleRandomizeButtonClickForWeek } from './randomizeButtonHandlerForWeek.js';
+import { updateSelectColors } from './updateSelectColors.js';
+import { countLongDays, selectBestConfiguration, applyBestConfiguration } from './bestConfigurationForWeek.js';
 
 export function updateWeekDates(apiUrl, availability) {
     const currentDate = new Date();
@@ -279,4 +283,38 @@ export async function handleSelectChange(event, availability) {
 
     await compareAvailabilitiesForEachDay(dayIndex);
     autoAssignReportBgColorsUpdate(dayIndex);
+}
+
+export async function handleAutoAssignForWeek(apiUrl, dayIndices, availability) {
+    showSpinner();
+    try {
+        const isValid = await validateAllDays();
+        if (!isValid) {
+            hideSpinner();
+            return;
+        }
+
+        const allLongDaysCounts = [];
+
+        for (let i = 0; i < 200; i++) {
+            const promises = dayIndices.map(dayIndex =>
+                handleRandomizeButtonClickForWeek(apiUrl, dayIndex, availability)
+            );
+            await Promise.all(promises);
+            const longDaysCount = countLongDays();
+            allLongDaysCounts.push(longDaysCount);
+        }
+
+        const bestConfiguration = selectBestConfiguration(allLongDaysCounts);
+        
+        applyBestConfiguration(bestConfiguration);
+
+        dayIndices.forEach(dayIndex => {
+            autoAssignReportBgColorsUpdate(dayIndex);
+            compareAvailabilitiesForEachDay(dayIndex);
+            updateSelectColors(dayIndex, availability);
+        });
+    } finally {
+        hideSpinner();
+    }
 }

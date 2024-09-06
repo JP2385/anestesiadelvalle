@@ -81,7 +81,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 sitesEnabled: parseInt(document.getElementById(`${day}-sites`).textContent) || 0,
                 available: parseInt(document.getElementById(`${day}-available`).textContent) || 0,
                 assigned: parseInt(document.getElementById(`${day}-assignments`).textContent) || 0,
-                unassigned: parseInt(document.getElementById(`${day}-compare`).textContent) || 0
+                unassigned: document.getElementById(`${day}-compare`).textContent || 0
             };
         });
 
