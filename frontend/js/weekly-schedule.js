@@ -12,35 +12,50 @@ import { updateSelectColors } from './updateSelectColors.js';
 import { countLongDays, selectBestConfiguration, applyBestConfiguration } from './bestConfigurationForWeek.js';
 
 document.addEventListener('DOMContentLoaded', async function() {
+    console.log('DOMContentLoaded - Inicio');
     const apiUrl = window.location.hostname === 'localhost' ? 'http://localhost:3000' : 'https://adv-37d5b772f5fd.herokuapp.com';
 
     let availability;
     try {
+        console.log('Mostrando spinner');
         showSpinner();
+        console.log('Ejecutando updateWeekDates');
         updateWeekDates();
+        console.log('Ejecutando populateSelectOptions');
         await populateSelectOptions();
+        console.log('Ejecutando initializeLockButtons');
         initializeLockButtons();
-        availability = await fetchAvailability(apiUrl);
+
     } finally {
+        console.log('Ocultando spinner');
         hideSpinner();
     }
 
     const dayIndices = [0, 1, 2, 3, 4]; // Índices para lunes a viernes
     for (const dayIndex of dayIndices) {
         try {
+            console.log(`Mostrando spinner para el día ${dayIndex}`);
             showSpinner();
-
+            console.log('Obteniendo disponibilidad');
+            availability = await fetchAvailability(apiUrl);
+            console.log(`Autoasignando Caro, Sandra, Gabi para el día ${dayIndex}`);
             await autoAssignCaroSandraGabiByDay(apiUrl, dayIndex, availability);
+            console.log(`Autoasignando hospitales públicos para el día ${dayIndex}`);
             await autoAssignPublicHospitalsByDay(apiUrl, dayIndex, availability);
+            console.log(`Contando asignaciones para el día ${dayIndex}`);
             await countAssignmentsByDay(dayIndex);
+            console.log(`Actualizando colores de fondo de reportes para el día ${dayIndex}`);
             autoAssignReportBgColorsUpdate(dayIndex);
+            console.log(`Actualizando colores de selectores para el día ${dayIndex}`);
             updateSelectColors(dayIndex, availability);
 
         } finally {
+            console.log(`Ocultando spinner para el día ${dayIndex}`);
             hideSpinner();
         }
     }
 
+    console.log('Comparando disponibilidades');
     await compareAvailabilities();
 
     const autoAssignButton = document.getElementById('autoAssign-button');
@@ -92,6 +107,7 @@ document.addEventListener('DOMContentLoaded', async function() {
     
 
     function updateWeekDates() {
+        console.log('Ejecutando updateWeekDates');
         const currentDate = new Date();
         const currentDay = currentDate.getDay();
         let nextMondayDate;
@@ -152,6 +168,7 @@ document.addEventListener('DOMContentLoaded', async function() {
     }
 
     async function populateSelectOptions() {
+        console.log('Ejecutando populateSelectOptions');
         try {
             const response = await fetch(`${apiUrl}/availability`, {
                 method: 'GET',
@@ -266,6 +283,7 @@ document.addEventListener('DOMContentLoaded', async function() {
 
 
     function initializeLockButtons() {
+        console.log('Ejecutando initializeLockButtons');
         const droppableCells = document.querySelectorAll('.droppable');
         droppableCells.forEach(cell => {
             const select = cell.querySelector('select');
@@ -333,6 +351,7 @@ document.addEventListener('DOMContentLoaded', async function() {
     
 
     async function handleSelectChange(event) {
+        console.log('Cambio en el selector detectado');
         const select = event.target;
         const selectedUserId = select.value;
         const originalValue = select.getAttribute('data-original-value');
