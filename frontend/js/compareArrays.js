@@ -10,6 +10,7 @@ export async function compareAvailabilities() {
         const differences = compareUserAvailability(serverUsernames, clientAvailability);
 
         updateDOMWithDifferences(differences);
+        console.log('updateDOMWithDifferences ha terminado de ejecutarse'); // Log al finalizar
     } catch (error) {
         console.error('Error comparing availabilities:', error);
     }
@@ -17,20 +18,15 @@ export async function compareAvailabilities() {
 
 export async function compareAvailabilitiesForEachDay(dayIndex) {
     try {
-        (`Starting comparison for day index: ${dayIndex}`);
         
         const serverAvailability = await fetchAvailability();
-        (`Server availability for day index ${dayIndex}:`, serverAvailability);
         
         const { contents: clientAvailability } = await countAssignmentsByDay();
-        (`Client availability for day index ${dayIndex}:`, clientAvailability);
         
         const serverUsernames = extractUsernamesFromAvailability(serverAvailability);
         const differences = compareUserAvailabilityForDay(serverUsernames, clientAvailability, dayIndex);
-        (`Differences for day index ${dayIndex}:`, differences);
         
         updateDOMWithDifferencesForDay(differences, dayIndex);
-        (`DOM updated with differences for day index ${dayIndex}`);
         
     } catch (error) {
         console.error(`Error comparing availabilities for day index ${dayIndex}:`, error);
