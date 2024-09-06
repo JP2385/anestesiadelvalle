@@ -1,14 +1,4 @@
-import { handleRandomizeButtonClickForWeek } from './randomizeButtonHandlerForWeek.js';
 import { fetchAvailability } from './assignUtils.js';
-import { autoAssignCaroSandraGabiByDay } from './autoAssignHandlersCaroSandraGabi.js';
-import { autoAssignPublicHospitalsByDay } from './autoAssignHandlersPublicHospitals.js';
-import { countAssignmentsByDay } from './autoAssignFunctions.js';
-import { compareAvailabilities } from './compareArrays.js';
-import { validateAllDays } from './autoAssignValidation.js';
-import { autoAssignReportBgColorsUpdate } from './autoAssignReportBgColorsUpdate.js';
-import { compareAvailabilitiesForEachDay } from './compareArrays.js';
-import { updateSelectColors } from './updateSelectColors.js';
-import { countLongDays, selectBestConfiguration, applyBestConfiguration } from './bestConfigurationForWeek.js';
 import { updateWeekDates, populateSelectOptions, initializeLockButtons, handleSelectChange, handleAutoAssignForWeek } from './weekly-schedule-utils.js';
 
 document.addEventListener('DOMContentLoaded', async function() {
@@ -36,9 +26,6 @@ document.addEventListener('DOMContentLoaded', async function() {
         select.setAttribute('data-original-value', select.value);
         select.addEventListener('change', (event) => handleSelectChange(event, availability));
     });
-
-    const weeklyScheduleCompletedEvent = new CustomEvent('weeklyScheduleCompleted');
-    document.dispatchEvent(weeklyScheduleCompletedEvent);
 
     fetch(`${apiUrl}/schedule/last-schedule`)
         .then(response => {
@@ -111,4 +98,4 @@ document.addEventListener('DOMContentLoaded', async function() {
         .catch(error => {
             console.error('Error fetching schedule:', error);
         });
-});
+ });

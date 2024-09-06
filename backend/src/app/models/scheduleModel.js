@@ -37,7 +37,7 @@ const scheduleSchema = new mongoose.Schema({
     }, // Información sobre disponibilidad por día
     createdAt: { type: Date, default: Date.now, expires: '1y' }, // Campo de expiración
     printedBy: { type: String, required: true },
-    longDaysInform: { type: String, required: true }
+    longDaysInform: { type: String, required: false }
 });
 
 // Creamos el modelo basado en el esquema

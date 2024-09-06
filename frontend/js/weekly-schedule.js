@@ -4,9 +4,7 @@ import { autoAssignPublicHospitalsByDay } from './autoAssignHandlersPublicHospit
 import { countAssignmentsByDay } from './autoAssignFunctions.js';
 import { compareAvailabilities } from './compareArrays.js';
 import { autoAssignReportBgColorsUpdate } from './autoAssignReportBgColorsUpdate.js';
-import { compareAvailabilitiesForEachDay } from './compareArrays.js';
 import { updateSelectColors } from './updateSelectColors.js';
-import { countLongDays, selectBestConfiguration, applyBestConfiguration } from './bestConfigurationForWeek.js';
 import { updateWeekDates, populateSelectOptions, initializeLockButtons, handleSelectChange, handleAutoAssignForWeek } from './weekly-schedule-utils.js';
 
 document.addEventListener('DOMContentLoaded', async function() {
@@ -50,7 +48,4 @@ document.addEventListener('DOMContentLoaded', async function() {
         select.setAttribute('data-original-value', select.value);
         select.addEventListener('change', (event) => handleSelectChange(event, availability));
     });
-
-    const weeklyScheduleCompletedEvent = new CustomEvent('weeklyScheduleCompleted');
-    document.dispatchEvent(weeklyScheduleCompletedEvent);
 });
