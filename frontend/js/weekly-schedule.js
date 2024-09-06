@@ -21,7 +21,7 @@ document.addEventListener('DOMContentLoaded', async function() {
         availability = await fetchAvailability(apiUrl);
         await updateWeekDates(apiUrl, availability);
         await populateSelectOptions(availability);
-        initializeLockButtons();
+        await initializeLockButtons();
         
     } finally {
         hideSpinner();
@@ -34,8 +34,8 @@ document.addEventListener('DOMContentLoaded', async function() {
             await autoAssignCaroSandraGabiByDay(apiUrl, dayIndex, availability);
             await autoAssignPublicHospitalsByDay(apiUrl, dayIndex, availability);
             await countAssignmentsByDay(dayIndex);
-            autoAssignReportBgColorsUpdate(dayIndex);
-            updateSelectColors(dayIndex, availability);
+            await autoAssignReportBgColorsUpdate(dayIndex);
+            await updateSelectColors(dayIndex, availability);
 
         } finally {
             hideSpinner();
@@ -89,5 +89,7 @@ document.addEventListener('DOMContentLoaded', async function() {
     });
 
     const weeklyScheduleCompletedEvent = new CustomEvent('weeklyScheduleCompleted');
+    console.log('Evento weeklyScheduleCompleted disparado'); // Este console.log se ejecuta antes de disparar el evento
     document.dispatchEvent(weeklyScheduleCompletedEvent);
+    
 });

@@ -1,6 +1,8 @@
 document.addEventListener('weeklyScheduleCompleted', () => {
+    console.log('weeklyScheduleCompleted - Inicio');
+
     const apiUrl = window.location.hostname === 'localhost' ? 'http://localhost:3000' : 'https://adv-37d5b772f5fd.herokuapp.com';
-    
+
     fetch(`${apiUrl}/schedule/last-schedule`)
         .then(response => {
             return response.json();
