@@ -71,7 +71,7 @@
     }
 
     th:not(.work-site) {
-        width: 125px; /* Permite que las demás columnas se ajusten automáticamente */
+        width: auto; /* Permite que las demás columnas se ajusten automáticamente */
     }
 
     td.work-site {
@@ -140,29 +140,39 @@
     /* Estilos responsivos para las tablas */
     table {
         width: 100%;
-        table-layout: fixed;
+        table-layout: auto;
     }
 
     th, td {
         font-size: 0.75rem; /* Reduce aún más el tamaño de la fuente */
-        padding: 2px; /* Reduce el padding */
+        padding: 1px; /* Reduce el padding */
+        word-break: break-word;
     }
 
     th.work-site {
         width: auto; /* Permite que la primera columna se ajuste automáticamente */
+        word-break: break-word;
     }
 
     th:not(.work-site) {
         width: auto; /* Permite que las demás columnas se ajusten automáticamente */
+        word-break: break-word;
     }
 
     td.work-site {
         width: auto; /* Permite que la primera columna se ajuste automáticamente */
+        word-break: break-word;
     }
 
     td.droppable {
         background-color: #f0f0f0;
         white-space: nowrap; /* Evita el desbordamiento de texto */
+        word-break: break-word;
+        align-items: center;
+    }
+
+    select {
+        display: flex;
     }
 
     .instructions button {
