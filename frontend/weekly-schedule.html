@@ -10,6 +10,7 @@
     <link rel="stylesheet" href="css/spinner.css">
     <link rel="stylesheet" href="css/tooltip.css">
     <link rel="stylesheet" href="css/media.css">
+    <link rel="stylesheet" href="css/progressBar.css">
     <script defer src="js/bundle.js"></script>
     <script src="js/spinner.js"></script>
     <script type="module" defer src="js/weekly-schedule.js"></script>
@@ -38,9 +39,17 @@
                     cambie días días largos por días matutinos/vespertinos.</li>
                 <li>4. Puede asignar anestesiólogos para días individuales empleando los botones 🔄 al lado de las fechas.</li> 
                 <li>5. Puede asignar anestesiólogos para toda la semana:<button id="autoAssign-button">Asignar anestesiólogos</button></li>
+                <div id="progress-wrapper">
+                    <div id="progress-content">
+                        <div id="progress-bar-container">
+                            <div id="progress-bar"></div>
+                        </div>
+                        <p id="progress-message"></p>
+                    </div>
+                </div>
                 <li>6. Imprima:<button id="print-schedule">Imprimir Programación</button></li>
             </ol>
-        </div>
+        </div>         
         <div id="availability-container" class="instructions">
             <h3>Informe de asignaciones</h3>
             <span id="long-days-inform"></span>

@@ -5,7 +5,8 @@ import { compareAvailabilitiesForEachDay } from './compareArrays.js';
 import { validateAllDays } from './autoAssignValidation.js';
 import { handleRandomizeButtonClickForWeek } from './randomizeButtonHandlerForWeek.js';
 import { updateSelectColors } from './updateSelectColors.js';
-import { countLongDays, selectBestConfiguration, applyBestConfiguration } from './bestConfigurationForWeek.js';
+import { countLongDays, selectBestConfiguration, applyBestConfiguration, collectAssignments } from './bestConfigurationForWeek.js';
+import { showProgressBar, updateProgressBar, hideProgressBar, updateProgressMessage} from './progressBar.js'
 
 export function updateWeekDates(apiUrl, availability) {
     const currentDate = new Date();
@@ -86,6 +87,11 @@ export async function populateSelectOptions(availability) {
                 // Exclusión de "mgioja" en sitios que contienen "Fundación"
                 if (user.username === 'mgioja' && workSite.includes('Fundación')) {
                     return; // Excluir "mgioja" si el sitio contiene "Fundación"
+                }
+                
+                // Exclusión de "rconsigli" en workSite que incluye "CMAC"
+                if (user.username === 'rconsigli' && workSite.includes('CMAC')) {
+                    return; // Excluir "rconsigli" de "CMAC"
                 }
 
                 // Restricción adicional para miércoles en "Imágenes Quirofano 1 Matutino"
@@ -286,35 +292,59 @@ export async function handleSelectChange(event, availability) {
 }
 
 export async function handleAutoAssignForWeek(apiUrl, dayIndices, availability) {
-    showSpinner();
+    showProgressBar(); // Mostrar la barra de progreso al inicio
+
     try {
         const isValid = await validateAllDays();
         if (!isValid) {
-            hideSpinner();
+            hideProgressBar();
             return;
         }
 
         const allLongDaysCounts = [];
+        const allAssignments = []; // Para almacenar las asignaciones de cada configuración
 
-        for (let i = 0; i < 200; i++) {
+        for (let i = 0; i < 200; i++) { // Cambiar a 100 iteraciones
             const promises = dayIndices.map(dayIndex =>
                 handleRandomizeButtonClickForWeek(apiUrl, dayIndex, availability)
             );
             await Promise.all(promises);
+
+            // Obtener el conteo de días largos para esta configuración
             const longDaysCount = countLongDays();
             allLongDaysCounts.push(longDaysCount);
+
+            // Guardar las asignaciones de esta iteración
+            const currentAssignments = collectAssignments();
+            allAssignments.push(currentAssignments);
+
+            // Actualizar la barra de progreso
+            const progress = Math.round(((i + 1) / 200) * 100);
+            updateProgressBar(progress);
+
+            // Actualizar el mensaje de progreso
+            updateProgressMessage(`Esquema semanal ${i + 1} de 200 completado.`);
+
+            // Esperar un pequeño retraso para permitir que la UI se repinte
+            await new Promise(resolve => setTimeout(resolve, 0));
         }
 
-        const bestConfiguration = selectBestConfiguration(allLongDaysCounts);
-        
-        applyBestConfiguration(bestConfiguration);
+        // Seleccionar la mejor configuración usando allLongDaysCounts y allAssignments
+        const bestConfigurationIndex = selectBestConfiguration(allLongDaysCounts, allAssignments);
 
+        // Aplicar la mejor configuración
+        const bestAssignments = allAssignments[bestConfigurationIndex]; // Ahora deberías obtener las asignaciones correctas
+        console.log("Mejor configuración seleccionada: ", bestAssignments);
+        applyBestConfiguration(bestAssignments);
+
+        // Actualizar colores y reportes para cada día
         dayIndices.forEach(dayIndex => {
             autoAssignReportBgColorsUpdate(dayIndex);
             compareAvailabilitiesForEachDay(dayIndex);
             updateSelectColors(dayIndex, availability);
         });
+
     } finally {
-        hideSpinner();
+        hideProgressBar(); // Ocultar la barra de progreso al finalizar
     }
 }
