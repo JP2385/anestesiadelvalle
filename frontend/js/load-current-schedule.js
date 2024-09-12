@@ -40,15 +40,28 @@ document.addEventListener('DOMContentLoaded', async function() {
             const rows = scheduleBody.getElementsByTagName('tr');
 
             // Actualizar longDaysInform
+            // Actualizar longDaysInform
             const longDaysSpan = document.getElementById('long-days-inform');
             if (longDaysSpan && longDaysInform) {
-                const items = longDaysInform.split('.').map(item => item.trim()).filter(item => item.length > 0);
+                // Dividir la cadena longDaysInform en base al "-" para separar las líneas
+                const items = longDaysInform.split('-').map(item => item.trim()).filter(item => item.length > 0);
+                
+                // Crear un nuevo elemento <ul>
                 const ul = document.createElement('ul');
+                
+                // Recorrer los elementos separados por "-"
                 items.forEach(item => {
+                    // Crear un nuevo <li> para cada elemento
                     const li = document.createElement('li');
-                    li.textContent = item.trim();
+                    
+                    // Añadir el "-" al inicio del texto
+                    li.textContent = `- ${item.trim()}`;
+                    
+                    // Añadir el <li> al <ul>
                     ul.appendChild(li);
                 });
+
+                // Limpiar el contenido anterior y añadir la nueva lista <ul> al elemento longDaysSpan
                 longDaysSpan.innerHTML = '';
                 longDaysSpan.appendChild(ul);
             }
