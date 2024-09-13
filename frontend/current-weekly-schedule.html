@@ -11,11 +11,13 @@
     <link rel="stylesheet" href="css/media.css">
     <link rel="stylesheet" href="css/tooltip.css">
     <link rel="stylesheet" href="css/progressBar.css">
+    <link rel="stylesheet" href="css/floatingTable.css">
     <script defer src="js/spinner.js"></script>
     <script defer src="js/bundle.js"></script>
     <script type="module" defer src="js/load-current-schedule.js"></script>
     <script type="module" defer src="js/printSchedule.js"></script>
     <script type="module" defer src="js/warnBeforeUnload.js"></script>
+    <script type="module" defer src="js/longDaysCount.js"></script>
 </head>
 <body>
     <div class="spinner" id="spinner"></div>
@@ -52,6 +54,31 @@
         </div>
         <div id="availability-container" class="instructions">
             <h3>Informe de asignaciones</h3>
+            <div class="switch-container">
+                <span class="switch-legend">
+                    Acumulado de días largos: 
+                </span>
+        
+                <!-- Switch con checkbox -->
+                <label class="switch">
+                    <input type="checkbox" id="toggle-table" />
+                    <span class="slider"></span>
+                </label>
+            </div>
+            <!-- Tabla flotante -->
+            <div id="floating-table" class="floating-table">
+                <button id="close-table" class="close-btn">&times;</button>
+                <table id="long-days-count-table">
+                    <thead>
+                        <tr>
+                            <!-- Las cabeceras se agregarán dinámicamente desde el JS -->
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- Aquí se agregarán las filas de datos dinámicamente -->
+                    </tbody>
+                </table>
+            </div> 
             <span id="long-days-inform"></span>
             <table class="assigments-inform">
                 <thead>

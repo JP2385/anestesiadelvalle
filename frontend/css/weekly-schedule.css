@@ -12,7 +12,7 @@ main {
 table {
     width: 100%;
     border-collapse: collapse;
-    margin-top: 20px;
+    margin-top: 10px;
     table-layout: fixed; /* Hace que las columnas tengan un ancho fijo */
 }
 
