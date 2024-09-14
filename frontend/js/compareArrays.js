@@ -10,7 +10,7 @@ export async function compareAvailabilities() {
         const differences = compareUserAvailability(serverUsernames, clientAvailability);
 
         updateDOMWithDifferences(differences);
-        console.log('updateDOMWithDifferences ha terminado de ejecutarse'); // Log al finalizar
+        
     } catch (error) {
         console.error('Error comparing availabilities:', error);
     }

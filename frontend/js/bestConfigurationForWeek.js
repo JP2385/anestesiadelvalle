@@ -138,7 +138,7 @@ function generateReport(totalConfigurations, minTwoLongDaysUsers, maxUniqueUsers
         const ul = document.createElement('ul');
 
         // Crear los elementos <li> para cada mensaje
-        const configurationsMessage = `- De los ${totalConfigurations} esquemas de programación analizados, hubo ${minTwoLongDaysUsers} esquemas con ${minTwoLongDaysUsers} usuarios trabajando 2 días largos.`;
+        const configurationsMessage = `- De los 200 esquemas de programación analizados, hubo ${minTwoLongDaysUsers} esquemas con ${minTwoLongDaysUsers} usuarios trabajando 2 días largos.`;
         const selectedConfigurationMessage = `- Se seleccionó el esquema con la mayor cantidad de usuarios únicos en Fundación Q1, el número ${selectedConfigurationIndex + 1}.`;
         const uniqueUsersMessage = `- El número máximo de usuarios únicos asignados a Fundación Q1 fue de: ${maxUniqueUsers}.`;
         const twoLongDaysUsersMessage = `- Los usuarios con 2 días largos en el esquema elegido son: ${usersWithTwoLongDays.join(', ') || 'Ninguno'}.`;

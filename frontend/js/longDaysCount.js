@@ -4,18 +4,12 @@ import { generateTableHeaders, generateTableRows,  } from './longDaysCountUtils.
 document.addEventListener('DOMContentLoaded', async () => {
     const apiUrl = window.location.hostname === 'localhost' ? 'http://localhost:3000' : 'https://adv-37d5b772f5fd.herokuapp.com';
 
-    console.log('Fetching users...');
     const users = await fetchUsers(apiUrl);
-    console.log('Users fetched:', users);
 
-    console.log('Fetching last schedule of each week...');
     const schedules = await fetchLastScheduleOfEachWeek(apiUrl);
-    console.log('Last schedules fetched:', schedules);
 
-    console.log('Generating table headers...');
     generateTableHeaders(schedules);
 
-    console.log('Generating table rows...');
     generateTableRows(schedules, users);
 });
 
