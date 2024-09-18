@@ -9,9 +9,10 @@ const getUsersAvailability = async (req, res) => {
             tuesday: [],
             wednesday: [],
             thursday: [],
-            friday: []
+            friday: [],
+            saturday: []  // Agregamos el sábado
         };
-
+        
         const currentDate = new Date();
         let startOfWeek = new Date(currentDate);
 
@@ -30,7 +31,8 @@ const getUsersAvailability = async (req, res) => {
             new Date(new Date(startOfWeek).setDate(startOfWeek.getDate() + 1)), // Tuesday
             new Date(new Date(startOfWeek).setDate(startOfWeek.getDate() + 2)), // Wednesday
             new Date(new Date(startOfWeek).setDate(startOfWeek.getDate() + 3)), // Thursday
-            new Date(new Date(startOfWeek).setDate(startOfWeek.getDate() + 4)) // Friday
+            new Date(new Date(startOfWeek).setDate(startOfWeek.getDate() + 4)), // Friday
+            new Date(new Date(startOfWeek).setDate(startOfWeek.getDate() + 5))  // Saturday
         ];
 
         // console.log('Days of the week being processed:', daysOfWeek);
@@ -83,6 +85,9 @@ const getUsersAvailability = async (req, res) => {
             }
             if (user.workSchedule.friday !== 'No trabaja' && !onVacation(daysOfWeek[4])) {
                 availability.friday.push(userData);
+            }
+            if (user.workSchedule.saturday !== 'No trabaja' && !onVacation(daysOfWeek[5])) {
+                availability.saturday.push(userData);
             }
         });
 

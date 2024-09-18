@@ -73,6 +73,9 @@ export async function populateSelectOptions(availability) {
     try {
         const selects = document.querySelectorAll('select');
 
+        // Obtener la lista de usuarios disponibles el sábado
+        const saturdayAvailability = availability.saturday.map(user => user.username);
+
         selects.forEach(select => {
             const workSite = select.closest('tr').querySelector('.work-site').innerText;
             const dayIndex = select.closest('td').cellIndex - 1;
@@ -88,7 +91,7 @@ export async function populateSelectOptions(availability) {
                 if (user.username === 'mgioja' && workSite.includes('Fundación')) {
                     return; // Excluir "mgioja" si el sitio contiene "Fundación"
                 }
-                
+
                 // Exclusión de "rconsigli" en workSite que incluye "CMAC"
                 if (user.username === 'rconsigli' && workSite.includes('CMAC')) {
                     return; // Excluir "rconsigli" de "CMAC"
@@ -101,32 +104,56 @@ export async function populateSelectOptions(availability) {
                     }
                 }
 
+                // Exclusión de usuarios con régimen variable el viernes si salen de vacaciones el sábado
+                if (dayName === 'friday' && user.workSchedule[dayName] === 'Variable' && !saturdayAvailability.includes(user.username)) {
+                    if (workSite.includes('Vespertino') || workSite.includes('Largo')) {
+                        console.log(`Excluyendo a ${user.username} del turno largo o vespertino por régimen variable y vacaciones el sábado.`);
+                        return; // Excluir solo de los turnos vespertinos o largos
+                    }
+                    if (workSite.includes('Matutino')) {
+                        console.log(`Incluyendo a ${user.username} en el turno matutino porque tiene régimen variable y empieza vacaciones el sábado.`);
+                        user.workSchedule[dayName] = 'Mañana'; // Cambiar a turno matutino
+                    }
+                }
+
+                // Exclusión de usuarios con turno vespertino el viernes si salen de vacaciones el sábado
+                if (dayName === 'friday' && user.workSchedule[dayName] === 'Tarde' && !saturdayAvailability.includes(user.username)) {
+                    if (workSite.includes('Vespertino')) {
+                        console.log(`Excluyendo a ${user.username} del turno vespertino porque empieza vacaciones el sábado.`);
+                        return; // Excluir solo de los turnos vespertinos
+                    }
+                    if (workSite.includes('Matutino')) {
+                        console.log(`Incluyendo a ${user.username} en el turno matutino porque empieza vacaciones el sábado.`);
+                        user.workSchedule[dayName] = 'Mañana'; // Cambiar a turno matutino
+                    }
+                }
+
                 // Excluir si el workSite incluye '4to piso' y el username es 'lespinosa'
                 if (workSite.includes('4to piso') && user.username === 'lespinosa') return;
-            
+
                 if (user.worksInCmacOnly && !workSite.includes('CMAC')) return;
-            
+
                 if ((workSite.includes('Fundación Q2') || workSite.includes('Fundación 3') || workSite.includes('CMAC Q'))) {
                     if (!user.worksInPrivateRioNegro) return;
                 }
-            
+
                 if (workSite.includes('Hospital Cipolletti') || workSite.includes('Hospital Allen')) {
                     if (!user.worksInPublicRioNegro) return;
                 }
-            
+
                 if (workSite.includes('Hospital Heller') || workSite.includes('Hospital Plottier') || workSite.includes('Hospital Centenario') || workSite.includes('Hospital Castro Rendon')) {
                     if (!user.worksInPublicNeuquen) return;
                 }
-            
+
                 if ((workSite.includes('Imágenes') || workSite.includes('COI')) && !workSite.includes('4to piso')) {
                     if (!user.worksInPrivateNeuquen) return;
                 }
-            
+
                 if (workSite.includes('Matutino') && user.workSchedule[dayName] === 'Tarde') return;
                 if (workSite.includes('Vespertino') && user.workSchedule[dayName] === 'Mañana') return;
                 if (workSite.includes('Largo') && user.workSchedule[dayName] === 'Mañana') return;
                 if (workSite.includes('Largo') && user.workSchedule[dayName] === 'Tarde') return;
-            
+
                 if (workSite.includes('CMAC Endoscopia')) {
                     if (user.worksInPrivateRioNegro || user.username === 'mgioja') {
                         // Incluir este usuario
@@ -134,7 +161,6 @@ export async function populateSelectOptions(availability) {
                         return;
                     }
                 }
-            
 
                 const option = document.createElement('option');
                 option.value = user._id || user.username; // Asegurarse de usar user._id si está disponible
@@ -172,6 +198,7 @@ export async function populateSelectOptions(availability) {
     }
 }
 
+
 export function initializeLockButtons() {
     const droppableCells = document.querySelectorAll('.droppable');
     droppableCells.forEach(cell => {
@@ -196,6 +223,9 @@ export function initializeLockButtons() {
                 // Eliminar las clases previas y agregar la clase default
                 select.classList = ' ';
                 select.classList.add('default'); // Añadir la clase default
+
+                // Llamar a handleSelectChange para reflejar el cambio
+                handleSelectChange({ target: select });
             } else {
                 // Si el select se desbloquea, eliminar la clase default
                 select.classList.remove('default');
@@ -220,6 +250,9 @@ export function initializeLockButtons() {
                 // Eliminar clases previas y añadir la clase default
                 relatedSelect.classList = ' ';
                 relatedSelect.classList.add('default');
+
+                // Llamar a handleSelectChange para reflejar el cambio en los selects relacionados
+                handleSelectChange({ target: relatedSelect });
         
                 const relatedButton = relatedSelect.closest('td').querySelector('.lock-button');
                 if (relatedButton) {
@@ -236,6 +269,7 @@ export function initializeLockButtons() {
         cell.appendChild(button);
     });
 }
+
 
 export async function handleSelectChange(event, availability) {
     const select = event.target;
