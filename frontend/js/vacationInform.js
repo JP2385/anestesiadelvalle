@@ -1,7 +1,18 @@
 document.addEventListener('DOMContentLoaded', async function() {
-    const yearSelect = document.getElementById('year');
-    const userSelect = document.getElementById('user');
-    const currentYear = new Date().getFullYear();
+    document.addEventListener('DOMContentLoaded', async function() {
+        // Asegúrate de que todos los elementos HTML que estás manipulando existan en este momento
+        const yearSelect = document.getElementById('year');
+        const userSelect = document.getElementById('user');
+        const reportBody = document.getElementById('report-body');
+    
+        if (!yearSelect || !userSelect || !reportBody) {
+            console.error('Algunos elementos del DOM no se han cargado correctamente.');
+            return;  // Evita continuar si los elementos clave no están presentes
+        }
+    
+        // Resto del código para generar el informe de vacaciones
+    });
+    
     let users = [];  // Mover la declaración de `users` fuera del bloque try
 
     try {
