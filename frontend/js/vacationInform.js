@@ -3,8 +3,10 @@ import { fetchVacations } from './fetchVacations.js';  // Asegúrate de que la r
 document.addEventListener('DOMContentLoaded', async function() {
     const yearSelect = document.getElementById('year');
     const userSelect = document.getElementById('user');
+    const startDateInput = document.getElementById('startDate');
+    const endDateInput = document.getElementById('endDate');
     const currentYear = new Date().getFullYear();
-    let users = [];  // Mover la declaración de `users` fuera del bloque try
+    let users = [];
 
     try {
         // Usar la función fetchVacations para obtener los datos de las vacaciones
@@ -38,35 +40,41 @@ document.addEventListener('DOMContentLoaded', async function() {
         if (sortedYears.includes(currentYear)) {
             yearSelect.value = currentYear;
         } else {
-            yearSelect.value = sortedYears[0]; // Si no hay vacaciones para el año actual, seleccionar el más reciente
+            yearSelect.value = sortedYears[0];
         }
 
         // Mostrar las vacaciones por defecto con el año y usuario actual
-        generateReport(yearSelect.value, userSelect.value, users);
+        generateReport(yearSelect.value, userSelect.value, startDateInput.value, endDateInput.value, users);
 
     } catch (error) {
         console.error('Error fetching vacation data:', error);
     }
 
-    // Agregar eventos para actualizar el reporte cuando se cambia el año o el usuario
+    // Agregar eventos para actualizar el reporte cuando se cambia el año, usuario, o fechas
     yearSelect.addEventListener('change', function() {
-        generateReport(yearSelect.value, userSelect.value, users);
+        generateReport(yearSelect.value, userSelect.value, startDateInput.value, endDateInput.value, users);
     });
 
     userSelect.addEventListener('change', function() {
-        generateReport(yearSelect.value, userSelect.value, users);
+        generateReport(yearSelect.value, userSelect.value, startDateInput.value, endDateInput.value, users);
+    });
+
+    startDateInput.addEventListener('change', function() {
+        generateReport(yearSelect.value, userSelect.value, startDateInput.value, endDateInput.value, users);
+    });
+
+    endDateInput.addEventListener('change', function() {
+        generateReport(yearSelect.value, userSelect.value, startDateInput.value, endDateInput.value, users);
     });
 });
 
 // Función para poblar el select de usuarios
 function populateUserSelect(users) {
     const userSelect = document.getElementById('user');
-    userSelect.innerHTML = '<option value="">All Users</option>';  // Opción para mostrar todos los usuarios
+    userSelect.innerHTML = '<option value="">All Users</option>';
 
-    // Ordenar los usuarios alfabéticamente por username
     const sortedUsers = users.sort((a, b) => a.username.localeCompare(b.username));
 
-    // Poblar el select con los usuarios ordenados
     sortedUsers.forEach(user => {
         const option = document.createElement('option');
         option.value = user.username;
@@ -75,20 +83,28 @@ function populateUserSelect(users) {
     });
 }
 
-// Función para generar el informe basado en el año y usuario seleccionados
-function generateReport(year, selectedUser, users) {
+// Función para generar el informe basado en el año, usuario, y rango de fechas seleccionados
+function generateReport(year, selectedUser, startDate, endDate, users) {
     const reportBody = document.getElementById('report-body');
     reportBody.innerHTML = '';  // Limpiar resultados anteriores
 
-    // Filtrar y ordenar las vacaciones por endDate, considerando el año y el usuario
     const reportData = users.map(user => {
         if (selectedUser && user.username !== selectedUser) {
-            return [];  // Si un usuario está seleccionado, solo mostramos sus vacaciones
+            return [];
         }
 
         return user.vacations.filter(vacation => {
-            const startDate = new Date(vacation.startDate);
-            return startDate.getFullYear() == year;
+            const vacationStart = new Date(vacation.startDate);
+            const vacationEnd = new Date(vacation.endDate);
+
+            // Verificar que las vacaciones estén dentro del año seleccionado
+            const isInYear = vacationStart.getFullYear() == year;
+
+            // Verificar si las vacaciones están dentro del rango de fechas (si se seleccionaron fechas)
+            const isInDateRange = (!startDate || vacationStart >= new Date(startDate)) &&
+                                  (!endDate || vacationEnd <= new Date(endDate));
+
+            return isInYear && isInDateRange;
         }).map(vacation => ({
             username: user.username,
             startDate: vacation.startDate,
@@ -109,7 +125,7 @@ function generateReport(year, selectedUser, users) {
         });
     } else {
         const row = document.createElement('tr');
-        row.innerHTML = `<td colspan="3">No vacations found for ${year} ${selectedUser ? `and user ${selectedUser}` : ''}</td>`;
+        row.innerHTML = `<td colspan="3">No vacations found for ${year} ${selectedUser ? `and user ${selectedUser}` : ''} in the selected date range.</td>`;
         reportBody.appendChild(row);
     }
 }

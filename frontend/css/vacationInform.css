@@ -1,36 +1,43 @@
 /* Estilos para el formulario de filtro */
 #filter-form {
     display: flex;
-    justify-content: space-between;
-    align-items: center;
-    gap: 20px; /* Espacio entre los elementos */
-    margin-bottom: 20px; /* Margen inferior para separar del contenido debajo */
+    flex-wrap: wrap; /* Permite que los pares label/input se envuelvan si es necesario */
+    gap: 10px; /* Espacio entre los elementos */
+    margin-bottom: 10px; /* Margen inferior para separar del contenido debajo */
+}
+
+/* Contenedor para cada par de label/input */
+.form-group {
+    display: flex;
+    align-items: center; /* Alinear el label y el input verticalmente */
+    gap: 10px; /* Espacio entre el label y el input */
+    flex: 1 1 20%; /* Los pares ocuparán aproximadamente 45% del ancho cada uno */
 }
 
 /* Estilos para los labels */
-#filter-form label {
-    font-size: 16px;
+label {
+    min-width: max-content;
+    color: #555;
+    font-weight: bold;
+}
+
+input, select {
     margin-right: 10px;
 }
 
-/* Estilos para los select */
-#filter-form select {
-    width: 30%; /* Ancho del 30% */
-    padding: 5px;
-    font-size: 16px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    /* background-color: #f9f9f9; */
-}
-
-/* Asegurar que el formulario se ajuste a pantallas más pequeñas */
+/* Ajustes para pantallas pequeñas */
 @media (max-width: 768px) {
     #filter-form {
-        flex-direction: column; /* Cambiar a columna en pantallas pequeñas */
+        flex-direction: row; /* Cambiar a columna en pantallas pequeñas */
         align-items: flex-start;
     }
 
-    #filter-form select {
-        width: 100%; /* Ancho completo en pantallas pequeñas */
+    .form-group {
+        width: 80%; /* Los pares de label/input ocuparán el ancho completo en pantallas pequeñas */
+        margin-bottom: 5px;
+    }
+
+    input, select {
+        width: 80px; /* Los inputs y selects ocupan el 100% en pantallas pequeñas */
     }
 }
