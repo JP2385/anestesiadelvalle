@@ -1,24 +1,14 @@
+import { fetchVacations } from './fetchVacations.js';  // Asegúrate de que la ruta del archivo sea correcta
+
 document.addEventListener('DOMContentLoaded', async function() {
-    document.addEventListener('DOMContentLoaded', async function() {
-        // Asegúrate de que todos los elementos HTML que estás manipulando existan en este momento
-        const yearSelect = document.getElementById('year');
-        const userSelect = document.getElementById('user');
-        const reportBody = document.getElementById('report-body');
-    
-        if (!yearSelect || !userSelect || !reportBody) {
-            console.error('Algunos elementos del DOM no se han cargado correctamente.');
-            return;  // Evita continuar si los elementos clave no están presentes
-        }
-    
-        // Resto del código para generar el informe de vacaciones
-    });
-    
+    const yearSelect = document.getElementById('year');
+    const userSelect = document.getElementById('user');
+    const currentYear = new Date().getFullYear();
     let users = [];  // Mover la declaración de `users` fuera del bloque try
 
     try {
-        // Realizar la solicitud al backend para obtener las vacaciones
-        const response = await fetch('http://localhost:3000/vacations'); // Ajusta la URL según tu configuración
-        users = await response.json();  // Ahora la variable `users` es accesible en todo el bloque
+        // Usar la función fetchVacations para obtener los datos de las vacaciones
+        users = await fetchVacations();
 
         // Poblar el select de usuarios
         populateUserSelect(users);

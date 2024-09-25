@@ -41,7 +41,6 @@ export function updateSelectBackgroundColors() {
 export async function fetchAvailability() {
     const apiUrl = window.location.hostname === 'localhost' ? 'http://localhost:3000' : 'https://adv-37d5b772f5fd.herokuapp.com';
     try {
-        (`Fetching availability from: ${apiUrl}/auth/availability`);
 
         const response = await fetch(`${apiUrl}/auth/availability`, {
             method: 'GET',
@@ -53,7 +52,6 @@ export async function fetchAvailability() {
 
         if (response.ok) {
             const availability = await response.json();
-            ('Fetched availability:', availability);
 
             // Crear availabilityCount a partir de la data recibida
             const availabilityCount = {
