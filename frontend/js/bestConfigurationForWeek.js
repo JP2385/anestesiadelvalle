@@ -196,7 +196,7 @@ function countQ1Assignments(assignments) {
 
     ['monday', 'tuesday', 'wednesday', 'thursday', 'friday'].forEach(day => {
         assignments[day].forEach(assignment => {
-            if (assignment.workSite.includes('Fundación Q1')) {
+            if (assignment.workSite.includes('Fundación Q1 Cardio')) {
                 const userId = assignment.userId;
                 if (!q1Assignments[userId]) {
                     q1Assignments[userId] = 0;

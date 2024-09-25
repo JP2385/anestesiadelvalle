@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Informe de Vacaciones</title>
+    <link rel="icon" type="image/png" href="images/logo/logo64x64.png">
+    <link rel="stylesheet" href="css/header.css">
+    <link rel="stylesheet" href="css/media.css">
+    <link rel="stylesheet" href="css/weekly-schedule.css">
+    <link rel="stylesheet" href="css/spinner.css">
+    <link rel="stylesheet" href="css/vacationInform.css">
+    <script type="module" src="js/vacationInform.js"></script>
+    <script defer src="js/bundle.js"></script>
+</head>
+<body>
+    <div class="spinner" id="spinner"></div>
+        <header>
+            <a href="index.html" class="app-logo-link">
+                <img src="images/logo/logo.png" alt="Logo Anestesiólogos del Valle" class="app-logo">
+            </a>
+            <h1>Anestesiólogos del Valle</h1>
+            <a href="index.html" class="back-to-main-menu" title="Volver al menú principal">
+                <img src="images/icons/back-icon.svg" alt="Volver" class="back-icon">
+            </a>
+        </header>
+        <main>
+            <div class="instructions">
+                <h3>Informe de Vacaciones</h3>
+                <form id="filter-form">
+                    <label for="year">Año:</label>
+                    <select id="year"></select>
+
+                    <label for="user">Usuario:</label>
+                    <select id="user"></select>
+                </form>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Usuario</th>
+                            <th>Fecha de inicio</th>
+                            <th>Fecha de fin</th>
+                        </tr>
+                    </thead>
+                    <tbody id="report-body">
+                        <!-- Vacation data will be inserted here -->
+                    </tbody>
+                </table>
+            </div>
+        </main>
+    </div>
+</body>
+</html>

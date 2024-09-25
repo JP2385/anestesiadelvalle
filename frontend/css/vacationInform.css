@@ -1,0 +1,36 @@
+/* Estilos para el formulario de filtro */
+#filter-form {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 20px; /* Espacio entre los elementos */
+    margin-bottom: 20px; /* Margen inferior para separar del contenido debajo */
+}
+
+/* Estilos para los labels */
+#filter-form label {
+    font-size: 16px;
+    margin-right: 10px;
+}
+
+/* Estilos para los select */
+#filter-form select {
+    width: 30%; /* Ancho del 30% */
+    padding: 5px;
+    font-size: 16px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    /* background-color: #f9f9f9; */
+}
+
+/* Asegurar que el formulario se ajuste a pantallas más pequeñas */
+@media (max-width: 768px) {
+    #filter-form {
+        flex-direction: column; /* Cambiar a columna en pantallas pequeñas */
+        align-items: flex-start;
+    }
+
+    #filter-form select {
+        width: 100%; /* Ancho completo en pantallas pequeñas */
+    }
+}
