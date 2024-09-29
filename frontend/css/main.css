@@ -25,13 +25,77 @@ main {
     box-shadow: 2px 2px 5px rgba(0,0,0,0.2);
 }
 
-.content-section button:hover {
+.content-section button:hover, .notification-area button:hover {
     background-color: #0056b3;
     transform: translateY(-2px);
     box-shadow: 4px 4px 10px rgba(0,0,0,0.3);
 }
 
-.content-section button:active {
+.content-section button:active, .notification-area button:active {
     background-color: #003f7f;
     transform: translateY(0);
+}
+
+.notification-area {
+    background-color: white;
+    padding: 1rem;
+    border-radius: 5px;
+    box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    margin-bottom: 1rem;
+    text-align: center;
+}
+
+.notification-area h3 {
+    text-align: left;
+    font-weight: bold;
+}
+
+.notification-area button {
+    background-color: #0069d9;
+    color: white;
+    border: none;
+    padding: 1rem 2rem;
+    cursor: pointer;
+    font-size: 1rem;
+    font-weight: bold;
+    margin: 0.5rem;
+    transition: background-color 0.3s, transform 0.3s;
+    border-radius: 10px;
+    width: calc(20% - 1rem);
+    box-sizing: border-box;
+    box-shadow: 2px 2px 5px rgba(0,0,0,0.2);
+}
+
+/* Estilos para el checkbox y la etiqueta "Recuérdame" */
+
+.notification-area input[type="checkbox"] {
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    /* Estilo personalizado */
+    width: 16px;
+    height: 16px;
+    background-color: #fff; /* Color de fondo del checkbox */
+    border: 2px solid #ddd;
+    border-radius: 5px; /* Bordes redondeados */
+    outline: none;
+    cursor: pointer;
+    margin-right: 10px;
+}
+
+.notification-area input[type="checkbox"]:checked {
+    background-color: #0069d9; /* Color de fondo cuando está seleccionado */
+    border: 2px solid #0069d9; /* Borde del checkbox cuando está seleccionado */
+    background-image: url('../images/icons/check.svg');
+    background-size: 100% 100%;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+
+.notification-area label {
+    display: inline-flex;
+    align-items: center;
+    color: #555;
+    font-weight: bold;
+    align-items: left;
 }

@@ -107,8 +107,9 @@ function generateReport(year, selectedUser, startDate, endDate, users) {
             return isInYear && isInDateRange;
         }).map(vacation => ({
             username: user.username,
-            startDate: vacation.startDate,
-            endDate: vacation.endDate
+            // Sumar 3 horas a las fechas antes de mostrarlas
+            startDate: addThreeHours(vacation.startDate),
+            endDate: addThreeHours(vacation.endDate)
         }));
     }).flat().sort((a, b) => new Date(b.endDate) - new Date(a.endDate)); // Ordenar por endDate
 
@@ -128,4 +129,10 @@ function generateReport(year, selectedUser, startDate, endDate, users) {
         row.innerHTML = `<td colspan="3">No vacations found for ${year} ${selectedUser ? `and user ${selectedUser}` : ''} in the selected date range.</td>`;
         reportBody.appendChild(row);
     }
+}
+
+function addThreeHours(dateString) {
+    const date = new Date(dateString);
+    date.setHours(date.getHours() + 3);
+    return date;
 }

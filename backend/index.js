@@ -6,11 +6,13 @@ const config = require('./config');
 const cors = require('cors');
 const authRoutes = require('./src/app/routes/authRoutes');
 const scheduleRoutes = require('./src/app/routes/scheduleRoutes');
+const vacationSwapRoutes = require('./src/app/routes/vacationSwapRoutes');  // Ruta correcta
+const notificationRoutes = require('./src/app/routes/notificationRoutes');  // Ruta correcta
 const path = require('path');
 const cron = require('node-cron');
-const Schedule = require('./src/app/models/scheduleModel'); // Asegúrate de que la ruta sea correcta
+const Schedule = require('./src/app/models/scheduleModel'); // Ruta correcta
 const { getUsersAvailability } = require('./src/app/controllers/availabilityController');
-const { getAllVacations } = require('./src/app/controllers/vacationController');  // Importa el controlador de vacaciones
+const { getAllVacations } = require('./src/app/controllers/vacationController');
 
 const app = express();
 app.use(express.json());
@@ -31,6 +33,12 @@ mongoose.connect(config.mongoUri, { useNewUrlParser: true, useUnifiedTopology: t
 // Definición de rutas
 app.use('/auth', authRoutes);
 app.use('/schedule', scheduleRoutes);
+
+// Nueva ruta para el intercambio de vacaciones
+app.use('/vacation-swap', vacationSwapRoutes);  // Asegúrate de que la ruta esté bien configurada
+
+// Nueva ruta para manejar las notificaciones
+app.use('/notifications', notificationRoutes);  // Asegúrate de que la ruta esté bien configurada
 
 // Ruta para consultar disponibilidad
 app.get('/availability', getUsersAvailability);

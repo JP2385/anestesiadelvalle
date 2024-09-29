@@ -96,7 +96,16 @@
         width: 100%; /* Asegura que los botones ocupen todo el ancho en dispositivos pequeños */
         padding: 0.5rem; /* Ajusta el padding según sea necesario */
     }
+
+
+    .notification-area button {
+            width: 30%; /* Los botones ocuparán todo el ancho disponible */
+            font-size: 0.9rem; /* Ajustar el tamaño de fuente */
+            padding: 0.8rem 1.5rem; /* Ajustar el padding para mejor visualización */
+            margin: 0.5rem; /* Márgenes ajustados */
+    }
 }
+
 
 @media (max-width: 480px) {
     header {
@@ -185,7 +194,7 @@
         padding: 0.5rem; /* Ajusta el padding según sea necesario */
     }
 
-    .lock-button {
+    .lock-button, .notification-area button {
         width: 100%; /* Asegura que los botones ocupen todo el ancho en dispositivos pequeños */
         padding: 0.5rem; /* Ajusta el padding según sea necesario */
     }

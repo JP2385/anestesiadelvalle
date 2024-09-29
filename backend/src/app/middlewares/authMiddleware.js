@@ -1,4 +1,3 @@
-// backend/src/app/middlewares/authMiddleware.js
 const jwt = require('jsonwebtoken');
 const config = require('../../../config');
 
@@ -18,7 +17,10 @@ module.exports = (req, res, next) => {
             return res.status(500).send({ message: 'Failed to authenticate token' });
         }
 
-        req.userId = decoded.userId;
+        // Asignar tanto req.userId como req.user._id para compatibilidad
+        req.userId = decoded.userId;  // Mantener compatibilidad con el código existente
+        req.user = { _id: decoded.userId };  // Añadir compatibilidad con req.user._id
+        console.log('Usuario autenticado ID:', req.user._id);  // Log para verificar el IDs
         next();
     });
 };

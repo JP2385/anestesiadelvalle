@@ -75,9 +75,18 @@ function generateVacationList(vacations) {
     vacations.forEach(vacation => {
         const listItem = document.createElement('li');
 
+        // Función para sumar 3 horas a una fecha
+        function addThreeHours(dateString) {
+            const date = new Date(dateString);
+            date.setHours(date.getHours() + 3);
+            return date;
+        }
+
         const options = { day: 'numeric', month: 'long', year: 'numeric' };  // Opciones para el formato
-        const startDate = new Date(vacation.startDate).toLocaleDateString('es-ES', options);
-        const endDate = new Date(vacation.endDate).toLocaleDateString('es-ES', options);
+        
+        // Sumar 3 horas a las fechas antes de mostrarlas
+        const startDate = addThreeHours(vacation.startDate).toLocaleDateString('es-ES', options);
+        const endDate = addThreeHours(vacation.endDate).toLocaleDateString('es-ES', options);
 
         listItem.textContent = `Del ${startDate} hasta el ${endDate}.`;
         list.appendChild(listItem);
