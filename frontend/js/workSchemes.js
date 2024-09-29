@@ -22,11 +22,10 @@ export function getWorkSchemes(isOddWeek) {
     };
 
     const ltotisScheme = {
-        'tuesday-header': 'Hospital Allen Largo'
     };
 
     const lburgueñoScheme = {
-        'thursday-header': 'Hospital Allen Largo'
+        'tuesday-header': 'Hospital Allen Largo'
     };
 
     const sdegreefScheme = {

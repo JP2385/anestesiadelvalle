@@ -24,8 +24,6 @@ const getNotifications = async (req, res) => {
 };
 
 
-// Responder a una notificación (aceptar o rechazar)
-// Responder a una notificación (aceptar o rechazar)
 const respondToNotification = async (req, res) => {
     const { notificationId, response, selectedPeriod } = req.body;  // Incluimos el período seleccionado
 
@@ -50,29 +48,59 @@ const respondToNotification = async (req, res) => {
                 return res.status(404).json({ message: 'Usuarios no encontrados.' });
             }
 
-            // Si hay un período seleccionado (el que el receptor quiere tomar), lo parseamos
+            // Parsear el período seleccionado
             const selectedPeriodObj = JSON.parse(selectedPeriod);
 
-            // Quitar el período cedido de las vacaciones del remitente (sender)
-            sender.vacations = sender.vacations.filter(vacation => 
-                !(vacation.startDate.toISOString() === selectedPeriodObj.startDate && vacation.endDate.toISOString() === selectedPeriodObj.endDate)
-            );
+            // Dividir el período de vacaciones del sender, manejando superposición
+            const updatedSenderVacations = [];
 
-            // Agregar el período solicitado a las vacaciones del remitente (sender)
-            sender.vacations.push(notification.vacationPeriod);
+            sender.vacations.forEach(vacation => {
+                const vacationStart = new Date(vacation.startDate);
+                const vacationEnd = new Date(vacation.endDate);
+                const periodStart = new Date(selectedPeriodObj.startDate);
+                const periodEnd = new Date(selectedPeriodObj.endDate);
+
+                // Caso 1: El período de vacaciones del sender abarca el período cedido
+                if (vacationStart <= periodStart && vacationEnd >= periodEnd) {
+                    // Mantener la parte antes del período cedido
+                    if (vacationStart < periodStart) {
+                        updatedSenderVacations.push({
+                            startDate: vacationStart,
+                            endDate: new Date(periodStart.setDate(periodStart.getDate() - 1))  // Un día antes del período cedido
+                        });
+                    }
+
+                    // Mantener la parte después del período cedido
+                    if (vacationEnd > periodEnd) {
+                        updatedSenderVacations.push({
+                            startDate: new Date(periodEnd.setDate(periodEnd.getDate() + 1)),  // Un día después del período cedido
+                            endDate: vacationEnd
+                        });
+                    }
+                } else {
+                    // Caso 2: No hay superposición o el período no es parte del cedido, mantenerlo
+                    updatedSenderVacations.push(vacation);
+                }
+            });
+
+            // Actualizar las vacaciones del sender con las partes que no fueron cedidas
+            sender.vacations = updatedSenderVacations;
+
+            // Agregar el nuevo período adquirido a las vacaciones del sender
+            sender.vacations.push(notification.vacationPeriod);  // Período que el sender obtiene (19/10/2024 al 27/10/2024)
             await sender.save();
 
-            // Quitar el período solicitado de las vacaciones del receptor (receiver)
+            // Quitar el período cedido de las vacaciones del receiver
             receiver.vacations = receiver.vacations.filter(vacation => 
                 !(vacation.startDate.toISOString() === notification.vacationPeriod.startDate.toISOString() &&
                   vacation.endDate.toISOString() === notification.vacationPeriod.endDate.toISOString())
             );
 
-            // Agregar el período cedido a las vacaciones del receptor (receiver)
+            // Agregar el período cedido a las vacaciones del receiver
             receiver.vacations.push(selectedPeriodObj);
             await receiver.save();
 
-            // Crear una nueva notificación para el `sender` informándole que su intercambio fue aceptado
+            // Crear una nueva notificación para el sender informándole que su intercambio fue aceptado
             const acceptanceNotification = new Notification({
                 sender: notification.receiver,  // El que acepta
                 receiver: notification.sender,  // El que solicitó el intercambio
@@ -105,6 +133,7 @@ const respondToNotification = async (req, res) => {
         res.status(500).json({ message: 'Error al responder a la notificación.' });
     }
 };
+
 
 // Función para cambiar el estado de la notificación a 'notified'
 const markAsNotified = async (req, res) => {
