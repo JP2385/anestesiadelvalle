@@ -7,6 +7,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
         // Verificar si el userId está almacenado en localStorage
         let userId = localStorage.getItem('userId');
+        console.log("UserId obtenido:", userId);  // Agrega este log
         if (!userId) {
             // Si no está en localStorage, hacer una solicitud para obtener el perfil del usuario
             const profileResponse = await fetch(`${apiUrl}/auth/profile`, {
