@@ -24,8 +24,9 @@ const getNotifications = async (req, res) => {
 };
 
 
+// Responder a una notificación (aceptar o rechazar)
 const respondToNotification = async (req, res) => {
-    const { notificationId, response, selectedPeriod } = req.body;  // Incluimos el período seleccionado
+    const { notificationId, response, selectedPeriod } = req.body;
 
     try {
         const notification = await Notification.findById(notificationId);
@@ -48,59 +49,74 @@ const respondToNotification = async (req, res) => {
                 return res.status(404).json({ message: 'Usuarios no encontrados.' });
             }
 
-            // Parsear el período seleccionado
             const selectedPeriodObj = JSON.parse(selectedPeriod);
 
-            // Dividir el período de vacaciones del sender, manejando superposición
-            const updatedSenderVacations = [];
+            // Convertir las fechas del período cedido y del período original en objetos Date
+            const cedidoStart = new Date(selectedPeriodObj.startDate);
+            const cedidoEnd = new Date(selectedPeriodObj.endDate);
 
-            sender.vacations.forEach(vacation => {
-                const vacationStart = new Date(vacation.startDate);
-                const vacationEnd = new Date(vacation.endDate);
-                const periodStart = new Date(selectedPeriodObj.startDate);
-                const periodEnd = new Date(selectedPeriodObj.endDate);
+            // Buscar el período completo de vacaciones que incluye las fechas a ceder
+            const originalVacation = sender.vacations.find(vacation => 
+                new Date(vacation.startDate).getTime() <= cedidoStart.getTime() &&
+                new Date(vacation.endDate).getTime() >= cedidoEnd.getTime()
+            );
 
-                // Caso 1: El período de vacaciones del sender abarca el período cedido
-                if (vacationStart <= periodStart && vacationEnd >= periodEnd) {
-                    // Mantener la parte antes del período cedido
-                    if (vacationStart < periodStart) {
-                        updatedSenderVacations.push({
-                            startDate: vacationStart,
-                            endDate: new Date(periodStart.setDate(periodStart.getDate() - 1))  // Un día antes del período cedido
-                        });
-                    }
+            if (originalVacation) {
+                // Eliminar el período completo de vacaciones del sender
+                sender.vacations = sender.vacations.filter(vacation => 
+                    vacation.startDate.toISOString() !== originalVacation.startDate.toISOString() ||
+                    vacation.endDate.toISOString() !== originalVacation.endDate.toISOString()
+                );
 
-                    // Mantener la parte después del período cedido
-                    if (vacationEnd > periodEnd) {
-                        updatedSenderVacations.push({
-                            startDate: new Date(periodEnd.setDate(periodEnd.getDate() + 1)),  // Un día después del período cedido
-                            endDate: vacationEnd
-                        });
-                    }
-                } else {
-                    // Caso 2: No hay superposición o el período no es parte del cedido, mantenerlo
-                    updatedSenderVacations.push(vacation);
+                const originalStart = new Date(originalVacation.startDate);
+                const originalEnd = new Date(originalVacation.endDate);
+
+                let remainingStart = null;
+                let remainingEnd = null;
+
+                 // Caso 1: Cedido al inicio del período original
+                if (cedidoStart.getTime() === originalStart.getTime()) {
+                    remainingStart = new Date(cedidoEnd);
+                    remainingStart.setDate(remainingStart.getDate() - 1);  // Comienza el día anterior al período cedido
+                    remainingEnd = originalEnd;
+
+                    
+                } else if (cedidoEnd.getTime() === originalEnd.getTime()) { 
+                    // Caso 2: Cedido al final del período original
+                    remainingStart = originalStart;
+                    remainingEnd = new Date(cedidoStart);
+                    remainingEnd.setDate(remainingEnd.getDate() +1);  // Termina un día después al período cedido
+
                 }
-            });
 
-            // Actualizar las vacaciones del sender con las partes que no fueron cedidas
-            sender.vacations = updatedSenderVacations;
 
-            // Agregar el nuevo período adquirido a las vacaciones del sender
-            sender.vacations.push(notification.vacationPeriod);  // Período que el sender obtiene (19/10/2024 al 27/10/2024)
+                // Si tenemos un período restante válido, lo agregamos a las vacaciones del sender
+                if (remainingStart && remainingEnd && remainingStart.getTime() <= remainingEnd.getTime()) {
+                    console.log(`Agregando el período restante al sender: ${remainingStart.toISOString()} a ${remainingEnd.toISOString()}`);
+                    sender.vacations.push({
+                        startDate: remainingStart,
+                        endDate: remainingEnd
+                    });
+                } else {
+                    console.log("No se encontró un período restante para agregar.");
+                }
+            }
+
+            // Agregar el período solicitado a las vacaciones del sender
+            sender.vacations.push(notification.vacationPeriod);
             await sender.save();
 
-            // Quitar el período cedido de las vacaciones del receiver
+            // Quitar el período solicitado de las vacaciones del receptor
             receiver.vacations = receiver.vacations.filter(vacation => 
                 !(vacation.startDate.toISOString() === notification.vacationPeriod.startDate.toISOString() &&
                   vacation.endDate.toISOString() === notification.vacationPeriod.endDate.toISOString())
             );
 
-            // Agregar el período cedido a las vacaciones del receiver
+            // Agregar el período cedido a las vacaciones del receptor
             receiver.vacations.push(selectedPeriodObj);
             await receiver.save();
 
-            // Crear una nueva notificación para el sender informándole que su intercambio fue aceptado
+            // Crear una nueva notificación para el `sender` informándole que su intercambio fue aceptado
             const acceptanceNotification = new Notification({
                 sender: notification.receiver,  // El que acepta
                 receiver: notification.sender,  // El que solicitó el intercambio

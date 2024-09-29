@@ -194,7 +194,6 @@ document.addEventListener('DOMContentLoaded', async () => {
                             alert('Por favor, selecciona al menos un período para tomar.');
                         } else {
                             respondToNotification(notification._id, 'accepted', selectedPeriods, notificationDiv);
-                            notificationArea.classList.remove('notification-area')
                         }
                     });
                     
