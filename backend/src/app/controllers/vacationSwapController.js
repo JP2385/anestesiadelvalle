@@ -38,9 +38,13 @@ const requestVacationSwap = async (req, res) => {
 
         // Obtener los usuarios que tienen el período solicitado
         const requestedVacationUsers = await User.find({
-            'vacations.startDate': periodToRequest.startDate,
-            'vacations.endDate': periodToRequest.endDate
+            'vacations.startDate': { $lte: periodToRequest.startDate },
+            'vacations.endDate': { $gte: periodToRequest.endDate },
+            '_id': { $ne: userId }  // Excluir al current user (solicitante)
         });
+        
+        console.log(`Usuarios encontrados con el período solicitado (ajustado): ${requestedVacationUsers.length}`);
+        
 
         // Validar los días cedidos vs días solicitados
         const totalDaysToGive = periodsToGive.reduce((total, period) => {

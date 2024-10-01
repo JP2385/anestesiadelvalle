@@ -5,31 +5,24 @@ document.addEventListener('DOMContentLoaded', async () => {
     try {
         console.log('Iniciando solicitud de notificaciones...');
 
-        // Verificar si el userId está almacenado en localStorage
-        let userId = localStorage.getItem('userId');
-        console.log("UserId obtenido:", userId);  // Agrega este log
-        if (!userId) {
-            // Si no está en localStorage, hacer una solicitud para obtener el perfil del usuario
-            const profileResponse = await fetch(`${apiUrl}/auth/profile`, {
-                method: 'GET',
-                headers: {
-                    'Authorization': 'Bearer ' + localStorage.getItem('token'),
-                    'Content-Type': 'application/json'
-                }
-            });
-
-            if (profileResponse.ok) {
-                const profileData = await profileResponse.json();
-                userId = profileData._id;
-                // Almacenar el userId en localStorage
-                localStorage.setItem('userId', userId);
-                console.log('userId obtenido y almacenado:', userId);
-            } else {
-                console.error('Error al obtener el perfil del usuario');
-                notificationArea.textContent = 'Error al cargar notificaciones.';
-                return;
+        // Hacer una solicitud para obtener el perfil del usuario (siempre obtenemos desde el servidor)
+        const profileResponse = await fetch(`${apiUrl}/auth/profile`, {
+            method: 'GET',
+            headers: {
+                'Authorization': 'Bearer ' + localStorage.getItem('token'),
+                'Content-Type': 'application/json'
             }
+        });
+
+        if (!profileResponse.ok) {
+            console.error('Error al obtener el perfil del usuario');
+            notificationArea.textContent = 'Error al cargar notificaciones.';
+            return;
         }
+
+        const profileData = await profileResponse.json();
+        const userId = profileData._id;  // Asignar el userId desde el perfil obtenido
+        console.log('UserId obtenido desde el perfil:', userId);
 
         // Realizar una solicitud al backend para obtener las notificaciones pendientes o aceptadas
         const response = await fetch(`${apiUrl}/notifications`, {
@@ -52,76 +45,88 @@ document.addEventListener('DOMContentLoaded', async () => {
         console.log('Notificaciones obtenidas:', notifications);
 
         // Filtrar notificaciones relevantes para el usuario (pending o accepted)
-        const relevantNotifications = notifications.filter(notification => 
-            (notification.status === 'pending' && notification.receiver.toString() === userId) ||
-            (notification.status === 'accepted' && notification.sender.toString() === userId)
-        );
+        // Filtrar notificaciones aceptadas con isConfirmation = true
+        const relevantNotifications = notifications.filter(notification => {
+            console.log(`Revisando notificación con ID: ${notification._id}`);
+            console.log(`Estado: ${notification.status}, isConfirmation: ${notification.isConfirmation}, Receiver: ${notification.receiver}, Sender: ${notification.sender}`);
+            
+            // Mostrar notificaciones "accepted" si es una confirmación
+            if (notification.status === 'accepted') {
+                if (notification.receiver.toString() === userId.toString() && notification.isConfirmation === true) {
+                    console.log("Notificación aceptada relevante para el sender original.");
+                    return true;  // Esta es la notificación de confirmación
+                } else {
+                    console.log("Notificación 'accepted' pero no es una confirmación.");
+                }
+            }
 
-        console.log('Notificaciones relevantes para mostrar:', relevantNotifications);
+            // Filtrar notificaciones pendientes donde el usuario es el receiver
+            if (notification.status === 'pending' && notification.receiver.toString() === userId.toString()) {
+                console.log("Notificación pendiente encontrada para el receiver.");
+                return true;  // Esta es una notificación pendiente
+            }
 
+            console.log("Notificación no relevante.");
+            return false;
+        });
+
+        
+        
         if (relevantNotifications.length > 0) {
-            notificationArea.innerHTML = '';  // Limpiar el área antes de renderizar
             notificationArea.classList.add('notification-area');
             for (const notification of relevantNotifications) {
                 console.log('Procesando notificación:', notification);
-        
-                // Verificar si la notificación es para el *sender* y fue aceptada
-                if (notification.status === 'accepted' && notification.sender.toString() === userId) {
-                    // Crear un contenedor para la notificación aceptada
-                    const notificationDiv = document.createElement('div');
-                    notificationDiv.classList.add('notification');
-                
-                    // Hacer una solicitud para obtener el nombre del receiver basado en su ID
-                    const senderResponse = await fetch(`${apiUrl}/auth/user/${notification.sender}`, {
-                        method: 'GET',
-                        headers: {
-                            'Authorization': 'Bearer ' + localStorage.getItem('token'),
-                            'Content-Type': 'application/json'
-                        }
-                    });
-                
-                    const senderData = await senderResponse.json();
-                    const senderName = senderData.username || 'Usuario desconocido';
-                
-                    // Capitalizar el nombre del receiver
-                    const capitalizedSenderName = senderName.charAt(0).toUpperCase() + senderName.slice(1);
-                
-                    // Función para sumar 3 horas a una fecha
-                    function addThreeHours(dateString) {
-                        const date = new Date(dateString);
-                        date.setHours(date.getHours() + 3);
-                        return date;
+
+                // Verificar si la notificación es una confirmación para el sender original y fue aceptada
+            if (notification.status === 'accepted' && notification.isConfirmation && notification.receiver.toString() === userId) {
+                // Crear un contenedor para la notificación aceptada
+                const notificationDiv = document.createElement('div');
+                notificationDiv.classList.add('notification');
+
+                // Hacer una solicitud para obtener el nombre del usuario que aceptó (el `receiver` en la notificación de confirmación)
+                const receiverResponse = await fetch(`${apiUrl}/auth/user/${notification.sender}`, {  // Cambiar a `sender` que es quien hizo la solicitud original
+                    method: 'GET',
+                    headers: {
+                        'Authorization': 'Bearer ' + localStorage.getItem('token'),
+                        'Content-Type': 'application/json'
                     }
-                
-                    // Ajustar las fechas sumando 3 horas
-                    const adjustedStartDateToGive = addThreeHours(notification.periodsToGive[0].startDate).toLocaleDateString();
-                    const adjustedEndDateToGive = addThreeHours(notification.periodsToGive[0].endDate).toLocaleDateString();
-                    const adjustedVacationStartDate = addThreeHours(notification.vacationPeriod.startDate).toLocaleDateString();
-                    const adjustedVacationEndDate = addThreeHours(notification.vacationPeriod.endDate).toLocaleDateString();
-                
-                    // Mensaje de notificación de aceptación
-                    const message = document.createElement('p');
-                    message.innerHTML = `<h3>Solicitud de intercambio de vacaciones aceptada</h3>
-                    <p>Tu solicitud de intercambio de vacaciones ha sido aceptada por el usuario ${capitalizedSenderName}.</p> 
-                    <p>Has cedido el período de vacaciones del ${adjustedStartDateToGive} al ${adjustedEndDateToGive}, 
-                    y ahora tendrás vacaciones del ${adjustedVacationStartDate} al ${adjustedVacationEndDate}.</p>`;
-                
-                    // Botón para confirmar y marcar la notificación como 'notified'
-                    const confirmButton = document.createElement('button');
-                    confirmButton.textContent = 'De acuerdo';
-                    confirmButton.addEventListener('click', () =>
-                        markNotificationAsNotified(notification._id, notificationDiv));
-                
-                    // Añadir todo al contenedor de la notificación
-                    notificationDiv.appendChild(message);
-                    notificationDiv.appendChild(confirmButton);
-                
-                    // Añadir la notificación al área de notificaciones
-                    notificationArea.appendChild(notificationDiv);
-                } 
+                });
+
+                const receiverData = await receiverResponse.json();
+                const receiverName = receiverData.username || 'Usuario desconocido';
+
+                const capitalizedReceiverName = receiverName.charAt(0).toUpperCase() + receiverName.slice(1);
+
+                // Convertir las fechas en UTC sin convertir a zona horaria local
+                const startDateToGive = new Date(notification.periodsToGive[0].startDate).toISOString().split('T')[0];
+                const endDateToGive = new Date(notification.periodsToGive[0].endDate).toISOString().split('T')[0];
+                const vacationStartDate = new Date(notification.vacationPeriod.startDate).toISOString().split('T')[0];
+                const vacationEndDate = new Date(notification.vacationPeriod.endDate).toISOString().split('T')[0];
+
+                // Mensaje de notificación de aceptación
+                const message = document.createElement('p');
+                message.innerHTML = `<h3>Solicitud de intercambio de vacaciones aceptada</h3>
+                <p>Tu solicitud de intercambio de vacaciones ha sido aceptada por ${capitalizedReceiverName}.</p> 
+                <p>Has cedido el período de vacaciones del ${startDateToGive} al ${endDateToGive}, 
+                y ahora tendrás vacaciones del ${vacationStartDate} al ${vacationEndDate}.</p>`;
+
+                // Botón para confirmar y marcar la notificación como 'notified'
+                const confirmButton = document.createElement('button');
+                confirmButton.textContent = 'De acuerdo';
+                confirmButton.addEventListener('click', () =>
+                    markNotificationAsNotified(notification._id, notificationDiv));
+
+                // Añadir todo al contenedor de la notificación
+                notificationDiv.appendChild(message);
+                notificationDiv.appendChild(confirmButton);
+
+                // Añadir la notificación al área de notificaciones
+                notificationArea.appendChild(notificationDiv);
+            }
+
+                 
                  else {
                     // Procesar notificaciones pendientes para el receiver
-                    // Hacer una solicitud para obtener el nombre del sender basado en su ID
                     const senderResponse = await fetch(`${apiUrl}/auth/user/${notification.sender}`, {
                         method: 'GET',
                         headers: {
@@ -135,16 +140,9 @@ document.addEventListener('DOMContentLoaded', async () => {
 
                     console.log('Sender:', senderName);
 
-                    // Función para sumar 3 horas a una fecha
-                    function addThreeHours(dateString) {
-                        const date = new Date(dateString);
-                        date.setHours(date.getHours() + 3);
-                        return date;
-                    }
-
-                    // Obtener las fechas del período de vacaciones y sumarles 3 horas
-                    const vacationStart = addThreeHours(notification.vacationPeriod?.startDate || '').toLocaleDateString();
-                    const vacationEnd = addThreeHours(notification.vacationPeriod?.endDate || '').toLocaleDateString();
+                    // Obtener las fechas del período de vacaciones en UTC y convertirlas a un formato legible
+                    const vacationStart = new Date(notification.vacationPeriod?.startDate || '').toISOString().split('T')[0];
+                    const vacationEnd = new Date(notification.vacationPeriod?.endDate || '').toISOString().split('T')[0];
 
                     // Crear un contenedor para la notificación
                     const notificationDiv = document.createElement('div');
@@ -152,11 +150,9 @@ document.addEventListener('DOMContentLoaded', async () => {
 
                     const capitalizedSenderName = senderName.charAt(0).toUpperCase() + senderName.slice(1);
 
-                    // Crear el contenido de la notificación
                     const message = document.createElement('p');
                     message.innerHTML = `<h3>${capitalizedSenderName} ha solicitado un intercambio de vacaciones contigo:</h3>
                     <p>Desea tomar el período de vacaciones que ahora posees del ${vacationStart} hasta ${vacationEnd}.</p>
-                    <p>Si te interesa tomar a su vez alguno de los períodos que puede ofrecerte, selecciónalo tildando en el recuadro y haz click en aceptar, si no haz click en rechazar.</p>
                     <p>Períodos que ${capitalizedSenderName} puede cederte:</p>`
 
                     // Crear los checkboxes para los períodos a ceder
@@ -164,10 +160,9 @@ document.addEventListener('DOMContentLoaded', async () => {
                     periodsToGiveDiv.classList.add('periods-to-give');
                     
                     notification.periodsToGive.forEach((period, index) => {
-                        const periodStart = addThreeHours(period.startDate).toLocaleDateString();
-                        const periodEnd = addThreeHours(period.endDate).toLocaleDateString();
+                        const periodStart = new Date(period.startDate).toISOString().split('T')[0];
+                        const periodEnd = new Date(period.endDate).toISOString().split('T')[0];
 
-                        // Crear checkbox y label
                         const checkbox = document.createElement('input');
                         checkbox.type = 'checkbox';
                         checkbox.id = `period-${index}`;
@@ -177,14 +172,12 @@ document.addEventListener('DOMContentLoaded', async () => {
                         label.setAttribute('for', `period-${index}`);
                         label.textContent = `Del ${periodStart} al ${periodEnd}`;
 
-                        // Añadir checkbox y label al contenedor
                         periodsToGiveDiv.appendChild(checkbox);
                         periodsToGiveDiv.appendChild(label);
                         periodsToGiveDiv.appendChild(document.createElement('br'));
-                        periodsToGiveDiv.appendChild(document.createElement('br'));  // Separar las opciones
+                        periodsToGiveDiv.appendChild(document.createElement('br'));
                     });
 
-                    // Botón para aceptar la solicitud
                     const acceptButton = document.createElement('button');
                     acceptButton.textContent = 'Aceptar';
                     acceptButton.addEventListener('click', () => {
@@ -198,19 +191,15 @@ document.addEventListener('DOMContentLoaded', async () => {
                         }
                     });
                     
-
-                    // Botón para rechazar la solicitud
                     const rejectButton = document.createElement('button');
                     rejectButton.textContent = 'Rechazar';
                     rejectButton.addEventListener('click', () => respondToNotification(notification._id, 'rejected', null, notificationDiv));
 
-                    // Añadir todo al contenedor de la notificación
                     notificationDiv.appendChild(message);
-                    notificationDiv.appendChild(periodsToGiveDiv);  // Añadir los checkboxes
+                    notificationDiv.appendChild(periodsToGiveDiv);
                     notificationDiv.appendChild(acceptButton);
                     notificationDiv.appendChild(rejectButton);
 
-                    // Añadir la notificación al área de notificaciones
                     notificationArea.appendChild(notificationDiv);
                 }
                 console.log('Notificación agregada al área de notificaciones');
@@ -250,9 +239,13 @@ async function respondToNotification(notificationId, response, selectedPeriod = 
             // Eliminar la notificación del área de notificaciones sin recargar la página
             notificationDiv.remove();
 
-            // Si ya no hay más notificaciones, mostrar un mensaje
-            if (document.querySelectorAll('.notification').length === 0) {
-                document.getElementById('notification-area').textContent = '';
+            // Si ya no hay más notificaciones, eliminar la clase 'notification-area' y mostrar un mensaje
+            const remainingNotifications = document.querySelectorAll('.notification');
+            const notificationArea = document.getElementById('notification-area');
+            
+            if (remainingNotifications.length === 0) {
+                notificationArea.textContent = '';
+                notificationArea.classList.remove('notification-area');
             }
         } else {
             alert(`Error: ${result.message}`);
@@ -263,6 +256,7 @@ async function respondToNotification(notificationId, response, selectedPeriod = 
         alert('Hubo un problema al responder a la notificación.');
     }
 }
+
 
 // Función para marcar la notificación como 'notified'
 async function markNotificationAsNotified(notificationId, notificationDiv) {

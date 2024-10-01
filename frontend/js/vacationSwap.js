@@ -152,92 +152,89 @@
         
         
         // Función modificada para obtener los períodos que el usuario actual puede ceder (solo en el futuro)
-        async function populatePeriodsToGive() {
-            const currentUserResponse = await fetch(`${apiUrl}/auth/profile`, {
-                headers: { 'Authorization': 'Bearer ' + localStorage.getItem('token') }
-            });
-            currentUser = await currentUserResponse.json();  // Asigna el valor a currentUser
-        
-            const today = new Date();  // Fecha actual
-            const requestedStartDate = new Date(startDateInput.value);
-            const requestedEndDate = new Date(endDateInput.value);
-            const requestedDays = Math.round((requestedEndDate - requestedStartDate) / (1000 * 60 * 60 * 24)) + 1;  // Duración solicitada
-        
-            periodsToGiveSelect.innerHTML = ''; // Limpiar checkboxes anteriores
-        
-            console.log("Vacaciones actuales del usuario:", currentUser.vacations);
-        
-            currentUser.vacations
-                .filter(vacation => adjustTimezone(vacation.startDate) > today)  // Solo vacaciones futuras
-                .forEach(vacation => {
-                    const vacationStart = adjustTimezone(vacation.startDate);
-                    const vacationEnd = adjustTimezone(vacation.endDate);
-                    const vacationDays = Math.round((vacationEnd - vacationStart) / (1000 * 60 * 60 * 24)) + 1;
-        
-                    console.log("Periodo de vacaciones:", { vacationStart, vacationEnd, vacationDays });
-        
-                    if (vacationDays <= requestedDays) {
-                        console.log("Periodo completo a ceder:", { vacationStart, vacationEnd });
-        
-                        // Crear el div contenedor
-                        const divGroup = document.createElement('div');
-                        divGroup.classList.add('swap-input-group');  // Agregar la clase al div
-        
-                        // Crear checkbox en lugar de opciones de select
-                        const checkbox = document.createElement('input');
-                        checkbox.type = 'checkbox';
-                        checkbox.value = JSON.stringify({ startDate: vacation.startDate, endDate: vacation.endDate });
-                        checkbox.id = `vacation-${vacation._id}`;
-        
-                        const label = document.createElement('label');
-                        label.setAttribute('for', checkbox.id);
-                        label.textContent = `Del ${vacationStart.toLocaleDateString()} al ${vacationEnd.toLocaleDateString()}`;
-        
-                        // Añadir checkbox y label al div
-                        divGroup.appendChild(label);
-                        divGroup.appendChild(checkbox);
-        
-                        // Añadir el div al contenedor principal
-                        periodsToGiveSelect.appendChild(divGroup);
-                    } else {
-                        console.log("Dividiendo periodo largo:", { vacationStart, vacationEnd });
-        
-                        // Si el período es más largo, dividir en semanas de sábado a domingo con un ID único
-                        const weeks = divideIntoWeeks(vacationStart, vacationEnd, vacation._id);
-                        weeks.forEach(week => {
-                            console.log("Semana dividida:", week);
-        
-                            const divGroup = document.createElement('div');
-                            divGroup.classList.add('swap-input-group');  // Agregar la clase al div
-        
-                            const checkbox = document.createElement('input');
-                            checkbox.type = 'checkbox';
-                            checkbox.value = JSON.stringify({ startDate: week.startDate, endDate: week.endDate });
-                            checkbox.id = `week-${week.weekId}`;
-        
-                            const label = document.createElement('label');
-                            label.setAttribute('for', checkbox.id);
-                            label.textContent = `Del ${week.startDate.toLocaleDateString()} al ${week.endDate.toLocaleDateString()}`;
-        
-                            // Añadir checkbox y label al div
-                            divGroup.appendChild(label);
-                            divGroup.appendChild(checkbox);
-        
-                            // Añadir el div al contenedor principal
-                            periodsToGiveSelect.appendChild(divGroup);
-                        });
-                    }
+        // Función modificada para obtener los períodos que el usuario actual puede ceder (solo en el futuro)
+async function populatePeriodsToGive() {
+    const currentUserResponse = await fetch(`${apiUrl}/auth/profile`, {
+        headers: { 'Authorization': 'Bearer ' + localStorage.getItem('token') }
+    });
+    currentUser = await currentUserResponse.json();  // Asigna el valor a currentUser
+
+    const today = new Date();  // Fecha actual en UTC
+    const requestedStartDate = new Date(startDateInput.value);  // Fecha solicitada en UTC
+    const requestedEndDate = new Date(endDateInput.value);      // Fecha solicitada en UTC
+    const requestedDays = Math.round((requestedEndDate - requestedStartDate) / (1000 * 60 * 60 * 24)) + 1;  // Duración solicitada en días
+
+    periodsToGiveSelect.innerHTML = ''; // Limpiar checkboxes anteriores
+
+    console.log("Vacaciones actuales del usuario (en UTC):", currentUser.vacations);
+
+    currentUser.vacations
+        .filter(vacation => new Date(vacation.startDate).getTime() > today.getTime())  // Solo vacaciones futuras en UTC
+        .forEach(vacation => {
+            const vacationStart = new Date(vacation.startDate).toISOString();  // Forzar UTC
+            const vacationEnd = new Date(vacation.endDate).toISOString();      // Forzar UTC
+            const vacationDays = Math.round((new Date(vacationEnd) - new Date(vacationStart)) / (1000 * 60 * 60 * 24)) + 1;
+
+            console.log("Periodo de vacaciones en UTC:", { vacationStart, vacationEnd, vacationDays });
+
+            if (vacationDays <= requestedDays) {
+                console.log("Periodo completo a ceder en UTC:", { vacationStart, vacationEnd });
+
+                // Crear el div contenedor
+                const divGroup = document.createElement('div');
+                divGroup.classList.add('swap-input-group');  // Agregar la clase al div
+
+                // Crear checkbox en lugar de opciones de select
+                const checkbox = document.createElement('input');
+                checkbox.type = 'checkbox';
+                checkbox.value = JSON.stringify({ startDate: vacation.startDate, endDate: vacation.endDate });
+                checkbox.id = `vacation-${vacation._id}`;
+
+                const label = document.createElement('label');
+                label.setAttribute('for', checkbox.id);
+
+                // Mostrar las fechas en formato UTC (sin la parte de horas)
+                label.textContent = `Del ${vacationStart.split('T')[0]} al ${vacationEnd.split('T')[0]}`;
+
+                // Añadir checkbox y label al div
+                divGroup.appendChild(label);
+                divGroup.appendChild(checkbox);
+
+                // Añadir el div al contenedor principal
+                periodsToGiveSelect.appendChild(divGroup);
+            } else {
+                console.log("Dividiendo periodo largo (en UTC):", { vacationStart, vacationEnd });
+
+                // Si el período es más largo, dividir en semanas de sábado a domingo con un ID único
+                const weeks = divideIntoWeeks(new Date(vacationStart), new Date(vacationEnd), vacation._id);
+                weeks.forEach(week => {
+                    console.log("Semana dividida en UTC:", week);
+
+                    const divGroup = document.createElement('div');
+                    divGroup.classList.add('swap-input-group');  // Agregar la clase al div
+
+                    const checkbox = document.createElement('input');
+                    checkbox.type = 'checkbox';
+                    checkbox.value = JSON.stringify({ startDate: week.startDate.toISOString(), endDate: week.endDate.toISOString() });
+                    checkbox.id = `week-${week.weekId}`;
+
+                    const label = document.createElement('label');
+                    label.setAttribute('for', checkbox.id);
+
+                    // Mostrar las fechas en formato UTC
+                    label.textContent = `Del ${week.startDate.toISOString().split('T')[0]} al ${week.endDate.toISOString().split('T')[0]}`;
+
+                    // Añadir checkbox y label al div
+                    divGroup.appendChild(label);
+                    divGroup.appendChild(checkbox);
+
+                    // Añadir el div al contenedor principal
+                    periodsToGiveSelect.appendChild(divGroup);
                 });
-        }   
+            }
+        });
+}
 
-        function adjustTimezone(dateString) {
-            const date = new Date(dateString);
-            date.setHours(date.getHours() + 3);  // Sumar 3 horas
-            return date;
-        }
-
-        
-        // Manejar el envío del formulario
         // Manejar el envío del formulario
     form.addEventListener('submit', async (e) => {
         e.preventDefault();
@@ -261,8 +258,8 @@
         const periodsToGive = Array.from(periodsToGiveCheckboxes).map(checkbox => {
             const period = JSON.parse(checkbox.value);
             return {
-                startDate: period.startDate,
-                endDate: period.endDate,
+                startDate: period.startDate,  // Ya en UTC, no es necesario ajustar manualmente
+                endDate: period.endDate
             };
         });
 
@@ -297,11 +294,4 @@
         }
     });
 
-    // Función para revertir la suma de 3 horas y regresar a UTC
-    function revertTimezone(dateString) {
-        const date = new Date(dateString);
-        date.setHours(date.getHours() - 3);  // Restar las 3 horas
-        return date.toISOString();  // Regresar el valor como una cadena en formato UTC
-    }
-
-    });
+});

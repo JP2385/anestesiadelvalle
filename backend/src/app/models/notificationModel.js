@@ -19,6 +19,7 @@ const notificationSchema = new mongoose.Schema({
         enum: ['pending', 'accepted', 'rejected', 'canceled', 'notified'],  // Incluimos 'notified' aquí
         default: 'pending' 
     },  // Estado de la solicitud
+    isConfirmation: { type: Boolean, default: false },  // Campo para distinguir entre tipos de notificación
     createdAt: { type: Date, default: Date.now },
     updatedAt: { type: Date, default: Date.now }
 });
