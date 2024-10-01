@@ -226,7 +226,32 @@ const getNotifications = async (req, res) => {
                 } else {
                     return res.status(404).json({ message: 'No se encontraron períodos de vacaciones válidos para el intercambio.' });
                 }
-            } else {
+            } else if (response === 'rejected') {
+                // Obtener el receiver (usuario que rechazó la solicitud)
+                const receiver = await User.findById(notification.receiver);
+            
+                if (!receiver) {
+                    return res.status(404).json({ message: 'Usuario que rechazó la solicitud no encontrado.' });
+                }
+            
+                // Crear una notificación de rechazo para el sender original
+                const rejectionNotification = new Notification({
+                    sender: notification.receiver,  // El usuario que rechazó la solicitud es ahora el sender de la nueva notificación
+                    receiver: notification.sender,  // El sender original es el receiver de la notificación de rechazo
+                    message: `Tu solicitud de intercambio de vacaciones ha sido rechazada por ${receiver.username}.`,  // Usamos el nombre del receiver
+                    vacationPeriod: notification.vacationPeriod,  // Mantener el período de la solicitud original
+                    periodsToGive: notification.periodsToGive,    // Mantener los períodos ofrecidos
+                    status: 'rejected',  // Estado rechazado
+                    isConfirmation: true  // Indicar que es una confirmación de rechazo
+                });
+            
+                await rejectionNotification.save();
+                console.log('Notificación de rechazo creada:', rejectionNotification);
+            
+                // **Enviar respuesta al frontend**
+                return res.status(200).json({ message: 'Solicitud rechazada y notificación creada.' });
+            }
+             else {
                 return res.status(200).json({ message: `Solicitud de intercambio ${response}.` });
             }
         } catch (error) {
