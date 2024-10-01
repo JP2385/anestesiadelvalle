@@ -21,21 +21,77 @@
         }
 
         // Escuchar cambios en las fechas solicitadas
-        startDateInput.addEventListener('change', validateDates);
-        endDateInput.addEventListener('change', validateDates);
+        startDateInput.addEventListener('change', validateStartDate);
+        endDateInput.addEventListener('change', validateEndDate);
 
-        // Validar que la fecha de fin no sea anterior a la fecha de inicio
-        function validateDates() {
-            const startDate = new Date(startDateInput.value);
-            const endDate = new Date(endDateInput.value);
+        // Validar que la fecha de inicio sea un sábado (UTC) y aplicar validaciones adicionales si ya hay fecha de fin
+        function validateStartDate() {
+            const startDate = new Date(startDateInput.value + "T00:00:00Z");
+            const endDate = new Date(endDateInput.value + "T00:00:00Z");
 
-            if (endDate < startDate) {
-                alert('La fecha de fin no puede ser anterior a la fecha de inicio.');
-                endDateInput.value = '';  // Vaciar el campo de fecha de fin o establecerlo a un valor por defecto
+            // Verificar si la fecha de inicio es sábado (6) en UTC
+            if (startDate.getUTCDay() !== 6) {
+                alert('La fecha de inicio debe ser un sábado.');
+                startDateInput.value = '';  // Vaciar el campo de fecha de inicio
+                submitButton.disabled = true;  // Desactivar el botón de envío
+                return;
+            }
+
+            // Si ya hay fecha de fin, validar que la fecha de inicio sea anterior y que haya al menos 8 días de diferencia
+            if (endDateInput.value) {
+                // Verificar si la fecha de inicio es anterior a la fecha de fin
+                if (startDate >= endDate) {
+                    alert('La fecha de inicio debe ser anterior a la fecha de fin.');
+                    startDateInput.value = '';  // Vaciar el campo de fecha de inicio
+                    submitButton.disabled = true;  // Desactivar el botón de envío
+                    return;
+                }
+
+                // Verificar si hay al menos 8 días de diferencia entre las fechas
+                const daysDifference = Math.ceil((endDate - startDate) / (1000 * 60 * 60 * 24));
+                if (daysDifference < 8) {
+                    alert('Debe haber al menos 8 días entre la fecha de inicio y la de fin.');
+                    startDateInput.value = '';  // Vaciar el campo de fecha de inicio
+                    submitButton.disabled = true;  // Desactivar el botón de envío
+                    return;
+                }
+            }
+
+            // Si todas las validaciones pasan, habilitar el botón de envío
+            submitButton.disabled = false;
+            handleDateChange();
+        }
+
+        // Validar que la fecha de fin sea un domingo (UTC), sea posterior a la fecha de inicio y haya al menos 8 días de diferencia
+        function validateEndDate() {
+            const startDate = new Date(startDateInput.value + "T00:00:00Z");
+            const endDate = new Date(endDateInput.value + "T00:00:00Z");
+
+            // Verificar si la fecha de fin es domingo (0) en UTC
+            if (endDate.getUTCDay() !== 0) {
+                alert('La fecha de fin debe ser un domingo.');
+                endDateInput.value = '';  // Vaciar el campo de fecha de fin
+                submitButton.disabled = true;  // Desactivar el botón de envío
+                return;
+            }
+
+            // Verificar si la fecha de fin es posterior a la fecha de inicio
+            if (endDate <= startDate) {
+                alert('La fecha de fin debe ser posterior a la fecha de inicio.');
+                endDateInput.value = '';  // Vaciar el campo de fecha de fin
+                submitButton.disabled = true;  // Desactivar el botón de envío
+                return;
+            }
+
+            // Verificar si hay al menos 8 días de diferencia entre las fechas
+            const daysDifference = Math.ceil((endDate - startDate) / (1000 * 60 * 60 * 24));
+            if (daysDifference < 8) {
+                alert('Debe haber al menos 8 días entre la fecha de inicio y la de fin.');
+                endDateInput.value = '';  // Vaciar el campo de fecha de fin
                 submitButton.disabled = true;  // Desactivar el botón de envío
             } else {
                 submitButton.disabled = false;  // Activar el botón de envío
-                handleDateChange();  // Llamar a la función de cambio de fecha si las fechas son válidas
+                handleDateChange();
             }
         }
 
