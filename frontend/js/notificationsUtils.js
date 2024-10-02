@@ -40,13 +40,20 @@ async function respondToNotification(apiUrl, notificationId, response, selectedP
         });
 
         const result = await res.json();
+
         if (res.ok) {
-            alert(`Solicitud de intercambio ${response}.`);
-            notificationDiv.remove();
-            if (document.querySelectorAll('.notification').length === 0) {
-                const notificationArea = document.getElementById('notification-area');
-                notificationArea.textContent = '';
-                notificationArea.classList.remove('notification-area');
+            // Chequea si el mensaje del servidor indica que la notificación sigue pendiente
+            if (result.message.includes('pendiente')) {
+                alert(result.message);  // Mostrar el mensaje completo cuando sigue pendiente
+            } else {
+                alert(`Solicitud de intercambio ${response}.`);
+                // Solo eliminar la notificación del DOM si se acepta o rechaza
+                notificationDiv.remove();
+                if (document.querySelectorAll('.notification').length === 0) {
+                    const notificationArea = document.getElementById('notification-area');
+                    notificationArea.textContent = '';
+                    notificationArea.classList.remove('notification-area');
+                }
             }
         } else {
             console.log('Error en la respuesta del servidor:', result);
@@ -58,6 +65,7 @@ async function respondToNotification(apiUrl, notificationId, response, selectedP
         alert('Hubo un problema al responder a la notificación.');
     }
 }
+
 
 async function markNotificationAsNotified(apiUrl, notificationId, notificationDiv) {
     try {
