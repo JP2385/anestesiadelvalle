@@ -3,13 +3,12 @@
 // Objeto para cachear los usuarios y evitar múltiples solicitudes GET al backend
 const userCache = {};
 
+// Obtener datos del usuario con fechas en UTC
 async function getUserData(apiUrl, userId) {
-    // Si el usuario ya está en el caché, devolver los datos del caché
     if (userCache[userId]) {
         return userCache[userId];
     }
 
-    // Si no está en el caché, realizar la solicitud al backend
     const userResponse = await fetch(`${apiUrl}/auth/user/${userId}`, {
         method: 'GET',
         headers: {
@@ -19,13 +18,11 @@ async function getUserData(apiUrl, userId) {
     });
 
     const userData = await userResponse.json();
-
-    // Guardar los datos en el caché
     userCache[userId] = userData;
-
     return userData;
 }
 
+// Responder a la notificación asegurando el uso de fechas UTC
 async function respondToNotification(apiUrl, notificationId, response, selectedPeriod = null, notificationDiv) {
     try {
         console.log(`Enviando respuesta para la notificación ${notificationId} con estado ${response}`);
@@ -58,15 +55,14 @@ async function respondToNotification(apiUrl, notificationId, response, selectedP
         } else {
             console.log('Error en la respuesta del servidor:', result);
             alert(`Error: ${result.message}`);
-        }
-
+        }        
     } catch (error) {
         console.error('Error al responder a la notificación:', error);
         alert('Hubo un problema al responder a la notificación.');
     }
 }
 
-
+// Marcar la notificación como notificada en UTC
 async function markNotificationAsNotified(apiUrl, notificationId, notificationDiv) {
     try {
         const res = await fetch(`${apiUrl}/notifications/mark-as-notified`, {
@@ -93,7 +89,7 @@ async function markNotificationAsNotified(apiUrl, notificationId, notificationDi
     }
 }
 
-// Procesar notificaciones con uso del caché de usuarios
+// Procesar notificaciones aceptadas con fechas UTC
 export async function processAcceptedNotification(notification, notificationDiv, apiUrl) {
     const receiverData = await getUserData(apiUrl, notification.sender);
     const receiverName = receiverData.username || 'Usuario desconocido';
@@ -117,6 +113,7 @@ export async function processAcceptedNotification(notification, notificationDiv,
     notificationDiv.appendChild(confirmButton);
 }
 
+// Procesar notificaciones rechazadas con fechas UTC
 export async function processRejectedNotification(notification, notificationDiv, apiUrl) {
     const receiverData = await getUserData(apiUrl, notification.sender);
     const receiverName = receiverData.username || 'Usuario desconocido';
@@ -134,6 +131,7 @@ export async function processRejectedNotification(notification, notificationDiv,
     notificationDiv.appendChild(confirmButton);
 }
 
+// Procesar notificaciones pendientes con fechas UTC
 export async function processPendingNotification(notification, notificationDiv, apiUrl) {
     const senderData = await getUserData(apiUrl, notification.sender);
     const senderName = senderData.username || 'Usuario desconocido';
@@ -158,7 +156,10 @@ export async function processPendingNotification(notification, notificationDiv, 
         const checkbox = document.createElement('input');
         checkbox.type = 'checkbox';
         checkbox.id = `period-${index}`;
-        checkbox.value = JSON.stringify(period);
+        checkbox.value = JSON.stringify({
+            startDate: new Date(period.startDate).toISOString(),
+            endDate: new Date(period.endDate).toISOString()
+        });
 
         const label = document.createElement('label');
         label.setAttribute('for', `period-${index}`);
@@ -174,6 +175,10 @@ export async function processPendingNotification(notification, notificationDiv, 
     acceptButton.textContent = 'Aceptar';
     acceptButton.addEventListener('click', () => {
         const selectedPeriods = Array.from(periodsToGiveDiv.querySelectorAll('input[type="checkbox"]:checked')).map(checkbox => checkbox.value);
+
+        // Log para verificar los valores de los checkboxes seleccionados
+        console.log("Periodos seleccionados:", selectedPeriods);
+
         if (selectedPeriods.length === 0) {
             alert('Por favor, selecciona al menos un período para tomar.');
         } else {

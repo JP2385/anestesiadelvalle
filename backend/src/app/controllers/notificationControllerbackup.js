@@ -20,71 +20,47 @@ const getNotifications = async (req, res) => {
     // Responder a una notificación (aceptar o rechazar)
     const respondToNotification = async (req, res) => {
         const { notificationId, response, selectedPeriod } = req.body;
-    
+
         try {
             const notification = await Notification.findById(notificationId);
-    
+
             if (!notification) {
                 return res.status(404).json({ message: 'Notificación no encontrada.' });
             }
-    
-            // Si la respuesta es 'accepted'
+
+            // Actualizar el estado de la notificación
+            notification.status = response === 'accepted' ? 'accepted' : 'rejected';
+            notification.updatedAt = Date.now();
+            await notification.save();
+
             if (response === 'accepted') {
                 // Obtener los usuarios involucrados
                 const sender = await User.findById(notification.sender);
                 const receiver = await User.findById(notification.receiver);
-    
+
                 if (!sender || !receiver) {
                     return res.status(404).json({ message: 'Usuarios no encontrados.' });
                 }
-    
-                console.log('req.body.selectedPeriods:', req.body.selectedPeriod);
-                // Obtener los períodos seleccionados por el usuario desde la solicitud
-                const selectedPeriods = req.body.selectedPeriod.map(period => JSON.parse(period));
-    
-                // Verificar si el receiver ya tiene alguno de los períodos seleccionados
-                const receiverAlreadyHasPeriod = selectedPeriods.some(selectedPeriod => {
-                    const selectedStart = new Date(selectedPeriod.startDate).getTime();
-                    const selectedEnd = new Date(selectedPeriod.endDate).getTime();
-    
-                    return receiver.vacations.some(vacation => {
-                        const receiverStart = new Date(vacation.startDate).getTime();
-                        const receiverEnd = new Date(vacation.endDate).getTime();
-    
-                        // Agregar logs para ver las fechas que se están comparando
-                        console.log('Comparando período de vacaciones del receiver:', { 
-                            receiverStart: new Date(vacation.startDate), 
-                            receiverEnd: new Date(vacation.endDate) 
-                        });
-                        console.log('Comparando con el período seleccionado:', { 
-                            selectedStart: new Date(selectedPeriod.startDate), 
-                            selectedEnd: new Date(selectedPeriod.endDate) 
-                        });
-    
-                        return receiverStart <= selectedStart && receiverEnd >= selectedEnd;
-                    });
-                });
-    
-                // Si el receptor ya tiene el período, no cambiar el estado a "accepted"
-                if (receiverAlreadyHasPeriod) {
-                    return res.status(200).json({ message: 'Ya tienes este período. Por favor rechaza la solicitud o toma otro período. La solicitud seguirá pendiente.' });
-                }
-    
-                // Si no hay conflicto con los períodos, procede con el intercambio
+
                 const selectedPeriodObj = JSON.parse(selectedPeriod);
-    
-                // Lógica para manejar el intercambio de vacaciones entre sender y receiver
+
+                // Convertir las fechas del período cedido y del período original en objetos Date
                 const cedidoStart = new Date(selectedPeriodObj.startDate);
                 const cedidoEnd = new Date(selectedPeriodObj.endDate);
+
+                // Buscar el período completo de vacaciones del sender
                 const originalVacationSender = sender.vacations.find(vacation => 
                     new Date(vacation.startDate).getTime() <= cedidoStart.getTime() &&
                     new Date(vacation.endDate).getTime() >= cedidoEnd.getTime()
                 );
+
+                // Buscar el período completo de vacaciones del receiver que coincide con el solicitado por el sender
                 const originalVacationReceiver = receiver.vacations.find(vacation => 
                     new Date(vacation.startDate).getTime() <= new Date(notification.vacationPeriod.startDate).getTime() &&
                     new Date(vacation.endDate).getTime() >= new Date(notification.vacationPeriod.endDate).getTime()
                 );
-    
+
+                // Si se encuentran ambos períodos originales
                 if (originalVacationSender && originalVacationReceiver) {
                     // Calcular la duración de los períodos
                     const originalDurationSender = Math.round((new Date(originalVacationSender.endDate) - new Date(originalVacationSender.startDate)) / (1000 * 60 * 60 * 24)) + 1;
@@ -215,14 +191,10 @@ const getNotifications = async (req, res) => {
                     receiver.vacations.push(selectedPeriodObj);
                 }
 
-                await sender.save();
-                await receiver.save();
 
-                // Actualizar el estado de la notificación a "accepted" después de completar el intercambio
-                notification.status = 'accepted';
-                notification.updatedAt = Date.now();
-                await notification.save();
-                
+                    await sender.save();
+                    await receiver.save();
+
                     const acceptanceNotification = new Notification({
                         sender: notification.receiver,  // El receiver original se convierte en sender de esta notificación
                         receiver: notification.sender,  // El sender original es ahora el receiver de esta notificación
