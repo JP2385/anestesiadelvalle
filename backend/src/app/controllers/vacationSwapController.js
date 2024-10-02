@@ -1,3 +1,5 @@
+// vacationSwapController.js
+const { calculateDaysBetween, notifyVacationUsers } = require('./vacationSwapControllerUtils');
 const User = require('../models/userModel');
 const Notification = require('../models/notificationModel');
 
@@ -16,7 +18,6 @@ const requestVacationSwap = async (req, res) => {
         }
 
         // Verificar los períodos a ceder
-        // Verificar los períodos a ceder
         const validPeriodsToGive = periodsToGive.every(period => {
             console.log(`Verificando período a ceder: ${JSON.stringify(period)}`);
             return requestingUser.vacations.some(v => {
@@ -30,7 +31,6 @@ const requestVacationSwap = async (req, res) => {
             });
         });
 
-
         if (!validPeriodsToGive) {
             console.log('El usuario no tiene los períodos seleccionados para ceder');
             return res.status(400).json({ message: 'El usuario no tiene los períodos seleccionados para ceder' });
@@ -42,9 +42,8 @@ const requestVacationSwap = async (req, res) => {
             'vacations.endDate': { $gte: periodToRequest.endDate },
             '_id': { $ne: userId }  // Excluir al current user (solicitante)
         });
-        
-        console.log(`Usuarios encontrados con el período solicitado (ajustado): ${requestedVacationUsers.length}`);
-        
+
+        console.log(`Usuarios encontrados con el período solicitado: ${requestedVacationUsers.length}`);
 
         // Validar los días cedidos vs días solicitados
         const totalDaysToGive = periodsToGive.reduce((total, period) => {
@@ -52,6 +51,7 @@ const requestVacationSwap = async (req, res) => {
             const end = new Date(period.endDate);
             return total + calculateDaysBetween(start, end);
         }, 0);
+        
         const daysRequested = calculateDaysBetween(new Date(periodToRequest.startDate), new Date(periodToRequest.endDate));
 
         console.log(`Días solicitados: ${daysRequested}`);
@@ -62,7 +62,7 @@ const requestVacationSwap = async (req, res) => {
             return res.status(400).json({ message: 'Los períodos cedidos deben tener al menos la misma cantidad de días que el período solicitado' });
         }
 
-        // Si el período solicitado ya tiene 2 personas, notificar a los usuarios
+        // Si el período solicitado ya tiene usuarios disponibles, notificar a esos usuarios
         await notifyVacationUsers(requestedVacationUsers, requestingUser, periodToRequest, periodsToGive);
 
         console.log('Solicitud enviada a los usuarios para su aprobación');
@@ -71,43 +71,6 @@ const requestVacationSwap = async (req, res) => {
     } catch (error) {
         console.error('Error al solicitar el intercambio de vacaciones:', error);
         return res.status(500).json({ message: 'Error al solicitar el intercambio de vacaciones', error });
-    }
-};
-
-// Función para calcular los días entre dos fechas
-const calculateDaysBetween = (startDate, endDate) => {
-    const start = new Date(startDate);
-    const end = new Date(endDate);
-    const diffTime = Math.abs(end - start);
-    return Math.ceil(diffTime / (1000 * 60 * 60 * 24));  // Convertir a días
-};
-
-// Función para notificar a los usuarios que tienen vacaciones
-const notifyVacationUsers = async (users, requestingUser, requestedPeriod, periodsToGive) => {
-    try {
-        for (const user of users) {
-            console.log(`Creando notificación para ${user.username}`);
-            console.log(`Períodos a ceder: ${JSON.stringify(periodsToGive)}`);
-
-            const notification = new Notification({
-                sender: requestingUser._id,
-                receiver: user._id,
-                message: `${requestingUser.username} ha solicitado un intercambio de vacaciones contigo.`,
-                vacationPeriod: {
-                    startDate: requestedPeriod.startDate,
-                    endDate: requestedPeriod.endDate
-                },
-                periodsToGive: periodsToGive.map(period => ({
-                    startDate: period.startDate,
-                    endDate: period.endDate
-                }))
-            });
-
-            await notification.save();  // Guardar la notificación en la base de datos
-            console.log(`Notificación creada para ${user.username}`);
-        }
-    } catch (error) {
-        console.error('Error al notificar a los usuarios:', error);
     }
 };
 
