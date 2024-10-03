@@ -198,7 +198,10 @@ const handleVacationSwap = (sender, receiver, selectedPeriodObj, notification) =
             // El receiver conserva el período seleccionado por el sender
             receiver.vacations.push(selectedPeriodObj);
         }
+        
     }    
+    sender.vacations = mergeOverlappingVacations(sender.vacations);
+    receiver.vacations = mergeOverlappingVacations(receiver.vacations);
 
     return { originalVacationSender, originalVacationReceiver };
 };
@@ -225,6 +228,33 @@ const ajustarPeriodoRestante = (startDate, endDate) => {
     return { startDate: adjustedStart, endDate: adjustedEnd };
 };
 
+// Función para fusionar vacaciones superpuestas
+const mergeOverlappingVacations = (vacations) => {
+    if (vacations.length === 0) return [];
+
+    // Ordenar los períodos de vacaciones por fecha de inicio
+    vacations.sort((a, b) => new Date(a.startDate) - new Date(b.startDate));
+
+    // Lista para almacenar los períodos fusionados
+    const mergedVacations = [vacations[0]];
+
+    // Recorrer los períodos de vacaciones y fusionar los que se superponen
+    for (let i = 1; i < vacations.length; i++) {
+        const lastMerged = mergedVacations[mergedVacations.length - 1];
+        const current = vacations[i];
+
+        // Si el período actual se superpone o es continuo con el último período fusionado
+        if (new Date(current.startDate).getTime() <= new Date(lastMerged.endDate).getTime()) {
+            // Fusionar los períodos ajustando la fecha de fin
+            lastMerged.endDate = new Date(Math.max(new Date(lastMerged.endDate).getTime(), new Date(current.endDate).getTime()));
+        } else {
+            // Si no se superponen, agregar el período actual a la lista de fusionados
+            mergedVacations.push(current);
+        }
+    }
+
+    return mergedVacations;
+};
 
 
 module.exports = {
