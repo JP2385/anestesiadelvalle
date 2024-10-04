@@ -20,6 +20,14 @@
     margin: 0; /* Eliminar márgenes adicionales */
 }
 
+.admin-input-group-user{
+    align-items: center;
+    justify-content: space-between; 
+    text-align: center;
+    margin-bottom: 20px;
+    margin-right: 0rem;
+}
+
 ul{
-    margin-left: 0rem;
+    margin-left: -0.5rem;
 }

@@ -39,7 +39,7 @@ document.addEventListener('DOMContentLoaded', function() {
         users.forEach(user => {
             const option = document.createElement('option');
             option.value = user._id;
-            option.textContent = `${user.username}`;
+            option.textContent = `${user.username} (${user.email})`;
             userSelect.appendChild(option);
         });
 
