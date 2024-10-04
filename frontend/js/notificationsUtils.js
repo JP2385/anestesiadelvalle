@@ -50,6 +50,8 @@ async function respondToNotification(apiUrl, notificationId, response, selectedP
                     notificationArea.textContent = '';
                     notificationArea.classList.remove('notification-area');
                 }
+                // Recargar la página después de aceptar el alert
+                window.location.reload();
             }
         } else {
             alert(`Error: ${result.message}`);
