@@ -5,7 +5,7 @@
     justify-content: space-between; /* Separar el label y el checkbox horizontalmente */
     text-align: left;
     margin-bottom: 10px;
-    margin-right: 5rem;
+    margin-right: 7rem;
 }
 
 .admin-input-group label, .swap-input-group label {
