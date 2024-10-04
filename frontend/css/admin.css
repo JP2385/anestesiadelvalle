@@ -4,8 +4,8 @@
     align-items: center; /* Alinear el label y el input en el centro verticalmente */
     justify-content: space-between; /* Separar el label y el checkbox horizontalmente */
     text-align: left;
-    margin-bottom: 15px;
-    margin-right: 8rem;
+    margin-bottom: 10px;
+    margin-right: 5rem;
 }
 
 .admin-input-group label, .swap-input-group label {

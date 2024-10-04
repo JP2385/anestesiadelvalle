@@ -13,6 +13,8 @@
     <link rel="stylesheet" href="css/main.css">
     <link rel="stylesheet" href="css/spinner.css">
     <link rel="stylesheet" href="css/admin.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
     <script defer src="js/bundle.js"></script>
     <script defer src="js/admin.js"></script>
     <script defer src="js/spinner.js"></script>
@@ -23,17 +25,20 @@
         <a href="index.html" class="app-logo-link">
             <img src="images/logo/logo.png" alt="Logo Anestesiólogos del Valle" class="app-logo">
         </a>
-        <h1>Administrar Usuarios</h1>
+        <h1>Anestesiólogos del Valle</h1>
         <a href="index.html" class="back-to-main-menu" title="Volver al menú principal">
             <img src="images/icons/back-icon.svg" alt="Volver" class="back-icon">
         </a>
     </header>
     <main class="form-container">
-        <h2>Seleccionar Usuario</h2>
+        <h2>Administrador de Usuarios</h2>
+        <div class="admin-input-group">
+        <label for="duser-select">Usuario:</label>
         <select id="user-select"></select>
+        </div>
         <div class="admin-input-group">
             <label for="beginningDate">Fecha de Ingreso:</label>
-            <p id="beginningDate">No disponible</p> <!-- Se actualiza dinámicamente -->
+            <div id="beginningDate">No disponible</div> <!-- Se actualiza dinámicamente -->
         </div>
         <form id="admin-form">
             <h3>Actualizar perfil para la asignación de trabajo programado:</h3>
@@ -116,16 +121,13 @@
                     <option value="No trabaja">No trabaja</option>
                 </select>
             </div>
-
-            <h3>Vacaciones Programadas:</h3>
+            <h3>Gestor de vacaciones:</h3>
             <div class="admin-input-group">
-                <label for="vacation-start">Fecha de Inicio</label>
-                <input type="date" id="vacation-start" name="vacation-start">
-            </div>
-            <div class="admin-input-group">
-                <label for="vacation-end">Fecha de Fin</label>
-                <input type="date" id="vacation-end" name="vacation-end">
-            </div>
+                <label for="vacation-range">Seleccione rango de vacaciones a agregar</label>
+                <input type="text" id="vacation-range" name="vacation-range" placeholder="Despliegue calendario aquí">
+                <input type="hidden" id="vacation-start" name="vacation-start">
+                <input type="hidden" id="vacation-end" name="vacation-end">
+            </div>   
             <button type="button" id="add-vacation" class="main-menu-button">Agregar Vacaciones</button>
             <ul id="vacation-list"></ul>
             <button type="submit" class="main-menu-button">Actualizar Usuario</button>
