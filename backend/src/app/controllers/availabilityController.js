@@ -35,8 +35,6 @@ const getUsersAvailability = async (req, res) => {
             new Date(new Date(startOfWeek).setDate(startOfWeek.getDate() + 5))  // Saturday
         ];
 
-        // console.log('Days of the week being processed:', daysOfWeek);
-
         const adjustForTimezone = (date) => {
             const adjustedDate = new Date(date);
             adjustedDate.setMinutes(adjustedDate.getMinutes() + adjustedDate.getTimezoneOffset());
@@ -54,7 +52,6 @@ const getUsersAvailability = async (req, res) => {
                 const start = adjustForTimezone(new Date(vacation.startDate));
                 const end = adjustForTimezone(new Date(vacation.endDate));
                 const isOnVacation = (day >= start && day <= end) || isSameDay(day, start) || isSameDay(day, end);
-                // console.log(`User ${user.username} checking vacation for day: ${day}, vacation start: ${start}, vacation end: ${end}, isOnVacation: ${isOnVacation}`);
                 return isOnVacation;
             });
 

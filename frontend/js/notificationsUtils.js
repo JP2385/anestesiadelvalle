@@ -25,7 +25,6 @@ async function getUserData(apiUrl, userId) {
 // Responder a la notificación asegurando el uso de fechas UTC
 async function respondToNotification(apiUrl, notificationId, response, selectedPeriod = null, notificationDiv) {
     try {
-        console.log(`Enviando respuesta para la notificación ${notificationId} con estado ${response}`);
 
         const res = await fetch(`${apiUrl}/notifications/respond`, {
             method: 'POST',
@@ -53,7 +52,6 @@ async function respondToNotification(apiUrl, notificationId, response, selectedP
                 }
             }
         } else {
-            console.log('Error en la respuesta del servidor:', result);
             alert(`Error: ${result.message}`);
         }        
     } catch (error) {
@@ -178,9 +176,6 @@ export async function processPendingNotification(notification, notificationDiv, 
     acceptButton.textContent = 'Aceptar';
     acceptButton.addEventListener('click', () => {
         const selectedPeriods = Array.from(periodsToGiveDiv.querySelectorAll('input[type="checkbox"]:checked')).map(checkbox => checkbox.value);
-
-        // Log para verificar los valores de los checkboxes seleccionados
-        console.log("Periodos seleccionados:", selectedPeriods);
 
         // Calcular la suma de los días hábiles seleccionados
         let selectedBusinessDays = 0;

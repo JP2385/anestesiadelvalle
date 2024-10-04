@@ -10,15 +10,6 @@ const checkReceiverAlreadyHasPeriod = (receiver, selectedPeriods) => {
             const receiverStart = new Date(vacation.startDate).getTime();
             const receiverEnd = new Date(vacation.endDate).getTime();
 
-            console.log('Comparando período de vacaciones del receiver:', {
-                receiverStart: new Date(vacation.startDate),
-                receiverEnd: new Date(vacation.endDate)
-            });
-            console.log('Comparando con el período seleccionado:', {
-                selectedStart: new Date(selectedPeriod.startDate),
-                selectedEnd: new Date(selectedPeriod.endDate)
-            });
-
             return receiverStart <= selectedStart && receiverEnd >= selectedEnd;
         });
     });
@@ -44,17 +35,9 @@ const handleVacationSwap = (sender, receiver, selectedPeriodObj, notification) =
         const originalDurationReceiver = Math.round((new Date(originalVacationReceiver.endDate) - new Date(originalVacationReceiver.startDate)) / (1000 * 60 * 60 * 24)) + 1;
         const cedidoDuration = Math.round((cedidoEnd - cedidoStart) / (1000 * 60 * 60 * 24)) + 1;
 
-        // Logs para verificar los períodos antes del intercambio
-        console.log("Periodo cedido (seleccionado por el sender):", { cedidoStart, cedidoEnd });
-        console.log("Período original del sender:", originalVacationSender);
-        console.log("Período original del receiver:", originalVacationReceiver);
-        console.log("Duración original del sender:", originalDurationSender);
-        console.log("Duración original del receiver:", originalDurationReceiver);
-        console.log("Duración del período cedido:", cedidoDuration);
 
         // Caso 1: Intercambio directo si los períodos tienen la misma duración
         if (originalDurationSender === cedidoDuration && originalDurationReceiver === cedidoDuration) {
-            console.log("Intercambio directo: ambos períodos tienen la misma duración.");
             sender.vacations.push(notification.vacationPeriod);
             receiver.vacations.push(selectedPeriodObj);
         } 
@@ -67,8 +50,6 @@ const handleVacationSwap = (sender, receiver, selectedPeriodObj, notification) =
                 notification.vacationPeriod.endDate.getTime() === originalVacationReceiver.endDate.getTime()) {
                 
                 // Intercambio directo: no hay período restante
-                console.log("Intercambio directo: el período solicitado coincide completamente con el período original del receiver.");
-                
                 sender.vacations.push(notification.vacationPeriod);
                 receiver.vacations.push(selectedPeriodObj);
 
@@ -98,11 +79,7 @@ const handleVacationSwap = (sender, receiver, selectedPeriodObj, notification) =
                     remainingPeriods.push({ startDate: remainingStartBefore, endDate: remainingEndBefore });
                     remainingPeriods.push({ startDate: remainingStartAfter, endDate: remainingEndAfter });
                 }
-
-                console.log("Períodos restantes antes del ajuste:", remainingPeriods);
-
                 let adjustedPeriods = remainingPeriods.map(period => ajustarPeriodoRestante(period.startDate, period.endDate));
-                console.log("Períodos restantes ajustados:", adjustedPeriods);
 
                 adjustedPeriods.forEach(period => {
                     receiver.vacations.push({ startDate: period.startDate, endDate: period.endDate });
@@ -142,10 +119,7 @@ const handleVacationSwap = (sender, receiver, selectedPeriodObj, notification) =
                 remainingPeriods.push({ startDate: remainingStartAfter, endDate: remainingEndAfter });
             }
 
-            console.log("Períodos restantes antes del ajuste (sender):", remainingPeriods);
-
             let adjustedPeriods = remainingPeriods.map(period => ajustarPeriodoRestante(period.startDate, period.endDate));
-            console.log("Períodos restantes ajustados (sender):", adjustedPeriods);
 
             adjustedPeriods.forEach(period => {
                 sender.vacations.push({ startDate: period.startDate, endDate: period.endDate });
@@ -155,10 +129,7 @@ const handleVacationSwap = (sender, receiver, selectedPeriodObj, notification) =
             receiver.vacations.push(selectedPeriodObj);
 
         }
-
-    } else {
-        console.log('No se encontraron períodos originales válidos para el intercambio.');
-    }
+    } 
 
     return { originalVacationSender, originalVacationReceiver };
 };

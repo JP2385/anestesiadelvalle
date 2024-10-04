@@ -8,18 +8,14 @@ const requestVacationSwap = async (req, res) => {
     const { userId, periodsToGive, periodToRequest } = req.body;
 
     try {
-        console.log('Iniciando solicitud de intercambio de vacaciones');
-
         // Obtener el usuario que está solicitando el intercambio
         const requestingUser = await User.findById(userId);
         if (!requestingUser) {
-            console.log('Usuario no encontrado');
             return res.status(404).json({ message: 'Usuario no encontrado' });
         }
 
         // Verificar los períodos a ceder
         const validPeriodsToGive = periodsToGive.every(period => {
-            console.log(`Verificando período a ceder: ${JSON.stringify(period)}`);
             return requestingUser.vacations.some(v => {
                 const vacationStart = new Date(v.startDate).getTime();
                 const vacationEnd = new Date(v.endDate).getTime();
@@ -32,7 +28,6 @@ const requestVacationSwap = async (req, res) => {
         });
 
         if (!validPeriodsToGive) {
-            console.log('El usuario no tiene los períodos seleccionados para ceder');
             return res.status(400).json({ message: 'El usuario no tiene los períodos seleccionados para ceder' });
         }
 
@@ -43,8 +38,6 @@ const requestVacationSwap = async (req, res) => {
             '_id': { $ne: userId }  // Excluir al current user (solicitante)
         });
 
-        console.log(`Usuarios encontrados con el período solicitado: ${requestedVacationUsers.length}`);
-
         // Validar los días cedidos vs días solicitados
         const totalDaysToGive = periodsToGive.reduce((total, period) => {
             const start = new Date(period.startDate);
@@ -54,18 +47,13 @@ const requestVacationSwap = async (req, res) => {
         
         const daysRequested = calculateDaysBetween(new Date(periodToRequest.startDate), new Date(periodToRequest.endDate));
 
-        console.log(`Días solicitados: ${daysRequested}`);
-        console.log(`Días cedidos: ${totalDaysToGive}`);
-
         if (totalDaysToGive < daysRequested) {
-            console.log('La cantidad de días de los períodos a ceder es menor que los días solicitados');
             return res.status(400).json({ message: 'Los períodos cedidos deben tener al menos la misma cantidad de días que el período solicitado' });
         }
 
         // Si el período solicitado ya tiene usuarios disponibles, notificar a esos usuarios
         await notifyVacationUsers(requestedVacationUsers, requestingUser, periodToRequest, periodsToGive);
 
-        console.log('Solicitud enviada a los usuarios para su aprobación');
         return res.status(200).json({ message: 'Solicitud enviada a los usuarios para su aprobación' });
 
     } catch (error) {

@@ -13,9 +13,7 @@ const calculateDaysBetween = (startDate, endDate) => {
 const notifyVacationUsers = async (users, requestingUser, requestedPeriod, periodsToGive) => {
     try {
         for (const user of users) {
-            console.log(`Creando notificación para ${user.username}`);
-            console.log(`Períodos a ceder: ${JSON.stringify(periodsToGive)}`);
-
+           
             const notification = new Notification({
                 sender: requestingUser._id,
                 receiver: user._id,
@@ -31,7 +29,6 @@ const notifyVacationUsers = async (users, requestingUser, requestedPeriod, perio
             });
 
             await notification.save();  // Guardar la notificación en la base de datos
-            console.log(`Notificación creada para ${user.username}`);
         }
     } catch (error) {
         console.error('Error al notificar a los usuarios:', error);
