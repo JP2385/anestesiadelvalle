@@ -29,7 +29,7 @@ const handleVacationSwap = (sender, receiver, selectedPeriodObj, notification) =
     const cedidoStart = new Date(selectedPeriodObj.startDate);
     const cedidoEnd = new Date(selectedPeriodObj.endDate);
 
-    // Buscar los períodos originales de sender y receiver
+    // Buscar los períodos originales de sender y receiver sin eliminarlos
     const originalVacationSender = sender.vacations.find(vacation =>
         new Date(vacation.startDate).getTime() <= cedidoStart.getTime() &&
         new Date(vacation.endDate).getTime() >= cedidoEnd.getTime()
@@ -44,164 +44,121 @@ const handleVacationSwap = (sender, receiver, selectedPeriodObj, notification) =
         const originalDurationReceiver = Math.round((new Date(originalVacationReceiver.endDate) - new Date(originalVacationReceiver.startDate)) / (1000 * 60 * 60 * 24)) + 1;
         const cedidoDuration = Math.round((cedidoEnd - cedidoStart) / (1000 * 60 * 60 * 24)) + 1;
 
-        // Eliminar los períodos originales del sender y receiver
-        sender.vacations = sender.vacations.filter(vacation =>
-            vacation.startDate.toISOString() !== originalVacationSender.startDate.toISOString() ||
-            vacation.endDate.toISOString() !== originalVacationSender.endDate.toISOString()
-        );
-        receiver.vacations = receiver.vacations.filter(vacation =>
-            vacation.startDate.toISOString() !== originalVacationReceiver.startDate.toISOString() ||
-            vacation.endDate.toISOString() !== originalVacationReceiver.endDate.toISOString()
-        );
+        // Logs para verificar los períodos antes del intercambio
+        console.log("Periodo cedido (seleccionado por el sender):", { cedidoStart, cedidoEnd });
+        console.log("Período original del sender:", originalVacationSender);
+        console.log("Período original del receiver:", originalVacationReceiver);
+        console.log("Duración original del sender:", originalDurationSender);
+        console.log("Duración original del receiver:", originalDurationReceiver);
+        console.log("Duración del período cedido:", cedidoDuration);
 
-        // Logs para verificar el cálculo del período restante (sin ajuste todavía)
-        console.log("Comparando período de vacaciones del receiver:", {
-            receiverStart: originalVacationReceiver.startDate,
-            receiverEnd: originalVacationReceiver.endDate
-        });
-        console.log("Comparando con el período seleccionado:", {
-            selectedStart: notification.vacationPeriod.startDate,
-            selectedEnd: notification.vacationPeriod.endDate
-        });
         // Caso 1: Intercambio directo si los períodos tienen la misma duración
         if (originalDurationSender === cedidoDuration && originalDurationReceiver === cedidoDuration) {
             console.log("Intercambio directo: ambos períodos tienen la misma duración.");
-            
-            // Agregar el período solicitado a las vacaciones del sender
             sender.vacations.push(notification.vacationPeriod);
-
-            // Agregar el período cedido a las vacaciones del receiver
             receiver.vacations.push(selectedPeriodObj);
         } 
-
         // Caso 2: Si el período del receiver es más largo
         else if (originalDurationReceiver > cedidoDuration) {
             let remainingPeriods = [];
-        
-            // Determinar el período restante
-            // Si el período solicitado comienza exactamente en la misma fecha que el período original del receiver
-            if (notification.vacationPeriod.startDate.getTime() === originalVacationReceiver.startDate.getTime()) {
-                // El período restante es después del final del período solicitado por el sender
-                let remainingStart = new Date(notification.vacationPeriod.endDate);
-                remainingStart.setDate(remainingStart.getDate() + 1);  // Un día después del final del período solicitado
-                let remainingEnd = new Date(originalVacationReceiver.endDate);  // Mantener el final original del receiver
-        
-                remainingPeriods.push({ startDate: remainingStart, endDate: remainingEnd });
-            } 
-            // Si el período solicitado termina en la misma fecha que el período original del receiver
-            else if (notification.vacationPeriod.endDate.getTime() === originalVacationReceiver.endDate.getTime()) {
-                // El período restante es antes del inicio del período solicitado por el sender
-                let remainingStart = new Date(originalVacationReceiver.startDate);  // Mantener el inicio original del receiver
-                let remainingEnd = new Date(notification.vacationPeriod.startDate);
-                remainingEnd.setDate(remainingEnd.getDate() - 1);  // Un día antes del inicio del período solicitado
-        
-                remainingPeriods.push({ startDate: remainingStart, endDate: remainingEnd });
-            }
-            // Caso en el que el período solicitado esté en medio del período original del receiver
-            else {
-                // Dividir en dos períodos restantes: uno antes del período solicitado y otro después
-                let remainingStartBefore = new Date(originalVacationReceiver.startDate);  // Mantener el inicio original
-                let remainingEndBefore = new Date(notification.vacationPeriod.startDate);
-                remainingEndBefore.setDate(remainingEndBefore.getDate() - 1);  // Un día antes del inicio del período solicitado
-        
-                let remainingStartAfter = new Date(notification.vacationPeriod.endDate);
-                remainingStartAfter.setDate(remainingStartAfter.getDate() + 1);  // Un día después del final del período solicitado
-                let remainingEndAfter = new Date(originalVacationReceiver.endDate);  // Mantener el final original
-        
-                // Agregar ambos períodos restantes
-                remainingPeriods.push({ startDate: remainingStartBefore, endDate: remainingEndBefore });
-                remainingPeriods.push({ startDate: remainingStartAfter, endDate: remainingEndAfter });
-            }
-        
-            // Logs para verificar los períodos restantes
-            console.log("Períodos restantes antes del ajuste:", remainingPeriods);
-        
-            // Ajustar cada período restante para que comience en sábado y termine en domingo
-            let adjustedPeriods = remainingPeriods.map(period => ajustarPeriodoRestante(period.startDate, period.endDate));
-        
-            // Logs para verificar los períodos ajustados
-            console.log("Períodos restantes ajustados:", adjustedPeriods);
-        
-            // El receiver conserva los períodos restantes ajustados
-            adjustedPeriods.forEach(period => {
-                receiver.vacations.push({
-                    startDate: period.startDate,
-                    endDate: period.endDate
+
+            // Nueva condición: Si el período solicitado coincide exactamente con el período original del receiver
+            if (notification.vacationPeriod.startDate.getTime() === originalVacationReceiver.startDate.getTime() &&
+                notification.vacationPeriod.endDate.getTime() === originalVacationReceiver.endDate.getTime()) {
+                
+                // Intercambio directo: no hay período restante
+                console.log("Intercambio directo: el período solicitado coincide completamente con el período original del receiver.");
+                
+                sender.vacations.push(notification.vacationPeriod);
+                receiver.vacations.push(selectedPeriodObj);
+
+            } else {
+                // Caso donde el período solicitado no coincide completamente con el período original del receiver
+                if (notification.vacationPeriod.startDate.getTime() === originalVacationReceiver.startDate.getTime()) {
+                    let remainingStart = new Date(notification.vacationPeriod.endDate);
+                    remainingStart.setDate(remainingStart.getDate() + 1);
+                    let remainingEnd = new Date(originalVacationReceiver.endDate);
+
+                    remainingPeriods.push({ startDate: remainingStart, endDate: remainingEnd });
+                } else if (notification.vacationPeriod.endDate.getTime() === originalVacationReceiver.endDate.getTime()) {
+                    let remainingStart = new Date(originalVacationReceiver.startDate);
+                    let remainingEnd = new Date(notification.vacationPeriod.startDate);
+                    remainingEnd.setDate(remainingEnd.getDate() - 1);
+
+                    remainingPeriods.push({ startDate: remainingStart, endDate: remainingEnd });
+                } else {
+                    let remainingStartBefore = new Date(originalVacationReceiver.startDate);
+                    let remainingEndBefore = new Date(notification.vacationPeriod.startDate);
+                    remainingEndBefore.setDate(remainingEndBefore.getDate() - 1);
+
+                    let remainingStartAfter = new Date(notification.vacationPeriod.endDate);
+                    remainingStartAfter.setDate(remainingStartAfter.getDate() + 1);
+                    let remainingEndAfter = new Date(originalVacationReceiver.endDate);
+
+                    remainingPeriods.push({ startDate: remainingStartBefore, endDate: remainingEndBefore });
+                    remainingPeriods.push({ startDate: remainingStartAfter, endDate: remainingEndAfter });
+                }
+
+                console.log("Períodos restantes antes del ajuste:", remainingPeriods);
+
+                let adjustedPeriods = remainingPeriods.map(period => ajustarPeriodoRestante(period.startDate, period.endDate));
+                console.log("Períodos restantes ajustados:", adjustedPeriods);
+
+                adjustedPeriods.forEach(period => {
+                    receiver.vacations.push({ startDate: period.startDate, endDate: period.endDate });
                 });
-            });
-        
-            // El sender recibe el período solicitado del receiver
-            sender.vacations.push(notification.vacationPeriod);
-        
-            // El receiver conserva el período seleccionado por el sender
-            receiver.vacations.push(selectedPeriodObj);
+
+                sender.vacations.push(notification.vacationPeriod);
+                receiver.vacations.push(selectedPeriodObj);
+            }
         }
-        
+
         // Caso 3: Si el período del sender es más largo
         else if (originalDurationSender > cedidoDuration) {
             let remainingPeriods = [];
 
-            // Determinar el período restante
             if (cedidoStart.getTime() === originalVacationSender.startDate.getTime()) {
-                // El período restante es después del final del período seleccionado por el receiver
                 let remainingStart = new Date(cedidoEnd);
-                remainingStart.setDate(remainingStart.getDate() + 1);  // Un día después del final del período cedido
-                let remainingEnd = new Date(originalVacationSender.endDate);  // Mantener el final original del sender
+                remainingStart.setDate(remainingStart.getDate() + 1);
+                let remainingEnd = new Date(originalVacationSender.endDate);
 
                 remainingPeriods.push({ startDate: remainingStart, endDate: remainingEnd });
-            } 
-            // Si el período cedido termina en la misma fecha que el período original del sender
-            else if (cedidoEnd.getTime() === originalVacationSender.endDate.getTime()) {
-                // El período restante es antes del inicio del período cedido por el sender
-                let remainingStart = new Date(originalVacationSender.startDate);  // Mantener el inicio original
+            } else if (cedidoEnd.getTime() === originalVacationSender.endDate.getTime()) {
+                let remainingStart = new Date(originalVacationSender.startDate);
                 let remainingEnd = new Date(cedidoStart);
-                remainingEnd.setDate(remainingEnd.getDate() - 1);  // Un día antes del inicio del período cedido
+                remainingEnd.setDate(remainingEnd.getDate() - 1);
 
                 remainingPeriods.push({ startDate: remainingStart, endDate: remainingEnd });
-            }
-            // Caso en el que el período cedido esté en medio del período original del sender
-            else {
-                // Dividir en dos períodos restantes: uno antes del período cedido y otro después
-                let remainingStartBefore = new Date(originalVacationSender.startDate);  // Mantener el inicio original del sender
+            } else {
+                let remainingStartBefore = new Date(originalVacationSender.startDate);
                 let remainingEndBefore = new Date(cedidoStart);
-                remainingEndBefore.setDate(remainingEndBefore.getDate() - 1);  // Un día antes del inicio del período cedido
+                remainingEndBefore.setDate(remainingEndBefore.getDate() - 1);
 
                 let remainingStartAfter = new Date(cedidoEnd);
-                remainingStartAfter.setDate(remainingStartAfter.getDate() + 1);  // Un día después del final del período cedido
-                let remainingEndAfter = new Date(originalVacationSender.endDate);  // Mantener el final original
+                remainingStartAfter.setDate(remainingStartAfter.getDate() + 1);
+                let remainingEndAfter = new Date(originalVacationSender.endDate);
 
-                // Agregar ambos períodos restantes
                 remainingPeriods.push({ startDate: remainingStartBefore, endDate: remainingEndBefore });
                 remainingPeriods.push({ startDate: remainingStartAfter, endDate: remainingEndAfter });
             }
 
-            // Logs para verificar los períodos restantes antes del ajuste
             console.log("Períodos restantes antes del ajuste (sender):", remainingPeriods);
 
-            // Ajustar cada período restante para que comience en sábado y termine en domingo
             let adjustedPeriods = remainingPeriods.map(period => ajustarPeriodoRestante(period.startDate, period.endDate));
-
-            // Logs para verificar los períodos ajustados
             console.log("Períodos restantes ajustados (sender):", adjustedPeriods);
 
-            // El sender conserva los períodos restantes ajustados
             adjustedPeriods.forEach(period => {
-                sender.vacations.push({
-                    startDate: period.startDate,
-                    endDate: period.endDate
-                });
+                sender.vacations.push({ startDate: period.startDate, endDate: period.endDate });
             });
 
-            // El sender recibe el período del receiver
             sender.vacations.push(notification.vacationPeriod);
-
-            // El receiver conserva el período seleccionado por el sender
             receiver.vacations.push(selectedPeriodObj);
+
         }
-        
-    }    
-    sender.vacations = mergeOverlappingVacations(sender.vacations);
-    receiver.vacations = mergeOverlappingVacations(receiver.vacations);
+
+    } else {
+        console.log('No se encontraron períodos originales válidos para el intercambio.');
+    }
 
     return { originalVacationSender, originalVacationReceiver };
 };
@@ -228,36 +185,23 @@ const ajustarPeriodoRestante = (startDate, endDate) => {
     return { startDate: adjustedStart, endDate: adjustedEnd };
 };
 
-// Función para fusionar vacaciones superpuestas
-const mergeOverlappingVacations = (vacations) => {
-    if (vacations.length === 0) return [];
-
-    // Ordenar los períodos de vacaciones por fecha de inicio
-    vacations.sort((a, b) => new Date(a.startDate) - new Date(b.startDate));
-
-    // Lista para almacenar los períodos fusionados
-    const mergedVacations = [vacations[0]];
-
-    // Recorrer los períodos de vacaciones y fusionar los que se superponen
-    for (let i = 1; i < vacations.length; i++) {
-        const lastMerged = mergedVacations[mergedVacations.length - 1];
-        const current = vacations[i];
-
-        // Si el período actual se superpone o es continuo con el último período fusionado
-        if (new Date(current.startDate).getTime() <= new Date(lastMerged.endDate).getTime()) {
-            // Fusionar los períodos ajustando la fecha de fin
-            lastMerged.endDate = new Date(Math.max(new Date(lastMerged.endDate).getTime(), new Date(current.endDate).getTime()));
-        } else {
-            // Si no se superponen, agregar el período actual a la lista de fusionados
-            mergedVacations.push(current);
+// Función para eliminar períodos duplicados exactamente iguales
+const removeDuplicateVacations = (vacations) => {
+    const uniqueVacations = vacations.reduce((acc, current) => {
+        const isDuplicate = acc.some(vacation => 
+            vacation.startDate.toISOString() === current.startDate.toISOString() &&
+            vacation.endDate.toISOString() === current.endDate.toISOString()
+        );
+        if (!isDuplicate) {
+            acc.push(current);
         }
-    }
-
-    return mergedVacations;
+        return acc;
+    }, []);
+    return uniqueVacations;
 };
-
 
 module.exports = {
     checkReceiverAlreadyHasPeriod,
-    handleVacationSwap
+    handleVacationSwap,
+    removeDuplicateVacations
 };

@@ -171,6 +171,9 @@ export async function processPendingNotification(notification, notificationDiv, 
         periodsToGiveDiv.appendChild(document.createElement('br'));
     });
 
+    // Calcular los días hábiles del período solicitado por el sender
+    const senderBusinessDays = countBusinessDays(new Date(notification.vacationPeriod.startDate), new Date(notification.vacationPeriod.endDate));
+
     const acceptButton = document.createElement('button');
     acceptButton.textContent = 'Aceptar';
     acceptButton.addEventListener('click', () => {
@@ -179,11 +182,23 @@ export async function processPendingNotification(notification, notificationDiv, 
         // Log para verificar los valores de los checkboxes seleccionados
         console.log("Periodos seleccionados:", selectedPeriods);
 
-        if (selectedPeriods.length === 0) {
-            alert('Por favor, selecciona al menos un período para tomar.');
-        } else {
-            respondToNotification(apiUrl, notification._id, 'accepted', selectedPeriods, notificationDiv);
+        // Calcular la suma de los días hábiles seleccionados
+        let selectedBusinessDays = 0;
+        selectedPeriods.forEach(period => {
+            const parsedPeriod = JSON.parse(period);
+            const startDate = new Date(parsedPeriod.startDate);
+            const endDate = new Date(parsedPeriod.endDate);
+            selectedBusinessDays += countBusinessDays(startDate, endDate);
+        });
+
+        // Verificar si los días hábiles seleccionados son suficientes
+        if (selectedBusinessDays < senderBusinessDays) {
+            alert('No puedes tomar menos días hábiles que los que te piden a cambio.');
+            return;
         }
+
+        // Si todo está bien, proceder con la respuesta
+        respondToNotification(apiUrl, notification._id, 'accepted', selectedPeriods, notificationDiv);
     });
 
     const rejectButton = document.createElement('button');
@@ -196,3 +211,18 @@ export async function processPendingNotification(notification, notificationDiv, 
     notificationDiv.appendChild(rejectButton);
 }
 
+// Función para contar días hábiles entre dos fechas
+function countBusinessDays(startDate, endDate) {
+    let count = 0;
+    let currentDate = new Date(startDate);
+
+    while (currentDate <= endDate) {
+        const dayOfWeek = currentDate.getUTCDay();
+        if (dayOfWeek !== 0 && dayOfWeek !== 6) { // Excluir fines de semana
+            count++;
+        }
+        currentDate.setUTCDate(currentDate.getUTCDate() + 1);
+    }
+
+    return count;
+}
