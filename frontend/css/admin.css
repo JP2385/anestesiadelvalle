@@ -19,3 +19,7 @@
     width: auto; /* Evitar que el checkbox se extienda al 100% */
     margin: 0; /* Eliminar márgenes adicionales */
 }
+
+ul{
+    margin-left: 0rem;
+}
