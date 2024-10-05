@@ -5,24 +5,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const adminForm = document.getElementById('admin-form');
     const vacationList = document.getElementById('vacation-list');
     const addVacationButton = document.getElementById('add-vacation');
-    const beginningDateElement = document.getElementById('beginningDate');
-    
-    // Inicializar Flatpickr y almacenar la instancia
-    const vacationRangeInput = document.getElementById('vacation-range');
-    const flatpickrInstance = flatpickr(vacationRangeInput, {
-        locale: "es", // Cambiar a español
-        mode: "range", // Modo de rango de fechas
-        dateFormat: "Y-m-d", // Formato visible de la fecha
-        minDate: "today", // No permitir fechas pasadas
-        onChange: function(selectedDates) {
-            // Extraer las fechas de inicio y fin
-            const [startDate, endDate] = selectedDates;
-
-            // Asignar las fechas a los campos ocultos
-            document.getElementById('vacation-start').value = startDate ? startDate.toISOString().split('T')[0] : '';
-            document.getElementById('vacation-end').value = endDate ? endDate.toISOString().split('T')[0] : '';
-        }
-    });
+    const beginningDateElement= document.getElementById('beginningDate');
 
     // Obtener la lista de usuarios
     fetch(`${apiUrl}/auth/users`, {
@@ -34,8 +17,10 @@ document.addEventListener('DOMContentLoaded', function() {
     })
     .then(response => response.json())
     .then(users => {
+        // Ordenar usuarios alfabéticamente por nombre de usuario
         users.sort((a, b) => a.username.localeCompare(b.username));
 
+        // Crear las opciones para el select
         users.forEach(user => {
             const option = document.createElement('option');
             option.value = user._id;
@@ -43,6 +28,7 @@ document.addEventListener('DOMContentLoaded', function() {
             userSelect.appendChild(option);
         });
 
+        // Seleccionar el primer usuario en la lista y cargar sus datos
         if (users.length > 0) {
             userSelect.value = users[0]._id;
             loadUserData(users[0]._id);
@@ -52,6 +38,8 @@ document.addEventListener('DOMContentLoaded', function() {
         alert('Hubo un problema al obtener la lista de usuarios: ' + error.message);
     });
 
+
+    // Manejar la selección de usuario
     userSelect.addEventListener('change', () => {
         const userId = userSelect.value;
         if (userId) {
@@ -59,6 +47,7 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
 
+    // Manejar el formulario de administración
     adminForm.addEventListener('submit', async (event) => {
         event.preventDefault();
         const userId = userSelect.value;
@@ -110,62 +99,65 @@ document.addEventListener('DOMContentLoaded', function() {
     addVacationButton.addEventListener('click', () => {
         const startDate = document.getElementById('vacation-start').value;
         const endDate = document.getElementById('vacation-end').value;
-
+    
         if (!startDate || !endDate) {
-            alert('Por favor, selecciona un rango de fechas válido.');
+            alert('Por favor, ingresa ambas fechas de inicio y fin.');
             return;
         }
-
-        // Crear un nuevo elemento de la lista de vacaciones con inputs tipo "date"
+    
         const vacationItem = document.createElement('li');
         vacationItem.innerHTML = `
             Del <input type="date" class="vacation-start" value="${startDate}"> 
             al <input type="date" class="vacation-end" value="${endDate}">
             <button class="delete-vacation">❌</button>
         `;
-
-        // Añadir la funcionalidad para eliminar el elemento
+    
         vacationItem.querySelector('.delete-vacation').addEventListener('click', () => vacationItem.remove());
-
-         // Agregar el nuevo elemento al principio de la lista de vacaciones
-         if (vacationList.firstChild) {
-            vacationList.insertBefore(vacationItem, vacationList.firstChild);
-        } else {
-            vacationList.appendChild(vacationItem);  // Si la lista está vacía
-        }        
-
-        // Limpiar el input de rango visible y los campos ocultos
-        document.getElementById('vacation-range').value = '';
+    
+        // Insertar el nuevo elemento al principio de la lista
+        vacationList.insertBefore(vacationItem, vacationList.firstChild);
+    
+        // Limitar la visibilidad a 6 elementos
+        const vacationItems = Array.from(vacationList.children);
+        if (vacationItems.length > 6) {
+            vacationItems.slice(6).forEach(item => {
+                item.style.display = 'none'; // Ocultar los elementos adicionales
+            });
+        }
+    
+        // Clear input fields
         document.getElementById('vacation-start').value = '';
         document.getElementById('vacation-end').value = '';
-        flatpickrInstance.clear(); // Restablecer el calendario de Flatpickr
-        });
+    });
+    
 
-        async function loadUserData(userId) {
-            try {
-                const response = await fetch(`${apiUrl}/auth/user/${userId}`, {
-                    method: 'GET',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Authorization': 'Bearer ' + localStorage.getItem('token')
-                    }
-                });
-        
-                if (response.ok) {
-                    const user = await response.json();
-                    document.getElementById('doesCardio').checked = user.doesCardio;
-                    document.getElementById('doesPediatrics').checked = user.doesPediatrics;
-                    document.getElementById('doesRNM').checked = user.doesRNM;
-                    document.getElementById('worksInPublicNeuquen').checked = user.worksInPublicNeuquen;
-                    document.getElementById('worksInPrivateNeuquen').checked = user.worksInPrivateNeuquen;
-                    document.getElementById('worksInPublicRioNegro').checked = user.worksInPublicRioNegro;
-                    document.getElementById('worksInPrivateRioNegro').checked = user.worksInPrivateRioNegro;
-                    document.getElementById('worksInCmacOnly').checked = user.worksInCmacOnly;
-                    document.getElementById('workSchedule-monday').value = user.workSchedule.monday || 'No trabaja';
-                    document.getElementById('workSchedule-tuesday').value = user.workSchedule.tuesday || 'No trabaja';
-                    document.getElementById('workSchedule-wednesday').value = user.workSchedule.wednesday || 'No trabaja';
-                    document.getElementById('workSchedule-thursday').value = user.workSchedule.thursday || 'No trabaja';
-                    document.getElementById('workSchedule-friday').value = user.workSchedule.friday || 'No trabaja';
+    // Función para cargar los datos del usuario seleccionado
+    async function loadUserData(userId) {
+        try {
+            const response = await fetch(`${apiUrl}/auth/user/${userId}`, {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': 'Bearer ' + localStorage.getItem('token')
+                }
+            });
+
+            if (response.ok) {
+                const user = await response.json();
+                document.getElementById('doesCardio').checked = user.doesCardio;
+                document.getElementById('doesPediatrics').checked = user.doesPediatrics;
+                document.getElementById('doesRNM').checked = user.doesRNM;
+                document.getElementById('worksInPublicNeuquen').checked = user.worksInPublicNeuquen;
+                document.getElementById('worksInPrivateNeuquen').checked = user.worksInPrivateNeuquen;
+                document.getElementById('worksInPublicRioNegro').checked = user.worksInPublicRioNegro;
+                document.getElementById('worksInPrivateRioNegro').checked = user.worksInPrivateRioNegro;
+                document.getElementById('worksInCmacOnly').checked = user.worksInCmacOnly;
+                document.getElementById('workSchedule-monday').value = user.workSchedule.monday || 'No trabaja';
+                document.getElementById('workSchedule-tuesday').value = user.workSchedule.tuesday || 'No trabaja';
+                document.getElementById('workSchedule-wednesday').value = user.workSchedule.wednesday || 'No trabaja';
+                document.getElementById('workSchedule-thursday').value = user.workSchedule.thursday || 'No trabaja';
+                document.getElementById('workSchedule-friday').value = user.workSchedule.friday || 'No trabaja';
+
         
                     if (user.beginningDate) {
                         const correctedDate = new Date(new Date(user.beginningDate).getTime() + 3 * 60 * 60 * 1000);
@@ -185,25 +177,14 @@ document.addEventListener('DOMContentLoaded', function() {
                     user.vacations.forEach(vacation => {
                         const vacationItem = document.createElement('li');
                         vacationItem.innerHTML = `
-                            Del <input type="text" class="vacation-start" value="${new Date(vacation.startDate).toISOString().split('T')[0]}"> 
-                            al <input type="text" class="vacation-end" value="${new Date(vacation.endDate).toISOString().split('T')[0]}">
+                            Del <input type="date" class="vacation-start" value="${new Date(vacation.startDate).toISOString().split('T')[0]}"> 
+                            al <input type="date" class="vacation-end" value="${new Date(vacation.endDate).toISOString().split('T')[0]}">
                             <button class="delete-vacation">❌</button>
                         `;
         
                         vacationItem.querySelector('.delete-vacation').addEventListener('click', () => vacationItem.remove());
         
                         vacationList.appendChild(vacationItem);
-        
-                        // Inicializar Flatpickr en los inputs generados
-                        flatpickr(vacationItem.querySelector('.vacation-start'), {
-                            dateFormat: 'Y-m-d', // El formato de la fecha que quieres usar
-                            locale: 'es' // Cambiar a español
-                        });
-        
-                        flatpickr(vacationItem.querySelector('.vacation-end'), {
-                            dateFormat: 'Y-m-d', // El formato de la fecha que quieres usar
-                            locale: 'es' // Cambiar a español
-                        });
                     });
                 } else {
                     const errorData = await response.json();
@@ -212,6 +193,5 @@ document.addEventListener('DOMContentLoaded', function() {
             } catch (error) {
                 alert('Hubo un problema con la solicitud: ' + error.message);
             }
-        }
-        
+        }        
 });

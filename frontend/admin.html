@@ -13,9 +13,6 @@
     <link rel="stylesheet" href="css/main.css">
     <link rel="stylesheet" href="css/spinner.css">
     <link rel="stylesheet" href="css/admin.css">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
-    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
-    <script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/es.js"></script>
     <script defer src="js/bundle.js"></script>
     <script defer src="js/admin.js"></script>
     <script defer src="js/spinner.js"></script>
@@ -123,11 +120,13 @@
             </div>
             <h3>Gestor de vacaciones:</h3>
             <div class="admin-input-group">
-                <label for="vacation-range">Seleccione rango de vacaciones a agregar</label>
-                <input type="text" id="vacation-range" name="vacation-range" placeholder="Despliegue calendario aquí">
-                <input type="hidden" id="vacation-start" name="vacation-start">
-                <input type="hidden" id="vacation-end" name="vacation-end">
-            </div>   
+                <label for="vacation-start">Fecha de Inicio</label>
+                <input type="date" id="vacation-start" name="vacation-start" class="vacation-start">
+            </div>
+            <div class="admin-input-group">
+                <label for="vacation-end">Fecha de Fin</label>
+                <input type="date" id="vacation-end" name="vacation-end" class="vacation-end">
+            </div>
             <button type="button" id="add-vacation" class="main-menu-button">Agregar Vacaciones</button>
             <ul id="vacation-list"></ul>
             <button type="submit" class="main-menu-button">Actualizar Usuario</button>
