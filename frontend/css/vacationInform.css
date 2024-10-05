@@ -22,7 +22,7 @@ label {
 }
 
 .form-group input, select {
-    margin-right: 10px;
+    margin-right: 0px;
     padding:2px;
 }
 
@@ -39,7 +39,7 @@ label {
     }
 
     input, select {
-        width: 80px; /* Los inputs y selects ocupan el 100% en pantallas pequeñas */
+        width: 75px; /* Los inputs y selects ocupan el 100% en pantallas pequeñas */
     }
     .user, .year {
         width: auto;
