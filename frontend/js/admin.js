@@ -12,7 +12,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const flatpickrInstance = flatpickr(vacationRangeInput, {
         locale: "es", // Cambiar a español
         mode: "range", // Modo de rango de fechas
-        dateFormat: "d-m-y", // Formato visible de la fecha
+        dateFormat: "Y-m-d", // Formato visible de la fecha
         minDate: "today", // No permitir fechas pasadas
         onChange: function(selectedDates) {
             // Extraer las fechas de inicio y fin
@@ -185,14 +185,25 @@ document.addEventListener('DOMContentLoaded', function() {
                     user.vacations.forEach(vacation => {
                         const vacationItem = document.createElement('li');
                         vacationItem.innerHTML = `
-                            Del <input type="date" class="vacation-start" value="${new Date(vacation.startDate).toISOString().split('T')[0]}"> 
-                            al <input type="date" class="vacation-end" value="${new Date(vacation.endDate).toISOString().split('T')[0]}">
+                            Del <input type="text" class="vacation-start" value="${new Date(vacation.startDate).toISOString().split('T')[0]}"> 
+                            al <input type="text" class="vacation-end" value="${new Date(vacation.endDate).toISOString().split('T')[0]}">
                             <button class="delete-vacation">❌</button>
                         `;
         
                         vacationItem.querySelector('.delete-vacation').addEventListener('click', () => vacationItem.remove());
         
                         vacationList.appendChild(vacationItem);
+        
+                        // Inicializar Flatpickr en los inputs generados
+                        flatpickr(vacationItem.querySelector('.vacation-start'), {
+                            dateFormat: 'Y-m-d', // El formato de la fecha que quieres usar
+                            locale: 'es' // Cambiar a español
+                        });
+        
+                        flatpickr(vacationItem.querySelector('.vacation-end'), {
+                            dateFormat: 'Y-m-d', // El formato de la fecha que quieres usar
+                            locale: 'es' // Cambiar a español
+                        });
                     });
                 } else {
                     const errorData = await response.json();
@@ -201,5 +212,6 @@ document.addEventListener('DOMContentLoaded', function() {
             } catch (error) {
                 alert('Hubo un problema con la solicitud: ' + error.message);
             }
-        }        
+        }
+        
 });
