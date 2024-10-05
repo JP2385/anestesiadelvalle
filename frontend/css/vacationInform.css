@@ -27,7 +27,7 @@ label {
 }
 
 /* Ajustes para pantallas pequeñas */
-@media (max-width: 768px) {
+@media (max-width: 480px) {
     #filter-form {
         flex-direction: row; /* Cambiar a columna en pantallas pequeñas */
         align-items: flex-start;
@@ -39,6 +39,9 @@ label {
     }
 
     input, select {
-        width: 100px; /* Los inputs y selects ocupan el 100% en pantallas pequeñas */
+        width: 90px; /* Los inputs y selects ocupan el 100% en pantallas pequeñas */
+    }
+    .user, .year {
+        width: auto;
     }
 }

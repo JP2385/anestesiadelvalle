@@ -67,7 +67,7 @@ table.assigments-inform {
 }
 
 select {
-    width: 70%;
+    max-width: 70%;
     padding: 5px;
     box-sizing: border-box;
 }
