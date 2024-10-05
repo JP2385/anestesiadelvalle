@@ -1,11 +1,14 @@
-document.addEventListener('DOMContentLoaded', function() {
+import { validateStartDate, validateEndDate } from './vacationSwapUtils.js'; // Asegúrate de importar las funciones correctamente
+
+document.addEventListener('DOMContentLoaded', function () {
     const apiUrl = window.location.hostname === 'localhost' ? 'http://localhost:3000' : 'https://adv-37d5b772f5fd.herokuapp.com';
 
     const userSelect = document.getElementById('user-select');
     const adminForm = document.getElementById('admin-form');
     const vacationList = document.getElementById('vacation-list');
     const addVacationButton = document.getElementById('add-vacation');
-    const beginningDateElement= document.getElementById('beginningDate');
+    const beginningDateElement = document.getElementById('beginningDate');
+    const submitButton = adminForm.querySelector('button[type="submit"]'); // Botón de envío
 
     // Obtener la lista de usuarios
     fetch(`${apiUrl}/auth/users`, {
@@ -15,29 +18,28 @@ document.addEventListener('DOMContentLoaded', function() {
             'Authorization': 'Bearer ' + localStorage.getItem('token')
         }
     })
-    .then(response => response.json())
-    .then(users => {
-        // Ordenar usuarios alfabéticamente por nombre de usuario
-        users.sort((a, b) => a.username.localeCompare(b.username));
+        .then(response => response.json())
+        .then(users => {
+            // Ordenar usuarios alfabéticamente por nombre de usuario
+            users.sort((a, b) => a.username.localeCompare(b.username));
 
-        // Crear las opciones para el select
-        users.forEach(user => {
-            const option = document.createElement('option');
-            option.value = user._id;
-            option.textContent = `${user.username} (${user.email})`;
-            userSelect.appendChild(option);
+            // Crear las opciones para el select
+            users.forEach(user => {
+                const option = document.createElement('option');
+                option.value = user._id;
+                option.textContent = `${user.username} (${user.email})`;
+                userSelect.appendChild(option);
+            });
+
+            // Seleccionar el primer usuario en la lista y cargar sus datos
+            if (users.length > 0) {
+                userSelect.value = users[0]._id;
+                loadUserData(users[0]._id);
+            }
+        })
+        .catch(error => {
+            alert('Hubo un problema al obtener la lista de usuarios: ' + error.message);
         });
-
-        // Seleccionar el primer usuario en la lista y cargar sus datos
-        if (users.length > 0) {
-            userSelect.value = users[0]._id;
-            loadUserData(users[0]._id);
-        }
-    })
-    .catch(error => {
-        alert('Hubo un problema al obtener la lista de usuarios: ' + error.message);
-    });
-
 
     // Manejar la selección de usuario
     userSelect.addEventListener('change', () => {
@@ -45,6 +47,19 @@ document.addEventListener('DOMContentLoaded', function() {
         if (userId) {
             loadUserData(userId);
         }
+    });
+
+    // Adjuntar eventos de cambio a los inputs de fecha para validar al seleccionar fechas
+    const startDateInput = document.getElementById('vacation-start');
+    const endDateInput = document.getElementById('vacation-end');
+
+    startDateInput.addEventListener('change', () => {
+        validateStartDate(startDateInput, endDateInput, submitButton, handleDateChange);
+        endDateInput.value = startDateInput.value;
+    });
+    
+    endDateInput.addEventListener('change', () => {
+        validateEndDate(startDateInput, endDateInput, submitButton, handleDateChange);
     });
 
     // Manejar el formulario de administración
@@ -97,39 +112,41 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Manejar la adición de vacaciones
     addVacationButton.addEventListener('click', () => {
-        const startDate = document.getElementById('vacation-start').value;
-        const endDate = document.getElementById('vacation-end').value;
-    
+        const startDate = startDateInput.value;
+        const endDate = endDateInput.value;
+
+        // Validar la fecha de inicio y fin antes de añadir vacaciones
+        validateStartDate(startDateInput, endDateInput, submitButton, handleDateChange);
+        validateEndDate(startDateInput, endDateInput, submitButton, handleDateChange);
+
         if (!startDate || !endDate) {
             alert('Por favor, ingresa ambas fechas de inicio y fin.');
             return;
         }
-    
+
+        // Crear un nuevo elemento de la lista de vacaciones con inputs tipo "date"
         const vacationItem = document.createElement('li');
         vacationItem.innerHTML = `
             Del <input type="date" class="vacation-start" value="${startDate}"> 
             al <input type="date" class="vacation-end" value="${endDate}">
             <button class="delete-vacation">❌</button>
         `;
-    
+
         vacationItem.querySelector('.delete-vacation').addEventListener('click', () => vacationItem.remove());
-    
+
         // Insertar el nuevo elemento al principio de la lista
         vacationList.insertBefore(vacationItem, vacationList.firstChild);
-    
-        // Limitar la visibilidad a 6 elementos
-        const vacationItems = Array.from(vacationList.children);
-        if (vacationItems.length > 6) {
-            vacationItems.slice(6).forEach(item => {
-                item.style.display = 'none'; // Ocultar los elementos adicionales
-            });
-        }
-    
-        // Clear input fields
-        document.getElementById('vacation-start').value = '';
-        document.getElementById('vacation-end').value = '';
+
+        // Limpiar los campos de fecha
+        startDateInput.value = '';
+        endDateInput.value = '';
     });
-    
+
+    // Función para manejar el cambio de fechas y realizar otras acciones si es necesario
+    function handleDateChange() {
+        // Aquí puedes agregar lógica adicional después de cambiar las fechas
+        console.log('Las fechas han cambiado.');
+    }
 
     // Función para cargar los datos del usuario seleccionado
     async function loadUserData(userId) {
@@ -158,40 +175,39 @@ document.addEventListener('DOMContentLoaded', function() {
                 document.getElementById('workSchedule-thursday').value = user.workSchedule.thursday || 'No trabaja';
                 document.getElementById('workSchedule-friday').value = user.workSchedule.friday || 'No trabaja';
 
-        
-                    if (user.beginningDate) {
-                        const correctedDate = new Date(new Date(user.beginningDate).getTime() + 3 * 60 * 60 * 1000);
-                        const formattedDate = correctedDate.toLocaleDateString('es-ES');
-                        beginningDateElement.textContent = formattedDate;
-                    } else {
-                        beginningDateElement.textContent = 'No disponible';
-                    }
-        
-                    // Limpiar la lista actual de vacaciones
-                    vacationList.innerHTML = '';
-        
-                    // Ordenar vacaciones de más reciente a más antiguo según la fecha de inicio
-                    user.vacations.sort((a, b) => new Date(b.startDate) - new Date(a.startDate));
-        
-                    // Mostrar las vacaciones en la lista, de más nuevo a más antiguo
-                    user.vacations.forEach(vacation => {
-                        const vacationItem = document.createElement('li');
-                        vacationItem.innerHTML = `
-                            Del <input type="date" class="vacation-start" value="${new Date(vacation.startDate).toISOString().split('T')[0]}"> 
-                            al <input type="date" class="vacation-end" value="${new Date(vacation.endDate).toISOString().split('T')[0]}">
-                            <button class="delete-vacation">❌</button>
-                        `;
-        
-                        vacationItem.querySelector('.delete-vacation').addEventListener('click', () => vacationItem.remove());
-        
-                        vacationList.appendChild(vacationItem);
-                    });
+                if (user.beginningDate) {
+                    const correctedDate = new Date(new Date(user.beginningDate).getTime() + 3 * 60 * 60 * 1000);
+                    const formattedDate = correctedDate.toLocaleDateString('es-ES');
+                    beginningDateElement.textContent = formattedDate;
                 } else {
-                    const errorData = await response.json();
-                    alert(`Error: ${errorData.message}`);
+                    beginningDateElement.textContent = 'No disponible';
                 }
-            } catch (error) {
-                alert('Hubo un problema con la solicitud: ' + error.message);
+
+                // Limpiar la lista actual de vacaciones
+                vacationList.innerHTML = '';
+
+                // Ordenar vacaciones de más reciente a más antiguo según la fecha de inicio
+                user.vacations.sort((a, b) => new Date(b.startDate) - new Date(a.startDate));
+
+                // Mostrar las vacaciones en la lista, de más nuevo a más antiguo
+                user.vacations.forEach(vacation => {
+                    const vacationItem = document.createElement('li');
+                    vacationItem.innerHTML = `
+                        Del <input type="date" class="vacation-start" value="${new Date(vacation.startDate).toISOString().split('T')[0]}"> 
+                        al <input type="date" class="vacation-end" value="${new Date(vacation.endDate).toISOString().split('T')[0]}">
+                        <button class="delete-vacation">❌</button>
+                    `;
+
+                    vacationItem.querySelector('.delete-vacation').addEventListener('click', () => vacationItem.remove());
+
+                    vacationList.appendChild(vacationItem);
+                });
+            } else {
+                const errorData = await response.json();
+                alert(`Error: ${errorData.message}`);
             }
-        }        
+        } catch (error) {
+            alert('Hubo un problema con la solicitud: ' + error.message);
+        }
+    }
 });

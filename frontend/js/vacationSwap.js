@@ -20,8 +20,14 @@ document.addEventListener('DOMContentLoaded', async () => {
         console.error('Error fetching vacation data:', error);
     }
 
-    startDateInput.addEventListener('change', () => validateStartDate(startDateInput, endDateInput, submitButton, handleDateChange));
-    endDateInput.addEventListener('change', () => validateEndDate(startDateInput, endDateInput, submitButton, handleDateChange));
+    startDateInput.addEventListener('change', () => {
+        validateStartDate(startDateInput, endDateInput, submitButton, handleDateChange);
+        endDateInput.value = startDateInput.value;
+    });
+    
+    endDateInput.addEventListener('change', () => {
+        validateEndDate(startDateInput, endDateInput, submitButton, handleDateChange);
+    });
 
     async function handleDateChange() {
         const startDate = startDateInput.value;
