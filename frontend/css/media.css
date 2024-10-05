@@ -198,8 +198,4 @@
         width: 100%; /* Asegura que los botones ocupen todo el ancho en dispositivos pequeños */
         padding: 0.5rem; /* Ajusta el padding según sea necesario */
     }
-
-    ul{
-        margin-left: -0.5rem;
-    }
 }
