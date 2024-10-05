@@ -21,8 +21,9 @@ label {
     font-weight: bold;
 }
 
-input, select {
+.form-group input, select {
     margin-right: 10px;
+    padding:2px;
 }
 
 /* Ajustes para pantallas pequeñas */
@@ -38,6 +39,6 @@ input, select {
     }
 
     input, select {
-        width: 80px; /* Los inputs y selects ocupan el 100% en pantallas pequeñas */
+        width: 100px; /* Los inputs y selects ocupan el 100% en pantallas pequeñas */
     }
 }
