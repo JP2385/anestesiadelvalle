@@ -39,7 +39,7 @@ label {
     }
 
     input, select {
-        width: 90px; /* Los inputs y selects ocupan el 100% en pantallas pequeñas */
+        width: 80px; /* Los inputs y selects ocupan el 100% en pantallas pequeñas */
     }
     .user, .year {
         width: auto;
