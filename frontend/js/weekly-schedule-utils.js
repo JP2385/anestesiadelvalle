@@ -97,6 +97,15 @@ export async function populateSelectOptions(availability) {
                     return; // Excluir "rconsigli" de "CMAC"
                 }
 
+                // Nueva condición: Exclusión de "lharriague" en worksites vespertinos los martes
+                if (user.username === 'lharriague' && dayName === 'tuesday' && workSite.includes('Vespertino')) {
+                    return; // Excluir "lharriague" en vespertino los martes
+                }
+
+                // Nueva condición: Exclusión de "mquiroga" en worksites vespertinos los jueves
+                if (user.username === 'mquiroga' && dayName === 'thursday' && workSite.includes('Vespertino')) {
+                    return; // Excluir "mquiroga" en vespertino los jueves
+                }
                 // Restricción adicional para miércoles en "Imágenes Quirofano 1 Matutino"
                 if (dayName === 'wednesday' && workSite.includes('Imágenes Q1') && workSite.includes('Matutino')) {
                     if (!user.doesCardio) {
