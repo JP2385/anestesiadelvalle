@@ -133,7 +133,7 @@ export async function populateSelectOptions(availability) {
 
                 if (user.worksInCmacOnly && !workSite.includes('CMAC')) return;
 
-                if ((workSite.includes('Fundación Q2') || workSite.includes('Fundación 3') || workSite.includes('CMAC Q'))) {
+                if ((workSite.includes('Fundación Q1') || workSite.includes('Fundación Q2') || workSite.includes('Fundación 3') || workSite.includes('CMAC Q'))) {
                     if (!user.worksInPrivateRioNegro) return;
                 }
 

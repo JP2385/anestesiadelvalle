@@ -54,10 +54,12 @@ document.addEventListener('DOMContentLoaded', function () {
     const endDateInput = document.getElementById('vacation-end');
 
     startDateInput.addEventListener('change', () => {
+        // Validar la fecha de inicio
         validateStartDate(startDateInput, endDateInput, submitButton, handleDateChange);
-        endDateInput.value = startDateInput.value;
+        endDateInput.min = startDateInput.value;
+        endDateInput.focus();
     });
-    
+
     endDateInput.addEventListener('change', () => {
         validateEndDate(startDateInput, endDateInput, submitButton, handleDateChange);
     });

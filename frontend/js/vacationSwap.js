@@ -11,6 +11,10 @@ document.addEventListener('DOMContentLoaded', async () => {
     const messageInput = document.getElementById('message');
     const submitButton = form.querySelector('button[type="submit"]');
 
+    // Setear la fecha mínima del startDateInput como la fecha actual
+    const today = new Date().toISOString().split('T')[0];
+    startDateInput.min = today;
+    
     let users = [];
     let currentUser = null;
 
@@ -22,7 +26,8 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     startDateInput.addEventListener('change', () => {
         validateStartDate(startDateInput, endDateInput, submitButton, handleDateChange);
-        endDateInput.value = startDateInput.value;
+        endDateInput.min = startDateInput.value;
+        endDateInput.focus();
     });
     
     endDateInput.addEventListener('change', () => {

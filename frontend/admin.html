@@ -13,6 +13,15 @@
     <link rel="stylesheet" href="css/main.css">
     <link rel="stylesheet" href="css/spinner.css">
     <link rel="stylesheet" href="css/admin.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script> 
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/es.js"></script>
+    <script>
+        flatpickr(".selector", {
+            locale: "es", // Configura el idioma a español
+            dateFormat: "d-m-Y" // Formato de la fecha opcional
+        });
+    </script>
     <script defer src="js/bundle.js"></script>
     <script type=module defer src="js/admin.js"></script>
     <script defer src="js/spinner.js"></script>

@@ -45,13 +45,6 @@ export function validateEndDate(startDateInput, endDateInput, submitButton, hand
         return;
     }
 
-    if (endDate <= startDate) {
-        alert('La fecha de fin debe ser posterior a la fecha de inicio.');
-        endDateInput.value = '';  // Vaciar el campo de fecha de fin
-        submitButton.disabled = true;  // Desactivar el botón de envío
-        return;
-    }
-
     const daysDifference = Math.ceil((endDate - startDate) / (1000 * 60 * 60 * 24));
     if (daysDifference < 8) {
         alert('Debe haber al menos 8 días entre la fecha de inicio y la de fin.');
