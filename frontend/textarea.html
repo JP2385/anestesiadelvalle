@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Editar Textarea</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+        .container {
+            margin: 20px;
+        }
+        textarea {
+            width: 100%;
+            height: 150px;
+            padding: 10px;
+            font-size: 16px;
+            resize: none;
+        }
+        button {
+            margin-top: 10px;
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <textarea id="autoText" disabled>Texto generado automáticamente</textarea>
+        <br>
+        <button id="editButton">Editar</button>
+    </div>
+
+    <script>
+        // Obtener el textarea y el botón
+        const textarea = document.getElementById('autoText');
+        const editButton = document.getElementById('editButton');
+
+        // Manejar el clic en el botón "Editar"
+        editButton.addEventListener('click', () => {
+            // Mostrar alerta indicando que los observers han sido desactivados
+            alert('Se han desactivado los observers que generan texto automático');
+
+            // Habilitar la edición manual del textarea
+            textarea.disabled = false;
+
+            // Cambiar el botón para que el usuario sepa que ahora puede editar
+            editButton.textContent = 'Ahora puedes editar';
+        });
+    </script>
+</body>
+</html>
