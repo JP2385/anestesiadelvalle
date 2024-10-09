@@ -14,7 +14,7 @@ module.exports = {
         'mauromelo20@hotmail.com',
         'qgonella@gmail.com',
         'luharriagueborsarelli@gmail.com',
-        'gogorza.nicolas.alum@anestesiologo.org',
+        'nicogogorza@hotmail.com',
         'leandrogn1307@gmail.com',
         'alanlmacias@gmail.com',
         'ezequiel.smc@gmail.com',

@@ -88,12 +88,8 @@ export async function populateSelectOptions(availability) {
 
             availableUsers.forEach(user => {
 
-
-                console.log(`User: ${user.username}, doesPediatrics: ${user.doesPediatrics}`);
-
                 // Excluir usuarios que no hacen pediatría en sitios que contienen "COI"
                 if (workSite.includes('COI') && !user.doesPediatrics) {
-                    console.log(`Excluyendo a ${user.username} porque no hace pediatría y el sitio incluye COI.`);
                     return; // Excluir usuario si no hace pediatría y el sitio contiene "COI"
                 }
 
