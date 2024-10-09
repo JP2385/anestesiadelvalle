@@ -1,17 +1,24 @@
-import { generateTableHeaders, generateTableRows,  } from './longDaysCountUtils.js';
+import { generateTableHeaders, generateTableRows } from './longDaysCountUtils.js';
+
+let longDaysSumGlobal = {}; // Variable global para almacenar los días largos acumulados
 
 // DOMContentLoaded event to fetch data and generate the table
 document.addEventListener('DOMContentLoaded', async () => {
     const apiUrl = window.location.hostname === 'localhost' ? 'http://localhost:3000' : 'https://adv-37d5b772f5fd.herokuapp.com';
 
     const users = await fetchUsers(apiUrl);
-
     const schedules = await fetchLastScheduleOfEachWeek(apiUrl);
 
     generateTableHeaders(schedules);
 
-    generateTableRows(schedules, users);
+    // Generar las filas de la tabla y capturar los días largos acumulados
+    longDaysSumGlobal = generateTableRows(schedules, users);
 });
+
+// Función para acceder a `longDaysSumGlobal`
+export function getAccumulatedLongDays() {
+    return longDaysSumGlobal;
+}
 
 // Fetch users from backend
 async function fetchUsers(apiUrl) {

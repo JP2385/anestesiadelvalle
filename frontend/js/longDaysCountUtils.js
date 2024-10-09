@@ -11,7 +11,6 @@ export function generateTableHeaders(schedules) {
     });
 }
 
-// Generate table rows with users as rows, weeks as columns, and sorted by total long days
 export function generateTableRows(schedules, users) {
     const tbody = document.querySelector('#long-days-count-table tbody');
     tbody.innerHTML = ''; // Clear existing rows
@@ -56,6 +55,9 @@ export function generateTableRows(schedules, users) {
 
         tbody.appendChild(tr);
     });
+
+    // Return longDaysSum so it can be used elsewhere
+    return longDaysSum;
 }
 
 // Helper function to get week/year from the schedule's timestamp
