@@ -68,7 +68,6 @@ export function updateWeekDates(apiUrl, availability) {
     updateHeader('friday-header', 'Viernes', fridayDate, 4);
 }
 
-
 export async function populateSelectOptions(availability) {
     try {
         const selects = document.querySelectorAll('select');
@@ -213,7 +212,6 @@ export async function populateSelectOptions(availability) {
     }
 }
 
-
 export function initializeLockButtons() {
     const droppableCells = document.querySelectorAll('.droppable');
     droppableCells.forEach(cell => {
@@ -284,7 +282,6 @@ export function initializeLockButtons() {
         cell.appendChild(button);
     });
 }
-
 
 export async function handleSelectChange(event, availability) {
     const select = event.target;

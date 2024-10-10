@@ -128,7 +128,7 @@ export function selectBestConfiguration(allLongDaysCounts, allAssignments) {
     // Log para ver las configuraciones con la menor dispersión y su valor de dispersión
     console.log("Configuraciones con la menor dispersión:");
     mostBalancedConfigurations.forEach((configIndex, i) => {
-        console.log(`Configuración ${configIndex + 1}: dispersión = ${dispersions[i]}`);
+        console.log(`Configuración ${configIndex + 1}: dispersión = ${dispersions[bestConfigurations.indexOf(configIndex)]}`);
     });
 
     // Etapa 3: Si hay múltiples configuraciones con la misma dispersión, aplicar la lógica de Q1 Fundación Cardio
@@ -173,26 +173,26 @@ export function selectBestConfiguration(allLongDaysCounts, allAssignments) {
                 const randomIndex = Math.floor(Math.random() * mostEquitableConfigurations.length);
                 console.log("Seleccionando una configuración al azar de las más equitativas:", mostEquitableConfigurations[randomIndex]);
 
-                generateReport(bestConfigurations, minTwoLongDaysUsers, maxUniqueUsers, mostEquitableConfigurations[randomIndex], allLongDaysCounts[mostEquitableConfigurations[randomIndex]], allAssignments);
+                generateReport(bestConfigurations, minTwoLongDaysUsers, maxUniqueUsers, mostEquitableConfigurations[randomIndex], allLongDaysCounts[mostEquitableConfigurations[randomIndex]]);
                 return mostEquitableConfigurations[randomIndex]; // Retorna el índice
             }
 
             console.log("Seleccionando la configuración más equitativa:", mostEquitableConfigurations[0]);
 
-            generateReport(bestConfigurations, minTwoLongDaysUsers, maxUniqueUsers, mostEquitableConfigurations[0], allLongDaysCounts[mostEquitableConfigurations[0]], allAssignments);
+            generateReport(bestConfigurations, minTwoLongDaysUsers, maxUniqueUsers, mostEquitableConfigurations[0], allLongDaysCounts[mostEquitableConfigurations[0]]);
             return mostEquitableConfigurations[0]; // Retorna el índice
         }
 
         console.log("Seleccionando la mejor configuración basada en más usuarios únicos en Fundación Q1:", bestUniqueUserConfigurations[0]);
 
-        generateReport(bestConfigurations, minTwoLongDaysUsers, maxUniqueUsers, bestUniqueUserConfigurations[0], allLongDaysCounts[bestUniqueUserConfigurations[0]], allAssignments);
+        generateReport(bestConfigurations, minTwoLongDaysUsers, maxUniqueUsers, bestUniqueUserConfigurations[0], allLongDaysCounts[bestUniqueUserConfigurations[0]]);
         return bestUniqueUserConfigurations[0]; // Retorna el índice
     }
 
     // Si no hay múltiples configuraciones, asegúrate de pasar el valor de maxUniqueUsers
     console.log("Seleccionando la configuración más balanceada:", mostBalancedConfigurations[0]);
 
-    generateReport(bestConfigurations, minTwoLongDaysUsers, maxUniqueUsers, mostBalancedConfigurations[0], allLongDaysCounts[mostBalancedConfigurations[0]], allAssignments);
+    generateReport(bestConfigurations, minTwoLongDaysUsers, maxUniqueUsers, mostBalancedConfigurations[0], allLongDaysCounts[mostBalancedConfigurations[0]]);
     return mostBalancedConfigurations[0]; // Retorna el índice
 }
 
@@ -245,7 +245,6 @@ function generateReport(bestConfigurations, maxUniqueUsers, selectedConfiguratio
         const configurationsMessage = `- De los 200 esquemas de programación analizados, hubo ${bestConfigurations.length} esquemas con el menor número de usuarios trabajando 2 días largos.
         - De cada uno de estos ${bestConfigurations.length} esquemas se calculó su impacto en la dispersión del acumulado de días largos, pre-seleccionando aquel/aquellos que redujeran o de ser esto imposible, incrementaran la dispersión lo menos posible.`;  // Cambiado para reflejar la cantidad de bestConfigurations
         const selectedConfigurationMessage = `- De los esquemas preseleccionados se eligió el esquema con la mayor cantidad de usuarios únicos en Fundación Q1, el número ${selectedConfigurationIndex + 1}.`;
-        const uniqueUsersMessage = `- El número máximo de usuarios únicos asignados a Fundación Q1 Cardio fue de: ${maxUniqueUsers}.`;
         const twoLongDaysUsersMessage = `- Los usuarios con 2 días largos en el esquema actual son: ${usersWithTwoLongDays.join(', ') || 'Ninguno'}.`;
 
         const li1 = document.createElement('li');
@@ -255,16 +254,12 @@ function generateReport(bestConfigurations, maxUniqueUsers, selectedConfiguratio
         li2.innerText = selectedConfigurationMessage;
 
         const li3 = document.createElement('li');
-        li3.innerText = uniqueUsersMessage;
-
-        const li4 = document.createElement('li');
-        li4.innerText = twoLongDaysUsersMessage;
+        li3.innerText = twoLongDaysUsersMessage;
 
         // Agregar los <li> al <ul>
         ul.appendChild(li1);
         ul.appendChild(li2);
         ul.appendChild(li3);
-        ul.appendChild(li4);
 
         // Limpiar el contenido anterior y agregar el <ul> al elemento <span>
         informSpan.innerHTML = '';
@@ -273,26 +268,19 @@ function generateReport(bestConfigurations, maxUniqueUsers, selectedConfiguratio
 }
 
 
-
-
-
 // Función para contar usuarios únicos asignados a "Fundación Q1"
 function countUniqueUsersInQ1(assignments) {
-    const uniqueUsers = new Map(); // Usamos un Map para almacenar userId y nombre de usuario
+    const uniqueUsers = new Set();
 
     ['monday', 'tuesday', 'wednesday', 'thursday', 'friday'].forEach(day => {
         assignments[day].forEach(assignment => {
             if (assignment.workSite.includes('Fundación Q1 Cardio')) {
-                uniqueUsers.set(assignment.userId, assignment.username); // Almacena el userId y el nombre de usuario
+                uniqueUsers.add(assignment.userId);
             }
         });
     });
 
-    // Retorna tanto la cantidad de usuarios únicos como sus nombres
-    return {
-        count: uniqueUsers.size,
-        usernames: Array.from(uniqueUsers.values()) // Convierte los valores del Map (nombres de usuarios) en un array
-    };
+    return uniqueUsers.size;
 }
 
 
