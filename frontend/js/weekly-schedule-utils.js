@@ -111,6 +111,7 @@ export async function populateSelectOptions(availability) {
                 if (user.username === 'mquiroga' && dayName === 'thursday' && workSite.includes('Vespertino')) {
                     return; // Excluir "mquiroga" en vespertino los jueves
                 }
+                
                 // Restricción adicional para miércoles en "Imágenes Quirofano 1 Matutino"
                 if (dayName === 'wednesday' && workSite.includes('Imágenes Q1') && workSite.includes('Matutino')) {
                     if (!user.doesCardio) {
@@ -147,9 +148,15 @@ export async function populateSelectOptions(availability) {
 
                 if (user.worksInCmacOnly && !workSite.includes('CMAC')) return;
 
-                if ((workSite.includes('Fundación Q1') || workSite.includes('Fundación Q2') || workSite.includes('Fundación 3') || workSite.includes('CMAC Q'))) {
-                    if (!user.worksInPrivateRioNegro) return;
+                if ((workSite.includes('Fundación') || workSite.includes('CMAC'))) {
+                    if (!user.worksInPrivateRioNegro) return;   
                 }
+
+                //RESTRICCIÓN FLEXIBLE PARA CRUCE DE NEQUINOS A RIO NEGRO
+                // if ((workSite.includes('Fundación Q1') || workSite.includes('Fundación Q2') 
+                //     || workSite.includes('Fundación Q3') || workSite.includes('CMAC Q'))) {
+                //     if (!user.worksInPrivateRioNegro) return;
+                // }
 
                 if (workSite.includes('Hospital Cipolletti') || workSite.includes('Hospital Allen')) {
                     if (!user.worksInPublicRioNegro) return;
@@ -159,9 +166,14 @@ export async function populateSelectOptions(availability) {
                     if (!user.worksInPublicNeuquen) return;
                 }
 
-                if ((workSite.includes('Imágenes') || workSite.includes('COI')) && !workSite.includes('4to piso')) {
+                if ((workSite.includes('Imágenes') || workSite.includes('COI'))) {
                     if (!user.worksInPrivateNeuquen) return;
                 }
+
+                //RESTRICCIÓN FLEXIBLE PARA CRUCE DE NEQUINOS A RIO NEGRO
+                // if ((workSite.includes('Imágenes') || workSite.includes('COI')) && !workSite.includes('4to piso')) {
+                //     if (!user.worksInPrivateNeuquen) return;
+                // }
 
                 if (workSite.includes('Matutino') && user.workSchedule[dayName] === 'Tarde') return;
                 if (workSite.includes('Vespertino') && user.workSchedule[dayName] === 'Mañana') return;
