@@ -201,7 +201,7 @@ export async function populateSelectOptions(availability) {
                     option.classList.add('option-long');
                 }
 
-                if (workSite.includes('Fundación Q1 Cardio') || workSite.includes('Fundación Hemo')) {
+                if (workSite.includes('Cardio')) {
                     if (user.doesCardio) {
                         select.appendChild(option);
                     }
