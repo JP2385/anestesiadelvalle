@@ -17,6 +17,7 @@ const getUsersAvailability = async (req, res) => {
         let startOfWeek = new Date(currentDate);
 
         // Check if today is Saturday (6) and adjust startOfWeek accordingly
+        const todayDay = currentDate.getDay();
         if (todayDay === 6) { // Si hoy es sábado
             startOfWeek.setDate(currentDate.getDate() + 2); // Ajustar al lunes siguiente
         } else if (todayDay === 0) { // Si hoy es domingo
@@ -24,7 +25,6 @@ const getUsersAvailability = async (req, res) => {
         } else {
             startOfWeek.setDate(currentDate.getDate() - currentDate.getDay() + 1); // Ajustar al lunes actual
         }
-        
 
         startOfWeek.setHours(0, 0, 0, 0);
 
