@@ -16,10 +16,10 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // Sitios de guardia
     const guardSites = {
-        publicNeuquen: ['HH', 'HCe', 'HCM'],
-        privateNeuquen: ['I'],
-        privateRioNegro: ['F'],
-        publicRioNegro: ['HCp', 'HA', 'HJ'],
+        publicNeuquen: ['HH', 'Ce', 'CM'],
+        privateNeuquen: ['Im'],
+        privateRioNegro: ['Fn'],
+        publicRioNegro: ['Cp', 'Al', 'Jb'],
         saturday: ['P1']  // Para los días sábado
     };
 
@@ -45,7 +45,7 @@ function populateShiftSelect(selectElement, user, isSaturday) {
     // Agregar la opción vacía para todos los selects
     const emptyOption = document.createElement('option');
     emptyOption.value = '';
-    emptyOption.textContent = 'Seleccionar...';
+    emptyOption.textContent = '  ';
     selectElement.appendChild(emptyOption);
 
     // Si el usuario no hace guardias
@@ -140,26 +140,39 @@ function populateRegularSites(selectElement, user) {
             const userCell = document.createElement('td');
             userCell.textContent = user.username;
             row.appendChild(userCell);
-
-            // Creamos un select por cada día del mes
+        
             for (let day = 1; day <= daysInMonth; day++) {
                 const cell = document.createElement('td');
                 const select = document.createElement('select');
                 select.classList.add('shift-select');
-
-                // Verificamos si es sábado
+        
                 const date = new Date(year, month, day);
                 const isSaturday = date.getDay() === 6;
-
-                // Llamamos a la función para poblar el select basado en el perfil del usuario
-                populateShiftSelect(select, user, isSaturday);
-
+        
+                // Formato de la fecha como 'YYYY-MM-DD' para la comparación
+                const dayString = date.toISOString().slice(0, 10);
+        
+                if (user.vacations.some(vacation => vacation.startDate <= dayString && vacation.endDate >= dayString)) {
+                    // Si está de vacaciones, añadimos una opción con la letra "V"
+                    const vacationOption = document.createElement('option');
+                    vacationOption.value = 'V';
+                    vacationOption.textContent = 'V';
+                    select.appendChild(vacationOption);
+        
+                    // Desactivar el select
+                    select.disabled = true;
+                } else {
+                    // Solo poblar el select si el usuario no está de vacaciones
+                    populateShiftSelect(select, user, isSaturday, date);
+                }
+        
                 cell.appendChild(select);
                 row.appendChild(cell);
             }
-
+        
             usersBody.appendChild(row);
         });
+        
     }
 
     // Función para obtener los usuarios desde la API
@@ -180,6 +193,27 @@ function populateRegularSites(selectElement, user) {
             filteredUsers.sort((a, b) => a.username.localeCompare(b.username));
             
             // Generamos la tabla con los usuarios filtrados
+            generateTable(filteredUsers);
+        })
+        .catch(error => {
+            console.error('Hubo un problema al obtener la lista de usuarios: ', error.message);
+        });
+    }
+
+    // Función para obtener los usuarios desde AvailabilityController
+    function fetchUsersAvailability() {
+        fetch(`${apiUrl}/availability`, {  // Cambia la ruta a /availability
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': 'Bearer ' + localStorage.getItem('token')
+            }
+        })
+        .then(response => response.json())
+        .then(usersAvailability => {
+            // Procesamos la disponibilidad de los usuarios
+            const filteredUsers = usersAvailability.filter(user => user.username !== 'montes_esposito');
+            filteredUsers.sort((a, b) => a.username.localeCompare(b.username));
             generateTable(filteredUsers);
         })
         .catch(error => {
