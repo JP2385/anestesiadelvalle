@@ -68,6 +68,10 @@ const userSchema = new Schema({
         type: Boolean,
         default: false
     },
+    doesShifts: {
+        type: Boolean,
+        default: false
+    },
     workSchedule: {
         monday: {
             type: String,

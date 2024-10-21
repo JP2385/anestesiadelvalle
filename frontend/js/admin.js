@@ -77,6 +77,7 @@ document.addEventListener('DOMContentLoaded', function () {
             worksInPublicRioNegro: document.getElementById('worksInPublicRioNegro').checked,
             worksInPrivateRioNegro: document.getElementById('worksInPrivateRioNegro').checked,
             worksInCmacOnly: document.getElementById('worksInCmacOnly').checked,
+            doesShifts: document.getElementById('doesShifts').checked,
             workSchedule: {
                 monday: document.getElementById('workSchedule-monday').value,
                 tuesday: document.getElementById('workSchedule-tuesday').value,
@@ -171,6 +172,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 document.getElementById('worksInPublicRioNegro').checked = user.worksInPublicRioNegro;
                 document.getElementById('worksInPrivateRioNegro').checked = user.worksInPrivateRioNegro;
                 document.getElementById('worksInCmacOnly').checked = user.worksInCmacOnly;
+                document.getElementById('doesShifts').checked = user.doesShifts;
                 document.getElementById('workSchedule-monday').value = user.workSchedule.monday || 'No trabaja';
                 document.getElementById('workSchedule-tuesday').value = user.workSchedule.tuesday || 'No trabaja';
                 document.getElementById('workSchedule-wednesday').value = user.workSchedule.wednesday || 'No trabaja';

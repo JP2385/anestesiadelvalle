@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestión de Guardias</title>
+    <script type="module" src="js/shiftSchedule.js"></script>
+</head>
+<body>
+    <div class="shift-management">
+        <h3>Gestión de Guardias</h3>
+        
+        <!-- Selección de año y mes -->
+        <div class="selectors">
+            <label for="year-select">Año:</label>
+            <select id="year-select"></select>
+            
+            <label for="month-select">Mes:</label>
+            <select id="month-select">
+                <option value="0">Enero</option>
+                <option value="1">Febrero</option>
+                <option value="2">Marzo</option>
+                <option value="3">Abril</option>
+                <option value="4">Mayo</option>
+                <option value="5">Junio</option>
+                <option value="6">Julio</option>
+                <option value="7">Agosto</option>
+                <option value="8">Septiembre</option>
+                <option value="9">Octubre</option>
+                <option value="10">Noviembre</option>
+                <option value="11">Diciembre</option>
+            </select>
+        </div>
+
+        <!-- Tabla dinámica -->
+        <table id="shift-schedule">
+            <thead>
+                <tr id="days-header">
+                    <!-- Aquí se generarán dinámicamente los encabezados de los días -->
+                </tr>
+            </thead>
+            <tbody id="users-body">
+                <!-- Aquí se generarán dinámicamente las filas de los usuarios -->
+            </tbody>
+        </table>
+    </div>
+</body>
+</html>
