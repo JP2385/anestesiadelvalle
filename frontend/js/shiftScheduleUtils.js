@@ -85,20 +85,27 @@ export function fetchUsers(apiUrl, generateTable, yearSelect, monthSelect, dayAb
         
         // Generamos la tabla con los usuarios filtrados
         generateTable(filteredUsers, yearSelect, monthSelect, dayAbbreviations, guardSites, usersBody, daysHeader);
+
+        // Agregamos el atributo data-cardio a cada fila
+        const rows = document.querySelectorAll('#users-body tr');
+        rows.forEach((row, index) => {
+            const user = filteredUsers[index];
+            row.setAttribute('data-cardio', user.doesCardio);
+        });
     })
     .catch(error => {
         console.error('Hubo un problema al obtener la lista de usuarios: ', error.message);
     });
 }
 
-// Función para asignar automáticamente las guardias de lunes a jueves
-export function assignWeekShifts() {
+
+// Función para asignar automáticamente las guardias de lunes a jueves con lógica de Cardio
+export function assignWeekShiftsWithCardio(users) {
     const headers = document.querySelectorAll('#days-header th'); // Seleccionamos todos los headers
     const daysOfWeek = ['Lun', 'Mar', 'Mie', 'Jue']; // Días de lunes a jueves
 
     // Recorremos cada día de la semana
     daysOfWeek.forEach(day => {
-        // Encontrar todos los índices de las columnas que corresponden al día actual (Lun, Mar, etc.)
         const headerIndices = [];
         headers.forEach((header, index) => {
             if (header.textContent.includes(day)) {
@@ -110,38 +117,141 @@ export function assignWeekShifts() {
             return;
         }
 
-        // Procesamos cada columna que corresponde al día actual (puede haber múltiples columnas para cada día)
+        // Procesamos cada columna que corresponde al día actual
         headerIndices.forEach(headerIndex => {
-            // Recorrer todos los selects que están en la columna de este día (headerIndex)
             const rows = document.querySelectorAll('#users-body tr'); // Seleccionamos todas las filas de la tabla de usuarios
-            let assignedIm = false;
-            let assignedFn = false;
+            let assignedImUser = null;  // Guardamos el usuario asignado para 'Im'
+            let assignedFnUser = null;  // Guardamos el usuario asignado para 'Fn'
 
-            rows.forEach((row) => {
+            // Paso 1: Verificar si hay alguien asignado a Im
+            for (const row of rows) {
                 const selects = row.querySelectorAll('td select'); // Obtenemos todos los selects de la fila
+                if (selects.length > headerIndex - 1) {
+                    const select = selects[headerIndex - 1]; // Seleccionamos el select correspondiente a la columna
 
-                if (selects.length > headerIndex - 1) { // Aseguramos que exista el select en la columna correcta (desplazamos un índice)
-                    const select = selects[headerIndex - 1];  // Seleccionamos el select correspondiente a la columna desplazada
+                    if (select && !select.disabled && select.value === 'Im') {
+                        assignedImUser = row;  // Si hay un usuario con Im asignado, guardamos el usuario
+                        break;  // Salimos del bucle, ya hay un asignado
+                    }
+                }
+            }
 
-                    if (select && !select.disabled && select.value === '') {  // Verificamos que el valor sea explícitamente vacío
-                        // Buscar las opciones "Im" y "Fn" dinámicamente
-                        const imOption = Array.from(select.options).find(option => option.value === 'Im');
-                        const fnOption = Array.from(select.options).find(option => option.value === 'Fn');
+            // Paso 2: Verificar si hay alguien asignado a Fn
+            for (const row of rows) {
+                const selects = row.querySelectorAll('td select'); // Obtenemos todos los selects de la fila
+                if (selects.length > headerIndex - 1) {
+                    const select = selects[headerIndex - 1]; // Seleccionamos el select correspondiente a la columna
 
-                        // Asignar "Im" o "Fn" solo si aún no han sido asignadas
-                        if (!assignedIm && imOption) {
-                            select.value = 'Im';  // Asignar guardia de Im
-                            assignedIm = true;
-                        } else if (!assignedFn && fnOption) {
-                            select.value = 'Fn';  // Asignar guardia de Fn
-                            assignedFn = true;
+                    if (select && !select.disabled && select.value === 'Fn') {
+                        assignedFnUser = row;  // Si hay un usuario con Fn asignado, guardamos el usuario
+                        break;  // Salimos del bucle, ya hay un asignado
+                    }
+                }
+            }
+
+            // Paso 3: Asignar a Im si no está asignado
+            if (!assignedImUser) {
+                // Verificar si hay asignación previa a Fn
+                if (assignedFnUser) {
+                    const isFnUserCardio = assignedFnUser.dataset.cardio === 'true'; // Verificamos si el usuario asignado a Fn hace Cardio
+
+                    if (isFnUserCardio) {
+                        // Asignar Im a un usuario disponible sin importar si hace Cardio
+                        for (const row of rows) {
+                            const selects = row.querySelectorAll('td select'); // Obtenemos todos los selects de la fila
+                            if (selects.length > headerIndex - 1) {
+                                const select = selects[headerIndex - 1]; // Seleccionamos el select correspondiente a la columna
+                                const imOption = Array.from(select.options).find(option => option.value === 'Im');
+
+                                if (select && !select.disabled && select.value === '' && imOption) {
+                                    select.value = 'Im';  // Asignar guardia de Im
+                                    assignedImUser = row; // Guardar usuario asignado
+                                    break;  // Salimos del bucle, ya hemos asignado
+                                }
+                            }
+                        }
+                    } else {
+                        // Si el usuario asignado a Fn no hace Cardio, asignar Im a un usuario que sí lo haga
+                        for (const row of rows) {
+                            const selects = row.querySelectorAll('td select'); // Obtenemos todos los selects de la fila
+                            if (selects.length > headerIndex - 1) {
+                                const select = selects[headerIndex - 1]; // Seleccionamos el select correspondiente a la columna
+                                const isCardioUser = row.dataset.cardio === 'true'; // Verificar si el usuario hace Cardio
+
+
+                                if (select && !select.disabled && select.value === '' && isCardioUser) {
+                                    select.value = 'Im'; // Asignar guardia de Im
+                                    assignedImUser = row; // Guardar usuario asignado
+                                    break; // Salimos del bucle, ya hemos asignado
+                                }
+                            }
+                        }
+                    }
+                } else {
+                    // Si no hay usuario asignado a Fn, simplemente asignar Im
+                    for (const row of rows) {
+                        const selects = row.querySelectorAll('td select'); // Obtenemos todos los selects de la fila
+                        if (selects.length > headerIndex - 1) {
+                            const select = selects[headerIndex - 1]; // Seleccionamos el select correspondiente a la columna
+                            const imOption = Array.from(select.options).find(option => option.value === 'Im');
+
+                            if (select && !select.disabled && select.value === '' && imOption) {
+                                select.value = 'Im';  // Asignar guardia de Im
+                                assignedImUser = row; // Guardar usuario asignado
+                                break;  // Salimos del bucle, ya hemos asignado
+                            }
                         }
                     }
                 }
-            });
+            }
+
+            // Paso 4: Asignar a Fn si no está asignado
+            if (!assignedFnUser) {
+                // Asignación a Fn
+                if (assignedImUser) {
+                    const isImUserCardio = assignedImUser.dataset.cardio === 'true'; // Verificamos si el usuario asignado a Im hace Cardio
+
+                    if (isImUserCardio) {
+                        // Si el usuario asignado a Im hace Cardio, asignar Fn a un usuario disponible sin importar si hace Cardio
+                        for (const row of rows) {
+                            const selects = row.querySelectorAll('td select'); // Obtenemos todos los selects de la fila
+                            if (selects.length > headerIndex - 1) {
+                                const select = selects[headerIndex - 1]; // Seleccionamos el select correspondiente a la columna
+                                const fnOption = Array.from(select.options).find(option => option.value === 'Fn');
+
+                                if (select && !select.disabled && select.value === '' && fnOption) {
+                                    select.value = 'Fn'; // Asignar guardia de Fn
+                                    assignedFnUser = row; // Guardar usuario asignado
+                                    break; // Salimos del bucle, ya hemos asignado
+                                }
+                            }
+                        }
+                    } else {
+                        // Si el usuario asignado a Im no hace Cardio, asignar Fn a un usuario que sí lo haga
+                        for (const row of rows) {
+                            const selects = row.querySelectorAll('td select'); // Obtenemos todos los selects de la fila
+                            if (selects.length > headerIndex - 1) {
+                                const select = selects[headerIndex - 1]; // Seleccionamos el select correspondiente a la columna
+                                const isCardioUser = row.dataset.cardio === 'true'; // Verificar si el usuario hace Cardio
+                                const fnOption = Array.from(select.options).find(option => option.value === 'Fn');
+
+                                if (select && !select.disabled && select.value === '' && fnOption && isCardioUser) {
+                                    select.value = 'Fn'; // Asignar guardia de Fn
+                                    assignedFnUser = row; // Guardar usuario asignado
+                                    break; // Salimos del bucle, ya hemos asignado
+                                }
+                            }
+                        }
+                    }
+                }
+            }
         });
     });
 }
+
+
+
+
 
 // Función para poblar los selects basados en las reglas del usuario
 function populateShiftSelect(selectElement, user, isSaturday, guardSites, dayOfWeek, username) {

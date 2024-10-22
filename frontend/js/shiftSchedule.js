@@ -1,4 +1,4 @@
-import { generateTable, fetchUsers, assignWeekShifts } from './shiftScheduleUtils.js';
+import { generateTable, fetchUsers, assignWeekShiftsWithCardio } from './shiftScheduleUtils.js';
 
 document.addEventListener('DOMContentLoaded', function () {
     // URL de la API
@@ -26,8 +26,16 @@ document.addEventListener('DOMContentLoaded', function () {
     };
 
     const assignButton = document.getElementById('assign-week-shifts');
+    
     // Llamar a la función cuando se presione el botón
-    assignButton.addEventListener('click', assignWeekShifts);
+    assignButton.addEventListener('click', () => {
+        console.log('Botón de asignar presionado');
+        // Llamamos a fetchUsers y le pasamos el callback
+        fetchUsers(apiUrl, (filteredUsers) => {
+            console.log('Usuarios filtrados:', filteredUsers);
+            assignWeekShiftsWithCardio(filteredUsers); // Llama a la función de asignación de guardias
+        }, yearSelect, monthSelect, dayAbbreviations, guardSites, usersBody, daysHeader);
+    });    
 
     // Poblamos el selector de años (desde 2020 hasta 2030 por ejemplo)
     for (let year = 2020; year <= 2030; year++) {
