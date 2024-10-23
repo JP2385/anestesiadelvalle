@@ -125,29 +125,32 @@ document.addEventListener('DOMContentLoaded', () => {
         const longDaysCount = {}; // Para almacenar el recuento de días largos
         const scheduleBody = document.getElementById('schedule-body');
         const rows = scheduleBody.getElementsByTagName('tr');
-
+    
+        let lalvarezAssignedOnMonday = false; // Variable para rastrear si "lalvarez" tiene asignación el lunes
+        const lalvarezId = '66849bb060db6c808e86bcfd'; // El ID de "lalvarez"
+    
         for (let row of rows) {
             const workSiteElement = row.querySelector('.work-site');
             if (workSiteElement) {
                 const workSite = workSiteElement.textContent.trim();
                 const selects = row.querySelectorAll('select');
-
+    
                 selects.forEach((select, index) => {
                     const day = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday'][index];
                     const selectedOption = select.options[select.selectedIndex];
                     const selectedUser = selectedOption.text;
                     const userId = selectedOption.value;
                     const username = selectedOption.getAttribute('data-username') || selectedUser;
-
+    
                     // Saltar si el usuario seleccionado es "Select user"
                     if (selectedUser === "Select user") {
                         return;
                     }
-
+    
                     if (!assignments[day]) {
                         assignments[day] = [];
                     }
-
+    
                     if (selectedUser !== "") {
                         assignments[day].push({
                             workSite: workSite,
@@ -155,7 +158,7 @@ document.addEventListener('DOMContentLoaded', () => {
                             userId: userId,
                             username: username
                         });
-
+    
                         // Contar los días largos asignados
                         if (workSite.toLowerCase().includes('largo')) {
                             if (!longDaysCount[userId]) {
@@ -163,14 +166,27 @@ document.addEventListener('DOMContentLoaded', () => {
                             }
                             longDaysCount[userId].count++;
                         }
+    
+                        // Verificar si "lalvarez" tiene asignación el lunes (index 0 corresponde al lunes)
+                        if (userId === lalvarezId && index === 0) { // index 0 es el lunes
+                            lalvarezAssignedOnMonday = true;
+                        }
                     }
                 });
             }
         }
-
+    
+        // Si "lalvarez" tiene asignación el lunes, añadir un día largo adicional
+        if (lalvarezAssignedOnMonday) {
+            if (!longDaysCount[lalvarezId]) {
+                longDaysCount[lalvarezId] = { username: 'lalvarez', count: 0 };
+            }
+            longDaysCount[lalvarezId].count++; // Incrementar el contador en 1
+        }
+    
         return { assignments, longDaysCount };
     }
-
+    
     function collectDayHeaders() {
         const dayHeaders = {};
         const headers = document.querySelectorAll('#schedule-assistant thead th');
