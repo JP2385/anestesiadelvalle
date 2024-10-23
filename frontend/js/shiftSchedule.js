@@ -26,7 +26,7 @@ document.addEventListener('DOMContentLoaded', function () {
     };
 
     const assignButton = document.getElementById('assign-week-shifts');
-    
+
     // Llamar a la función cuando se presione el botón
     assignButton.addEventListener('click', () => {
         console.log('Botón de asignar presionado');
