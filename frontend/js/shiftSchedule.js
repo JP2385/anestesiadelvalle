@@ -56,3 +56,5 @@ document.addEventListener('DOMContentLoaded', function () {
     // Obtenemos la tabla de usuarios al cargar la página
     fetchUsers(apiUrl, generateTable, yearSelect, monthSelect, dayAbbreviations, guardSites, usersBody, daysHeader);
 });
+
+

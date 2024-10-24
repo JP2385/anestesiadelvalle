@@ -1,265 +1,157 @@
-export function assignIm(rows, headerIndex, isLharriagueAssignedToday, isMquirogaAssignedToday, assignedFnUser, getUsernameFromRow) {
-    let assignedImUser = null;
+export function assignIm(rows, selects, isLharriagueAssignedToday, isMquirogaAssignedToday, assignedFnUser, assignedImUser) {
+    let userShiftCounts = countWeekdayShifts();
+    const excludedUsers = new Set();
 
-    for (const row of rows) {
-        const selects = row.querySelectorAll('td select'); // Obtenemos todos los selects de la fila
-        if (selects.length > headerIndex - 1) {
-            const select = selects[headerIndex - 1]; // Seleccionamos el select correspondiente a la columna
+    // Excluir usuarios que ya tienen asignaciones
+    excludeAssignedUsers(selects, excludedUsers);
+    
+    // Verificar si ya hay un usuario asignado a Im
+    assignedImUser = isAlreadyAssigned(selects, 'Im');
 
-            if (select && !select.disabled && select.value === 'Im') {
-                assignedImUser = row;  // Si hay un usuario con Im asignado, guardamos el usuario
-                break;  // Salimos del bucle, ya hay un asignado
-            }
-        }
-    }
-
-    // Asignación a Im
     if (!assignedImUser) {
-        console.log(`Buscando asignación a Im...`); // Log inicial para la asignación a Im
-
-        // Paso 2: Verificación de Asignación a Fn
+        console.log(`Buscando asignación a Im...`);
+        
+        // Si hay un usuario asignado a Fn, verificar si hace cardio
         if (assignedFnUser) {
-            const isFnUserCardio = assignedFnUser.dataset.cardio === 'true'; // Verificamos si el usuario asignado a Fn hace Cardio
-            console.log(`Verificando asignación a Im: assignedFnUser: ${assignedFnUser ? getUsernameFromRow(assignedFnUser) : 'Ninguno'}, isFnUserCardio: ${isFnUserCardio}`);
-
-            // Paso 4A: Si el usuario asignado a Fn hace Cardio
-            if (isFnUserCardio) {
-                console.log(`El usuario asignado a Fn ${getUsernameFromRow(assignedFnUser)} hace cardio. Comenzando a buscar asignaciones a Im.`); // Log adicional
-
-                // Asignar Im a un usuario disponible sin importar si hace cardio o no, verificando mquiroga y lharriague
-                for (const row of rows) {
-                    const selects = row.querySelectorAll('td select'); // Obtenemos todos los selects de la fila
-                    if (selects.length > headerIndex - 1) {
-                        const select = selects[headerIndex - 1];
-                        const imOption = Array.from(select.options).find(option => option.value === 'Im');
-
-                        console.log(`Verificando fila para el usuario: ${getUsernameFromRow(row)}`);
-                        console.log(`Select encontrado para ${getUsernameFromRow(row)}: ${select.value}, disabled: ${select.disabled}`);
-                        console.log(`Opción "Im" disponible: ${imOption ? 'Sí' : 'No'}`);
-
-                        if (select && !select.disabled && select.value === '' && imOption) {
-                            console.log(`Select habilitado y vacío para ${getUsernameFromRow(row)}. Verificando condiciones de exclusión...`);
-
-                            // Si lharriague tiene guardia, evitar asignar a mquiroga
-                            if (isLharriagueAssignedToday && getUsernameFromRow(row) === 'mquiroga') {
-                                console.log(`No se asignará a mquiroga porque lharriague tiene guardia en este día.`); // Log
-                                continue; // Saltar la asignación
-                            } else {
-                                console.log(`mquiroga NO tiene guardia en este día.`); // Log de verificación
-                            }
-
-                            // Si mquiroga tiene guardia, evitar asignar a lharriague
-                            if (isMquirogaAssignedToday && getUsernameFromRow(row) === 'lharriague') {
-                                console.log(`No se asignará a lharriague porque mquiroga tiene guardia en este día.`); // Log
-                                continue; // Saltar la asignación
-                            } else {
-                                console.log(`lharriague NO tiene guardia en este día.`); // Log de verificación
-                            }
-
-                            select.value = 'Im';  // Asignar guardia de Im
-                            assignedImUser = row; // Guardar usuario asignado
-                            console.log(`Asignando Im a ${getUsernameFromRow(row)}`); // Log de asignación
-                            break;  // Salimos del bucle, ya hemos asignado
-                        } else {
-                            console.log(`Condiciones no cumplidas para ${getUsernameFromRow(row)}. Select no asignado.`); // Log de condiciones no cumplidas
-                        }
-                    } else {
-                        console.log(`No hay selects disponibles para ${getUsernameFromRow(row)} en esta fila.`); // Log si no hay selects
-                    }
-                }
-            } 
-            // Paso 4B: Si el usuario asignado a Fn no hace Cardio
-            else {
-                console.log(`El usuario asignado a Fn ${getUsernameFromRow(assignedFnUser)} no hace cardio. Buscando asignaciones a Im que hagan cardio.`);
-
-                for (const row of rows) {
-                    const selects = row.querySelectorAll('td select');
-                    if (selects.length > headerIndex - 1) {
-                        const select = selects[headerIndex - 1];
-                        const imOption = Array.from(select.options).find(option => option.value === 'Im');
-                        const isCardioUser = row.dataset.cardio === 'true'; // Verificar si el usuario hace Cardio
-
-                        if (select && !select.disabled && select.value === '' && isCardioUser && imOption) {
-                            // Si lharriague tiene guardia, evitar asignar a mquiroga
-                            if (isLharriagueAssignedToday && getUsernameFromRow(row) === 'mquiroga') {
-                                console.log(`No se asignará a mquiroga porque lharriague tiene guardia en este día.`); // Log
-                                continue; // Saltar la asignación
-                            }
-                            // Si mquiroga tiene guardia, evitar asignar a lharriague
-                            if (isMquirogaAssignedToday && getUsernameFromRow(row) === 'lharriague') {
-                                console.log(`No se asignará a lharriague porque mquiroga tiene guardia en este día.`); // Log
-                                continue; // Saltar la asignación
-                            }
-                            select.value = 'Im'; // Asignar guardia de Im
-                            assignedImUser = row; // Guardar usuario asignado
-                            console.log(`Asignando Im a ${getUsernameFromRow(row)}`); // Log de asignación
-                            break; // Salimos del bucle, ya hemos asignado
-                        }
-                    }
-                }
-            }
-        } 
-        // Si no hay usuario asignado a Fn, simplemente asignar Im
-        else {
+            const isFnUserCardio = assignedFnUser.dataset.cardio === 'true';
+            
+            // Llamamos a la función de asignación con el chequeo de cardio según el usuario de Fn
+            assignedImUser = assignShift(selects, 'Im', isLharriagueAssignedToday, isMquirogaAssignedToday, excludedUsers, userShiftCounts, isFnUserCardio);
+        } else {
             console.log(`No hay usuario asignado a Fn. Procediendo a asignar Im.`);
-
-            for (const row of rows) {
-                const selects = row.querySelectorAll('td select'); // Obtenemos todos los selects de la fila
-                if (selects.length > headerIndex - 1) {
-                    const select = selects[headerIndex - 1];
-                    const imOption = Array.from(select.options).find(option => option.value === 'Im');
-                    if (select && !select.disabled && select.value === '' && imOption) {
-                        // Si lharriague tiene guardia, evitar asignar a mquiroga
-                        if (isLharriagueAssignedToday && getUsernameFromRow(row) === 'mquiroga') {
-                            console.log(`No se asignará a mquiroga porque lharriague tiene guardia en este día.`); // Log
-                            continue; // Saltar la asignación
-                        }
-                        // Si mquiroga tiene guardia, evitar asignar a lharriague
-                        if (isMquirogaAssignedToday && getUsernameFromRow(row) === 'lharriague') {
-                            console.log(`No se asignará a lharriague porque mquiroga tiene guardia en este día.`); // Log
-                            continue; // Saltar la asignación
-                        }
-                        select.value = 'Im';  // Asignar guardia de Im
-                        assignedImUser = row; // Guardar usuario asignado
-                        console.log(`Asignando Im a ${getUsernameFromRow(row)}`); // Log de asignación
-                        break; // Salimos del bucle, ya hemos asignado
-                    }
-                }
-            }
+            
+            // Si no hay usuario asignado a Fn, el chequeo de cardio no es necesario (se pasa como `false`)
+            assignedImUser = assignShift(selects, 'Im', isLharriagueAssignedToday, isMquirogaAssignedToday, excludedUsers, userShiftCounts, false);
         }
     }
 
-    return assignedImUser; // Retornamos el usuario asignado a Im
+    return assignedImUser;
 }
 
-export function assignFn(rows, headerIndex, isLharriagueAssignedToday, isMquirogaAssignedToday, assignedImUser, getUsernameFromRow) {
-    let assignedFnUser = null;
+export function assignFn(rows, selects, isLharriagueAssignedToday, isMquirogaAssignedToday, assignedImUser, assignedFnUser) {
+    let userShiftCounts = countWeekdayShifts();
+    const excludedUsers = new Set();
 
-    for (const row of rows) {
-        const selects = row.querySelectorAll('td select'); // Obtenemos todos los selects de la fila
-        if (selects.length > headerIndex - 1) {
-            const select = selects[headerIndex - 1]; // Seleccionamos el select correspondiente a la columna
+    excludeAssignedUsers(selects, excludedUsers);
+    assignedFnUser = isAlreadyAssigned(selects, 'Fn');
 
-            if (select && !select.disabled && select.value === 'Fn') {
-                assignedFnUser = row;  // Si hay un usuario con Fn asignado, guardamos el usuario
-                break;  // Salimos del bucle, ya hay un asignado
-            }
-        }
-    }
-
-    // Asignación a Fn
     if (!assignedFnUser) {
-        console.log(`Buscando asignación a Fn...`); // Log inicial para la asignación a Fn
+        console.log(`Buscando asignación a Fn...`);
+        
+        // Aquí establecemos que no se requiere que el usuario asignado a Fn haga cardio, incluso si el de Im hace cardio
+        assignedFnUser = assignShift(selects, 'Fn', isLharriagueAssignedToday, isMquirogaAssignedToday, excludedUsers, userShiftCounts, false);
+    }
 
-        // Paso 2: Verificación de Asignación a Im
-        if (assignedImUser) {
-            const isImUserCardio = assignedImUser.dataset.cardio === 'true'; // Verificamos si el usuario asignado a Im hace Cardio
-            console.log(`Verificando asignación a Fn: assignedImUser: ${assignedImUser ? getUsernameFromRow(assignedImUser) : 'Ninguno'}, isImUserCardio: ${isImUserCardio}`);
+    return assignedFnUser;
+}
 
-            // Paso 4A: Si el usuario asignado a Im hace Cardio
-            if (isImUserCardio) {
-                console.log(`El usuario asignado a Im ${getUsernameFromRow(assignedImUser)} hace cardio. Comenzando a buscar asignaciones a Fn.`); // Log adicional
+// Función para contar las guardias asignadas a cada usuario en días de semana
+export function countWeekdayShifts() {
+    const userShiftCounts = {}; // Objeto para almacenar las guardias por usuario
 
-                // Asignar Fn a un usuario disponible sin importar si hace Cardio
-                for (const row of rows) {
-                    const selects = row.querySelectorAll('td select'); // Obtenemos todos los selects de la fila
-                    if (selects.length > headerIndex - 1) {
-                        const select = selects[headerIndex - 1];
-                        const fnOption = Array.from(select.options).find(option => option.value === 'Fn');
+    // Seleccionamos todas las filas de la tabla de usuarios
+    const rows = document.querySelectorAll('#users-body tr');
 
-                        console.log(`Verificando fila para el usuario: ${getUsernameFromRow(row)}`);
-                        console.log(`Select encontrado para ${getUsernameFromRow(row)}: ${select.value}, disabled: ${select.disabled}`);
-                        console.log(`Opción "Fn" disponible: ${fnOption ? 'Sí' : 'No'}`);
+    // Recorremos cada fila de la tabla de usuarios
+    rows.forEach(row => {
+        const username = row.cells[0].textContent.trim(); // Obtener el nombre de usuario de la primera celda
+        const selects = row.querySelectorAll('td select'); // Obtener todos los selects de la fila
 
-                        if (select && !select.disabled && select.value === '' && fnOption) {
-                            // Si lharriague tiene guardia, evitar asignar a mquiroga
-                            if (isLharriagueAssignedToday && getUsernameFromRow(row) === 'mquiroga') {
-                                console.log(`No se asignará a mquiroga porque lharriague tiene guardia en este día.`); // Log
-                                continue; // Saltar la asignación
-                            } else {
-                                console.log(`mquiroga NO tiene guardia en este día.`); // Log de verificación
-                            }
+        // Inicializar el conteo de guardias para el usuario si no existe
+        if (!userShiftCounts[username]) {
+            userShiftCounts[username] = 0;
+        }
 
-                            // Si mquiroga tiene guardia, evitar asignar a lharriague
-                            if (isMquirogaAssignedToday && getUsernameFromRow(row) === 'lharriague') {
-                                console.log(`No se asignará a lharriague porque mquiroga tiene guardia en este día.`); // Log
-                                continue; // Saltar la asignación
-                            } else {
-                                console.log(`lharriague NO tiene guardia en este día.`); // Log de verificación
-                            }
-
-                            select.value = 'Fn'; // Asignar guardia de Fn
-                            assignedFnUser = row; // Guardar usuario asignado
-                            console.log(`Asignando Fn a ${getUsernameFromRow(row)} (Con Cardio)`); // Log de asignación
-                            break; // Salimos del bucle, ya hemos asignado
-                        } else {
-                            console.log(`Condiciones no cumplidas para ${getUsernameFromRow(row)}. Select no asignado.`); // Log de condiciones no cumplidas
-                        }
-                    } else {
-                        console.log(`No hay selects disponibles para ${getUsernameFromRow(row)} en esta fila.`); // Log si no hay selects
-                    }
-                }
-            } 
-            // Paso 4B: Si el usuario asignado a Im no hace Cardio
-            else {
-                console.log(`El usuario asignado a Im ${getUsernameFromRow(assignedImUser)} no hace cardio. Buscando asignaciones a Fn que hagan cardio.`);
-
-                for (const row of rows) {
-                    const selects = row.querySelectorAll('td select');
-                    if (selects.length > headerIndex - 1) {
-                        const select = selects[headerIndex - 1];
-                        const fnOption = Array.from(select.options).find(option => option.value === 'Fn');
-                        const isCardioUser = row.dataset.cardio === 'true'; // Verificar si el usuario hace Cardio
-
-                        if (select && !select.disabled && select.value === '' && isCardioUser && fnOption) {
-                            // Si lharriague tiene guardia, evitar asignar a mquiroga
-                            if (isLharriagueAssignedToday && getUsernameFromRow(row) === 'mquiroga') {
-                                console.log(`No se asignará a mquiroga porque lharriague tiene guardia en este día.`); // Log
-                                continue; // Saltar la asignación
-                            }
-                            // Si mquiroga tiene guardia, evitar asignar a lharriague
-                            if (isMquirogaAssignedToday && getUsernameFromRow(row) === 'lharriague') {
-                                console.log(`No se asignará a lharriague porque mquiroga tiene guardia en este día.`); // Log
-                                continue; // Saltar la asignación
-                            }
-                            select.value = 'Fn'; // Asignar guardia de Fn
-                            assignedFnUser = row; // Guardar usuario asignado
-                            console.log(`Asignando Fn a ${getUsernameFromRow(row)} (Cardio)`); // Log de asignación
-                            break; // Salimos del bucle, ya hemos asignado
-                        }
-                    }
-                }
+        // Recorremos cada select en la fila (que corresponde a los días de semana)
+        selects.forEach(select => {
+            if (!select.disabled && select.value !== '' && select.value !== 'ND') {
+                // Si el select está habilitado y tiene una asignación válida (no vacío y no "ND")
+                userShiftCounts[username]++; // Incrementar el conteo de guardias para el usuario
             }
-        } 
-        // Si no hay usuario asignado a Im, simplemente asignar Fn
-        else {
-            console.log(`No hay usuario asignado a Im. Procediendo a asignar Fn.`);
+        });
+    });
 
-            for (const row of rows) {
-                const selects = row.querySelectorAll('td select'); // Obtenemos todos los selects de la fila
-                if (selects.length > headerIndex - 1) {
-                    const select = selects[headerIndex - 1];
-                    const fnOption = Array.from(select.options).find(option => option.value === 'Fn');
-                    if (select && !select.disabled && select.value === '' && fnOption) {
-                        // Si lharriague tiene guardia, evitar asignar a mquiroga
-                        if (isLharriagueAssignedToday && getUsernameFromRow(row) === 'mquiroga') {
-                            console.log(`No se asignará a mquiroga porque lharriague tiene guardia en este día.`); // Log
-                            continue; // Saltar la asignación
-                        }
-                        // Si mquiroga tiene guardia, evitar asignar a lharriague
-                        if (isMquirogaAssignedToday && getUsernameFromRow(row) === 'lharriague') {
-                            console.log(`No se asignará a lharriague porque mquiroga tiene guardia en este día.`); // Log
-                            continue; // Saltar la asignación
-                        }
-                        select.value = 'Fn';  // Asignar guardia de Fn
-                        assignedFnUser = row; // Guardar usuario asignado
-                        console.log(`Asignando Fn a ${getUsernameFromRow(row)} (Sin Im)`); // Log de asignación
-                        break; // Salimos del bucle, ya hemos asignado
-                    }
-                }
+    return userShiftCounts; // Retornar el objeto con los conteos de guardias por usuario
+}
+
+function isAlreadyAssigned(selects, assignmentType) {
+    for (const select of selects) {
+        const username = select.getAttribute('data-username');
+        const day = select.getAttribute('data-day');
+
+        if (!username || !day) continue;
+
+        if (select && !select.disabled && select.value === assignmentType) {
+            console.log(`Ya está asignado a ${assignmentType}: ${username} en el día ${day}`);
+            return select;  // Retornamos el select del usuario ya asignado
+        }
+    }
+    return null; // No hay asignación previa
+}
+
+function excludeAssignedUsers(selects, excludedUsers) {
+    selects.forEach(select => {
+        const username = select.getAttribute('data-username');
+        const dayOfWeek = select.getAttribute('data-dayofweek');
+
+        if (!username || !dayOfWeek || select.disabled) return;
+
+        if (['Lun', 'Mar', 'Mie', 'Jue'].includes(dayOfWeek) && select.value !== '' && select.value !== 'ND') {
+            excludedUsers.add(username);
+            console.log(`Excluyendo a ${username} porque tiene guardia asignada en la semana actual.`);
+        }
+    });
+}
+
+function assignShift(selects, assignmentType, isLharriagueAssignedToday, isMquirogaAssignedToday, excludedUsers, userShiftCounts, isCardioCheck) {
+    let minShifts = Math.min(...Object.values(userShiftCounts)); // Obtener el número mínimo de guardias
+    let noAssignment = true; // Para rastrear si se hizo una asignación
+
+    // Intentar asignar con el minShifts actual
+    while (noAssignment) {
+        for (const select of selects) {
+            const username = select.getAttribute('data-username');
+            const day = select.getAttribute('data-day');
+            const shiftOption = Array.from(select.options).find(option => option.value === assignmentType);
+            const isCardioUser = isCardioCheck ? select.dataset.cardio === 'true' : true; // Chequeo de cardio
+
+            if (!username || !day) continue;
+
+            if (excludedUsers.has(username)) {
+                console.log(`No se asignará a ${username} porque tiene guardia en la semana actual.`);
+                continue;
             }
+
+            if (userShiftCounts[username] > minShifts) {
+                console.log(`No se asignará a ${username} porque tiene más guardias (${userShiftCounts[username]}) que el mínimo permitido (${minShifts}).`);
+                continue;
+            }
+
+            if (select && !select.disabled && select.value === '' && shiftOption && isCardioUser) {
+                if (isLharriagueAssignedToday && username === 'mquiroga') {
+                    console.log(`No se asignará a mquiroga porque lharriague tiene guardia en este día.`);
+                    continue;
+                }
+                if (isMquirogaAssignedToday && username === 'lharriague') {
+                    console.log(`No se asignará a lharriague porque mquiroga tiene guardia en este día.`);
+                    continue;
+                }
+
+                select.value = assignmentType;
+                console.log(`Asignando ${assignmentType} a ${username} en el día ${day}`);
+                noAssignment = false; // Se hizo una asignación, salimos del ciclo
+                return select; // Salimos del ciclo, ya hemos asignado
+            }
+        }
+
+        // Si no se ha asignado ningún usuario, incrementamos el minShifts
+        if (noAssignment) {
+            console.log(`No se pudo asignar ${assignmentType}. Incrementando minShifts y reintentando...`);
+            minShifts++;
         }
     }
 
-    return assignedFnUser; // Retornamos el usuario asignado a Fn
+    return null; // No se asignó ningún usuario
 }
+
+
