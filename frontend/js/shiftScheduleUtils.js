@@ -15,18 +15,14 @@ export function generateTable(users, yearSelect, monthSelect, dayAbbreviations, 
 
     // Obtenemos el número de días en el mes seleccionado
     const daysInMonth = getDaysInMonth(year, month);
-    
-    console.log(`Generando tabla para el año: ${year}, mes: ${month + 1}`);
-    console.log(`Días en el mes: ${daysInMonth}`);
 
     // Generamos los encabezados con los días del mes y sus abreviaturas de día de la semana
     for (let day = 1; day <= daysInMonth; day++) {
         const date = new Date(year, month, day);
-        const dayOfWeek = date.getDay(); // Obtenemos el día de la semana (0=Domingo, 1=Lunes, ..., 6=Sábado)
+        const dayOfWeek = date.getDay();
 
         // Formateamos la fecha sin incluir la hora
-        const formattedDate = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`; // Formato YYYY-MM-DD
-        console.log(`Procesando el día: ${day}, Día de la semana: ${dayAbbreviations[dayOfWeek]}, Fecha: ${formattedDate}`);
+        const formattedDate = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
 
         const th = document.createElement('th');
         th.textContent = `${dayAbbreviations[dayOfWeek]} ${day}`;
@@ -47,15 +43,14 @@ export function generateTable(users, yearSelect, monthSelect, dayAbbreviations, 
 
             const date = new Date(year, month, day);
             const dayOfWeek = date.getDay();
-            const dayOfWeekAbbreviation = dayAbbreviations[dayOfWeek]; // Ejemplo: "Lun", "Mar"
+            const dayOfWeekAbbreviation = dayAbbreviations[dayOfWeek]; 
             const isSaturday = dayOfWeek === 6;
 
-            // Atributos personalizados para el select
-            const dayString = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`; // Formato YYYY-MM-DD
+            const dayString = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
             select.setAttribute('data-username', user.username);
             select.setAttribute('data-day', dayString);
-            select.setAttribute('data-dayOfWeek', dayOfWeekAbbreviation); // Atributo con la abreviatura del día de la semana
-            select.setAttribute('data-cardio', user.doesCardio); // Agregar atributo data-cardio a cada select
+            select.setAttribute('data-dayOfWeek', dayOfWeekAbbreviation);
+            select.setAttribute('data-cardio', user.doesCardio);
 
             // Poblar el select con las opciones regulares
             populateShiftSelect(select, user, isSaturday, guardSites, dayOfWeekAbbreviation, user.username);
@@ -64,18 +59,19 @@ export function generateTable(users, yearSelect, monthSelect, dayAbbreviations, 
             user.vacations.forEach(vacation => {
                 const vacationStartDate = vacation.startDate.slice(0, 10);
                 const vacationEndDate = vacation.endDate.slice(0, 10);
-                console.log(`Usuario: ${user.username}, Verificando vacaciones: Desde ${vacationStartDate} hasta ${vacationEndDate}, Día actual: ${dayString}`);
-            });
 
-            if (user.vacations.some(vacation => vacation.startDate.slice(0, 10) <= dayString && vacation.endDate.slice(0, 10) >= dayString)) {
-                select.innerHTML = ''; 
-                const vacationOption = document.createElement('option');
-                vacationOption.value = 'V';
-                vacationOption.textContent = 'V';
-                select.appendChild(vacationOption);
-                select.disabled = true;
-                console.log(`Usuario ${user.username} está de vacaciones en el día ${dayString}`);
-            }
+                const vacationStartPrevDay = new Date(new Date(vacationStartDate).getTime() - 86400000).toISOString().slice(0, 10);
+
+                // Deshabilitar el día antes del inicio y durante el período de vacaciones
+                if ((vacationStartPrevDay <= dayString && vacationEndDate >= dayString)) {
+                    select.innerHTML = ''; 
+                    const vacationOption = document.createElement('option');
+                    vacationOption.value = 'V';
+                    vacationOption.textContent = 'V';
+                    select.appendChild(vacationOption);
+                    select.disabled = true;
+                }
+            });
 
             cell.appendChild(select);
             row.appendChild(cell);
@@ -85,7 +81,7 @@ export function generateTable(users, yearSelect, monthSelect, dayAbbreviations, 
     });
 
     // Después de generar la tabla, aplicar las asignaciones por defecto
-    applyDefaultAssignments(usersBody, daysHeader);
+    applyDefaultAssignments(usersBody);
 
     // Realizar el recuento de guardias asignadas después de aplicar las asignaciones por defecto
     const shiftCounts = countWeekdayShifts();
@@ -93,7 +89,7 @@ export function generateTable(users, yearSelect, monthSelect, dayAbbreviations, 
 }
 
 // Función para obtener los usuarios desde la API
-export function fetchUsers(apiUrl, generateTable, yearSelect, monthSelect, dayAbbreviations, guardSites, usersBody, daysHeader) {
+export function fetchUsers(apiUrl, callback) {
     fetch(`${apiUrl}/auth/users`, {
         method: 'GET',
         headers: {
@@ -102,68 +98,67 @@ export function fetchUsers(apiUrl, generateTable, yearSelect, monthSelect, dayAb
         }
     })
     .then(response => response.json())
-    .then(users => {
-        // Excluimos el usuario con username "montes_esposito"
-        const filteredUsers = users.filter(user => user.username !== 'montes_esposito');
-
-        // Ordenamos los usuarios alfabéticamente por nombre de usuario
-        filteredUsers.sort((a, b) => a.username.localeCompare(b.username));
-        
-        // Generamos la tabla con los usuarios filtrados
-        generateTable(filteredUsers, yearSelect, monthSelect, dayAbbreviations, guardSites, usersBody, daysHeader);
-    })
+    .then(users => callback(users))
     .catch(error => {
-        console.error('Hubo un problema al obtener la lista de usuarios: ', error.message);
+        console.error('Hubo un problema al obtener la lista de usuarios:', error.message);
     });
 }
 
+export function processAndGenerateTable(users, yearSelect, monthSelect, dayAbbreviations, guardSites, usersBody, daysHeader, generateTable) {
+    // Excluimos el usuario con username "montes_esposito"
+    const filteredUsers = users.filter(user => user.username !== 'montes_esposito');
+
+    // Ordenamos los usuarios alfabéticamente por nombre de usuario
+    filteredUsers.sort((a, b) => a.username.localeCompare(b.username));
+
+    // Generamos la tabla con los usuarios filtrados
+    generateTable(filteredUsers, yearSelect, monthSelect, dayAbbreviations, guardSites, usersBody, daysHeader);
+}
+
 export function assignWeekShiftsWithCardio(users) {
-    const headers = document.querySelectorAll('#days-header th'); // Seleccionamos todos los headers
     const rows = document.querySelectorAll('#users-body tr'); // Seleccionamos todas las filas de la tabla de usuarios
+    const daysInMonth = document.querySelectorAll('.shift-select[data-day]'); // Seleccionamos todos los selects con data-day
 
     // Obtener el nombre de usuario en la primera celda de la fila
     const getUsernameFromRow = (row) => row.cells[0].textContent.trim();
 
-    headers.forEach((header, headerIndex) => {
-        if (headerIndex === 0) return;
+    // Obtenemos cada día único a partir de los selects (filtrando por día laboral)
+    const uniqueDays = Array.from(new Set(Array.from(daysInMonth)
+        .map(select => select.getAttribute('data-day'))
+        .filter(day => {
+            const date = new Date(day);
+            const dayOfWeek = date.getDay();
+            return dayOfWeek >= 1 && dayOfWeek <= 4; // Solo de lunes a jueves
+        })
+    ));
 
-        // Verificar si el día actual es viernes, sábado o domingo
-        if (header.textContent.includes('Vie') || header.textContent.includes('Sab') || header.textContent.includes('Dom')) {
-            return; // Saltar fines de semana y viernes
-        }
+    uniqueDays.forEach(currentDay => {
+        const selects = Array.from(document.querySelectorAll(`select[data-day="${currentDay}"]`));
+        console.log(`Procesando asignaciones para el día: ${currentDay}`);
 
-        const dayNumber = header.textContent.split(' ')[1]; 
-        const year = document.querySelector('#year-select').value;
-        let month = parseInt(document.querySelector('#month-select').value);
-        month = (month + 1).toString().padStart(2, '0');
-        const currentDay = `${year}-${month}-${dayNumber.padStart(2, '0')}`;
+        // Verificar asignaciones previas de lharriague y mquiroga para el día actual
+        const isLharriagueAssignedToday = selects.some(select => select.getAttribute('data-username') === 'lharriague' && select.value !== '');
+        const isMquirogaAssignedToday = selects.some(select => select.getAttribute('data-username') === 'mquiroga' && select.value !== '');
 
-        console.log(`Procesando el header para el día: ${header.textContent}, Fecha completa: ${currentDay}, headerIndex: ${headerIndex}`);
+        console.log(`Día: ${currentDay}, lharriague tiene guardia: ${isLharriagueAssignedToday}, mquiroga tiene guardia: ${isMquirogaAssignedToday}`);
 
-        const selects = document.querySelectorAll(`select[data-day="${currentDay}"]`);
-        console.log(`Selects encontrados para el día ${currentDay}:`, selects.length);
-
-        // Verificar asignaciones para lharriague y mquiroga
-        const isLharriagueAssignedToday = [...selects].some(select => select.getAttribute('data-username') === 'lharriague' && select.value !== '');
-        const isMquirogaAssignedToday = [...selects].some(select => select.getAttribute('data-username') === 'mquiroga' && select.value !== '');
-
-        console.log(`Día: ${header.textContent}, lharriague tiene guardia: ${isLharriagueAssignedToday}, mquiroga tiene guardia: ${isMquirogaAssignedToday}`);
-
-        // Inicializar assignedFnUser como null (o según lógica)
+        // Inicializar usuarios asignados como null
         let assignedFnUser = null;
         let assignedImUser = null;
 
-        // Llamada a la función para asignar Im con los selects del día actual
+        // Asignar Im y Fn para el día actual
         assignedImUser = assignIm(rows, selects, isLharriagueAssignedToday, isMquirogaAssignedToday, assignedFnUser, getUsernameFromRow);
-
-        // Llamada a la función para asignar Fn (una vez que tenemos assignedImUser)
         assignedFnUser = assignFn(rows, selects, isLharriagueAssignedToday, isMquirogaAssignedToday, assignedImUser, getUsernameFromRow);
     });
 
-    // Al finalizar la asignación de todo el mes, contar las guardias asignadas
+    // Contar guardias asignadas al finalizar
     const userShiftCounts = countWeekdayShifts();
     console.log('Conteo final de guardias asignadas:', userShiftCounts);
 }
+
+
+
+
 
 // Función para poblar los selects basados en las reglas del usuario
 function populateShiftSelect(selectElement, user, isSaturday, guardSites) {
@@ -266,7 +261,7 @@ function shouldDisableSelect(username, dayOfWeek) {
     return false;
 }
 
-function applyDefaultAssignments(usersBody, daysHeader) {
+function applyDefaultAssignments(usersBody) {
     const defaultAssignments = {
         'lburgueño': { day: 'Mar', value: 'Al' },
         'sdegreef': { day: 'Mie', value: 'Ce' },
@@ -275,23 +270,20 @@ function applyDefaultAssignments(usersBody, daysHeader) {
 
     // Recorrer cada fila (usuario) de la tabla
     usersBody.querySelectorAll('tr').forEach(row => {
-        const username = row.querySelector('td').textContent.trim(); // Obtener el nombre de usuario de la primera celda
+        // Recorrer todos los selects de la fila
+        Array.from(row.querySelectorAll('td select')).forEach(select => {
+            const username = select.getAttribute('data-username'); // Obtener el nombre de usuario directamente del atributo
+            const dayOfWeek = select.getAttribute('data-dayOfWeek'); // Obtener el día del select
 
-        if (defaultAssignments[username]) {
-            const assignment = defaultAssignments[username];
-            
-            // Recorrer todos los selects para encontrar el que coincida con el día asignado
-            Array.from(row.querySelectorAll('td select')).forEach(select => {
-                const dayOfWeek = select.getAttribute('data-dayOfWeek'); // Obtener el día del select
-                if (dayOfWeek === assignment.day) {
-                    // Verificar si el select está habilitado y tiene la opción
-                    if (!select.disabled && Array.from(select.options).some(option => option.value === assignment.value)) {
-                        select.value = assignment.value; // Asignar el valor por defecto
-                        console.log(`Asignación por defecto aplicada: ${username} -> ${assignment.value} en ${dayOfWeek}`);
-                    }
+            if (defaultAssignments[username] && defaultAssignments[username].day === dayOfWeek) {
+                const assignment = defaultAssignments[username];
+
+                // Verificar si el select está habilitado y tiene la opción
+                if (!select.disabled && Array.from(select.options).some(option => option.value === assignment.value)) {
+                    select.value = assignment.value; // Asignar el valor por defecto
                 }
-            });
-        }
+            }
+        });
     });
 }
 
