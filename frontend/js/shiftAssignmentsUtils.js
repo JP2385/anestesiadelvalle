@@ -6,7 +6,6 @@ export function isAlreadyAssigned(selects, assignmentType) {
         if (!username || !day) continue;
 
         if (select && !select.disabled && select.value === assignmentType) {
-            // console.log(`Ya está asignado a ${assignmentType}: ${username} en el día ${day}`);
             return select;  // Retornamos el select del usuario ya asignado
         }
     }
@@ -17,12 +16,16 @@ export function excludeAssignedUsers(selects, excludedUsers) {
     selects.forEach(select => {
         const username = select.getAttribute('data-username');
         const dayOfWeek = select.getAttribute('data-dayofweek');
+        const day = select.getAttribute('data-day'); // Fecha completa en formato YYYY-MM-DD
 
-        if (!username || !dayOfWeek || select.disabled) return;
+        if (!username || !dayOfWeek || select.disabled) {
+            return;
+        }
 
+        // Excluir usuario si ya tiene guardia en cualquier día de la semana (Lun a Jue)
         if (['Lun', 'Mar', 'Mie', 'Jue'].includes(dayOfWeek) && select.value !== '' && select.value !== 'ND') {
             excludedUsers.add(username);
-            // console.log(`Excluyendo a ${username} porque tiene guardia asignada en la semana actual.`);
+        } else {
         }
     });
 }

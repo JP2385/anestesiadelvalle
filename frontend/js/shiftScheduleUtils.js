@@ -215,7 +215,7 @@ function assignWeekendDays(currentDay, assignedUsername, assignmentType) {
         daySelects.forEach(select => {
             if (select.getAttribute('data-username') === assignedUsername && select.value === '') {
                 select.value = assignmentType;
-                console.log(`Asignando ${assignmentType} a ${assignedUsername} para el ${index === 0 ? 'sábado' : 'domingo'}`);
+                // console.log(`Asignando ${assignmentType} a ${assignedUsername} para el ${index === 0 ? 'sábado' : 'domingo'}`);
             }
         });
     });
