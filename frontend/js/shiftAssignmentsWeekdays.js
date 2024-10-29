@@ -1,4 +1,4 @@
-import { isAlreadyAssigned,excludeAssignedUsers, countWeekdayShifts } from './shiftAssignmentsUtils.js';
+import { isAlreadyAssigned,excludeAssignedUsers, countWeekdayShifts, countWeekendShifts } from './shiftAssignmentsUtils.js';
 
 export function assignWeekIm(rows, selects, isLharriagueAssignedToday, isMquirogaAssignedToday, assignedFnUser, assignedImUser) {
     let userShiftCounts = countWeekdayShifts();
@@ -45,7 +45,6 @@ export function assignWeekIm(rows, selects, isLharriagueAssignedToday, isMquirog
     return assignedImUser;
 }
 
-
 export function assignWeekFn(rows, selects, isLharriagueAssignedToday, isMquirogaAssignedToday, assignedImUser, assignedFnUser) {
     let userShiftCounts = countWeekdayShifts();
     const excludedUsers = new Set();
@@ -63,10 +62,17 @@ export function assignWeekFn(rows, selects, isLharriagueAssignedToday, isMquirog
     return assignedFnUser;
 }
 
-function assignShift(selects, assignmentType, isLharriagueAssignedToday, isMquirogaAssignedToday, excludedUsers, userShiftCounts, isCardioCheck) {
+function assignShift(selects, assignmentType, isLharriagueAssignedToday, isMquirogaAssignedToday, excludedUsers, isCardioCheck, isWeekend) {
+    // Obtener el conteo inicial de guardias de acuerdo al tipo de día
+    let userShiftCounts = isWeekend ? countWeekendShifts() : countWeekdayShifts();
     let minShifts = Math.min(...Object.values(userShiftCounts)); // Obtener el número mínimo de guardias
     let noAssignment = true; // Para rastrear si se hizo una asignación
-
+    
+    console.log(`Iniciando asignación de ${assignmentType} para ${isWeekend ? 'fin de semana' : 'día de semana'}`);
+    console.log(`Conteo inicial de guardias asignadas por usuario:`, userShiftCounts);
+    console.log(`Usuarios excluidos iniciales:`, Array.from(excludedUsers));
+    
+    // Intentar asignar hasta encontrar una asignación válida
     while (noAssignment) {
         for (const select of selects) {
             const username = select.getAttribute('data-username');
@@ -75,15 +81,21 @@ function assignShift(selects, assignmentType, isLharriagueAssignedToday, isMquir
             const shiftOption = Array.from(select.options).find(option => option.value === assignmentType);
             const isCardioUser = isCardioCheck ? select.dataset.cardio === 'true' : true; // Chequeo de cardio
 
+            console.log(`Evaluando usuario: ${username}, Día: ${day}, Día de la semana: ${dayNumber}, ` +
+                        `Asignación actual: ${select.value}, Requiere cardio: ${isCardioCheck}, ` +
+                        `Usuario hace cardio: ${select.dataset.cardio === 'true'}, Mínimo de guardias: ${minShifts}`);
+
             if (!username || !day) continue;
 
             // Verificar si el usuario está excluido
             if (excludedUsers.has(username)) {
+                console.log(`Usuario ${username} excluido debido a asignación anterior.`);
                 continue;
             }
 
             // Verificar si el usuario tiene más guardias que el mínimo permitido
             if (userShiftCounts[username] > minShifts) {
+                console.log(`Usuario ${username} tiene ${userShiftCounts[username]} guardias, que es mayor al mínimo de ${minShifts}.`);
                 continue;
             }
 
@@ -91,10 +103,20 @@ function assignShift(selects, assignmentType, isLharriagueAssignedToday, isMquir
             const previousDay = getPreviousDay(day);
             const previousSelect = document.querySelector(`.shift-select[data-username="${username}"][data-day="${previousDay}"]`);
             if (previousSelect && previousSelect.value !== '') {
-                // Si hay una guardia asignada el día anterior, excluimos al usuario y saltamos a la siguiente iteración
-                excludedUsers.add(username);
-                console.log(`Excluyendo a ${username} porque tiene guardia asignada el día anterior (${previousDay}).`);
+                excludedUsers.add(username); // Excluir usuario si tiene asignación el día anterior
+                console.log(`Usuario ${username} excluido debido a asignación el día anterior (${previousDay}).`);
                 continue;
+            }
+
+            // Excluir usuario si tiene asignación en domingo y estamos asignando el lunes
+            if (!isWeekend && dayNumber === 1) { // Lunes
+                const sunday = getPreviousDay(day, 2); // Obtener el domingo anterior
+                const sundaySelect = document.querySelector(`.shift-select[data-username="${username}"][data-day="${sunday}"]`);
+                if (sundaySelect && sundaySelect.value !== '') {
+                    excludedUsers.add(username);
+                    console.log(`Usuario ${username} excluido debido a asignación el domingo (${sunday}).`);
+                    continue;
+                }
             }
 
             // Chequeo final antes de asignar, verificando todas las condiciones
@@ -104,13 +126,15 @@ function assignShift(selects, assignmentType, isLharriagueAssignedToday, isMquir
                     continue;
                 }
                 if (isMquirogaAssignedToday && username === 'lharriague') {
+                    console.log(`No se asignará a lharriague porque mquiroga tiene guardia el día ${day}.`);
                     continue;
                 }
 
                 select.value = assignmentType;
+                userShiftCounts[username]++; // Actualizamos el conteo de guardias asignadas para el usuario
                 noAssignment = false; // Se hizo una asignación, salimos del ciclo
-                console.log(`Asignando ${assignmentType} a ${username} en el día ${day}.`);
-                return select; // Salimos del ciclo, ya hemos asignado
+                console.log(`Asignando ${assignmentType} a ${username} en el día ${day}. Conteo actualizado: ${userShiftCounts[username]}`);
+                return select; // Retornamos el select asignado
             }
         }
 
@@ -120,13 +144,16 @@ function assignShift(selects, assignmentType, isLharriagueAssignedToday, isMquir
             console.log(`Incrementando minShifts a ${minShifts} y reintentando asignación.`);
         }
     }
+    console.log(`No se pudo asignar ${assignmentType}.`);
     return null; // No se asignó ningún usuario
 }
 
 // Función auxiliar para obtener el día anterior en formato 'YYYY-MM-DD'
-function getPreviousDay(currentDay) {
+// Puede ajustar el offset para obtener días específicos antes (ej., -2 para domingo anterior)
+function getPreviousDay(currentDay, offset = 1) {
     const [year, month, day] = currentDay.split('-').map(Number);
     const date = new Date(year, month - 1, day);
-    date.setDate(date.getDate() - 1); // Restamos un día
+    date.setDate(date.getDate() - offset); // Restamos el offset dado
     return date.toISOString().slice(0, 10); // Retornamos en formato YYYY-MM-DD
 }
+

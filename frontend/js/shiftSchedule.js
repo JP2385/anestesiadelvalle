@@ -1,4 +1,4 @@
-import { generateTable, fetchUsers, assignWeekShiftsWithCardio, assignWeekendShiftsWithCardio } from './shiftScheduleUtils.js';
+import { generateTable, fetchUsers, assignMonthlyShiftsWithCardio} from './shiftScheduleUtils.js';
 
 document.addEventListener('DOMContentLoaded', function () {
     // URL de la API
@@ -45,8 +45,9 @@ document.addEventListener('DOMContentLoaded', function () {
         fetchUsers(apiUrl, (users) => {
             processAndGenerateTable(users); // Genera la tabla con los datos procesados
             console.log('Usuarios filtrados:', users);
-            assignWeekShiftsWithCardio(users); // Llama a la función de asignación de guardias
-            assignWeekendShiftsWithCardio(users);
+            // assignWeekShiftsWithCardio(users); // Llama a la función de asignación de guardias
+            // assignWeekendShiftsWithCardio(users);
+            assignMonthlyShiftsWithCardio(users);
         });
     });
 
