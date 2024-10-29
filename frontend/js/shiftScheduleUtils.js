@@ -1,7 +1,5 @@
-import { assignWeekFn, assignWeekIm} from './shiftAssignmentsWeekdays.js';
-import { assignWeekendIm, assignWeekendFn} from './shiftAssignmentsWeekends.js';
-import { assignIm, assignFn} from './shiftAssignmentsMonthly.js';
-import { countWeekdayShifts, countWeekendShifts } from './shiftAssignmentsUtils.js';
+import { assignIm, assignFn, assignWeekendIfLtotisAssigned, assignSaturdayP1} from './shiftAssignmentsMonthly.js';
+import { countWeekdayShifts, countWeekendShifts, countSaturdayShifts } from './shiftAssignmentsUtils.js';
 
 
 // Función auxiliar para obtener el número de días de un mes y año
@@ -122,153 +120,59 @@ export function processAndGenerateTable(users, yearSelect, monthSelect, dayAbbre
 
 // Función principal que recorre todos los días del mes en orden cronológico
 export function assignMonthlyShiftsWithCardio(users) {
-    const rows = document.querySelectorAll('#users-body tr'); // Seleccionamos todas las filas de la tabla de usuarios
-    const daysInMonth = document.querySelectorAll('.shift-select[data-day]'); // Seleccionamos todos los selects con data-day
+    const rows = document.querySelectorAll('#users-body tr');
+    const daysInMonth = document.querySelectorAll('.shift-select[data-day]');
 
-    // Obtener el nombre de usuario en la primera celda de la fila
+    // Asignar automáticamente a mmelo los mismos días si ltotis tiene asignaciones de fin de semana
+    assignWeekendIfLtotisAssigned(users);
+
     const getUsernameFromRow = (row) => row.cells[0].textContent.trim();
-
-    // Obtenemos cada día único a partir de los selects en orden cronológico
     const uniqueDays = Array.from(new Set(Array.from(daysInMonth)
         .map(select => select.getAttribute('data-day'))
     )).sort();
 
-    // Iteramos cronológicamente sobre cada día del mes
     uniqueDays.forEach(currentDay => {
         const selects = Array.from(document.querySelectorAll(`select[data-day="${currentDay}"]`));
-        const dayNumber = parseInt(selects[0].getAttribute('data-daynumber'), 10); // Número del día de la semana (0 = Domingo, ..., 6 = Sábado)
-        
-        // Definir isWeekend basado en el día de la semana
-        const isWeekend = (dayNumber === 5 || dayNumber === 6 || dayNumber === 0); // viernes, sábado y domingo
+        const dayNumber = parseInt(selects[0].getAttribute('data-daynumber'), 10);
 
-        // Verificar asignaciones previas de lharriague y mquiroga para el día actual
+        const isWeekend = (dayNumber === 5 || dayNumber === 6 || dayNumber === 0);
+
         const isLharriagueAssignedToday = selects.some(select => select.getAttribute('data-username') === 'lharriague' && select.value !== '');
         const isMquirogaAssignedToday = selects.some(select => select.getAttribute('data-username') === 'mquiroga' && select.value !== '');
 
-        // Inicializar usuarios asignados como null
         let assignedFnUser = null;
         let assignedImUser = null;
 
-        if (!isWeekend) { // Lunes a jueves
-            // Asignar guardias de lunes a jueves
+        if (!isWeekend) { 
             assignedImUser = assignIm(rows, selects, isLharriagueAssignedToday, isMquirogaAssignedToday, assignedFnUser, getUsernameFromRow, isWeekend);
             assignedFnUser = assignFn(rows, selects, isLharriagueAssignedToday, isMquirogaAssignedToday, assignedImUser, getUsernameFromRow, isWeekend);
-        } else { // Viernes, sábado y domingo
-            // Asignar guardias para viernes y sábado
+        } else { 
             assignedImUser = assignIm(rows, selects, isLharriagueAssignedToday, isMquirogaAssignedToday, assignedFnUser, getUsernameFromRow, isWeekend);
             assignedFnUser = assignFn(rows, selects, isLharriagueAssignedToday, isMquirogaAssignedToday, assignedImUser, getUsernameFromRow, isWeekend);
 
-            // Si se asignó un usuario para el viernes, asignar automáticamente al mismo usuario sábado y domingo
             if (assignedFnUser && dayNumber === 5) {
                 const assignedUsername = assignedFnUser.getAttribute('data-username');
-                assignWeekendDays(currentDay, assignedUsername, 'Fn'); // Asignar Fn para sábado y domingo
+                assignWeekendDays(currentDay, assignedUsername, 'Fn');
             }
 
             if (assignedImUser && dayNumber === 5) {
                 const assignedUsername = assignedImUser.getAttribute('data-username');
-                assignWeekendDays(currentDay, assignedUsername, 'Im'); // Asignar Im para sábado y domingo
+                assignWeekendDays(currentDay, assignedUsername, 'Im');
             }
         }
     });
 
-    // Contar guardias asignadas al finalizar
+    // Llamar a la función assignSaturdayP1 después de asignar las guardias regulares
+    assignSaturdayP1(users);
+
     const userShiftCountsWeek = countWeekdayShifts();
     const userShiftCountsWeekend = countWeekendShifts();
+    const saturdayCounts = countSaturdayShifts();
     console.log('Conteo final de guardias asignadas de lunes a jueves:', userShiftCountsWeek);
     console.log('Conteo final de guardias asignadas de viernes a domingo:', userShiftCountsWeekend);
+    console.log('Conteo final de guardias asignadas P1 los sábados:', saturdayCounts);
+
 }
-
-
-// export function assignWeekShiftsWithCardio(users) {
-//     const rows = document.querySelectorAll('#users-body tr'); // Seleccionamos todas las filas de la tabla de usuarios
-//     const daysInMonth = document.querySelectorAll('.shift-select[data-day]'); // Seleccionamos todos los selects con data-day
-
-//     // Obtener el nombre de usuario en la primera celda de la fila
-//     const getUsernameFromRow = (row) => row.cells[0].textContent.trim();
-
-//     // Obtenemos cada día único a partir de los selects (filtrando por día laboral usando data-daynumber)
-//     const uniqueDays = Array.from(new Set(Array.from(daysInMonth)
-//         .map(select => select.getAttribute('data-day'))
-//         .filter(day => {
-//             const select = document.querySelector(`.shift-select[data-day="${day}"]`);
-//             const dayNumber = parseInt(select.getAttribute('data-daynumber'), 10); // Obtenemos el número de día de 0 a 6
-//             return dayNumber >= 1 && dayNumber <= 4; // Solo lunes a jueves (1 a 4)
-//         })
-//     ));
-
-//     uniqueDays.forEach(currentDay => {
-//         const selects = Array.from(document.querySelectorAll(`select[data-day="${currentDay}"]`));
-
-//         // Verificar asignaciones previas de lharriague y mquiroga para el día actual
-//         const isLharriagueAssignedToday = selects.some(select => select.getAttribute('data-username') === 'lharriague' && select.value !== '');
-//         const isMquirogaAssignedToday = selects.some(select => select.getAttribute('data-username') === 'mquiroga' && select.value !== '');
-
-//         // Inicializar usuarios asignados como null
-//         let assignedFnUser = null;
-//         let assignedImUser = null;
-
-//         // Asignar Im y Fn para el día actual
-//         assignedImUser = assignWeekIm(rows, selects, isLharriagueAssignedToday, isMquirogaAssignedToday, assignedFnUser, getUsernameFromRow);
-//         assignedFnUser = assignWeekFn(rows, selects, isLharriagueAssignedToday, isMquirogaAssignedToday, assignedImUser, getUsernameFromRow);
-//     });
-
-//     // Contar guardias asignadas al finalizar
-//     const userShiftCounts = countWeekdayShifts();
-//     console.log('Conteo final de guardias asignadas de lunes a jueves:', userShiftCounts);
-// }
-
-
-// export function assignWeekendShiftsWithCardio(users) {
-//     const rows = document.querySelectorAll('#users-body tr'); // Seleccionamos todas las filas de la tabla de usuarios
-//     const daysInMonth = document.querySelectorAll('.shift-select[data-day]'); // Seleccionamos todos los selects con data-day
-
-//     // Obtener el nombre de usuario en la primera celda de la fila
-//     const getUsernameFromRow = (row) => row.cells[0].textContent.trim();
-
-//     // Obtenemos cada día único a partir de los selects (filtrando solo por viernes, sábado y domingo usando data-daynumber)
-//     const uniqueDays = Array.from(new Set(Array.from(daysInMonth)
-//         .map(select => select.getAttribute('data-day'))
-//         .filter(dayString => {
-//             const select = document.querySelector(`.shift-select[data-day="${dayString}"]`);
-//             const dayNumber = parseInt(select.getAttribute('data-daynumber'), 10); // Obtener el número de día de la semana (0 a 6)
-//             return dayNumber === 5; // Filtrar solo los días viernes
-//         })
-//     ));
-
-//     uniqueDays.forEach(currentDay => {
-//         const selects = Array.from(document.querySelectorAll(`select[data-day="${currentDay}"]`));
-
-//         // Verificar asignaciones previas de lharriague y mquiroga para el día actual
-//         const isLharriagueAssignedToday = selects.some(select => select.getAttribute('data-username') === 'lharriague' && select.value !== '');
-//         const isMquirogaAssignedToday = selects.some(select => select.getAttribute('data-username') === 'mquiroga' && select.value !== '');
-
-//         // Inicializar usuarios asignados como null
-//         let assignedFnUser = null;
-//         let assignedImUser = null;
-
-//         // Asignar Im y Fn para el viernes
-//         assignedImUser = assignWeekendIm(rows, selects, isLharriagueAssignedToday, isMquirogaAssignedToday, assignedFnUser, getUsernameFromRow);
-//         assignedFnUser = assignWeekendFn(rows, selects, isLharriagueAssignedToday, isMquirogaAssignedToday, assignedImUser, getUsernameFromRow);
-
-//         // Si se ha asignado un usuario para Im o Fn el viernes, asignar sábado y domingo automáticamente al mismo usuario
-//         if (assignedFnUser) {
-//             const assignedUsername = assignedFnUser.getAttribute('data-username');
-//             assignWeekendDays(currentDay, assignedUsername, 'Fn'); // Asignar Fn para sábado y domingo
-//         }
-
-//         if (assignedImUser) {
-//             const assignedUsername = assignedImUser.getAttribute('data-username');
-//             assignWeekendDays(currentDay, assignedUsername, 'Im'); // Asignar Im para sábado y domingo
-//         }
-//     });
-
-//     // Contar guardias asignadas al finalizar
-//     const userShiftCounts = countWeekendShifts();
-//     console.log('Conteo final de guardias asignadas de fin de semana:', userShiftCounts);
-// }
-
-
-// Función auxiliar para asignar sábado y domingo para un usuario específico y tipo de guardia
 
 function assignWeekendDays(currentDay, assignedUsername, assignmentType) {
     const saturdaySelects = Array.from(document.querySelectorAll(`.shift-select[data-day="${getNextDay(currentDay, 6)}"]`));
@@ -319,22 +223,24 @@ function populateShiftSelect(selectElement, user, isSaturday, guardSites) {
     ndOption.textContent = 'ND';
     selectElement.appendChild(ndOption);
 
-    // Si el usuario no hace guardias
+    // Agregar la opción "P1" para los sábados independientemente de las reglas
+    if (isSaturday) {
+        const p1Option = document.createElement('option');
+        p1Option.value = 'P1';
+        p1Option.textContent = 'P1';
+        selectElement.appendChild(p1Option);
+    }
+
+    // Si el usuario no hace guardias, deshabilitar selects excepto los de los sábados
     if (!user.doesShifts) {
-        selectElement.disabled = !isSaturday;  // Deshabilitar los selects excepto los de los sábados
-        if (isSaturday) {
-            // Solo agregar P1 para los sábados si el usuario no hace guardias
-            const option = document.createElement('option');
-            option.value = 'P1';
-            option.textContent = 'P1';
-            selectElement.appendChild(option);
-        }
+        selectElement.disabled = !isSaturday; // Solo habilitar los de sábados
         return;  // Salir de la función si no hace guardias
     }
 
     // Para usuarios que hacen guardias, poblar como los días normales
     populateRegularSites(selectElement, user, guardSites);
 }
+
 
 // Función auxiliar para poblar los sitios regulares según el perfil del usuario
 function populateRegularSites(selectElement, user, guardSites) {

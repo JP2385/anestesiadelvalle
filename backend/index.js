@@ -6,6 +6,7 @@ const config = require('./config');
 const cors = require('cors');
 const authRoutes = require('./src/app/routes/authRoutes');
 const scheduleRoutes = require('./src/app/routes/scheduleRoutes');
+const shiftScheduleRoutes = require('./src/app/routes/shiftScheduleRoutes'); // Nueva ruta para shiftSchedules
 const vacationSwapRoutes = require('./src/app/routes/vacationSwapRoutes');  // Ruta correcta
 const notificationRoutes = require('./src/app/routes/notificationRoutes');  // Ruta correcta
 const path = require('path');
@@ -33,6 +34,7 @@ mongoose.connect(config.mongoUri, { useNewUrlParser: true, useUnifiedTopology: t
 // Definición de rutas
 app.use('/auth', authRoutes);
 app.use('/schedule', scheduleRoutes);
+app.use('/shift-schedule', shiftScheduleRoutes); // Nueva ruta para shiftSchedules
 
 // Nueva ruta para el intercambio de vacaciones
 app.use('/vacation-swap', vacationSwapRoutes);  // Asegúrate de que la ruta esté bien configurada

@@ -1,4 +1,4 @@
-import { isAlreadyAssigned, excludeAssignedUsers, countWeekdayShifts, countWeekendShifts } from './shiftAssignmentsUtils.js';
+import { isAlreadyAssigned, excludeAssignedUsers, countWeekdayShifts, countWeekendShifts, countSaturdayShifts } from './shiftAssignmentsUtils.js';
 
 export function assignIm(rows, selects, isLharriagueAssignedToday, isMquirogaAssignedToday, assignedFnUser, assignedImUser, isWeekend) {
     // Llamamos al conteo de guardias adecuado dependiendo de si es fin de semana o día de semana
@@ -59,6 +59,107 @@ export function assignFn(rows, selects, isLharriagueAssignedToday, isMquirogaAss
     }
 
     return assignedFnUser;
+}
+
+export function assignSaturdayP1(users) {
+    const rows = document.querySelectorAll('#users-body tr');
+    const daysInMonth = document.querySelectorAll('.shift-select[data-day]');
+
+    // Filtrar los selects para obtener solo los días sábado
+    const saturdays = Array.from(daysInMonth).filter(select => {
+        const dayNumber = parseInt(select.getAttribute('data-daynumber'), 10);
+        return dayNumber === 6; // Día sábado
+    });
+
+    saturdays.forEach(saturdaySelect => {
+        const currentDay = saturdaySelect.getAttribute('data-day');
+        console.log(`Procesando el sábado ${currentDay}`);
+
+        // Verificar si ya existe una asignación de "P1" en el sábado actual
+        const isP1Assigned = Array.from(document.querySelectorAll(`.shift-select[data-day="${currentDay}"]`))
+            .some(select => select.value === 'P1');
+        
+        console.log(`¿Ya hay un P1 asignado para el sábado ${currentDay}? ${isP1Assigned}`);
+
+        if (!isP1Assigned) {
+            let assigned = false; // Flag para seguimiento de asignación
+
+            for (const row of rows) {
+                const username = row.cells[0].textContent.trim();
+                const select = row.querySelector(`.shift-select[data-day="${currentDay}"]`);
+
+                if (select && !select.disabled && select.value === '') {
+                    console.log(`Evaluando a ${username} para el sábado ${currentDay}`);
+
+                    // Verificar que el usuario no tenga otra guardia en sábado en el mes
+                    const hasSaturdayShift = Array.from(row.querySelectorAll('.shift-select[data-daynumber="6"]'))
+                        .some(satSelect => satSelect.value !== '' && satSelect.value !== 'ND');
+                    
+                    console.log(`¿${username} tiene guardia en otro sábado este mes? ${hasSaturdayShift}`);
+
+                    if (!hasSaturdayShift) {
+                        select.value = 'P1';
+                        console.log(`Asignado P1 a ${username} para el sábado ${currentDay}.`);
+                        assigned = true;
+                        break; // Salir del bucle una vez asignado "P1" para este sábado
+                    }
+                }
+            }
+
+            // Si no se asignó "P1" porque todos tienen sábados ocupados, asignar al usuario con menos guardias
+            if (!assigned) {
+                let minShifts = Infinity;
+                let candidate = null;
+
+                rows.forEach(row => {
+                    const username = row.cells[0].textContent.trim();
+                    const saturdayShifts = Array.from(row.querySelectorAll('.shift-select[data-daynumber="6"]'))
+                        .filter(select => select.value !== '' && select.value !== 'ND').length;
+
+                    if (saturdayShifts < minShifts) {
+                        minShifts = saturdayShifts;
+                        candidate = { row, username };
+                    }
+                });
+
+                if (candidate) {
+                    const select = candidate.row.querySelector(`.shift-select[data-day="${currentDay}"]`);
+                    select.value = 'P1';
+                    console.log(`Asignado P1 a ${candidate.username} para el sábado ${currentDay}, a pesar de tener otro sábado asignado.`);
+                }
+            }
+        }
+    });
+}
+
+
+// Función para asignar automáticamente a mmelo los mismos días si ltotis tiene asignaciones de fin de semana
+export function assignWeekendIfLtotisAssigned(users) {
+    const daysInMonth = document.querySelectorAll('.shift-select[data-day]');
+
+    // Filtrar selects de viernes, sábado y domingo para el usuario ltotis
+    const weekendSelectsLtotis = Array.from(daysInMonth).filter(select => {
+        const username = select.getAttribute('data-username');
+        const dayNumber = parseInt(select.getAttribute('data-daynumber'), 10); // Número del día (0=Dom, 5=Vie, 6=Sab)
+        const value = select.value;
+
+        // Revisar si es viernes, sábado o domingo y si ltotis tiene asignación válida
+        return username === 'ltotis' && (dayNumber === 5 || dayNumber === 6 || dayNumber === 0) &&
+               value !== '' && value !== 'ND' && !select.disabled;
+    });
+
+    // Asignar los mismos días a mmelo si ltotis tiene asignaciones de fin de semana
+    weekendSelectsLtotis.forEach(select => {
+        const day = select.getAttribute('data-day');
+        const assignedValue = select.value;
+
+        // Seleccionar el select de mmelo para el mismo día y asignar el mismo valor
+        const mmeloSelect = document.querySelector(`.shift-select[data-username="mmelo"][data-day="${day}"]`);
+        if (mmeloSelect && mmeloSelect.value === '') { // Solo asignar si está vacío
+            mmeloSelect.value = assignedValue;
+            console.log(`Asignando a mmelo ${assignedValue} para el día ${day} (mismo que ltotis)`);
+        }
+    });
 }
 
 // Función auxiliar para obtener selects de los días anteriores al actual, usada en fines de semana
@@ -157,4 +258,5 @@ function getPreviousDay(currentDay, offset = 1) {
     date.setDate(date.getDate() - offset); // Restamos un día (o el offset dado)
     return date.toISOString().slice(0, 10); // Retornamos en formato YYYY-MM-DD
 }
+
 

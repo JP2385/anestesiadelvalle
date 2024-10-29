@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Gestión de Guardias</title>
     <script type="module" src="js/shiftSchedule.js"></script>
+    <script type="module" src="js/printShifts.js"></script>
 </head>
 <body>
     <div class="shift-management">
@@ -32,9 +33,33 @@
             </select>
         </div>
 
-        <button id="assign-week-shifts">Asignar guardias de semana</button>
+                <!-- Tabla de conteo de guardias -->
+                <div id="shift-counts-container">
+                    <h4>Conteo de Guardias por Usuario</h4>
+                    <table id="shift-counts">
+                        <thead>
+                            <tr>
+                                <th>Usuario</th>
+                                <th>Guardias Semana</th>
+                                <th>Guardias Fin de Semana</th>
+                                <th>Plantas Sábado</th>
+                                <th>Acumulado Semana</th>
+                                <th>Acumulado Fin de Semana</th>
+                                <th>Acumulado Sábado</th>
 
-        <!-- Tabla dinámica -->
+                            </tr>
+                        </thead>
+                        <tbody id="shift-counts-body">
+                            <!-- Aquí se generarán dinámicamente las filas de conteo por usuario -->
+                        </tbody>
+                    </table>
+                </div>
+        
+        <button id="assign-shifts">Asignar guardias</button>
+
+        <button id="print-shifts">Imprimir guardias</button>
+
+        <!-- Tabla dinámica de asignación de guardias -->
         <table id="shift-schedule">
             <thead>
                 <tr id="days-header">
