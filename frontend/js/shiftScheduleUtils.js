@@ -7,7 +7,30 @@ export function getDaysInMonth(year, month) {
     return new Date(year, month + 1, 0).getDate();
 }
 
-export function generateTable(users, yearSelect, monthSelect, dayAbbreviations, guardSites, usersBody, daysHeader) {
+
+// Función para obtener los usuarios desde la API
+export function fetchUsers(apiUrl, callback) {
+    console.log("Llamando a la API para obtener usuarios..."); // Log de inicio de fetchUsers
+
+    fetch(`${apiUrl}/auth/users`, {
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer ' + localStorage.getItem('token')
+        }
+    })
+    .then(response => response.json())
+    .then(users => {
+        console.log("Usuarios obtenidos:", users); // Confirmar que se obtienen los usuarios
+        callback(users);
+    })
+    .catch(error => {
+        console.error('Hubo un problema al obtener la lista de usuarios:', error.message);
+    });
+}
+
+
+function generateTable(users, yearSelect, monthSelect, dayAbbreviations, guardSites, usersBody, daysHeader, existingSchedule = null) {
     const year = parseInt(yearSelect.value);
     const month = parseInt(monthSelect.value);
 
@@ -18,20 +41,20 @@ export function generateTable(users, yearSelect, monthSelect, dayAbbreviations, 
     // Obtenemos el número de días en el mes seleccionado
     const daysInMonth = getDaysInMonth(year, month);
 
-    // Generamos los encabezados con los días del mes y sus abreviaturas de día de la semana
+    // Generamos encabezados con los días del mes y sus abreviaturas
     for (let day = 1; day <= daysInMonth; day++) {
         const date = new Date(year, month, day);
         const dayOfWeek = date.getDay();
-
-        // Formateamos la fecha sin incluir la hora
-        const formattedDate = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
-
         const th = document.createElement('th');
         th.textContent = `${dayAbbreviations[dayOfWeek]} ${day}`;
         daysHeader.appendChild(th);
     }
 
-    // Verificar lógica de vacaciones con logs detallados
+    // Crear un mapa con la configuración de selects del horario existente, si hay uno
+    const selectConfigMap = existingSchedule 
+        ? Object.fromEntries(existingSchedule.selectConfig.map(config => [`${config.username}-${config.day}`, config]))
+        : {};
+
     users.forEach(user => {
         const row = document.createElement('tr');
         const userCell = document.createElement('td');
@@ -44,29 +67,30 @@ export function generateTable(users, yearSelect, monthSelect, dayAbbreviations, 
             select.classList.add('shift-select');
 
             const date = new Date(year, month, day);
-            const dayOfWeek = date.getDay(); // Número del día de la semana
-            const dayOfWeekAbbreviation = dayAbbreviations[dayOfWeek]; // Ejemplo: "Lun", "Mar"
+            const dayOfWeek = date.getDay();
+            const dayOfWeekAbbreviation = dayAbbreviations[dayOfWeek];
             const isSaturday = dayOfWeek === 6;
 
             const dayString = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+            const selectKey = `${user.username}-${dayString}`;
+
+            // Asignar atributos de data al select
             select.setAttribute('data-username', user.username);
             select.setAttribute('data-day', dayString);
             select.setAttribute('data-dayOfWeek', dayOfWeekAbbreviation);
-            select.setAttribute('data-daynumber', dayOfWeek); // Nuevo atributo con el número del día de la semana
+            select.setAttribute('data-daynumber', dayOfWeek);
             select.setAttribute('data-cardio', user.doesCardio);
 
-            // Poblar el select con las opciones regulares
-            populateShiftSelect(select, user, isSaturday, guardSites, dayOfWeekAbbreviation, user.username);
+            // Poblar el select con opciones regulares
+            populateShiftSelect(select, user, isSaturday, guardSites);
 
-            // Verificación de vacaciones con logs
+            // Verificar vacaciones y deshabilitar si corresponde
             user.vacations.forEach(vacation => {
                 const vacationStartDate = vacation.startDate.slice(0, 10);
                 const vacationEndDate = vacation.endDate.slice(0, 10);
-
                 const vacationStartPrevDay = new Date(new Date(vacationStartDate).getTime() - 86400000).toISOString().slice(0, 10);
 
-                // Deshabilitar el día antes del inicio y durante el período de vacaciones
-                if ((vacationStartPrevDay <= dayString && vacationEndDate >= dayString)) {
+                if (vacationStartPrevDay <= dayString && vacationEndDate >= dayString) {
                     select.innerHTML = ''; 
                     const vacationOption = document.createElement('option');
                     vacationOption.value = 'V';
@@ -76,6 +100,12 @@ export function generateTable(users, yearSelect, monthSelect, dayAbbreviations, 
                 }
             });
 
+            // Si existe una configuración de asignación, solo seleccionar la opción sin sobrescribir las existentes
+            const existingConfig = selectConfigMap[selectKey];
+            if (existingConfig) {
+                select.value = existingConfig.assignment;
+            }
+
             cell.appendChild(select);
             row.appendChild(cell);
         }
@@ -83,40 +113,34 @@ export function generateTable(users, yearSelect, monthSelect, dayAbbreviations, 
         usersBody.appendChild(row);
     });
 
-    // Después de generar la tabla, aplicar las asignaciones por defecto
-    applyDefaultAssignments(usersBody);
+    // Aplicar asignaciones por defecto si no hay un horario existente
+    if (!existingSchedule) applyDefaultAssignments(usersBody);
 
     // Realizar el recuento de guardias asignadas después de aplicar las asignaciones por defecto
     const shiftCounts = countWeekdayShifts();
     console.log('Conteo de guardias asignadas:', shiftCounts);
 }
 
-// Función para obtener los usuarios desde la API
-export function fetchUsers(apiUrl, callback) {
-    fetch(`${apiUrl}/auth/users`, {
-        method: 'GET',
-        headers: {
-            'Content-Type': 'application/json',
-            'Authorization': 'Bearer ' + localStorage.getItem('token')
-        }
-    })
-    .then(response => response.json())
-    .then(users => callback(users))
-    .catch(error => {
-        console.error('Hubo un problema al obtener la lista de usuarios:', error.message);
-    });
-}
 
-export function processAndGenerateTable(users, yearSelect, monthSelect, dayAbbreviations, guardSites, usersBody, daysHeader, generateTable) {
+
+
+export function processAndGenerateTable(users, yearSelect, monthSelect, dayAbbreviations, guardSites, usersBody, daysHeader, existingSchedule) {
+    const year = parseInt(yearSelect.value);
+    const month = parseInt(monthSelect.value) + 1; // Ajuste por mes basado en índice 0
+
+    console.log("processAndGenerateTable - Año y mes seleccionados:", year, month);
+
     // Excluimos el usuario con username "montes_esposito"
     const filteredUsers = users.filter(user => user.username !== 'montes_esposito');
+    console.log("Usuarios después de filtrar:", filteredUsers);
 
     // Ordenamos los usuarios alfabéticamente por nombre de usuario
     filteredUsers.sort((a, b) => a.username.localeCompare(b.username));
 
     // Generamos la tabla con los usuarios filtrados
-    generateTable(filteredUsers, yearSelect, monthSelect, dayAbbreviations, guardSites, usersBody, daysHeader);
+    generateTable(filteredUsers, yearSelect, monthSelect, dayAbbreviations, guardSites, usersBody, daysHeader, existingSchedule);
 }
+
 
 // Función principal que recorre todos los días del mes en orden cronológico
 export function assignMonthlyShiftsWithCardio(users) {
@@ -223,24 +247,22 @@ function populateShiftSelect(selectElement, user, isSaturday, guardSites) {
     ndOption.textContent = 'ND';
     selectElement.appendChild(ndOption);
 
-    // Agregar la opción "P1" para los sábados independientemente de las reglas
-    if (isSaturday) {
-        const p1Option = document.createElement('option');
-        p1Option.value = 'P1';
-        p1Option.textContent = 'P1';
-        selectElement.appendChild(p1Option);
-    }
-
-    // Si el usuario no hace guardias, deshabilitar selects excepto los de los sábados
+    // Si el usuario no hace guardias
     if (!user.doesShifts) {
-        selectElement.disabled = !isSaturday; // Solo habilitar los de sábados
+        selectElement.disabled = !isSaturday;  // Deshabilitar los selects excepto los de los sábados
+        if (isSaturday) {
+            // Solo agregar P1 para los sábados si el usuario no hace guardias
+            const option = document.createElement('option');
+            option.value = 'P1';
+            option.textContent = 'P1';
+            selectElement.appendChild(option);
+        }
         return;  // Salir de la función si no hace guardias
     }
 
     // Para usuarios que hacen guardias, poblar como los días normales
     populateRegularSites(selectElement, user, guardSites);
 }
-
 
 // Función auxiliar para poblar los sitios regulares según el perfil del usuario
 function populateRegularSites(selectElement, user, guardSites) {

@@ -2,13 +2,10 @@ const ShiftSchedule = require('../models/shiftScheduleModel');
 
 // Guardar o actualizar el horario del mes actual
 const saveShiftSchedule = async (req, res) => {
-    const { timestamp, shiftSchedule, shiftCounts, selectConfig, printedBy } = req.body;
-
-    // Extraer el mes y año desde `timestamp` para almacenar en el campo `month`
-    const month = timestamp.slice(0, 7); // Ej: '2024-10'
+    const { month, shiftSchedule, shiftCounts, selectConfig, printedBy } = req.body;
 
     try {
-        // Buscar si ya existe un horario para este mes
+        // Buscar si ya existe un horario para este mes y año específico
         let existingSchedule = await ShiftSchedule.findOne({ month });
 
         if (existingSchedule) {
@@ -51,7 +48,27 @@ const getLastShiftSchedule = async (req, res) => {
     }
 };
 
+// Obtener el horario de un mes específico
+const getShiftScheduleByMonth = async (req, res) => {
+    const { yearMonth } = req.params;
+    console.log("Received yearMonth parameter:", yearMonth); // Log de verificación
+    try {
+        const schedule = await ShiftSchedule.findOne({ month: yearMonth });
+        if (!schedule) {
+            console.log("No schedule found for:", yearMonth); // Log cuando no se encuentra el horario
+            return res.status(404).json({ message: 'No schedule found for this month' });
+        }
+        res.status(200).json(schedule);
+    } catch (error) {
+        console.error('Error fetching shift schedule:', error);
+        res.status(500).json({ error: 'Error fetching shift schedule' });
+    }
+};
+
+
+
 module.exports = {
     saveShiftSchedule,
-    getLastShiftSchedule
+    getLastShiftSchedule,
+    getShiftScheduleByMonth
 };

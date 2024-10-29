@@ -6,12 +6,13 @@ const config = require('./config');
 const cors = require('cors');
 const authRoutes = require('./src/app/routes/authRoutes');
 const scheduleRoutes = require('./src/app/routes/scheduleRoutes');
-const shiftScheduleRoutes = require('./src/app/routes/shiftScheduleRoutes'); // Nueva ruta para shiftSchedules
-const vacationSwapRoutes = require('./src/app/routes/vacationSwapRoutes');  // Ruta correcta
-const notificationRoutes = require('./src/app/routes/notificationRoutes');  // Ruta correcta
+const shiftScheduleRoutes = require('./src/app/routes/shiftScheduleRoutes'); // Ruta para los horarios específicos de guardias
+const accumulatedShiftRoutes = require('./src/app/routes/accumulatedShiftRoutes'); // Nueva ruta para el acumulado de guardias
+const vacationSwapRoutes = require('./src/app/routes/vacationSwapRoutes');
+const notificationRoutes = require('./src/app/routes/notificationRoutes');
 const path = require('path');
 const cron = require('node-cron');
-const Schedule = require('./src/app/models/scheduleModel'); // Ruta correcta
+const Schedule = require('./src/app/models/scheduleModel');
 const { getUsersAvailability } = require('./src/app/controllers/availabilityController');
 const { getAllVacations } = require('./src/app/controllers/vacationController');
 
@@ -34,18 +35,19 @@ mongoose.connect(config.mongoUri, { useNewUrlParser: true, useUnifiedTopology: t
 // Definición de rutas
 app.use('/auth', authRoutes);
 app.use('/schedule', scheduleRoutes);
-app.use('/shift-schedule', shiftScheduleRoutes); // Nueva ruta para shiftSchedules
+app.use('/shift-schedule', shiftScheduleRoutes); // Ruta para horarios específicos de guardias
+app.use('/accumulated-shifts', accumulatedShiftRoutes); // Nueva ruta para el acumulado de guardias
 
-// Nueva ruta para el intercambio de vacaciones
-app.use('/vacation-swap', vacationSwapRoutes);  // Asegúrate de que la ruta esté bien configurada
+// Ruta para el intercambio de vacaciones
+app.use('/vacation-swap', vacationSwapRoutes);
 
-// Nueva ruta para manejar las notificaciones
-app.use('/notifications', notificationRoutes);  // Asegúrate de que la ruta esté bien configurada
+// Ruta para manejar las notificaciones
+app.use('/notifications', notificationRoutes);
 
 // Ruta para consultar disponibilidad
 app.get('/availability', getUsersAvailability);
 
-// Nueva ruta para obtener las vacaciones de todos los usuarios
+// Ruta para obtener las vacaciones de todos los usuarios
 app.get('/vacations', getAllVacations);
 
 // Servir archivos estáticos del frontend
