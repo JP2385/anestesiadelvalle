@@ -273,9 +273,18 @@ function populateShiftSelect(selectElement, user, isSaturday, guardSites) {
         return;  // Salir de la función si no hace guardias
     }
 
-    // Para usuarios que hacen guardias, poblar como los días normales
+    // Si el usuario hace guardias, agregar "P1" para los sábados y poblar otros días con guardSites
+    if (isSaturday) {
+        const option = document.createElement('option');
+        option.value = 'P1';
+        option.textContent = 'P1';
+        selectElement.appendChild(option);
+    }
+
+    // Para usuarios que hacen guardias, poblar el select con los sitios regulares de guardia
     populateRegularSites(selectElement, user, guardSites);
 }
+
 
 // Función auxiliar para poblar los sitios regulares según el perfil del usuario
 function populateRegularSites(selectElement, user, guardSites) {
