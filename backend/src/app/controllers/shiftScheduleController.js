@@ -5,7 +5,7 @@ const saveShiftSchedule = async (req, res) => {
     const { month, shiftSchedule, shiftCounts, selectConfig, printedBy } = req.body;
 
     try {
-        // Buscar si ya existe un horario para este mes y año específico
+        // Buscar si ya existe un horario para este mes específico
         let existingSchedule = await ShiftSchedule.findOne({ month });
 
         if (existingSchedule) {
@@ -34,20 +34,6 @@ const saveShiftSchedule = async (req, res) => {
     }
 };
 
-// Obtener el horario del último mes
-const getLastShiftSchedule = async (req, res) => {
-    try {
-        const lastSchedule = await ShiftSchedule.findOne().sort({ createdAt: -1 });
-        if (!lastSchedule) {
-            return res.status(404).json({ message: 'No schedule found' });
-        }
-        res.status(200).json(lastSchedule);
-    } catch (error) {
-        console.error('Error fetching last shift schedule:', error);
-        res.status(500).json({ error: 'Error fetching last shift schedule' });
-    }
-};
-
 // Obtener el horario de un mes específico
 const getShiftScheduleByMonth = async (req, res) => {
     const { yearMonth } = req.params;
@@ -55,7 +41,7 @@ const getShiftScheduleByMonth = async (req, res) => {
     try {
         const schedule = await ShiftSchedule.findOne({ month: yearMonth });
         if (!schedule) {
-            console.log("No schedule found for:", yearMonth); // Log cuando no se encuentra el horario
+            console.log("No schedule found for:", yearMonth);
             return res.status(404).json({ message: 'No schedule found for this month' });
         }
         res.status(200).json(schedule);
@@ -65,10 +51,19 @@ const getShiftScheduleByMonth = async (req, res) => {
     }
 };
 
-
+// Obtener todos los horarios de cada mes
+const getAllMonthlySchedules = async (req, res) => {
+    try {
+        const allSchedules = await ShiftSchedule.find({});
+        res.status(200).json(allSchedules);
+    } catch (error) {
+        console.error('Error al obtener todos los horarios mensuales:', error);
+        res.status(500).json({ error: 'Error al obtener todos los horarios mensuales' });
+    }
+};
 
 module.exports = {
     saveShiftSchedule,
-    getLastShiftSchedule,
-    getShiftScheduleByMonth
+    getShiftScheduleByMonth,
+    getAllMonthlySchedules
 };

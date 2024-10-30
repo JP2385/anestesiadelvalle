@@ -112,4 +112,3 @@ export function countSaturdayShifts() {
 
     return userShiftCounts; // Retornar el objeto con los conteos de guardias de "P1" en sábado por usuario
 }
-

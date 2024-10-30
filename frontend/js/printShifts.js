@@ -80,18 +80,6 @@ document.getElementById('print-shifts').addEventListener('click', async () => {
             saturdayShifts: count.saturdayShifts
         }));
 
-        // Actualizar el acumulado de guardias en el backend
-        await fetch(`${apiUrl}/accumulated-shifts`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': 'Bearer ' + localStorage.getItem('token')
-            },
-            body: JSON.stringify(shiftCountsArray)
-        });
-
-        console.log('Accumulated shift counts updated successfully.');
-
     } catch (error) {
         console.error('Error al guardar el turno o actualizar el acumulado en la base de datos:', error);
     }

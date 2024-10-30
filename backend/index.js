@@ -7,7 +7,6 @@ const cors = require('cors');
 const authRoutes = require('./src/app/routes/authRoutes');
 const scheduleRoutes = require('./src/app/routes/scheduleRoutes');
 const shiftScheduleRoutes = require('./src/app/routes/shiftScheduleRoutes'); // Ruta para los horarios específicos de guardias
-const accumulatedShiftRoutes = require('./src/app/routes/accumulatedShiftRoutes'); // Nueva ruta para el acumulado de guardias
 const vacationSwapRoutes = require('./src/app/routes/vacationSwapRoutes');
 const notificationRoutes = require('./src/app/routes/notificationRoutes');
 const path = require('path');
@@ -36,7 +35,6 @@ mongoose.connect(config.mongoUri, { useNewUrlParser: true, useUnifiedTopology: t
 app.use('/auth', authRoutes);
 app.use('/schedule', scheduleRoutes);
 app.use('/shift-schedule', shiftScheduleRoutes); // Ruta para horarios específicos de guardias
-app.use('/accumulated-shifts', accumulatedShiftRoutes); // Nueva ruta para el acumulado de guardias
 
 // Ruta para el intercambio de vacaciones
 app.use('/vacation-swap', vacationSwapRoutes);

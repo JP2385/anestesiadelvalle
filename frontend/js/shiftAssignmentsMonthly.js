@@ -1,8 +1,12 @@
 import { isAlreadyAssigned, excludeAssignedUsers, countWeekdayShifts, countWeekendShifts, countSaturdayShifts } from './shiftAssignmentsUtils.js';
 
 export function assignIm(rows, selects, isLharriagueAssignedToday, isMquirogaAssignedToday, assignedFnUser, assignedImUser, isWeekend) {
+    console.log(`\nIniciando asignación de Im para el día: ${selects[0].getAttribute('data-day')}, es fin de semana: ${isWeekend}`);
+    
     // Llamamos al conteo de guardias adecuado dependiendo de si es fin de semana o día de semana
     let userShiftCounts = isWeekend ? countWeekendShifts() : countWeekdayShifts();
+    console.log("Conteo de guardias actual para cada usuario (inicio de asignación):", userShiftCounts);
+
     const excludedUsers = new Set();
 
     // En fin de semana, obtenemos selects de los cuatro días anteriores y el día actual para excluir usuarios de asignaciones recientes
@@ -10,14 +14,14 @@ export function assignIm(rows, selects, isLharriagueAssignedToday, isMquirogaAss
 
     // Excluir usuarios que ya tienen asignaciones en el select actual (y en días anteriores si es fin de semana)
     excludeAssignedUsers(extendedSelects, excludedUsers);
+    console.log("Usuarios excluidos tras verificación de asignaciones recientes o previas:", Array.from(excludedUsers));
 
     // Verificar si ya hay un usuario asignado a Im en el día actual
     assignedImUser = isAlreadyAssigned(selects, 'Im');
-    if (!assignedImUser) {
-        // Determinar si el usuario asignado a Fn hace cardio
-        const isFnUserCardio = assignedFnUser ? assignedFnUser.dataset.cardio === 'true' : false;
+    console.log(`¿Ya hay usuario asignado a Im? ${assignedImUser ? 'Sí' : 'No'}`);
 
-        // Llamar a la función de asignación con el chequeo de cardio en función del usuario de Fn
+    if (!assignedImUser) {
+        // Llamar a la función de asignación sin necesidad de verificar si `Fn` hace cardio
         assignedImUser = assignShift(
             selects, 
             'Im', 
@@ -25,16 +29,29 @@ export function assignIm(rows, selects, isLharriagueAssignedToday, isMquirogaAss
             isMquirogaAssignedToday, 
             excludedUsers, 
             userShiftCounts, 
-            isFnUserCardio
+            false // No es necesario verificar cardio en este punto
         );
+
+        if (assignedImUser) {
+            console.log(`Asignación exitosa: Im asignado a ${assignedImUser.getAttribute('data-username')} para el día ${selects[0].getAttribute('data-day')}`);
+        } else {
+            console.log("No se pudo asignar Im tras iterar sobre los usuarios disponibles.");
+        }
+    } else {
+        console.log(`Asignación omitida: Im ya está asignado a ${assignedImUser.getAttribute('data-username')}`);
     }
 
     return assignedImUser;
 }
 
+
+
 export function assignFn(rows, selects, isLharriagueAssignedToday, isMquirogaAssignedToday, assignedImUser, assignedFnUser, isWeekend) {
-    // Seleccionamos el conteo de guardias según si es fin de semana o no
+    console.log(`\nIniciando asignación de Fn para el día: ${selects[0].getAttribute('data-day')}, es fin de semana: ${isWeekend}`);
+    
     let userShiftCounts = isWeekend ? countWeekendShifts() : countWeekdayShifts();
+    console.log("Conteo de guardias actual para cada usuario (inicio de asignación):", userShiftCounts);
+
     const excludedUsers = new Set();
 
     // En fin de semana, obtenemos selects de los cuatro días anteriores y el día actual para excluir usuarios de asignaciones recientes
@@ -42,11 +59,17 @@ export function assignFn(rows, selects, isLharriagueAssignedToday, isMquirogaAss
 
     // Excluir usuarios que ya tienen asignaciones en el select actual (y en días anteriores si es fin de semana)
     excludeAssignedUsers(extendedSelects, excludedUsers);
+    console.log("Usuarios excluidos tras verificación de asignaciones recientes o previas:", Array.from(excludedUsers));
 
     // Verificar si ya hay un usuario asignado a Fn en el día actual
     assignedFnUser = isAlreadyAssigned(selects, 'Fn');
+    console.log(`¿Ya hay usuario asignado a Fn? ${assignedFnUser ? 'Sí' : 'No'}`);
+
     if (!assignedFnUser) {
-        // Llamar a la función de asignación, sin requerir chequeo de cardio
+        // Forzar chequeo de cardio en Fn si aún no hay asignación
+        const isFnUserCardioCheck = true;
+        console.log(`¿El usuario asignado a Im hace cardio? ${assignedImUser ? assignedImUser.dataset.cardio === 'true' : 'Ninguno asignado a Im'}`);
+        
         assignedFnUser = assignShift(
             selects, 
             'Fn', 
@@ -54,12 +77,25 @@ export function assignFn(rows, selects, isLharriagueAssignedToday, isMquirogaAss
             isMquirogaAssignedToday, 
             excludedUsers, 
             userShiftCounts, 
-            false // El usuario de Fn no requiere hacer cardio
+            isFnUserCardioCheck // Fuerza el chequeo de cardio en Fn
         );
+
+        if (assignedFnUser) {
+            console.log(`Asignación exitosa: Fn asignado a ${assignedFnUser.getAttribute('data-username')} para el día ${selects[0].getAttribute('data-day')}`);
+        } else {
+            console.log("No se pudo asignar Fn tras iterar sobre los usuarios disponibles.");
+        }
+    } else {
+        console.log(`Asignación omitida: Fn ya está asignado a ${assignedFnUser.getAttribute('data-username')}`);
     }
 
     return assignedFnUser;
 }
+
+
+
+
+
 
 export function assignSaturdayP1(users) {
     const rows = document.querySelectorAll('#users-body tr');
@@ -73,13 +109,11 @@ export function assignSaturdayP1(users) {
 
     saturdays.forEach(saturdaySelect => {
         const currentDay = saturdaySelect.getAttribute('data-day');
-        console.log(`Procesando el sábado ${currentDay}`);
 
         // Verificar si ya existe una asignación de "P1" en el sábado actual
         const isP1Assigned = Array.from(document.querySelectorAll(`.shift-select[data-day="${currentDay}"]`))
             .some(select => select.value === 'P1');
         
-        console.log(`¿Ya hay un P1 asignado para el sábado ${currentDay}? ${isP1Assigned}`);
 
         if (!isP1Assigned) {
             let assigned = false; // Flag para seguimiento de asignación
@@ -89,17 +123,16 @@ export function assignSaturdayP1(users) {
                 const select = row.querySelector(`.shift-select[data-day="${currentDay}"]`);
 
                 if (select && !select.disabled && select.value === '') {
-                    console.log(`Evaluando a ${username} para el sábado ${currentDay}`);
-
+            
                     // Verificar que el usuario no tenga otra guardia en sábado en el mes
                     const hasSaturdayShift = Array.from(row.querySelectorAll('.shift-select[data-daynumber="6"]'))
                         .some(satSelect => satSelect.value !== '' && satSelect.value !== 'ND');
                     
-                    console.log(`¿${username} tiene guardia en otro sábado este mes? ${hasSaturdayShift}`);
+            
 
                     if (!hasSaturdayShift) {
                         select.value = 'P1';
-                        console.log(`Asignado P1 a ${username} para el sábado ${currentDay}.`);
+                
                         assigned = true;
                         break; // Salir del bucle una vez asignado "P1" para este sábado
                     }
@@ -228,18 +261,18 @@ function assignShift(selects, assignmentType, isLharriagueAssignedToday, isMquir
             }
 
             // Chequeo final antes de asignar, verificando todas las condiciones
-            if (select && !select.disabled && select.value === '' && shiftOption && isCardioUser) {
-                if (isLharriagueAssignedToday && username === 'mquiroga') {
-                    continue;
-                }
-                if (isMquirogaAssignedToday && username === 'lharriague') {
-                    continue;
-                }
+if (select && !select.disabled && select.value === '' && shiftOption && isCardioUser) {
+    if (isLharriagueAssignedToday && username === 'mquiroga') continue;
+    if (isMquirogaAssignedToday && username === 'lharriague') continue;
 
-                select.value = assignmentType;
-                noAssignment = false; // Se hizo una asignación, salimos del ciclo
-                return select; // Retornamos el select asignado
-            }
+    console.log(`Asignación exitosa: ${assignmentType} asignado a ${username} para el día ${day}`);
+    select.value = assignmentType;
+    noAssignment = false; // Se hizo una asignación, salimos del ciclo
+    return select; // Retornamos el select asignado
+} else if (!isCardioUser && isCardioCheck) {
+    console.log(`Usuario ${username} omitido por no cumplir el requisito de cardio.`);
+}
+
         }
 
         // Si no se ha asignado ningún usuario, incrementamos el minShifts y reintentamos
@@ -258,5 +291,3 @@ function getPreviousDay(currentDay, offset = 1) {
     date.setDate(date.getDate() - offset); // Restamos un día (o el offset dado)
     return date.toISOString().slice(0, 10); // Retornamos en formato YYYY-MM-DD
 }
-
-

@@ -142,7 +142,6 @@ export function processAndGenerateTable(users, yearSelect, monthSelect, dayAbbre
 }
 
 
-// Función principal que recorre todos los días del mes en orden cronológico
 export function assignMonthlyShiftsWithCardio(users) {
     const rows = document.querySelectorAll('#users-body tr');
     const daysInMonth = document.querySelectorAll('.shift-select[data-day]');
@@ -161,17 +160,31 @@ export function assignMonthlyShiftsWithCardio(users) {
 
         const isWeekend = (dayNumber === 5 || dayNumber === 6 || dayNumber === 0);
 
-        const isLharriagueAssignedToday = selects.some(select => select.getAttribute('data-username') === 'lharriague' && select.value !== '');
-        const isMquirogaAssignedToday = selects.some(select => select.getAttribute('data-username') === 'mquiroga' && select.value !== '');
+        let isLharriagueAssignedToday = selects.some(select => select.getAttribute('data-username') === 'lharriague' && select.value !== '');
+        let isMquirogaAssignedToday = selects.some(select => select.getAttribute('data-username') === 'mquiroga' && select.value !== '');
 
         let assignedFnUser = null;
         let assignedImUser = null;
 
         if (!isWeekend) { 
+            // Asignación de Im
             assignedImUser = assignIm(rows, selects, isLharriagueAssignedToday, isMquirogaAssignedToday, assignedFnUser, getUsernameFromRow, isWeekend);
+
+            // Actualizar las variables después de asignar Im
+            isLharriagueAssignedToday = isLharriagueAssignedToday || (assignedImUser && assignedImUser.getAttribute('data-username') === 'lharriague');
+            isMquirogaAssignedToday = isMquirogaAssignedToday || (assignedImUser && assignedImUser.getAttribute('data-username') === 'mquiroga');
+
+            // Asignación de Fn con la verificación actualizada
             assignedFnUser = assignFn(rows, selects, isLharriagueAssignedToday, isMquirogaAssignedToday, assignedImUser, getUsernameFromRow, isWeekend);
         } else { 
+            // Asignación de Im en fin de semana
             assignedImUser = assignIm(rows, selects, isLharriagueAssignedToday, isMquirogaAssignedToday, assignedFnUser, getUsernameFromRow, isWeekend);
+
+            // Actualizar las variables después de asignar Im
+            isLharriagueAssignedToday = isLharriagueAssignedToday || (assignedImUser && assignedImUser.getAttribute('data-username') === 'lharriague');
+            isMquirogaAssignedToday = isMquirogaAssignedToday || (assignedImUser && assignedImUser.getAttribute('data-username') === 'mquiroga');
+
+            // Asignación de Fn con la verificación actualizada
             assignedFnUser = assignFn(rows, selects, isLharriagueAssignedToday, isMquirogaAssignedToday, assignedImUser, getUsernameFromRow, isWeekend);
 
             if (assignedFnUser && dayNumber === 5) {
@@ -195,8 +208,8 @@ export function assignMonthlyShiftsWithCardio(users) {
     console.log('Conteo final de guardias asignadas de lunes a jueves:', userShiftCountsWeek);
     console.log('Conteo final de guardias asignadas de viernes a domingo:', userShiftCountsWeekend);
     console.log('Conteo final de guardias asignadas P1 los sábados:', saturdayCounts);
-
 }
+
 
 function assignWeekendDays(currentDay, assignedUsername, assignmentType) {
     const saturdaySelects = Array.from(document.querySelectorAll(`.shift-select[data-day="${getNextDay(currentDay, 6)}"]`));
