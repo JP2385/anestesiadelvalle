@@ -36,6 +36,10 @@ const userSchema = new Schema({
     beginningDate: {
         type: Date,
     },
+    phoneNumber: {  // Nuevo campo de número de teléfono
+        type: String,
+        required: false  // Cambia a true si deseas que sea obligatorio
+    },
     doesCardio: {
         type: Boolean,
         default: false

@@ -8,6 +8,10 @@ document.addEventListener('DOMContentLoaded', function () {
     const vacationList = document.getElementById('vacation-list');
     const addVacationButton = document.getElementById('add-vacation');
     const beginningDateElement = document.getElementById('beginningDate');
+    // Nuevo campo para el número de teléfono
+    const phoneNumberInput = document.createElement('phoneNumber');
+    // Añadirlo al contenedor del formulario en el DOM
+    beginningDateElement.parentNode.appendChild(phoneNumberInput)
     const submitButton = adminForm.querySelector('button[type="submit"]'); // Botón de envío
 
     // Obtener la lista de usuarios
@@ -78,6 +82,7 @@ document.addEventListener('DOMContentLoaded', function () {
             worksInPrivateRioNegro: document.getElementById('worksInPrivateRioNegro').checked,
             worksInCmacOnly: document.getElementById('worksInCmacOnly').checked,
             doesShifts: document.getElementById('doesShifts').checked,
+            phoneNumber: document.getElementById('phoneNumber').value, // Nuevo campo agregado
             workSchedule: {
                 monday: document.getElementById('workSchedule-monday').value,
                 tuesday: document.getElementById('workSchedule-tuesday').value,
@@ -164,6 +169,8 @@ document.addEventListener('DOMContentLoaded', function () {
 
             if (response.ok) {
                 const user = await response.json();
+                // Cargar el número de teléfono si está disponible
+                document.getElementById('phoneNumber').value = user.phoneNumber || '';
                 document.getElementById('doesCardio').checked = user.doesCardio;
                 document.getElementById('doesPediatrics').checked = user.doesPediatrics;
                 document.getElementById('doesRNM').checked = user.doesRNM;

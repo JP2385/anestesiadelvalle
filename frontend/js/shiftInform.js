@@ -1,6 +1,9 @@
 import { shiftAssignmentLabels } from './shiftLabels.js';
+import { userRealNames } from './userLabels.js'; // Importar nombres reales
 
-document.addEventListener('DOMContentLoaded', () => {
+let userPhoneNumbers = {};
+
+document.addEventListener('DOMContentLoaded', async () => {
     const apiUrl = window.location.hostname === 'localhost' ? 'http://localhost:3000' : 'https://adv-37d5b772f5fd.herokuapp.com';
     const yearSelect = document.getElementById('year-select');
     const monthSelect = document.getElementById('month-select');
@@ -10,6 +13,23 @@ document.addEventListener('DOMContentLoaded', () => {
     const currentYear = new Date().getFullYear();
     const currentMonth = new Date().getMonth();
 
+    // Fetch de usuarios para obtener números de teléfono
+    try {
+        const response = await fetch(`${apiUrl}/auth/users`, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': 'Bearer ' + localStorage.getItem('token')
+            }
+        });
+        const users = await response.json();
+        users.forEach(user => {
+            userPhoneNumbers[user.username] = user.phoneNumber; // Guardar los números de teléfono en el mapa
+        });
+        console.log("User phone numbers loaded:", userPhoneNumbers);
+    } catch (error) {
+        console.error('Error al obtener usuarios:', error);
+    }
 
     // Llenar el select del año
     for (let year = currentYear - 2; year <= currentYear + 2; year++) {
@@ -57,83 +77,69 @@ document.addEventListener('DOMContentLoaded', () => {
             });
     }
 
-function generateCalendar(year, month, site, shiftSchedule) {
-    scheduleTable.innerHTML = ''; // Limpiar tabla
-    const startDate = new Date(year, month, 1);
-    const daysInMonth = new Date(year, parseInt(month) + 1, 0).getDate();
-    const firstDayOfWeek = startDate.getDay() === 0 ? 6 : startDate.getDay() - 1;
-
-    console.log(`Generando calendario para ${year}-${String(Number(month) + 1).padStart(2, '0')}, Último día: ${daysInMonth}`);
-
-
-
-    let currentRow = scheduleTable.insertRow();
-    const daysOfWeek = ['Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado', 'Domingo'];
-
-    // Agregar encabezados de los días
-    daysOfWeek.forEach(day => {
-        const th = document.createElement('th');
-        th.textContent = day;
-        currentRow.appendChild(th);
-    });
-
-    currentRow = scheduleTable.insertRow();
-
-    // Rellenar primeros días vacíos hasta el primer día de la semana
-    for (let i = 0; i < firstDayOfWeek; i++) {
-        currentRow.insertCell();
-    }
-
-    // Rellenar calendario con días y asignaciones, sin exceder el último día real del mes
-    for (let day = 1; day <= daysInMonth; day++) { // Cambiado para usar daysInMonth
-        const cell = currentRow.insertCell();
-        const date = `${year}-${String(Number(month) + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
-        
-        // Agregar el encabezado del día
-        const dateDiv = document.createElement('div');
-        dateDiv.classList.add('date');
-        dateDiv.textContent = `${daysOfWeek[(firstDayOfWeek + day - 1) % 7]} ${day}`;
-        cell.appendChild(dateDiv);
-
-        // Verificar día y fecha en cada celda
-        console.log(`Agregando celda para: ${date}`);
-
-        // Filtrar las asignaciones para la fecha y el sitio
-        const assignmentsForDay = shiftSchedule
-            .flatMap(user => 
-                user.shifts
-                    .filter(shift => 
-                        shift.day === date && 
-                        (site === 'all' && shift.assignment !== 'V' || shift.assignment === site)
-                    )
-                    .map(shift => ({
-                        username: user.username,
-                        assignment: shiftAssignmentLabels[shift.assignment] || shift.assignment
-                    }))
-            );
-
-        console.log(`Assignments for ${date}:`, assignmentsForDay);
-
-        // Mostrar asignaciones
-        const assignmentsDiv = document.createElement('div');
-        assignmentsDiv.classList.add('assignments');
-        assignmentsForDay.forEach(assignment => {
-            const assignmentText = document.createElement('p');
-
-            // Mostrar solo usuario o usuario + sitio dependiendo de la selección
-            assignmentText.textContent = site === 'all'
-                ? `${assignment.username} - ${assignment.assignment}` // Mostrar usuario y sitio
-                : assignment.username; // Solo mostrar usuario
-            assignmentsDiv.appendChild(assignmentText);
+    function generateCalendar(year, month, site, shiftSchedule) {
+        scheduleTable.innerHTML = ''; // Limpiar tabla
+        const startDate = new Date(year, month, 1);
+        const daysInMonth = new Date(year, parseInt(month) + 1, 0).getDate();
+        const firstDayOfWeek = startDate.getDay() === 0 ? 6 : startDate.getDay() - 1;
+    
+        let currentRow = scheduleTable.insertRow();
+        const daysOfWeek = ['Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado', 'Domingo'];
+    
+        // Agregar encabezados de los días
+        daysOfWeek.forEach(day => {
+            const th = document.createElement('th');
+            th.textContent = day;
+            currentRow.appendChild(th);
         });
-        cell.appendChild(assignmentsDiv);
-
-        // Pasar a la siguiente fila al final de la semana
-        if ((firstDayOfWeek + day) % 7 === 0) {
-            currentRow = scheduleTable.insertRow();
+    
+        currentRow = scheduleTable.insertRow();
+    
+        for (let day = 1; day <= daysInMonth; day++) {
+            const cell = currentRow.insertCell();
+            const date = `${year}-${String(Number(month) + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+            
+            const dateDiv = document.createElement('div');
+            dateDiv.classList.add('date');
+            dateDiv.textContent = `${daysOfWeek[(firstDayOfWeek + day - 1) % 7]} ${day}`;
+            cell.appendChild(dateDiv);
+    
+            const assignmentsForDay = shiftSchedule
+                .flatMap(user => 
+                    user.shifts
+                        .filter(shift => 
+                            shift.day === date && 
+                            (site === 'all' && shift.assignment !== 'V' || shift.assignment === site)
+                        )
+                        .map(shift => ({
+                            username: user.username,
+                            assignment: shiftAssignmentLabels[shift.assignment] || shift.assignment
+                        }))
+                );
+    
+            const assignmentsDiv = document.createElement('div');
+            assignmentsDiv.classList.add('assignments');
+            assignmentsForDay.forEach(assignment => {
+                const assignmentText = document.createElement('p');
+                const phoneNumber = userPhoneNumbers[assignment.username] || 'No phone'; 
+    
+                // Usar el nombre real del usuario o el username si no está en userRealNames
+                const realName = userRealNames[assignment.username] || assignment.username;
+    
+                // Formato de salida con nombre real y número de teléfono
+                assignmentText.textContent = site === 'all'
+                    ? `${realName} Tel: ${phoneNumber} - ${assignment.assignment}`
+                    : `${realName} Tel: ${phoneNumber}`;
+                    
+                assignmentsDiv.appendChild(assignmentText);
+            });
+            cell.appendChild(assignmentsDiv);
+    
+            if ((firstDayOfWeek + day) % 7 === 0) {
+                currentRow = scheduleTable.insertRow();
+            }
         }
     }
-}
 
     
 
