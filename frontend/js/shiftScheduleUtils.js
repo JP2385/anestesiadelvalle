@@ -1,6 +1,6 @@
 import { assignIm, assignFn, assignWeekendIfLtotisAssigned, assignSaturdayP1} from './shiftAssignmentsMonthly.js';
 import { countWeekdayShifts, countWeekendShifts, countSaturdayShifts } from './shiftAssignmentsUtils.js';
-
+import { calculateAccumulatedShiftCounts} from './shiftCountTable.js';
 
 // Función auxiliar para obtener el número de días de un mes y año
 export function getDaysInMonth(year, month) {
@@ -118,7 +118,7 @@ function generateTable(users, yearSelect, monthSelect, dayAbbreviations, guardSi
 
     // Realizar el recuento de guardias asignadas después de aplicar las asignaciones por defecto
     const shiftCounts = countWeekdayShifts();
-    console.log('Conteo de guardias asignadas:', shiftCounts);
+    console.log('Conteo de guardias luego de las asignaciones por defecto:', shiftCounts);
 }
 
 
@@ -142,9 +142,13 @@ export function processAndGenerateTable(users, yearSelect, monthSelect, dayAbbre
 }
 
 
-export function assignMonthlyShiftsWithCardio(users) {
+export async function assignMonthlyShiftsWithCardio(users, selectedYear, selectedMonth) {
     const rows = document.querySelectorAll('#users-body tr');
     const daysInMonth = document.querySelectorAll('.shift-select[data-day]');
+
+    // Obtener los acumulados previos para el año y mes seleccionados, excluyendo el mes actual y los posteriores
+    const accumulatedCounts = await calculateAccumulatedShiftCounts(selectedYear, selectedMonth);
+    console.log("Conteo de acumulados previo para cada usuario:", accumulatedCounts);
 
     // Asignar automáticamente a mmelo los mismos días si ltotis tiene asignaciones de fin de semana
     assignWeekendIfLtotisAssigned(users);
@@ -155,6 +159,7 @@ export function assignMonthlyShiftsWithCardio(users) {
     )).sort();
 
     uniqueDays.forEach(currentDay => {
+        console.log(`Asignando turnos para el día: ${currentDay}`);
         const selects = Array.from(document.querySelectorAll(`select[data-day="${currentDay}"]`));
         const dayNumber = parseInt(selects[0].getAttribute('data-daynumber'), 10);
 
@@ -168,24 +173,24 @@ export function assignMonthlyShiftsWithCardio(users) {
 
         if (!isWeekend) { 
             // Asignación de Im
-            assignedImUser = assignIm(rows, selects, isLharriagueAssignedToday, isMquirogaAssignedToday, assignedFnUser, getUsernameFromRow, isWeekend);
+            assignedImUser = assignIm(rows, selects, isLharriagueAssignedToday, isMquirogaAssignedToday, assignedFnUser, getUsernameFromRow, isWeekend, accumulatedCounts);
 
             // Actualizar las variables después de asignar Im
             isLharriagueAssignedToday = isLharriagueAssignedToday || (assignedImUser && assignedImUser.getAttribute('data-username') === 'lharriague');
             isMquirogaAssignedToday = isMquirogaAssignedToday || (assignedImUser && assignedImUser.getAttribute('data-username') === 'mquiroga');
 
             // Asignación de Fn con la verificación actualizada
-            assignedFnUser = assignFn(rows, selects, isLharriagueAssignedToday, isMquirogaAssignedToday, assignedImUser, getUsernameFromRow, isWeekend);
+            assignedFnUser = assignFn(rows, selects, isLharriagueAssignedToday, isMquirogaAssignedToday, assignedImUser, getUsernameFromRow, isWeekend, accumulatedCounts);
         } else { 
             // Asignación de Im en fin de semana
-            assignedImUser = assignIm(rows, selects, isLharriagueAssignedToday, isMquirogaAssignedToday, assignedFnUser, getUsernameFromRow, isWeekend);
+            assignedImUser = assignIm(rows, selects, isLharriagueAssignedToday, isMquirogaAssignedToday, assignedFnUser, getUsernameFromRow, isWeekend, accumulatedCounts);
 
             // Actualizar las variables después de asignar Im
             isLharriagueAssignedToday = isLharriagueAssignedToday || (assignedImUser && assignedImUser.getAttribute('data-username') === 'lharriague');
             isMquirogaAssignedToday = isMquirogaAssignedToday || (assignedImUser && assignedImUser.getAttribute('data-username') === 'mquiroga');
 
             // Asignación de Fn con la verificación actualizada
-            assignedFnUser = assignFn(rows, selects, isLharriagueAssignedToday, isMquirogaAssignedToday, assignedImUser, getUsernameFromRow, isWeekend);
+            assignedFnUser = assignFn(rows, selects, isLharriagueAssignedToday, isMquirogaAssignedToday, assignedImUser, getUsernameFromRow, isWeekend, accumulatedCounts);
 
             if (assignedFnUser && dayNumber === 5) {
                 const assignedUsername = assignedFnUser.getAttribute('data-username');
@@ -200,7 +205,7 @@ export function assignMonthlyShiftsWithCardio(users) {
     });
 
     // Llamar a la función assignSaturdayP1 después de asignar las guardias regulares
-    assignSaturdayP1(users);
+    assignSaturdayP1(users, accumulatedCounts);
 
     const userShiftCountsWeek = countWeekdayShifts();
     const userShiftCountsWeekend = countWeekendShifts();
@@ -209,7 +214,6 @@ export function assignMonthlyShiftsWithCardio(users) {
     console.log('Conteo final de guardias asignadas de viernes a domingo:', userShiftCountsWeekend);
     console.log('Conteo final de guardias asignadas P1 los sábados:', saturdayCounts);
 }
-
 
 function assignWeekendDays(currentDay, assignedUsername, assignmentType) {
     const saturdaySelects = Array.from(document.querySelectorAll(`.shift-select[data-day="${getNextDay(currentDay, 6)}"]`));
@@ -234,7 +238,6 @@ function getNextDay(currentDay, dayOfWeek) {
     }
     return date.toISOString().slice(0, 10); // Retornar en formato YYYY-MM-DD
 }
-
 
 // Función para poblar los selects basados en las reglas del usuario
 function populateShiftSelect(selectElement, user, isSaturday, guardSites) {
@@ -284,7 +287,6 @@ function populateShiftSelect(selectElement, user, isSaturday, guardSites) {
     // Para usuarios que hacen guardias, poblar el select con los sitios regulares de guardia
     populateRegularSites(selectElement, user, guardSites);
 }
-
 
 // Función auxiliar para poblar los sitios regulares según el perfil del usuario
 function populateRegularSites(selectElement, user, guardSites) {

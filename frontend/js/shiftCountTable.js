@@ -1,5 +1,4 @@
-// Obtener el acumulado sumando todos los conteos de guardias mensuales para el año seleccionado, excluyendo el mes actual
-async function calculateAccumulatedShiftCounts(selectedYear, selectedMonth) {
+export async function calculateAccumulatedShiftCounts(selectedYear, selectedMonth) {
     const apiUrl = window.location.hostname === 'localhost' ? 'http://localhost:3000' : 'https://adv-37d5b772f5fd.herokuapp.com';
     try {
         const response = await fetch(`${apiUrl}/shift-schedule/all-monthly-schedules`, {
@@ -15,15 +14,21 @@ async function calculateAccumulatedShiftCounts(selectedYear, selectedMonth) {
         // Inicializar el objeto acumulado para cada usuario
         const accumulatedCounts = {};
 
-        // Filtrar los horarios para incluir solo los del año seleccionado y excluir el mes actual
+        // Filtrar los horarios para incluir solo los registros anteriores al año y mes seleccionados
         monthlySchedules.forEach(schedule => {
-            const [year, month] = schedule.month.split('-');
-            if (parseInt(year) === selectedYear && parseInt(month) !== selectedMonth + 1) { // `selectedMonth + 1` porque `selectedMonth` es índice
+            const [year, month] = schedule.month.split('-').map(Number);
+
+            // Condiciones para acumular: años anteriores o meses anteriores del mismo año
+            if (year < selectedYear || (year === selectedYear && month < selectedMonth + 1)) {
                 schedule.shiftCounts.forEach(count => {
-                    const { username, weekdayShifts, weekendShifts, saturdayShifts } = count;
+                    const { username, weekdayShifts = 0, weekendShifts = 0, saturdayShifts = 0 } = count;
+
+                    // Inicializar acumulado si no existe
                     if (!accumulatedCounts[username]) {
                         accumulatedCounts[username] = { week: 0, weekend: 0, saturday: 0 };
                     }
+
+                    // Acumular valores
                     accumulatedCounts[username].week += weekdayShifts;
                     accumulatedCounts[username].weekend += weekendShifts;
                     accumulatedCounts[username].saturday += saturdayShifts;
@@ -37,6 +42,7 @@ async function calculateAccumulatedShiftCounts(selectedYear, selectedMonth) {
         return {};
     }
 }
+
 
 // Actualizar la tabla de conteo de guardias, incluyendo acumulados
 export async function updateShiftCountsTableWithAccumulated(weekCounts, weekendCounts, saturdayCounts) {

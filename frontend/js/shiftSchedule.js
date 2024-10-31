@@ -60,16 +60,27 @@ document.addEventListener('DOMContentLoaded', async function () {
         });
     }
 
-    assignButton.addEventListener('click', () => {
-        fetchUsers(apiUrl, (users) => {
-            assignMonthlyShiftsWithCardio(users);
-
+    assignButton.addEventListener('click', async () => {
+        const yearSelect = document.getElementById('year-select');
+        const monthSelect = document.getElementById('month-select');
+        const selectedYear = parseInt(yearSelect.value);
+        const selectedMonth = parseInt(monthSelect.value);
+    
+        fetchUsers(apiUrl, async (users) => {
+            // Llamar a assignMonthlyShiftsWithCardio con selectedYear y selectedMonth
+            await assignMonthlyShiftsWithCardio(users, selectedYear, selectedMonth);
+    
+            // Ahora contamos las asignaciones realizadas en el DOM
             const weekCounts = countWeekdayShifts();
             const weekendCounts = countWeekendShifts();
             const saturdayCounts = countSaturdayShifts();
-            updateShiftCountsTableWithAccumulated(weekCounts, weekendCounts, saturdayCounts);
+    
+            // Llamamos a la función para actualizar la tabla con los acumulados
+            await updateShiftCountsTableWithAccumulated(weekCounts, weekendCounts, saturdayCounts);
         });
     });
+    
+    
 
     for (let year = 2020; year <= 2030; year++) {
         const option = document.createElement('option');
