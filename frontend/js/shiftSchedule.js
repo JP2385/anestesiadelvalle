@@ -2,6 +2,7 @@ import { processAndGenerateTable, fetchUsers, assignMonthlyShiftsWithCardio } fr
 import { countWeekdayShifts, countWeekendShifts, countSaturdayShifts } from './shiftAssignmentsUtils.js';
 import { updateShiftCountsTableWithAccumulated } from './shiftCountTable.js';
 
+
 document.addEventListener('DOMContentLoaded', async function () {
     const apiUrl = window.location.hostname === 'localhost' ? 'http://localhost:3000' : 'https://adv-37d5b772f5fd.herokuapp.com';
 
@@ -57,6 +58,7 @@ document.addEventListener('DOMContentLoaded', async function () {
             const weekendCounts = countWeekendShifts();
             const saturdayCounts = countSaturdayShifts();
             updateShiftCountsTableWithAccumulated(weekCounts, weekendCounts, saturdayCounts);
+
         });
     }
 

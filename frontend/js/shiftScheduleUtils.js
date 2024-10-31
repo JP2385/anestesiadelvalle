@@ -1,6 +1,7 @@
 import { assignIm, assignFn, assignWeekendIfLtotisAssigned, assignSaturdayP1} from './shiftAssignmentsMonthly.js';
 import { countWeekdayShifts, countWeekendShifts, countSaturdayShifts } from './shiftAssignmentsUtils.js';
 import { calculateAccumulatedShiftCounts} from './shiftCountTable.js';
+import { fetchLastDayAssignments} from './shiftLastDayAssignments.js';
 
 // Función auxiliar para obtener el número de días de un mes y año
 export function getDaysInMonth(year, month) {
@@ -146,14 +147,12 @@ export async function assignMonthlyShiftsWithCardio(users, selectedYear, selecte
     const rows = document.querySelectorAll('#users-body tr');
     const daysInMonth = document.querySelectorAll('.shift-select[data-day]');
 
-    // Obtener los acumulados previos para el año y mes seleccionados, excluyendo el mes actual y los posteriores
+    // Obtener acumulados previos y asignaciones del último día del mes anterior
     const accumulatedCounts = await calculateAccumulatedShiftCounts(selectedYear, selectedMonth);
     console.log("Conteo de acumulados previo para cada usuario:", accumulatedCounts);
+    const lastDayAssignments = await fetchLastDayAssignments(selectedYear, selectedMonth);
+    console.log("Asignaciones del último día:", lastDayAssignments);
 
-    // Asignar automáticamente a mmelo los mismos días si ltotis tiene asignaciones de fin de semana
-    assignWeekendIfLtotisAssigned(users);
-
-    const getUsernameFromRow = (row) => row.cells[0].textContent.trim();
     const uniqueDays = Array.from(new Set(Array.from(daysInMonth)
         .map(select => select.getAttribute('data-day'))
     )).sort();
@@ -162,9 +161,118 @@ export async function assignMonthlyShiftsWithCardio(users, selectedYear, selecte
         console.log(`Asignando turnos para el día: ${currentDay}`);
         const selects = Array.from(document.querySelectorAll(`select[data-day="${currentDay}"]`));
         const dayNumber = parseInt(selects[0].getAttribute('data-daynumber'), 10);
-
         const isWeekend = (dayNumber === 5 || dayNumber === 6 || dayNumber === 0);
 
+        // Verificar si es el primer día del mes y aplicar replicación de turnos
+        // Bloque para el primer día del mes
+       // Bloque para el primer día del mes
+const dayOfMonth = parseInt(currentDay.split('-')[2]);
+if (dayOfMonth === 1 && lastDayAssignments.length > 0) {
+    console.log(`Es el primer día del mes (${currentDay}). Aplicando replicación de turnos u omisiones según corresponda.`);
+    
+    // Lista de usuarios a omitir en la asignación regular
+    const usersToExclude = [];
+
+    selects.forEach(select => {
+        const username = select.getAttribute('data-username');
+        const lastAssignment = lastDayAssignments.find(assign => assign.username === username);
+
+        if (lastAssignment) {
+            const [year, month, day] = lastAssignment.day.split('-').map(Number);
+            const lastAssignmentDate = new Date(Date.UTC(year, month - 1, day));
+            const lastDayOfWeek = lastAssignmentDate.getUTCDay();
+
+            console.log(`Evaluando asignación del último día para ${username}: ${JSON.stringify(lastAssignment)}`);
+            console.log(`Día de la semana para el último día (${lastAssignment.day}): ${lastDayOfWeek} (0=Domingo, 6=Sábado)`);
+
+            if (lastDayOfWeek === 5 || lastDayOfWeek === 6) {
+                // Si el último día fue viernes o sábado, replicar asignación de Im o Fn
+                if (lastAssignment.assignment === "Im" || lastAssignment.assignment === "Fn") {
+                    select.value = lastAssignment.assignment;
+                    console.log(`Replicando guardia de ${username} para ${currentDay} con turno ${lastAssignment.assignment}.`);
+                }
+            } else if (lastDayOfWeek >= 0 && lastDayOfWeek <= 4) {
+                // Si el último día fue de domingo a jueves, añadir a la lista de exclusión
+                usersToExclude.push(username);
+                console.log(`Usuario ${username} será excluido de la asignación regular en ${currentDay} por haber sido asignado el último día del mes anterior.`);
+            }
+        } else {
+            console.log(`No se encontró asignación del último día del mes anterior para ${username}.`);
+        }
+    });
+
+    // Si el último día fue de domingo a jueves, omitimos la replicación y procedemos con la asignación regular excluyendo usuarios
+    if (usersToExclude.length > 0) {
+        console.log(`Aplicando asignación regular en ${currentDay}, excluyendo a los usuarios:`, usersToExclude);
+        
+        // Lógica de asignación regular excluyendo a los usuarios que estuvieron asignados el día anterior
+        let isLharriagueAssignedToday = selects.some(select => select.getAttribute('data-username') === 'lharriague' && select.value !== '');
+        let isMquirogaAssignedToday = selects.some(select => select.getAttribute('data-username') === 'mquiroga' && select.value !== '');
+
+        let assignedFnUser = null;
+        let assignedImUser = null;
+
+        // Aplicar la lógica de asignación de Im, excluyendo usuarios asignados el día anterior
+        assignedImUser = assignIm(
+            rows,
+            selects.filter(select => !usersToExclude.includes(select.getAttribute('data-username'))),
+            isLharriagueAssignedToday,
+            isMquirogaAssignedToday,
+            assignedFnUser,
+            assignedImUser,
+            isWeekend,
+            accumulatedCounts,
+            lastDayAssignments
+        );
+
+        // Actualizar los estados de asignación de lharriague y mquiroga
+        isLharriagueAssignedToday = isLharriagueAssignedToday || (assignedImUser && assignedImUser.getAttribute('data-username') === 'lharriague');
+        isMquirogaAssignedToday = isMquirogaAssignedToday || (assignedImUser && assignedImUser.getAttribute('data-username') === 'mquiroga');
+
+        // Aplicar la lógica de asignación de Fn, excluyendo usuarios asignados el día anterior
+        assignedFnUser = assignFn(
+            rows,
+            selects.filter(select => !usersToExclude.includes(select.getAttribute('data-username'))),
+            isLharriagueAssignedToday,
+            isMquirogaAssignedToday,
+            assignedImUser,
+            assignedFnUser,
+            isWeekend,
+            accumulatedCounts,
+            lastDayAssignments
+        );
+    }
+
+    // Finalizamos este bloque y pasamos al siguiente día
+    return;
+}
+
+// Bloque para replicar asignación del sábado en domingo
+const dayOfWeek = new Date(currentDay).getUTCDay();
+if (dayOfWeek === 0) { // 0 representa el domingo
+    console.log(`Es domingo (${currentDay}). Verificando asignaciones del sábado anterior.`);
+    
+    const saturday = getPreviousDay(currentDay, 1); // Obtener el sábado anterior
+    selects.forEach(select => {
+        const username = select.getAttribute('data-username');
+        const saturdaySelect = document.querySelector(`.shift-select[data-day="${saturday}"][data-username="${username}"]`);
+        
+        if (saturdaySelect && saturdaySelect.value !== '' && !["V", "ND", "P1", "Ce", "HH", "CM", "Cp", "Al", "Jb"].includes(saturdaySelect.value)) {
+            select.value = saturdaySelect.value;
+            console.log(`Replicando guardia de ${username} del sábado ${saturday} para el domingo ${currentDay} con turno ${saturdaySelect.value}.`);
+        } else {
+            console.log(`No se encontró asignación válida para ${username} el sábado anterior (${saturday}) o es una asignación no válida.`);
+        }
+    });
+    return;
+}
+
+// Resto de la lógica de asignación para los días regulares del mes
+
+        
+        
+        
+        // Lógica de asignación regular
         let isLharriagueAssignedToday = selects.some(select => select.getAttribute('data-username') === 'lharriague' && select.value !== '');
         let isMquirogaAssignedToday = selects.some(select => select.getAttribute('data-username') === 'mquiroga' && select.value !== '');
 
@@ -172,25 +280,19 @@ export async function assignMonthlyShiftsWithCardio(users, selectedYear, selecte
         let assignedImUser = null;
 
         if (!isWeekend) { 
-            // Asignación de Im
-            assignedImUser = assignIm(rows, selects, isLharriagueAssignedToday, isMquirogaAssignedToday, assignedFnUser, getUsernameFromRow, isWeekend, accumulatedCounts);
+            assignedImUser = assignIm(rows, selects, isLharriagueAssignedToday, isMquirogaAssignedToday, assignedFnUser, assignedImUser, isWeekend, accumulatedCounts, lastDayAssignments);
 
-            // Actualizar las variables después de asignar Im
             isLharriagueAssignedToday = isLharriagueAssignedToday || (assignedImUser && assignedImUser.getAttribute('data-username') === 'lharriague');
             isMquirogaAssignedToday = isMquirogaAssignedToday || (assignedImUser && assignedImUser.getAttribute('data-username') === 'mquiroga');
 
-            // Asignación de Fn con la verificación actualizada
-            assignedFnUser = assignFn(rows, selects, isLharriagueAssignedToday, isMquirogaAssignedToday, assignedImUser, getUsernameFromRow, isWeekend, accumulatedCounts);
+            assignedFnUser = assignFn(rows, selects, isLharriagueAssignedToday, isMquirogaAssignedToday, assignedImUser, assignedFnUser, isWeekend, accumulatedCounts, lastDayAssignments);
         } else { 
-            // Asignación de Im en fin de semana
-            assignedImUser = assignIm(rows, selects, isLharriagueAssignedToday, isMquirogaAssignedToday, assignedFnUser, getUsernameFromRow, isWeekend, accumulatedCounts);
+            assignedImUser = assignIm(rows, selects, isLharriagueAssignedToday, isMquirogaAssignedToday, assignedFnUser, assignedImUser, isWeekend, accumulatedCounts, lastDayAssignments);
 
-            // Actualizar las variables después de asignar Im
             isLharriagueAssignedToday = isLharriagueAssignedToday || (assignedImUser && assignedImUser.getAttribute('data-username') === 'lharriague');
             isMquirogaAssignedToday = isMquirogaAssignedToday || (assignedImUser && assignedImUser.getAttribute('data-username') === 'mquiroga');
 
-            // Asignación de Fn con la verificación actualizada
-            assignedFnUser = assignFn(rows, selects, isLharriagueAssignedToday, isMquirogaAssignedToday, assignedImUser, getUsernameFromRow, isWeekend, accumulatedCounts);
+            assignedFnUser = assignFn(rows, selects, isLharriagueAssignedToday, isMquirogaAssignedToday, assignedImUser, assignedFnUser, isWeekend, accumulatedCounts, lastDayAssignments);
 
             if (assignedFnUser && dayNumber === 5) {
                 const assignedUsername = assignedFnUser.getAttribute('data-username');
@@ -204,7 +306,6 @@ export async function assignMonthlyShiftsWithCardio(users, selectedYear, selecte
         }
     });
 
-    // Llamar a la función assignSaturdayP1 después de asignar las guardias regulares
     assignSaturdayP1(users, accumulatedCounts);
 
     const userShiftCountsWeek = countWeekdayShifts();
@@ -214,6 +315,7 @@ export async function assignMonthlyShiftsWithCardio(users, selectedYear, selecte
     console.log('Conteo final de guardias asignadas de viernes a domingo:', userShiftCountsWeekend);
     console.log('Conteo final de guardias asignadas P1 los sábados:', saturdayCounts);
 }
+
 
 function assignWeekendDays(currentDay, assignedUsername, assignmentType) {
     const saturdaySelects = Array.from(document.querySelectorAll(`.shift-select[data-day="${getNextDay(currentDay, 6)}"]`));
@@ -372,6 +474,13 @@ function applyDefaultAssignments(usersBody) {
             }
         });
     });
+}
+
+function getPreviousDay(currentDay, offset = 1) {
+    const [year, month, day] = currentDay.split('-').map(Number);
+    const date = new Date(year, month - 1, day);
+    date.setDate(date.getDate() - offset); // Restamos un día (o el offset dado)
+    return date.toISOString().slice(0, 10); // Retornamos en formato YYYY-MM-DD
 }
 
 
