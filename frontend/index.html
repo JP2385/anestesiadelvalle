@@ -23,6 +23,7 @@
     <script src="js/menu.js" defer></script>
     <script src="js/nav.js" defer></script>
     <script src="js/weekly-schedule-individualized.js" defer></script>
+    <script type="module" src="js/shiftScheduleIndividualized.js" defer></script>
     <script src="js/vacationInformIndividualized.js" defer></script>
     <script type="module" src="js/notifications.js"></script>
     <script src="js/pwa-install.js" defer></script>
@@ -43,7 +44,8 @@
         </div>
     </header>
     <nav>
-        <button onclick="showSection('programacion')">Programación</button>
+        <button onclick="showSection('programacion')">Programacion plantas</button>
+        <button onclick="showSection('guardias')">Programacion guardias</button>
         <button onclick="showSection('vacaciones')">Vacaciones</button>
         <button onclick="showSection('facturacion')">Facturación y Nomenclado</button>
         <button onclick="showSection('liquidaciones')">Liquidaciones e Ingresos</button>
@@ -61,6 +63,12 @@
             <!-- <button onclick="openFile('https://docs.google.com/spreadsheets/d/18tNvZEY2VWkf3m5V7UnT1-yCWYDVAp6GggHg9hvsP0A/edit?usp=sharing')">Programación Semanal</button> -->
             <button onclick="openFile('https://docs.google.com/spreadsheets/d/1IIAo4YHyBavQmA7iN3xVwhW9NncDwYU-3PpnL81d4TE/edit?usp=sharing')">Vacaciones y Guardias 2024</button>
             <button onclick="openFile('https://docs.google.com/spreadsheets/d/1CBU7nXGDil2BPH5Ow2KOA7YgT9-LyGmtJSqBaOOmwng/edit?usp=sharing')">Vacaciones y Guardias 2025</button>
+        </section>
+        <section id="guardias" class="content-section">
+            <h3>Tus guardias para este mes son:</h3>
+            <div id="shifts-assignments"></div>
+            <a href=""><button>Cronograma mensual</button></a>
+            <!-- <a href="shiftSchedule.html"><button>Programación de guardias</button></a> -->
         </section>
         <section id="vacaciones" class="content-section">
         <h3>Tus próximos períodos de vacaciones son:</h3>
