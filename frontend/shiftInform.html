@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cronograma de guardias</title>
+    <script type="module" src="js/shiftInform.js" defer></script>
+</head>
+<body>
+    <header>
+        <h1>Cronograma de guardias</h1>
+    </header>
+    <main>
+        <section class="filters">
+            <!-- Selector de año -->
+            <label for="year-select">Año:</label>
+            <select id="year-select">
+                <!-- Opciones se llenarán con JavaScript -->
+            </select>
+
+            <!-- Selector de mes -->
+            <label for="month-select">Mes:</label>
+            <select id="month-select">
+                <!-- Opciones se llenarán con JavaScript -->
+            </select>
+
+            <!-- Selector de sitios de guardia -->
+            <label for="site-select">Sitio de guardia:</label>
+            <select id="site-select">
+                <option value="all">Todos</option>
+                <!-- Agregar más opciones si es necesario -->
+            </select>
+        </section>
+
+        <!-- Tabla de cronograma -->
+        <section class="schedule">
+            <table id="schedule-table">
+                <!-- Tabla generada dinámicamente -->
+            </table>
+        </section>
+    </main>
+</body>
+</html>
