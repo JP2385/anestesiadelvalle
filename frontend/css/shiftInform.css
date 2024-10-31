@@ -1,0 +1,17 @@
+.date-header {
+    font-weight: bold;
+    color: white;
+    background-color: #0056b3;
+    padding: 5px;
+    text-align: center;
+    border-radius: 4px;
+}
+
+.empty-cell {
+    background-color: #f5f5f5; /* Gris muy claro */
+    color: #c0c0c0; /* Texto gris claro */
+    text-align: center;
+    padding: 5px;
+    border-radius: 4px;
+}
+
