@@ -109,15 +109,18 @@ function generateShiftList(userShifts) {
 // Formatear fecha para la lista de guardias
 function formatDate(dateString) {
     const date = new Date(dateString);
-    
+
     date.setMinutes(date.getMinutes() + date.getTimezoneOffset()); // Compensar zona horaria
-    
+
     const options = { weekday: 'long', day: 'numeric', month: 'long' };
     let formattedDate = date.toLocaleDateString('es-ES', options);
 
     formattedDate = formattedDate.charAt(0).toUpperCase() + formattedDate.slice(1);
-    return formattedDate.replace(/,\s*/g, '').replace(' de ', ' de ');
+
+    // Quitar la coma y asegurar el espacio después del día de la semana
+    return formattedDate.replace(',', '').replace(/(\w+)(\s)(\d)/, '$1 $3').replace(' de ', ' de ');
 }
+
 
 // Formatear el timestamp para el mensaje de generación
 function formatTimestamp(timestamp) {
