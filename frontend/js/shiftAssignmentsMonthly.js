@@ -179,11 +179,17 @@ export function assignWeekendIfLtotisAssigned(users) {
 
 
 function assignShift(selects, assignmentType, isLharriagueAssignedToday, isMquirogaAssignedToday, userShiftCounts, isCardioCheck, isWeekend) {
-    let minShifts = Math.min(...Object.values(userShiftCounts)); // Obtener el número mínimo de guardias
+    let minShifts = Math.min(...Object.values(userShiftCounts).filter(count => count > 0));
+    const maxShifts = calculateMaxShifts(userShiftCounts); // Ajuste de maxShifts como el valor más común en userShiftCounts
     let noAssignment = true; // Para rastrear si se hizo una asignación
-    console.log(`\nIniciando asignación para ${assignmentType} con mínimo de guardias: ${minShifts}`);
+    let ignoreRestrictions = false; // Indicador para ignorar restricciones cuando se supera maxShifts
 
-    // Intentar asignar hasta encontrar una asignación válida
+    console.log(`\nIniciando asignación para ${assignmentType}`);
+    console.log(`minShifts al inicio: ${minShifts}`);
+    console.log(`maxShifts al inicio: ${maxShifts}`);
+    console.log(`¿Es fin de semana? ${isWeekend}`);
+    console.log(`Chequeo de cardio para asignación: ${isCardioCheck}`);
+
     while (noAssignment) {
         for (const select of selects) {
             const username = select.getAttribute('data-username');
@@ -192,64 +198,70 @@ function assignShift(selects, assignmentType, isLharriagueAssignedToday, isMquir
             const shiftOption = Array.from(select.options).find(option => option.value === assignmentType);
             const isCardioUser = isCardioCheck ? select.dataset.cardio === 'true' : true; // Chequeo de cardio
 
-            if (!username || !day) continue;
-
-            console.log(`Evaluando usuario: ${username} para el día ${day}`);
-            console.log(`Conteo de guardias actual para ${username}: ${userShiftCounts[username]}, mínimo permitido: ${minShifts}`);
-
-            // Verificar si el usuario tiene más guardias que el mínimo permitido
-            if (userShiftCounts[username] > minShifts) {
-                console.log(`${username} tiene más guardias que el mínimo actual. Saltando.`);
+            if (!username || !day) {
+                console.log(`Select sin username o day: ${select}`);
                 continue;
             }
 
-            // Verificar si el día anterior tiene asignación
-            const previousDay = getPreviousDay(day);
-            const previousSelect = document.querySelector(`.shift-select[data-username="${username}"][data-day="${previousDay}"]`);
-            if (previousSelect && previousSelect.value !== '') {
-                console.log(`${username} ya tiene asignación el día anterior (${previousDay}). Saltando.`);
-                continue; // Saltar si el usuario ya tiene una guardia el día anterior
+            console.log(`Evaluando ${username} para el día ${day}`);
+            console.log(`Guardias actuales de ${username}: ${userShiftCounts[username]}`);
+            console.log(`Mínimo permitido para asignación: ${minShifts}`);
+
+            // Verificar si el usuario tiene más guardias que el mínimo permitido
+            if (userShiftCounts[username] > minShifts) {
+                console.log(`${username} tiene más guardias que el mínimo. Saltando.`);
+                continue;
             }
 
-            // Excluir usuario si tiene asignación en domingo y estamos asignando el lunes
-            if (!isWeekend && dayNumber === 1) { // Lunes
-                const sunday = getPreviousDay(day, 2); // Obtener el domingo anterior
-                const sundaySelect = document.querySelector(`.shift-select[data-username="${username}"][data-day="${sunday}"]`);
-                if (sundaySelect && sundaySelect.value !== '') {
-                    console.log(`${username} ya tiene asignación el domingo anterior (${sunday}). Saltando.`);
-                    continue; // Saltar si el usuario ya tiene una guardia el domingo anterior
+            // Verificar restricciones solo si ignoreRestrictions es falso
+            if (!ignoreRestrictions) {
+                // Verificar si el día anterior tiene asignación
+                const previousDay = getPreviousDay(day);
+                const previousSelect = document.querySelector(`.shift-select[data-username="${username}"][data-day="${previousDay}"]`);
+                if (previousSelect && previousSelect.value !== '') {
+                    console.log(`${username} ya tiene asignación el día anterior (${previousDay}). Saltando.`);
+                    continue;
+                }
+
+                // Excluir usuario si tiene asignación en domingo y estamos asignando el lunes
+                if (!isWeekend && dayNumber === 1) { // Lunes
+                    const sunday = getPreviousDay(day, 2); // Obtener el domingo anterior
+                    const sundaySelect = document.querySelector(`.shift-select[data-username="${username}"][data-day="${sunday}"]`);
+                    if (sundaySelect && sundaySelect.value !== '') {
+                        console.log(`${username} ya tiene asignación el domingo anterior (${sunday}). Saltando.`);
+                        continue;
+                    }
                 }
             }
 
             // Chequeo final antes de asignar, verificando todas las condiciones
             if (select && !select.disabled && select.value === '' && shiftOption && isCardioUser) {
-                if (isLharriagueAssignedToday && username === 'mquiroga') {
-                    console.log(`Saltando ${username} porque lharriague ya está asignado hoy.`);
-                    continue;
-                }
-                if (isMquirogaAssignedToday && username === 'lharriague') {
-                    console.log(`Saltando ${username} porque mquiroga ya está asignado hoy.`);
-                    continue;
-                }
-
                 console.log(`Asignación exitosa: ${assignmentType} asignado a ${username} para el día ${day}`);
                 select.value = assignmentType;
                 noAssignment = false; // Se hizo una asignación, salimos del ciclo
                 return select; // Retornamos el select asignado
-            } else if (!isCardioUser && isCardioCheck) {
-                console.log(`Usuario ${username} omitido por no cumplir el requisito de cardio.`);
             }
+
+            console.log(`${username} no cumple con todos los requisitos para la asignación.`);
         }
 
-        // Si no se ha asignado ningún usuario, incrementamos el minShifts y reintentamos
+        // Si no se ha asignado ningún usuario, incrementamos minShifts
         if (noAssignment) {
             minShifts++;
             console.log(`No se encontró una asignación válida. Incrementando minShifts a ${minShifts} y reintentando.`);
+
+            // Activar ignorar restricciones si minShifts supera maxShifts
+            if (minShifts > maxShifts) {
+                ignoreRestrictions = true;
+                minShifts = Math.min(...Object.values(userShiftCounts).filter(count => count > 0));
+                console.log(`Superado maxShifts. Ignorando restricciones de asignación consecutiva y reiniciando minShifts.`);
+            }
         }
     }
     console.log(`No se pudo asignar ${assignmentType} a ningún usuario para el día ${day}.`);
     return null; // No se asignó ningún usuario
 }
+
 
 
 
@@ -261,3 +273,19 @@ function getPreviousDay(currentDay, offset = 1) {
     date.setDate(date.getDate() - offset); // Restamos un día (o el offset dado)
     return date.toISOString().slice(0, 10); // Retornamos en formato YYYY-MM-DD
 }
+
+function calculateMaxShifts(userShiftCounts) {
+    const counts = Object.values(userShiftCounts).filter(count => count !== 0);
+
+    if (counts.length === 0) {
+        return 0; // Retorna 0 si no hay valores distintos de 0
+    }
+
+    // Calcular el promedio
+    const sum = counts.reduce((acc, count) => acc + count, 0);
+    const averageShiftCount = Math.round(sum / counts.length);
+
+    return averageShiftCount;
+}
+
+

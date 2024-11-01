@@ -3,15 +3,13 @@ import { countWeekdayShifts, countWeekendShifts, countSaturdayShifts } from './s
 document.getElementById('print-shifts').addEventListener('click', async () => {
     const apiUrl = window.location.hostname === 'localhost' ? 'http://localhost:3000' : 'https://adv-37d5b772f5fd.herokuapp.com';
 
-    // Obtener año y mes seleccionados desde el DOM
     const yearSelect = document.getElementById('year-select');
     const monthSelect = document.getElementById('month-select');
     const year = yearSelect.value;
-    const month = (parseInt(monthSelect.value) + 1).toString().padStart(2, '0'); // Convertir a formato 'MM'
+    const month = (parseInt(monthSelect.value) + 1).toString().padStart(2, '0'); 
 
-    const monthYear = `${year}-${month}`; // Formato final 'YYYY-MM'
+    const monthYear = `${year}-${month}`; 
 
-    // Función para obtener el usuario actual
     async function getCurrentUser() {
         const token = localStorage.getItem('token') || sessionStorage.getItem('token');
         try {
@@ -43,7 +41,6 @@ document.getElementById('print-shifts').addEventListener('click', async () => {
     const shiftSchedule = captureShiftSchedule();
     const shiftCounts = transformShiftCounts();
 
-    // Capturar y almacenar todos los atributos del select
     const selectConfig = Array.from(document.querySelectorAll('#shift-schedule select'))
         .map(select => ({
             day: select.getAttribute('data-day'),
@@ -54,7 +51,6 @@ document.getElementById('print-shifts').addEventListener('click', async () => {
         .filter(config => config.assignment && config.assignment.trim() !== "");
 
     try {
-        // Guardar el horario mensual con mes y año incluidos
         await fetch(`${apiUrl}/shift-schedule/save-shift-schedule`, {
             method: 'POST',
             headers: {
@@ -62,7 +58,7 @@ document.getElementById('print-shifts').addEventListener('click', async () => {
                 'Authorization': 'Bearer ' + localStorage.getItem('token')
             },
             body: JSON.stringify({
-                month: monthYear, // Envía el valor de 'YYYY-MM' al backend
+                month: monthYear, 
                 shiftSchedule,
                 shiftCounts,
                 selectConfig,
@@ -71,14 +67,13 @@ document.getElementById('print-shifts').addEventListener('click', async () => {
         });
 
         console.log('Shift schedule saved successfully.');
+        
+        // Mostrar mensaje de éxito antes de la redirección
+        alert('El cronograma de guardias se generó exitosamente.');
 
-        // Transformar `shiftCounts` en un array para enviarlo al backend
-        const shiftCountsArray = shiftCounts.map(count => ({
-            username: count.username,
-            weekdayShifts: count.weekdayShifts,
-            weekendShifts: count.weekendShifts,
-            saturdayShifts: count.saturdayShifts
-        }));
+        // Redirigir al usuario a shiftInform.html con el año y mes en la URL
+        window.location.href = `shiftInform.html?year=${year}&month=${month}`;
+
 
     } catch (error) {
         console.error('Error al guardar el turno o actualizar el acumulado en la base de datos:', error);

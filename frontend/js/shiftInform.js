@@ -13,6 +13,11 @@ document.addEventListener('DOMContentLoaded', async () => {
     const currentYear = new Date().getFullYear();
     const currentMonth = new Date().getMonth();
 
+    // Obtener los parámetros de la URL
+    const urlParams = new URLSearchParams(window.location.search);
+    const yearParam = urlParams.get('year');
+    const monthParam = urlParams.get('month');
+
     // Fetch de usuarios para obtener números de teléfono
     try {
         const response = await fetch(`${apiUrl}/auth/users`, {
@@ -36,7 +41,6 @@ document.addEventListener('DOMContentLoaded', async () => {
         const option = document.createElement('option');
         option.value = year;
         option.textContent = year;
-        if (year === currentYear) option.selected = true;
         yearSelect.appendChild(option);
     }
 
@@ -49,12 +53,18 @@ document.addEventListener('DOMContentLoaded', async () => {
         const option = document.createElement('option');
         option.value = index;
         option.textContent = month;
-        if (index === currentMonth) option.selected = true;
         monthSelect.appendChild(option);
     });
 
-     // Agregar opciones de sitios al selector de sitios de guardia
-     Object.entries(shiftAssignmentLabels).forEach(([key, value]) => {
+    // Seleccionar el año y mes según los parámetros de la URL, o el actual si no hay parámetros
+yearSelect.value = yearParam || currentYear;
+monthSelect.value = monthParam ? (parseInt(monthParam, 10) - 1).toString() : currentMonth.toString();
+
+// Llamar a fetchAndDisplaySchedule para cargar el cronograma en función del año y mes seleccionados
+fetchAndDisplaySchedule(yearSelect.value, monthSelect.value, siteSelect.value);
+
+    // Agregar opciones de sitios al selector de sitios de guardia
+    Object.entries(shiftAssignmentLabels).forEach(([key, value]) => {
         const option = document.createElement('option');
         option.value = key;
         option.textContent = value;
@@ -147,14 +157,6 @@ document.addEventListener('DOMContentLoaded', async () => {
             }
         }
     }
-    
-    
-    
-    
-    
-
-    // Generar calendario inicial con el año y mes actuales
-    fetchAndDisplaySchedule(currentYear, currentMonth, siteSelect.value);
 
     // Escuchar cambios en los selects
     yearSelect.addEventListener('change', () => {

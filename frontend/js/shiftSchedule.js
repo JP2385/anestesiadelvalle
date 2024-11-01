@@ -79,6 +79,9 @@ document.addEventListener('DOMContentLoaded', async function () {
     
             // Llamamos a la función para actualizar la tabla con los acumulados
             await updateShiftCountsTableWithAccumulated(weekCounts, weekendCounts, saturdayCounts);
+
+            // Mostrar alerta al finalizar
+            alert('Guardias asignadas exitosamente.');
         });
     });
     
