@@ -11,10 +11,6 @@
         width: auto; /* Permite que la primera columna se ajuste automáticamente */
     }
 
-    th:not(.work-site) {
-        width: 125px; /* Permite que las demás columnas se ajusten automáticamente */
-    }
-
     td.work-site {
         width: auto; /* Permite que la primera columna se ajuste automáticamente */
     }
@@ -77,10 +73,18 @@
         padding: 2px; /* Padding reducido */
         text-align: center;
     }
-    
-    th.work-site, td.work-site {
-        width: 250px; /* Define un ancho fijo para la primera columna */
-    }
+
+/* Encabezado de la tabla */
+thead th {
+    position: sticky;
+    top: 0; /* Mantiene el encabezado fijo en la parte superior */
+    background-color: #0056b3; /* Fondo del encabezado */
+    color: white; /* Color del texto del encabezado */
+    z-index: 10; /* Coloca el encabezado sobre el resto del contenido */
+    padding: 10px;
+    border: 1px solid #ddd;
+}
+
     
     th {
         background-color: #0056b3;
@@ -106,7 +110,6 @@
     }
 
     .download-button {
-        width: 100%; /* Asegura que los botones ocupen todo el ancho en dispositivos pequeños */
         padding: 0.5rem; /* Ajusta el padding según sea necesario */
     }
 
@@ -177,7 +180,7 @@
     }
 
     th.work-site {
-        width: auto; /* Permite que la primera columna se ajuste automáticamente */
+        width: 120px; /* Permite que la primera columna se ajuste automáticamente */
         word-break: break-word;
     }
 
@@ -208,7 +211,6 @@
     }
 
     .download-button {
-        width: 100%; /* Asegura que los botones ocupen todo el ancho en dispositivos pequeños */
         padding: 0.5rem; /* Ajusta el padding según sea necesario */
     }
 

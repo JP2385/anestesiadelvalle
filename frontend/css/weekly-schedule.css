@@ -110,7 +110,7 @@ table.assigments-inform {
     background-color: #0069d9; /* Color de fondo del botón */
     color: white; /* Color del texto del botón */
     border: none;
-    padding: 10px 20px; /* Espaciado interno del botón */
+    padding: 5px 5px; /* Espaciado interno del botón */
     cursor: pointer;
     border-radius: 5px; /* Bordes redondeados */
     transition: background-color 0.3s; /* Transición suave para el cambio de color de fondo */

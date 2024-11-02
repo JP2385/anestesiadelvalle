@@ -56,8 +56,20 @@ document.addEventListener('DOMContentLoaded', () => {
                     // Crear el botón de descarga
                     const downloadButton = document.createElement('button');
                     downloadButton.id = 'download-button';
-                    downloadButton.textContent = 'Descargar como imagen'; // Texto del botón de descarga
                     downloadButton.className = 'download-button';
+
+                    // Agregar el icono SVG de descarga como contenido del botón
+                    downloadButton.innerHTML = `
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-download">
+                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                            <polyline points="7 10 12 15 17 10"></polyline>
+                            <line x1="12" y1="15" x2="12" y2="3"></line>
+                        </svg>
+                    `;
+
+                    // Añadir el botón al contenedor
+                    headerDiv.appendChild(downloadButton);
+
 
                     // Añadir la fecha de impresión y el botón al contenedor
                     headerDiv.appendChild(timestampDiv);
@@ -253,8 +265,34 @@ function downloadTableAsImage(container) {
     const downloadButton = container.querySelector('#download-button');
     downloadButton.style.display = 'none';
 
-    html2canvas(container).then(canvas => {
-        // Restablece la visibilidad del botón después de capturar la imagen
+    // Crear un fragmento de documento
+    const fragment = document.createDocumentFragment();
+
+    // Clonar el contenedor y ajustar los estilos
+    const containerClone = container.cloneNode(true);
+    containerClone.style.width = '1290px'; // 1250px + 20px de padding derecho
+    containerClone.style.paddingRight = '20px'; // Mantener el padding derecho
+    containerClone.style.display = 'block'; // Evita el recorte
+    containerClone.style.overflow = 'visible';
+    containerClone.style.boxSizing = 'border-box'; // Asegura que el padding se respete
+
+    // Agregar el clon al fragmento en lugar del DOM visible
+    fragment.appendChild(containerClone);
+
+    // Crear un div temporal oculto y agregar el clon
+    const tempDiv = document.createElement('div');
+    tempDiv.style.position = 'absolute';
+    tempDiv.style.opacity = '0'; // Oculto visualmente
+    tempDiv.style.pointerEvents = 'none'; // Evita la interacción
+    tempDiv.appendChild(fragment);
+    document.body.appendChild(tempDiv); // Añadimos el clon temporal al DOM
+
+    // Usar html2canvas en el clon dentro del fragmento
+    html2canvas(containerClone, { width: 1290, scrollX: 0, scrollY: 0 }).then(canvas => {
+        // Remover el div temporal después de la captura
+        document.body.removeChild(tempDiv);
+
+        // Restablecer la visibilidad del botón
         downloadButton.style.display = 'block';
 
         // Crear un enlace para descargar la imagen
