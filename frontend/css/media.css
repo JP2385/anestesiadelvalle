@@ -84,6 +84,37 @@
             min-width: auto;
         }
 
+    /* Configuración para la columna fija */
+    th.work-site, td.work-site {
+        position: sticky;
+        left: 0;
+        z-index: 10; /* Coloca la columna sobre el contenido desplazable */
+        padding-right: 10px; /* Opcional: ajusta según el diseño */
+    }
+
+    /* Pseudo-elemento para simular el espacio en blanco a la derecha */
+    th.work-site::after, td.work-site::after {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -23px; /* Ajusta según el ancho deseado */
+        width: 21px; /* Ancho del "relleno" */
+        height: 100%;
+        background-color: white;
+        border-right: 2px solid white;
+        border-left: 2px solid white; /* Borde derecho blanco para ocultar el borde de la celda siguiente */
+        border-top: 2px solid white; /* Borde superior blanco */
+        border-bottom: 2px solid white; /* Borde inferior blanco */
+        z-index: 9; /* Coloca el pseudo-elemento por detrás del contenido de la celda */
+    }
+
+    /* Contenedor de la tabla para manejar el desplazamiento */
+    .table-container {
+        overflow-x: auto; /* Permite desplazamiento horizontal */
+        width: 100%; /* Ancho completo para ajustar a la pantalla */
+    }
+
+
     th, td {
         font-size: 0.875rem; /* Tamaño de la fuente reducido */
         padding: 2px; /* Padding reducido */
