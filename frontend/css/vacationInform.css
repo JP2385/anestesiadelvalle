@@ -22,8 +22,11 @@ label {
 }
 
 .form-group input, select {
-    margin-right: 0px;
     padding:2px;
+}
+
+.form-group select {
+    margin-right: 20px;
 }
 
 /* Ajustes para pantallas pequeñas */
