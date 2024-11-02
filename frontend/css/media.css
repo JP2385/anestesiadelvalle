@@ -78,6 +78,12 @@
         margin-top: 10px;
     }
 
+        .responsive-table {
+            width: 100%; /* Ajusta el ancho de la tabla para que se adapte a la pantalla */
+            table-layout: auto; /* Permite que la tabla se ajuste automáticamente */
+            min-width: auto;
+        }
+
     th, td {
         font-size: 0.875rem; /* Tamaño de la fuente reducido */
         padding: 2px; /* Padding reducido */
@@ -87,7 +93,7 @@
     /* Fondo blanco para el resto de las celdas para evitar superposición de texto */
     tbody td {
         background-color: white;
-        padding: 10px;
+        padding: 2px;
         border: 1px solid #ddd;
     }
     
@@ -98,6 +104,16 @@
     
     th, td {
         border: 1px solid #ddd;
+    }
+
+    /* Ancho de la columna work-site */
+    th.work-site {
+        width: 16%; /* Define el ancho de la columna work-site como un 20% del total */
+    }
+
+    /* Ancho de las demás columnas <th> */
+    th:not(.work-site) {
+        width: 12%; /* Define el ancho de cada columna sin work-site como un 80% de work-site */
     }
 
     .header-div {
