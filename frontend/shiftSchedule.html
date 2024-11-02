@@ -3,12 +3,16 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Gestión de Guardias</title>
+    <title>Asistente de programación de guardias</title>
     <script type="module" src="js/shiftSchedule.js"></script>
     <script type="module" src="js/printShifts.js"></script>
     <link rel="stylesheet" href="css/header.css">
     <link rel="icon" type="image/png" href="images/logo/logo64x64.png">
     <link rel="stylesheet" href="css/weekly-schedule.css">
+    <link rel="stylesheet" href="css/media.css">
+    <link rel="stylesheet" href="css/shiftSchedule.css">
+    <link rel="stylesheet" href="css/floatingTable.css">
+    <link rel="stylesheet" href="css/vacationInform.css">
 </head>
 <header>
     <a href="index.html" class="app-logo-link">
@@ -20,11 +24,12 @@
     </a>
 </header>
 <body>
-    <div class="shift-management">
-        <h3>Gestión de Guardias</h3>
-        
-        <!-- Selección de año y mes -->
-        <div class="selectors">
+    <div class="instructions">
+        <div class="header-div">
+        <h3>Asistente de programación de guardias</h3>
+        </div>
+       <!-- Selección de año y mes -->
+       <div class="form-group">
             <label for="year-select">Año:</label>
             <select id="year-select"></select>
             
@@ -43,36 +48,51 @@
                 <option value="10">Noviembre</option>
                 <option value="11">Diciembre</option>
             </select>
-        </div>
+        </div> 
 
-                <!-- Tabla de conteo de guardias -->
-                <div id="shift-counts-container">
-                    <h4>Conteo de Guardias por Usuario</h4>
-                    <table id="shift-counts">
-                        <thead>
-                            <tr>
-                                <th>Usuario</th>
-                                <th>Guardias Semana</th>
-                                <th>Guardias Fin de Semana</th>
-                                <th>Plantas Sábado</th>
-                                <th>Acumulado Semana</th>
-                                <th>Acumulado Fin de Semana</th>
-                                <th>Acumulado Sábado</th>
-
-                            </tr>
-                        </thead>
-                        <tbody id="shift-counts-body">
-                            <!-- Aquí se generarán dinámicamente las filas de conteo por usuario -->
-                        </tbody>
-                    </table>
-                </div>
+        <div class="switch-container">
+            <span class="switch-legend">
+                Conteo de Guardias por Usuario
+            </span>
         
+    
+            <!-- Switch con checkbox -->
+            <label class="switch">
+                <input type="checkbox" id="toggle-table" />
+                <span class="slider"></span>
+            </label>
+        </div>
+        <!-- Tabla flotante -->
+        <div id="floating-table" class="floating-table">
+            <h1>Días largos acumulados</h1>
+            <button id="close-table" class="close-btn">&times;</button>
+            <table id="shift-counts">
+                <thead>
+                    <tr>
+                        <th>Usuario</th>
+                        <th>Guardias Semana</th>
+                        <th>Guardias Fin de Semana</th>
+                        <th>Plantas Sábado</th>
+                        <th>Acumulado Semana</th>
+                        <th>Acumulado Fin de Semana</th>
+                        <th>Acumulado Sábado</th>
+
+                    </tr>
+                </thead>
+                <tbody id="shift-counts-body">
+                    <!-- Aquí se generarán dinámicamente las filas de conteo por usuario -->
+                </tbody>
+            </table>
+        </div>
+    
+    <div class="button-container">
         <button id="assign-shifts">Asignar guardias</button>
 
         <button id="print-shifts">Imprimir guardias</button>
-
-        <!-- Tabla dinámica de asignación de guardias -->
-        <table id="shift-schedule">
+    </div>
+    </div>
+    <div class="instructions">    <!-- Tabla dinámica de asignación de guardias -->
+        <table id="shift-schedule" class="shift-table">
             <thead>
                 <tr id="days-header">
                     <!-- Aquí se generarán dinámicamente los encabezados de los días -->

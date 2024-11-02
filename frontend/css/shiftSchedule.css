@@ -1,0 +1,53 @@
+
+/* Estilos para la tabla */
+.shift-table {
+    width: auto; /* Permite que la tabla ajuste su ancho según el contenido */
+    table-layout: fixed; /* Fuerza un ancho uniforme para cada columna */
+    border-collapse: collapse;
+    min-width: 100%; /* Asegura que la tabla ocupe al menos el ancho del contenedor */
+}
+
+/* Estilos para celdas y encabezados */
+.shift-table th, .shift-table td {
+    padding: 2px;
+    border: 1px solid #ddd;
+    white-space: nowrap;
+    text-align: left;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    min-width: 50px; /* Ancho mínimo de 50px para cada columna */
+}
+
+/* Asegura que los elementos <select> ocupen el 100% del ancho de su celda */
+.shift-table select {
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.shift-table th {
+    text-align: center;
+}
+
+.switch-container {
+    color: #555;
+    font-weight: bold;
+    padding: 2px;
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
+
+.button-container {
+    display: flex;
+    gap: 10px; /* Espacio entre los botones */
+    justify-content: flex-start; /* Alineación de los botones al inicio (puedes usar center si prefieres) */
+    margin-top: 20px; /* Margen superior para separar de otros elementos */
+}
+
+.button-container button {
+    width: 200px;      
+    padding: 10px 20px; /* Espaciado interno para los botones */
+    font-size: 16px; /* Tamaño de fuente */
+    border: 1px solid #ddd; /* Borde para los botones */
+    border-radius: 5px; /* Bordes redondeados */
+    cursor: pointer;
+}

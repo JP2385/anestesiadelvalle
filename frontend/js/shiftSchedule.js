@@ -1,6 +1,7 @@
 import { processAndGenerateTable, fetchUsers, assignMonthlyShiftsWithCardio } from './shiftScheduleUtils.js';
 import { countWeekdayShifts, countWeekendShifts, countSaturdayShifts } from './shiftAssignmentsUtils.js';
 import { updateShiftCountsTableWithAccumulated } from './shiftCountTable.js';
+import { initializeFloatingTable } from './floatingTable.js';
 
 
 document.addEventListener('DOMContentLoaded', async function () {
@@ -101,4 +102,5 @@ document.addEventListener('DOMContentLoaded', async function () {
     monthSelect.addEventListener('change', initializeSchedule);
 
     initializeSchedule();
+    initializeFloatingTable();
 });
