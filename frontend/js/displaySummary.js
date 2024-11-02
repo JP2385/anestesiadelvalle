@@ -249,7 +249,15 @@ function formatTimestamp(timestamp) {
 }
 
 function downloadTableAsImage(container) {
+    // Selecciona el botón de descarga y ocúltalo temporalmente
+    const downloadButton = container.querySelector('#download-button');
+    downloadButton.style.display = 'none';
+
     html2canvas(container).then(canvas => {
+        // Restablece la visibilidad del botón después de capturar la imagen
+        downloadButton.style.display = 'block';
+
+        // Crear un enlace para descargar la imagen
         const link = document.createElement('a');
         link.download = 'programacion-semanal.png';
         link.href = canvas.toDataURL('image/png');

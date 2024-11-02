@@ -59,6 +59,10 @@
         overflow-x: auto; /* Permite el desplazamiento horizontal en pantallas pequeñas */
         width: 100%;
     }
+
+    .summary-container {
+        overflow-x: auto;
+    }
     
     table {
         width: 100%;
@@ -86,6 +90,11 @@
     th, td {
         border: 1px solid #ddd;
     }
+
+    .header-div {
+        contain: layout;
+    }
+    
 
     td.droppable {
         background-color: #f0f0f0;
