@@ -145,6 +145,7 @@ table.assigments-inform {
     padding: 20px;
     margin-bottom: 20px;
     border-radius: 5px;
+    overflow-x: auto;
 }
 
 .instructions, .schedule-assistant h3 {

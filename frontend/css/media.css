@@ -73,7 +73,7 @@
         padding: 2px; /* Padding reducido */
         text-align: center;
     }
-    
+
     /* Encabezado de la tabla */
     thead th {
         position: sticky;
@@ -101,7 +101,7 @@
         left: 0; /* Mantiene la primera columna fija en desplazamiento horizontal */
         background-color: white; /* Fondo blanco para la primera columna */
         z-index: 5; /* Asegura que esté por debajo del encabezado */
-        padding: 10px;
+        padding: 1px;
         border-right: 2px solid #ddd; /* Añade una separación visual */
     }
 
