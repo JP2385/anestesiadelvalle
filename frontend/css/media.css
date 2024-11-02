@@ -59,6 +59,16 @@
     .summary-container {
         overflow-x: auto;
     }
+
+    .header-div {
+    position: sticky;
+    left: 0; /* Fija el header-div solo en el desplazamiento horizontal */
+    padding: 5px; /* Aumenta el padding para darle espacio en pantallas pequeñas */
+    background-color: white; /* Fondo sólido para que se vea claro */
+    width: 100%; /* Para que ocupe todo el ancho de la pantalla */
+    }
+
+
     
     table {
         width: 100%;
@@ -67,7 +77,7 @@
         border-collapse: collapse;
         margin-top: 10px;
     }
-    
+
     th, td {
         font-size: 0.875rem; /* Tamaño de la fuente reducido */
         padding: 2px; /* Padding reducido */

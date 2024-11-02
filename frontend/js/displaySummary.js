@@ -98,6 +98,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
 function generateSummaryTable(dayHeaders, selectConfig) {
     const table = document.createElement('table');
+    table.classList.add('summary-table'); // Añadir la clase específica a la tabla
+
     const thead = document.createElement('thead');
     const tbody = document.createElement('tbody');
 
@@ -136,6 +138,7 @@ function generateSummaryTable(dayHeaders, selectConfig) {
 
     return table;
 }
+
 
 function populateAssignments(assignments, table, availability) {
     const tbody = table.querySelector('tbody');
