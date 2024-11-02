@@ -74,37 +74,6 @@
         text-align: center;
     }
 
-    /* Encabezado de la tabla */
-    thead th {
-        position: sticky;
-        top: 0; /* Mantiene el encabezado fijo en la parte superior */
-        background-color: #0056b3; /* Fondo del encabezado */
-        color: white; /* Color del texto del encabezado */
-        z-index: 10; /* Coloca el encabezado sobre el resto del contenido */
-        padding: 10px;
-        border: 1px solid #ddd;
-    }
-
-    /* Encabezado de la primera columna */
-    thead th:first-child {
-        position: sticky;
-        left: 0; /* Fija la primera columna en la izquierda */
-        z-index: 15; /* Asegura que esté sobre otras celdas */
-        background-color: #0056b3; /* Mantiene el color del encabezado */
-        color: white;
-        border-right: 2px solid #ddd; /* Evita superposición visual */
-    }
-
-    /* Primera columna del cuerpo de la tabla */
-    tbody th, tbody td:first-child {
-        position: sticky;
-        left: 0; /* Mantiene la primera columna fija en desplazamiento horizontal */
-        background-color: white; /* Fondo blanco para la primera columna */
-        z-index: 5; /* Asegura que esté por debajo del encabezado */
-        padding: 1px;
-        border-right: 2px solid #ddd; /* Añade una separación visual */
-    }
-
     /* Fondo blanco para el resto de las celdas para evitar superposición de texto */
     tbody td {
         background-color: white;
