@@ -165,9 +165,8 @@
         padding: 0.5rem; /* Ajusta el padding según sea necesario */
     }
 
-    .lock-button {
-        width: 100%; /* Asegura que los botones ocupen todo el ancho en dispositivos pequeños */
-        padding: 0.5rem; /* Ajusta el padding según sea necesario */
+    .lock-button {/* Asegura que los botones ocupen todo el ancho en dispositivos pequeños */
+        padding: 0.1rem; /* Ajusta el padding según sea necesario */
     }
 
 
@@ -253,10 +252,6 @@
         align-items: center;
     }
 
-    select {
-        display: flex;
-    }
-
     .instructions button {
         width: 100%; /* Asegura que los botones ocupen todo el ancho en dispositivos pequeños */
         padding: 0.5rem; /* Ajusta el padding según sea necesario */
@@ -266,7 +261,7 @@
         padding: 0.5rem; /* Ajusta el padding según sea necesario */
     }
 
-    .lock-button, .notification-area button {
+    .notification-area button {
         width: 100%; /* Asegura que los botones ocupen todo el ancho en dispositivos pequeños */
         padding: 0.5rem; /* Ajusta el padding según sea necesario */
     }
