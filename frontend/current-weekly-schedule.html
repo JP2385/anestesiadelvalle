@@ -30,7 +30,7 @@
             <img src="images/icons/back-icon.svg" alt="Volver" class="back-icon">
         </a>
     </header>
-    <main>  
+    <main>
         <div class="instructions">
             <h3>Pasos para generar programación</h3>
             <ol>
@@ -51,13 +51,17 @@
                 </div>
                 <li>6. Imprima:<button id="print-schedule">Imprimir Programación</button></li>
             </ol>
-        </div>
+        </div>         
         <div id="availability-container" class="instructions">
+            <div class="header-div">
             <h3>Informe de asignaciones</h3>
+            </div>
+            <div class="header-div">
             <div class="switch-container">
                 <span class="switch-legend">
                     Acumulado de días largos: 
                 </span>
+            
         
                 <!-- Switch con checkbox -->
                 <label class="switch">
@@ -67,6 +71,7 @@
             </div>
             <!-- Tabla flotante -->
             <div id="floating-table" class="floating-table">
+                <h1>Días largos acumulados</h1>
                 <button id="close-table" class="close-btn">&times;</button>
                 <table id="long-days-count-table">
                     <thead>
@@ -79,7 +84,11 @@
                     </tbody>
                 </table>
             </div> 
+        </div>
+        <div class="header-div">
             <span id="long-days-inform"></span>
+        </div>
+         
             <table class="assigments-inform">
                 <thead>
                     <tr>
@@ -94,14 +103,14 @@
                 <tbody>
                     <tr>
                         <td class="work-site"><span class="inform">Nro de lugares habilitados</span></td>
-                        <td><div class="tooltip-wrapper"><span id="monday-sites"></span></div></td>
+                        <td ><div class="tooltip-wrapper"><span id="monday-sites"></span></div></td>
                         <td><div class="tooltip-wrapper"><span id="tuesday-sites"></span></div></td>
                         <td><div class="tooltip-wrapper"><span id="wednesday-sites"></span></div></td>
                         <td><div class="tooltip-wrapper"><span id="thursday-sites"></span></div></td>
                         <td><div class="tooltip-wrapper"><span id="friday-sites"></span></div></td>
                     </tr>
                     <tr>
-                        <td><span class="inform">Nro. de Anestesiólogos disponibles</span></td>
+                        <td class="work-site"><span class="inform">Nro. de Anestesiólogos disponibles</span></td>
                         <td><div class="tooltip-wrapper"><span id="monday-available"></span></div></td>
                         <td><div class="tooltip-wrapper"><span id="tuesday-available"></span></div></td>
                         <td><div class="tooltip-wrapper"><span id="wednesday-available"></span></div></td>
@@ -109,7 +118,7 @@
                         <td><div class="tooltip-wrapper"><span id="friday-available"></span></div></td>
                     </tr>
                     <tr>
-                        <td><span class="inform">Nro. de Anestesiólogos asignados</span></td>
+                        <td class="work-site"><span class="inform">Nro. de Anestesiólogos asignados</span></td>
                         <td><div class="tooltip-wrapper"><span id="monday-assignments"></span></div></td>
                         <td><div class="tooltip-wrapper"><span id="tuesday-assignments"></span></div></td>
                         <td><div class="tooltip-wrapper"><span id="wednesday-assignments"></span></div></td>
@@ -117,7 +126,7 @@
                         <td><div class="tooltip-wrapper"><span id="friday-assignments"></span></div></td>
                     </tr>
                     <tr>
-                        <td><span class="inform">Anestesiólogos no asignados</span></td>
+                        <td class="work-site"><span class="inform">Anestesiólogos no asignados</span></td>
                         <td><div class="tooltip-wrapper"><span id="monday-compare"></span></div></td>
                         <td><div class="tooltip-wrapper"><span id="tuesday-compare"></span></div></td>
                         <td><div class="tooltip-wrapper"><span id="wednesday-compare"></span></div></td>
@@ -125,11 +134,13 @@
                         <td><div class="tooltip-wrapper"><span id="friday-compare"></span></div></td>
                     </tr>
                 </tbody>
-            </table>
+            </table>   
         </div>
         <div class="schedule-assistant">
-            <h3>Asistente propiamente dicho</h3>
-            <table id="schedule-assistant">
+            <div class="header-div">
+        <h3>Asistente propiamente dicho</h3>
+        </div>
+        <table id="schedule-assistant">
                 <thead>
                     <tr>
                         <th class="work-site">Sitio de Trabajo</th>

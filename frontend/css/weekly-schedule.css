@@ -66,6 +66,10 @@ table.assigments-inform {
     margin-bottom: 20px; /* Ajusta el valor según tus necesidades */
 }
 
+
+h3 {
+    margin: 0px;
+}
 #schedule-assistant select {
     width: 70%;
     padding: 5px;
