@@ -55,27 +55,36 @@
         margin-left: 0px;
     }
 
-    /* Estilos responsivos para las tablas */
+    .table-container {
+        overflow-x: auto; /* Permite el desplazamiento horizontal en pantallas pequeñas */
+        width: 100%;
+    }
+    
     table {
         width: 100%;
-        table-layout: auto; /* Cambia a auto para permitir la expansión */
+        table-layout: fixed; /* Mantiene el ancho fijo de la tabla */
+        min-width: 768px; /* Ancho mínimo para evitar que se encoja */
+        border-collapse: collapse;
+        margin-top: 10px;
     }
-
+    
     th, td {
-        font-size: 0.875rem; /* Reduce el tamaño de la fuente */
-        padding: 2px; /* Reduce el padding */
+        font-size: 0.875rem; /* Tamaño de la fuente reducido */
+        padding: 2px; /* Padding reducido */
+        text-align: center;
     }
-
-    th.work-site {
-        width: auto; /* Permite que la primera columna se ajuste automáticamente */
+    
+    th.work-site, td.work-site {
+        width: 250px; /* Define un ancho fijo para la primera columna */
     }
-
-    th:not(.work-site) {
-        width: auto; /* Permite que las demás columnas se ajusten automáticamente */
+    
+    th {
+        background-color: #0056b3;
+        color: white;
     }
-
-    td.work-site {
-        width: auto; /* Permite que la primera columna se ajuste automáticamente */
+    
+    th, td {
+        border: 1px solid #ddd;
     }
 
     td.droppable {
