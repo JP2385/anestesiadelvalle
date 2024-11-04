@@ -44,28 +44,37 @@ input:checked + .slider:before {
     transform: translateX(26px);
 }
 
-/* Ocultar la tabla por defecto */
 #floating-table {
-    display: none; /* Oculta la tabla por defecto */
-    position: fixed;
+    display: none; /* Solo se muestra cuando se activa */
+    position: fixed; /* Fija la posición en la pantalla */
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
     width: 400px;
+    max-width: 90%; /* Ajuste para pantallas pequeñas */
     background-color: white;
     border: 1px solid #ccc;
     padding: 10px;
-    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
-    z-index: 100;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.3);
+    z-index: 1000; /* Suficientemente alto para que esté frente a otros elementos */
     font-size: 0.7rem;
-    border-radius: 5px; /* Aquí se agregan las esquinas redondeadas */
+    border-radius: 5px;
+    max-height: 90vh; /* Limita la altura para evitar desbordamiento en la pantalla */
+    overflow-y: auto; /* Permite desplazamiento vertical si el contenido es alto */
 }
 
-#floating-table h1 {
-    font-size: .8rem;
+.table-scroll {
+    overflow-x: auto; /* Permite desplazamiento horizontal solo para la tabla */
+    max-width: 100%; /* Asegura que la tabla no exceda el ancho del contenedor */
+    margin-top: 10px; /* Espacio entre el encabezado y la tabla */
+}
+
+h1 {
+    font-size: 1.5em;
     font-weight: bold;
-    margin-top: 0px;
-    margin-bottom: 0px;
+    text-align: left;
+    margin: 0; /* Elimina márgenes para un ajuste preciso */
+
 }
 /* Estilo para la cruz (botón de cierre) */
 #floating-table .close-btn {
