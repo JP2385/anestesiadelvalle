@@ -24,6 +24,29 @@
     </a>
 </header>
 <body>
+    <div id="floating-table" class="floating-table">
+        <h1>Días largos acumulados</h1>
+        <button id="close-table" class="close-btn">&times;</button>
+        <div class="table-scroll">
+        <table id="shift-counts">
+            <thead>
+                <tr>
+                    <th>Usuario</th>
+                    <th>Guardias Semana</th>
+                    <th>Guardias Fin de Semana</th>
+                    <th>Plantas Sábado</th>
+                    <th>Acumulado Semana</th>
+                    <th>Acumulado Fin de Semana</th>
+                    <th>Acumulado Sábado</th>
+
+                </tr>
+            </thead>
+            <tbody id="shift-counts-body">
+                <!-- Aquí se generarán dinámicamente las filas de conteo por usuario -->
+            </tbody>
+        </table>
+    </div>
+    </div>
     <div class="instructions">
         <div class="header-div">
         <h3>Asistente de programación de guardias</h3>
@@ -62,31 +85,6 @@
                 <span class="slider"></span>
             </label>
         </div>
-        <!-- Tabla flotante -->
-        <div id="floating-table" class="floating-table">
-            <h1>Días largos acumulados</h1>
-            <button id="close-table" class="close-btn">&times;</button>
-            <div class="table-scroll">
-            <table id="shift-counts">
-                <thead>
-                    <tr>
-                        <th>Usuario</th>
-                        <th>Guardias Semana</th>
-                        <th>Guardias Fin de Semana</th>
-                        <th>Plantas Sábado</th>
-                        <th>Acumulado Semana</th>
-                        <th>Acumulado Fin de Semana</th>
-                        <th>Acumulado Sábado</th>
-
-                    </tr>
-                </thead>
-                <tbody id="shift-counts-body">
-                    <!-- Aquí se generarán dinámicamente las filas de conteo por usuario -->
-                </tbody>
-            </table>
-        </div>
-        </div>
-    
     <div class="button-container">
         <button id="assign-shifts">Asignar guardias</button>
 
@@ -94,6 +92,7 @@
     </div>
     </div>
     <div class="instructions">    <!-- Tabla dinámica de asignación de guardias -->
+        <div class="table-wrapper">
         <table id="shift-schedule" class="shift-table">
             <thead>
                 <tr id="days-header">
@@ -104,6 +103,7 @@
                 <!-- Aquí se generarán dinámicamente las filas de los usuarios -->
             </tbody>
         </table>
+    </div>
     </div>
 </body>
 </html>

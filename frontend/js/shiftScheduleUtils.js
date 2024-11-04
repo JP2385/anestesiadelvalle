@@ -36,7 +36,7 @@ function generateTable(users, yearSelect, monthSelect, dayAbbreviations, guardSi
     const month = parseInt(monthSelect.value);
 
     // Limpiamos el contenido anterior
-    daysHeader.innerHTML = '<th>Anestesiólogo</th>';
+    daysHeader.innerHTML = '<th class="user">Anestesiólogo</th>';
     usersBody.innerHTML = '';
 
     // Obtenemos el número de días en el mes seleccionado
@@ -60,6 +60,7 @@ function generateTable(users, yearSelect, monthSelect, dayAbbreviations, guardSi
         const row = document.createElement('tr');
         const userCell = document.createElement('td');
         userCell.textContent = user.username;
+        userCell.classList.add('user');
         row.appendChild(userCell);
 
         for (let day = 1; day <= daysInMonth; day++) {

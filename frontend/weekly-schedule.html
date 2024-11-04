@@ -21,6 +21,22 @@
 </head>
 <body>
     <div class="spinner" id="spinner"></div>
+    <div id="floating-table" class="floating-table">
+        <h1>Días largos acumulados</h1>
+        <button id="close-table" class="close-btn">&times;</button>
+        <div class="table-scroll">
+        <table id="long-days-count-table">
+            <thead>
+                <tr>
+                    <!-- Las cabeceras se agregarán dinámicamente desde el JS -->
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Aquí se agregarán las filas de datos dinámicamente -->
+            </tbody>
+        </table>
+    </div>
+    </div> 
     <header>
         <a href="index.html" class="app-logo-link">
             <img src="images/logo/logo.png" alt="Logo Anestesiólogos del Valle" class="app-logo">
@@ -70,22 +86,7 @@
                 </label>
             </div>
             <!-- Tabla flotante -->
-            <div id="floating-table" class="floating-table">
-                <h1>Días largos acumulados</h1>
-                <button id="close-table" class="close-btn">&times;</button>
-                <div class="table-scroll">
-                <table id="long-days-count-table">
-                    <thead>
-                        <tr>
-                            <!-- Las cabeceras se agregarán dinámicamente desde el JS -->
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <!-- Aquí se agregarán las filas de datos dinámicamente -->
-                    </tbody>
-                </table>
-            </div>
-            </div> 
+
         </div>
         <div class="header-div">
             <span id="long-days-inform"></span>

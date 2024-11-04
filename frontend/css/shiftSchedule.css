@@ -51,3 +51,53 @@
     border-radius: 5px; /* Bordes redondeados */
     cursor: pointer;
 }
+
+    th.user {
+        background-color: #0056b3;
+    }
+
+    td.user {
+        background-color: white;
+    }
+    /* Configuración para la columna fija */
+    th.user, td.user {
+        position: sticky;
+        left: 0;
+        z-index: 10; /* Coloca la columna sobre el contenido desplazable */
+        padding-right: 10px; /* Opcional: ajusta según el diseño */
+    }
+
+    /* Pseudo-elemento para simular el espacio en blanco a la derecha */
+    th.user::after, td.user::after {
+        content: '';
+        position: absolute;
+        top: -4px; /* Expande hacia arriba para cubrir el borde superior */
+        left: -25px; /* Ajusta según el ancho deseado */
+        width: 21px; /* Ancho del "relleno" */
+        height: 100%;
+        background-color: white;
+        border-right: 2px solid white;
+        border-left: 2px solid white; /* Borde derecho blanco para ocultar el borde de la celda siguiente */
+        border-top: 2px solid white; /* Borde superior blanco */
+        border-bottom: 8px solid white; /* Borde inferior blanco */
+        z-index: 9; /* Coloca el pseudo-elemento por detrás del contenido de la celda */
+    }
+
+    .table-wrapper {
+        position: relative;
+        overflow-x: auto; /* Permite el desplazamiento horizontal */
+    }
+    
+    /* Pseudo-elemento en el contenedor */
+    .table-wrapper::after {
+        content: '';
+        position: absolute;
+        top: 0;
+        right: 0; /* Alinea el pseudo-elemento al borde derecho del contenedor */
+        border: white;
+        border-width: 2px;
+        width: 25px; /* Ajusta el ancho del borde blanco */
+        height: 100%;
+        background-color: white;
+        z-index: 20; /* Asegura que esté al frente */
+    }
