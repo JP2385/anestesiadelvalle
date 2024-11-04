@@ -62,7 +62,7 @@
     /* Configuración para la columna fija */
     th.user, td.user {
         position: sticky;
-        left: 0;
+        left: -1px;
         z-index: 10; /* Coloca la columna sobre el contenido desplazable */
         padding-right: 10px; /* Opcional: ajusta según el diseño */
     }
@@ -72,8 +72,8 @@
         content: '';
         position: absolute;
         top: -4px; /* Expande hacia arriba para cubrir el borde superior */
-        left: -25px; /* Ajusta según el ancho deseado */
-        width: 21px; /* Ancho del "relleno" */
+        left: -28px; /* Ajusta según el ancho deseado */
+        width: 23px; /* Ancho del "relleno" */
         height: 100%;
         background-color: white;
         border-right: 2px solid white;
@@ -86,18 +86,4 @@
     .table-wrapper {
         position: relative;
         overflow-x: auto; /* Permite el desplazamiento horizontal */
-    }
-    
-    /* Pseudo-elemento en el contenedor */
-    .table-wrapper::after {
-        content: '';
-        position: absolute;
-        top: 0;
-        right: 0; /* Alinea el pseudo-elemento al borde derecho del contenedor */
-        border: white;
-        border-width: 2px;
-        width: 25px; /* Ajusta el ancho del borde blanco */
-        height: 100%;
-        background-color: white;
-        z-index: 20; /* Asegura que esté al frente */
     }
