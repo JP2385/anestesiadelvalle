@@ -9,6 +9,7 @@ const scheduleRoutes = require('./src/app/routes/scheduleRoutes');
 const shiftScheduleRoutes = require('./src/app/routes/shiftScheduleRoutes'); // Ruta para los horarios específicos de guardias
 const vacationSwapRoutes = require('./src/app/routes/vacationSwapRoutes');
 const notificationRoutes = require('./src/app/routes/notificationRoutes');
+const holidayRoutes = require('./src/app/routes/holidayRoutes');
 const path = require('path');
 const cron = require('node-cron');
 const Schedule = require('./src/app/models/scheduleModel');
@@ -41,6 +42,8 @@ app.use('/vacation-swap', vacationSwapRoutes);
 
 // Ruta para manejar las notificaciones
 app.use('/notifications', notificationRoutes);
+
+app.use('/holidays', holidayRoutes); // Rutas para feriados
 
 // Ruta para consultar disponibilidad
 app.get('/availability', getUsersAvailability);

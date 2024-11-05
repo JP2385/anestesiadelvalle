@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Administrar Feriados - Anestesiólogos del Valle</title>
+    <link rel="icon" type="image/png" href="images/logo/logo64x64.png">
+    <link rel="stylesheet" href="css/base.css">
+    <link rel="stylesheet" href="css/header.css">
+    <link rel="stylesheet" href="css/login.css">
+    <link rel="stylesheet" href="css/media.css">
+    <link rel="stylesheet" href="css/nav.css">
+    <link rel="stylesheet" href="css/main.css">
+    <link rel="stylesheet" href="css/spinner.css">
+    <link rel="stylesheet" href="css/admin.css">
+    <script defer src="js/holidays.js"></script> <!-- Archivo JavaScript para gestionar el ABM de feriados -->
+</head>
+<body>
+    <header>
+        <a href="index.html" class="app-logo-link">
+            <img src="images/logo/logo.png" alt="Logo Anestesiólogos del Valle" class="app-logo">
+        </a>
+        <h1>Anestesiólogos del Valle</h1>
+        <a href="index.html" class="back-to-main-menu" title="Volver al menú principal">
+            <img src="images/icons/back-icon.svg" alt="Volver" class="back-icon">
+        </a>
+    </header>
+
+    <main class="form-container">
+        <h2>Administrador de Feriados</h2>
+        
+        <form id="holiday-form">
+            <div class="admin-input-group">
+                <label for="holiday-name">Nombre del Feriado</label>
+                <input type="text" id="holiday-name" name="holiday-name" placeholder="Ej. Día de la Independencia">
+            </div>
+            
+            <div class="admin-input-group">
+                <label for="holiday-start">Fecha de Inicio</label>
+                <input type="date" id="holiday-start" name="holiday-start">
+            </div>
+            
+            <div class="admin-input-group">
+                <label for="holiday-end">Fecha de Fin</label>
+                <input type="date" id="holiday-end" name="holiday-end">
+            </div>
+
+            <button type="button" id="add-holiday" class="main-menu-button">Agregar Feriado</button>
+            
+            <h3>Lista de Feriados:</h3>
+            <ul id="holiday-list">
+                <!-- Aquí se agregarán dinámicamente los feriados -->
+            </ul>
+        </form>
+    </main>
+</body>
+</html>

@@ -52,7 +52,7 @@ document.addEventListener('DOMContentLoaded', async function () {
         const existingSchedule = await loadSchedule(selectedYear, selectedMonth);
     
         fetchUsers(apiUrl, (users) => {
-            processAndGenerateTable(users, yearSelect, monthSelect, dayAbbreviations, guardSites, usersBody, daysHeader, existingSchedule);
+            processAndGenerateTable(users, yearSelect, monthSelect, dayAbbreviations, guardSites, usersBody, daysHeader, existingSchedule, apiUrl);
             
             // Definir los conteos antes de actualizar la tabla de conteo de guardias
             const weekCounts = countWeekdayShifts();

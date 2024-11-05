@@ -87,3 +87,11 @@
         position: relative;
         overflow-x: auto; /* Permite el desplazamiento horizontal */
     }
+
+    td.weekend {
+        background-color: #e0f7fa; /* Color celeste pastel */
+    }
+
+    td.holiday {
+        background-color: #fff9c4; /* Color dorado pastel */
+    }

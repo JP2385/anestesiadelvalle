@@ -3,6 +3,8 @@ import { countWeekdayShifts, countWeekendShifts, countSaturdayShifts } from './s
 import { calculateAccumulatedShiftCounts} from './shiftCountTable.js';
 import { fetchLastDayAssignments} from './shiftLastDayAssignments.js';
 
+
+
 // Función auxiliar para obtener el número de días de un mes y año
 export function getDaysInMonth(year, month) {
     return new Date(year, month + 1, 0).getDate();
@@ -31,7 +33,7 @@ export function fetchUsers(apiUrl, callback) {
 }
 
 
-function generateTable(users, yearSelect, monthSelect, dayAbbreviations, guardSites, usersBody, daysHeader, existingSchedule = null) {
+function generateTable(users, yearSelect, monthSelect, dayAbbreviations, guardSites, usersBody, daysHeader, existingSchedule = null, apiUrl) {
     const year = parseInt(yearSelect.value);
     const month = parseInt(monthSelect.value);
 
@@ -48,6 +50,12 @@ function generateTable(users, yearSelect, monthSelect, dayAbbreviations, guardSi
         const dayOfWeek = date.getDay();
         const th = document.createElement('th');
         th.textContent = `${dayAbbreviations[dayOfWeek]} ${day}`;
+
+        // Añadir clase 'weekend' para los sábados y domingos
+        if (dayOfWeek === 6 || dayOfWeek === 0) { // 6 = sábado, 0 = domingo
+            th.classList.add('weekend');
+        }
+
         daysHeader.appendChild(th);
     }
 
@@ -72,9 +80,15 @@ function generateTable(users, yearSelect, monthSelect, dayAbbreviations, guardSi
             const dayOfWeek = date.getDay();
             const dayOfWeekAbbreviation = dayAbbreviations[dayOfWeek];
             const isSaturday = dayOfWeek === 6;
+            const isSunday = dayOfWeek === 0;
 
             const dayString = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
             const selectKey = `${user.username}-${dayString}`;
+
+            // Aplicar clase 'weekend' para los sábados y domingos
+            if (isSaturday || isSunday) {
+                cell.classList.add('weekend');
+            }
 
             // Asignar atributos de data al select
             select.setAttribute('data-username', user.username);
@@ -121,12 +135,16 @@ function generateTable(users, yearSelect, monthSelect, dayAbbreviations, guardSi
     // Realizar el recuento de guardias asignadas después de aplicar las asignaciones por defecto
     const shiftCounts = countWeekdayShifts();
     console.log('Conteo de guardias luego de las asignaciones por defecto:', shiftCounts);
+
+    // Llamar a la función para resaltar feriados
+    highlightHolidays(apiUrl, year, month);
 }
 
 
 
 
-export function processAndGenerateTable(users, yearSelect, monthSelect, dayAbbreviations, guardSites, usersBody, daysHeader, existingSchedule) {
+
+export function processAndGenerateTable(users, yearSelect, monthSelect, dayAbbreviations, guardSites, usersBody, daysHeader, existingSchedule, apiUrl) {
     const year = parseInt(yearSelect.value);
     const month = parseInt(monthSelect.value) + 1; // Ajuste por mes basado en índice 0
 
@@ -140,7 +158,7 @@ export function processAndGenerateTable(users, yearSelect, monthSelect, dayAbbre
     filteredUsers.sort((a, b) => a.username.localeCompare(b.username));
 
     // Generamos la tabla con los usuarios filtrados
-    generateTable(filteredUsers, yearSelect, monthSelect, dayAbbreviations, guardSites, usersBody, daysHeader, existingSchedule);
+    generateTable(filteredUsers, yearSelect, monthSelect, dayAbbreviations, guardSites, usersBody, daysHeader, existingSchedule, apiUrl);
 }
 
 
@@ -483,6 +501,70 @@ function getPreviousDay(currentDay, offset = 1) {
     date.setDate(date.getDate() - offset); // Restamos un día (o el offset dado)
     return date.toISOString().slice(0, 10); // Retornamos en formato YYYY-MM-DD
 }
+
+function highlightHolidays(apiUrl, year, month) {
+    // Limpiar cualquier clase 'holiday' anterior en las celdas del mes
+    document.querySelectorAll('.holiday').forEach(cell => cell.classList.remove('holiday'));
+
+    fetch(`${apiUrl}/holidays`, {
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer ' + localStorage.getItem('token')
+        }
+    })
+    .then(response => response.json())
+    .then(holidays => {
+        console.log("Feriados obtenidos:", holidays);
+
+        holidays.forEach(holiday => {
+            const holidayStart = holiday.startDate.slice(0, 10); // Formato YYYY-MM-DD
+            const holidayEnd = holiday.endDate.slice(0, 10);     // Formato YYYY-MM-DD
+
+            console.log(`Procesando feriado: ${holiday.name} - Desde ${holidayStart} hasta ${holidayEnd} (UTC)`);
+
+            // Recorrer las fechas entre holidayStart y holidayEnd en formato de cadena
+            let currentDate = holidayStart;
+
+            while (currentDate <= holidayEnd) {
+                const [currentYear, currentMonth, currentDay] = currentDate.split('-').map(Number);
+
+                if (currentYear === year && currentMonth === month + 1) {
+                    const dayString = `${year}-${String(month + 1).padStart(2, '0')}-${String(currentDay).padStart(2, '0')}`;
+                    console.log(`Buscando selects con data-day="${dayString}"`);
+
+                    // Seleccionar todos los selects con el atributo data-day
+                    const selects = document.querySelectorAll(`select[data-day="${dayString}"]`);
+                    if (selects.length > 0) {
+                        selects.forEach(select => {
+                            const cell = select.closest('td'); // Encontrar el td contenedor del select
+                            if (cell) {
+                                cell.classList.add('holiday'); // Aplicar la clase al td
+                                console.log(`Celda encontrada y clase holiday aplicada en data-day="${dayString}"`);
+                            }
+                        });
+                    } else {
+                        console.log(`No se encontraron selects con data-day="${dayString}"`);
+                    }
+                }
+
+                // Incrementar currentDate en un día
+                const nextDate = new Date(`${currentDate}T00:00:00Z`);
+                nextDate.setUTCDate(nextDate.getUTCDate() + 1);
+                currentDate = nextDate.toISOString().slice(0, 10);
+            }
+        });
+    })
+    .catch(error => {
+        console.error('Error al obtener los feriados:', error);
+    });
+}
+    
+
+
+
+
+
 
 
 
