@@ -28,10 +28,14 @@ export async function calculateAccumulatedShiftCounts(selectedYear, selectedMont
                         accumulatedCounts[username] = { week: 0, weekend: 0, saturday: 0 };
                     }
 
-                    // Acumular valores
-                    accumulatedCounts[username].week += weekdayShifts;
-                    accumulatedCounts[username].weekend += weekendShifts;
-                    accumulatedCounts[username].saturday += saturdayShifts;
+                    // Aplicar el multiplicador de 1.4 para el usuario "nvela"
+                    const adjustedWeekdayShifts = username === "nvela" ? weekdayShifts * 1.4 : weekdayShifts;
+                    const adjustedWeekendShifts = username === "nvela" ? weekendShifts * 1.4 : weekendShifts;
+
+                    // Acumular valores ajustados
+                    accumulatedCounts[username].week += adjustedWeekdayShifts;
+                    accumulatedCounts[username].weekend += adjustedWeekendShifts;
+                    accumulatedCounts[username].saturday += saturdayShifts; // Este valor no cambia
                 });
             }
         });
@@ -44,7 +48,8 @@ export async function calculateAccumulatedShiftCounts(selectedYear, selectedMont
 }
 
 
-// Actualizar la tabla de conteo de guardias, incluyendo acumulados
+
+
 export async function updateShiftCountsTableWithAccumulated(weekCounts, weekendCounts, saturdayCounts) {
     const yearSelect = document.getElementById('year-select');
     const monthSelect = document.getElementById('month-select');
@@ -65,23 +70,37 @@ export async function updateShiftCountsTableWithAccumulated(weekCounts, weekendC
         userCell.textContent = username;
         row.appendChild(userCell);
 
+        // Obtiene los valores de las guardias del mes actual
+        const weekCount = weekCounts[username] || 0;
+        const weekendCount = weekendCounts[username] || 0;
+        const saturdayCount = saturdayCounts[username] || 0;
+
+        // Ajusta los valores para el usuario "nvela" dividiendo por 1.4
+        const adjustedWeekCount = username === "nvela" ? weekCount / 1.4 : weekCount;
+        const adjustedWeekendCount = username === "nvela" ? weekendCount / 1.4 : weekendCount;
+
         const weekCountCell = document.createElement('td');
-        weekCountCell.textContent = (weekCounts[username] || 0).toFixed(0);
+        weekCountCell.textContent = adjustedWeekCount.toFixed(0);
         row.appendChild(weekCountCell);
 
         const weekendCountCell = document.createElement('td');
-        weekendCountCell.textContent = (weekendCounts[username] || 0).toFixed(0);
+        weekendCountCell.textContent = adjustedWeekendCount.toFixed(0);
         row.appendChild(weekendCountCell);
 
         const saturdayCountCell = document.createElement('td');
-        saturdayCountCell.textContent = (saturdayCounts[username] || 0).toFixed(0);
+        saturdayCountCell.textContent = saturdayCount.toFixed(0);
         row.appendChild(saturdayCountCell);
 
         // Acumulado previo y cálculo del nuevo acumulado sumando los datos actuales del DOM
         const previousAccumulated = previousAccumulatedCounts[username] || { week: 0, weekend: 0, saturday: 0 };
-        const newAccumulatedWeek = (previousAccumulated.week || 0) + (weekCounts[username] || 0);
-        const newAccumulatedWeekend = (previousAccumulated.weekend || 0) + (weekendCounts[username] || 0);
-        const newAccumulatedSaturday = (previousAccumulated.saturday || 0) + (saturdayCounts[username] || 0);
+        
+        // Ajusta el acumulado previo para "nvela" dividiendo por 1.4
+        const adjustedPreviousWeek = username === "nvela" ? previousAccumulated.week / 1.4 : previousAccumulated.week;
+        const adjustedPreviousWeekend = username === "nvela" ? previousAccumulated.weekend / 1.4 : previousAccumulated.weekend;
+
+        const newAccumulatedWeek = adjustedPreviousWeek + adjustedWeekCount;
+        const newAccumulatedWeekend = adjustedPreviousWeekend + adjustedWeekendCount;
+        const newAccumulatedSaturday = previousAccumulated.saturday + saturdayCount;
 
         const accumulatedWeekCell = document.createElement('td');
         accumulatedWeekCell.textContent = newAccumulatedWeek.toFixed(0);
@@ -98,4 +117,6 @@ export async function updateShiftCountsTableWithAccumulated(weekCounts, weekendC
         shiftCountsBody.appendChild(row);
     });
 }
+
+
 

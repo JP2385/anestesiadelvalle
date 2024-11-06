@@ -117,14 +117,20 @@ function transformShiftCounts() {
     console.log("Saturday Shifts Count:", saturdayCounts);
 
     const shiftCounts = Object.keys(weekCounts).map(username => {
-        const weekdayShifts = weekCounts[username] || 0;
-        const weekendShifts = weekendCounts[username] || 0;
+        let weekdayShifts = weekCounts[username] || 0;
+        let weekendShifts = weekendCounts[username] || 0;
         const saturdayShifts = saturdayCounts[username] || 0;
+
+         // Dividir los conteos de nvela por 1.4 y redondear los resultados
+         if (username === "nvela") {
+            weekdayShifts = Math.round(weekdayShifts / 1.4);
+            weekendShifts = Math.round(weekendShifts / 1.4);
+        }
 
         return {
             username,
-            weekdayShifts: username === "nvela" ? weekdayShifts * 1.4 : weekdayShifts,
-            weekendShifts: username === "nvela" ? weekendShifts * 1.4 : weekendShifts,
+            weekdayShifts,
+            weekendShifts,
             saturdayShifts // este se mantiene igual
         };
     });
@@ -132,3 +138,4 @@ function transformShiftCounts() {
     console.log("Final Shift Counts Array:", shiftCounts);
     return shiftCounts;
 }
+

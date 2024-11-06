@@ -262,10 +262,6 @@ function assignShift(selects, assignmentType, isLharriagueAssignedToday, isMquir
     return null; // No se asignó ningún usuario
 }
 
-
-
-
-// Función auxiliar para obtener el día anterior en formato 'YYYY-MM-DD'
 // Puede ajustar el offset para obtener días específicos antes (ej., -2 para domingo anterior)
 function getPreviousDay(currentDay, offset = 1) {
     const [year, month, day] = currentDay.split('-').map(Number);
