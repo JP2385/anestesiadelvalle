@@ -9,7 +9,7 @@ export const userRealNames = {
     "jserrano": "Juan Pablo Serrano",
     "mmelo": "Mauro Melo",
     "mquiroga": "Martín Quiroga",
-    "lharraigue": "Lucía Harriague",
+    "lharriague": "Lucía Harriague",
     "ngogorza": "Nicolás Gogorza",
     "lgarcia": "Leandro García",
     "amacias": "Alan Macías",

@@ -17,6 +17,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     const urlParams = new URLSearchParams(window.location.search);
     const yearParam = urlParams.get('year');
     const monthParam = urlParams.get('month');
+    const siteParam = urlParams.get('site') || 'all';
 
     // Fetch de usuarios para obtener números de teléfono
     try {
@@ -56,12 +57,13 @@ document.addEventListener('DOMContentLoaded', async () => {
         monthSelect.appendChild(option);
     });
 
-    // Seleccionar el año y mes según los parámetros de la URL, o el actual si no hay parámetros
-yearSelect.value = yearParam || currentYear;
-monthSelect.value = monthParam ? (parseInt(monthParam, 10) - 1).toString() : currentMonth.toString();
+    // Seleccionar el año, mes y clínica según los parámetros de la URL, o los valores actuales si no hay parámetros
+    yearSelect.value = yearParam || currentYear;
+    monthSelect.value = monthParam ? (parseInt(monthParam, 10) - 1).toString() : currentMonth.toString();
+    siteSelect.value = siteParam;
 
-// Llamar a fetchAndDisplaySchedule para cargar el cronograma en función del año y mes seleccionados
-fetchAndDisplaySchedule(yearSelect.value, monthSelect.value, siteSelect.value);
+    // Llamar a fetchAndDisplaySchedule para cargar el cronograma en función del año, mes y sitio seleccionados
+    fetchAndDisplaySchedule(yearSelect.value, monthSelect.value, siteSelect.value);
 
     // Agregar opciones de sitios al selector de sitios de guardia
     Object.entries(shiftAssignmentLabels).forEach(([key, value]) => {
@@ -75,6 +77,10 @@ fetchAndDisplaySchedule(yearSelect.value, monthSelect.value, siteSelect.value);
         const formattedMonth = `${year}-${String(Number(month) + 1).padStart(2, '0')}`;
         console.log(`Fetching schedule for ${formattedMonth} and site ${site}`);  
 
+        // Actualizar la URL con los nuevos parámetros
+        const newUrl = `${window.location.pathname}?year=${year}&month=${Number(month) + 1}&site=${site}`;
+        window.history.replaceState(null, '', newUrl);
+
         // Obtener las asignaciones de la base de datos
         fetch(`${apiUrl}/shift-schedule/${formattedMonth}`)
             .then(response => response.json())
@@ -86,6 +92,82 @@ fetchAndDisplaySchedule(yearSelect.value, monthSelect.value, siteSelect.value);
                 console.error('Hubo un problema al obtener el cronograma de guardias:', error);
             });
     }
+
+    function generateCalendar(year, month, site, shiftSchedule) {
+        scheduleTable.innerHTML = ''; // Limpiar tabla
+        const startDate = new Date(year, month, 1);
+        const daysInMonth = new Date(year, parseInt(month) + 1, 0).getDate();
+        const firstDayOfWeek = startDate.getDay() === 0 ? 6 : startDate.getDay() - 1;
+        
+        const daysOfWeek = ['Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado', 'Domingo'];
+        let currentRow, currentContentRow;
+        let dayCount = 1;
+    
+        // Generar las filas semana a semana hasta completar el mes
+        while (dayCount <= daysInMonth) {
+            currentRow = scheduleTable.insertRow();
+            currentRow.classList.add('date-row');
+    
+            currentContentRow = scheduleTable.insertRow();
+            currentContentRow.classList.add('content-row');
+    
+            for (let i = 0; i < 7; i++) {
+                const headerCell = currentRow.insertCell();
+                const contentCell = currentContentRow.insertCell();
+                
+                if (dayCount > daysInMonth || (dayCount === 1 && i < firstDayOfWeek)) {
+                    headerCell.classList.add('empty-cell');
+                    contentCell.classList.add('empty-cell');
+                } else {
+                    const date = `${year}-${String(Number(month) + 1).padStart(2, '0')}-${String(dayCount).padStart(2, '0')}`;
+    
+                    headerCell.textContent = `${daysOfWeek[i]} ${dayCount}`;
+                    headerCell.classList.add('date-header');
+    
+                    const assignmentsForDay = shiftSchedule
+                        .flatMap(user => 
+                            user.shifts
+                                .filter(shift => 
+                                    shift.day === date && 
+                                    (site === 'all' && shift.assignment !== 'V' || shift.assignment === site)
+                                )
+                                .map(shift => ({
+                                    username: user.username,
+                                    assignment: shiftAssignmentLabels[shift.assignment] || shift.assignment
+                                }))
+                        );
+    
+                    const assignmentsDiv = document.createElement('div');
+                    assignmentsDiv.classList.add('assignments');
+                    assignmentsForDay.forEach(assignment => {
+                        const assignmentText = document.createElement('p');
+                        const phoneNumber = userPhoneNumbers[assignment.username] || 'No phone';
+                        const realName = userRealNames[assignment.username] || assignment.username;
+                        
+                        assignmentText.textContent = site === 'all'
+                            ? `${realName} Tel: ${phoneNumber} - ${assignment.assignment}`
+                            : `${realName} Tel: ${phoneNumber}`;
+                        
+                        assignmentsDiv.appendChild(assignmentText);
+                    });
+                    contentCell.appendChild(assignmentsDiv);
+    
+                    dayCount++;
+                }
+            }
+        }
+    }
+
+    yearSelect.addEventListener('change', () => {
+        fetchAndDisplaySchedule(yearSelect.value, monthSelect.value, siteSelect.value);
+    });
+    monthSelect.addEventListener('change', () => {
+        fetchAndDisplaySchedule(yearSelect.value, monthSelect.value, siteSelect.value);
+    });
+    siteSelect.addEventListener('change', () => {
+        fetchAndDisplaySchedule(yearSelect.value, monthSelect.value, siteSelect.value);
+    }); 
+
     function generateCalendar(year, month, site, shiftSchedule) {
         scheduleTable.innerHTML = ''; // Limpiar tabla
         const startDate = new Date(year, month, 1);
