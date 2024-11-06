@@ -32,12 +32,18 @@ export function countWeekdayShifts() {
         selects.forEach(select => {
             const dayOfWeek = parseInt(select.getAttribute('data-daynumber'), 10); // Obtener el día de la semana directamente de data-daynumber
             const dayString = select.getAttribute('data-day'); // Formato YYYY-MM-DD para verificar si es feriado
+            const assignment = select.value; // Valor del select para la asignación de guardia
 
-            // Verificar si es un día entre lunes y jueves, no está deshabilitado y tiene un valor asignado
-            // Además, asegurarse de que no sea feriado
-            if (dayOfWeek >= 1 && dayOfWeek <= 4 && !select.disabled && select.value !== '' && select.value !== 'ND' && !isHoliday(dayString)) {
-                // Si el usuario es "nvela", cuenta cada guardia como 1.4 en lugar de 1
-                userShiftCounts[username] += (username === "nvela") ? 1.4 : 1;
+            // Verificar si es un día entre lunes y jueves, no está deshabilitado, tiene un valor asignado, y no es feriado
+            if (dayOfWeek >= 1 && dayOfWeek <= 4 && !select.disabled && assignment !== '' && assignment !== 'ND' && !isHoliday(dayString)) {
+                // Contar asignaciones especiales
+                if (assignment === "HH") {
+                    userShiftCounts[username] += 1.5;
+                } else if (username === "nvela") {
+                    userShiftCounts[username] += 1.4;
+                } else {
+                    userShiftCounts[username] += 1;
+                }
             }
         });
     });
@@ -63,17 +69,25 @@ export function countWeekendShifts() {
         selects.forEach(select => {
             const dayOfWeek = parseInt(select.getAttribute('data-daynumber'), 10); // Obtener el día de la semana directamente de data-daynumber
             const dayString = select.getAttribute('data-day'); // Formato YYYY-MM-DD para verificar si es feriado
+            const assignment = select.value; // Valor del select para la asignación de guardia
 
             // Verificar si el día corresponde a viernes a domingo o es un feriado
-            if ((dayOfWeek === 5 || dayOfWeek === 6 || dayOfWeek === 0 || isHoliday(dayString)) && !select.disabled && select.value !== '' && select.value !== 'ND' && select.value !== 'P1') {
-                // Si el usuario es "nvela", cuenta cada guardia como 1.4 en lugar de 1
-                userShiftCounts[username] += (username === "nvela") ? 1.4 : 1;
+            if ((dayOfWeek === 5 || dayOfWeek === 6 || dayOfWeek === 0 || isHoliday(dayString)) && !select.disabled && assignment !== '' && assignment !== 'ND' && assignment !== 'P1') {
+                // Contar asignaciones especiales
+                if (assignment === "HH") {
+                    userShiftCounts[username] += 1.5;
+                } else if (username === "nvela") {
+                    userShiftCounts[username] += 1.4;
+                } else {
+                    userShiftCounts[username] += 1;
+                }
             }
         });
     });
     
     return userShiftCounts;
 }
+
 
 
 

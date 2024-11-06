@@ -3,7 +3,7 @@ import { countWeekdayShifts, countWeekendShifts, countSaturdayShifts } from './s
 import { updateShiftCountsTableWithAccumulated } from './shiftCountTable.js';
 import { initializeFloatingTable } from './floatingTable.js';
 import { fetchHolidays } from './fetchHolidays.js';
-
+import { generateShiftReferencesTable } from './shiftReferencesTable.js';
 
 document.addEventListener('DOMContentLoaded', async function () {
     const apiUrl = window.location.hostname === 'localhost' ? 'http://localhost:3000' : 'https://adv-37d5b772f5fd.herokuapp.com';
@@ -27,6 +27,9 @@ document.addEventListener('DOMContentLoaded', async function () {
         publicRioNegro: ['Cp', 'Al', 'Jb'],
         saturday: ['P1']
     };
+
+     // Genera la tabla de referencias de los lugares de guardia
+     generateShiftReferencesTable(guardSites);
 
     const assignButton = document.getElementById('assign-shifts');
 

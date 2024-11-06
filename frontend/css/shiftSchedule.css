@@ -95,3 +95,38 @@
     td.holiday {
         background-color: #fff9c4; /* Color dorado pastel */
     }
+
+    /* Contenedor principal para alinear los dos divs en fila */
+.instructions {
+    display: flex;
+    justify-content: space-between; /* Distribuye los elementos a la izquierda y derecha */
+    align-items: flex-start; /* Alinea los elementos verticalmente al inicio */
+    gap: 20px; /* Espacio entre el div izquierdo y el div derecho */
+}
+
+/* Alineación de los elementos dentro del primer div */
+.instructions > div:first-child {
+    display: flex;
+    flex-direction: column;
+    gap: 15px; /* Espacio entre grupos de controles */
+}
+
+/* Estilo para el contenedor de la tabla de referencias */
+#shift-references-container {
+    overflow-x: auto;
+}
+
+/* Estilo de la tabla */
+.shift-references {
+    width: 100%;
+    border-collapse: collapse;
+    table-layout: auto
+}
+
+
+.shift-references th, .shift-references td {
+    border: 1px solid #ddd;
+    padding: 4px;
+    font-size: 0.7rem;
+    text-align: left;
+}

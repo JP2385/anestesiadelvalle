@@ -1,11 +1,24 @@
 @media (max-width: 1024px) {
     table {
         width: 100%;
+        min-width: 768px;
         table-layout: auto; /* Cambia a auto para permitir la expansión */
     }
+
+    /* Sobrescribir estilos específicos para #shift-references */
+    #shift-references {
+        width: auto; /* Restablece el ancho según el contenido */
+        min-width: 100px;
+        table-layout: auto; /* O elige otro valor si prefieres */
+    }
+    
     th, td {
         font-size: 0.875rem; /* Reduce el tamaño de la fuente */
         padding: 2px; /* Reduce el padding */
+    }
+
+    #floating-table th, td {
+        font-size: 0.7rem;
     }
     th.work-site {
         width: auto; /* Permite que la primera columna se ajuste automáticamente */
@@ -73,10 +86,28 @@
     table {
         width: 100%;
         table-layout: fixed; /* Mantiene el ancho fijo de la tabla */
-        min-width: 768px; /* Ancho mínimo para evitar que se encoja */
+        min-width: 768px;
         border-collapse: collapse;
         margin-top: 10px;
     }
+
+    #shift-references-container {
+        overflow-x: auto; /* Permite el scroll horizontal */
+    }
+    #shift-references {
+        width: auto; /* Restablece el ancho según el contenido */
+        min-width: 100px;
+        table-layout: auto; /* O elige otro valor si prefieres */
+    }
+
+    /* Estilos para las celdas */
+.shift-references th, .shift-references td {
+    border: 1px solid #ddd;
+    padding: 4px;
+    font-size: 0.9rem; /* Ajusta según sea necesario */
+    text-align: left;
+    white-space: nowrap; /* Evita que el contenido se divida en varias líneas */
+}
 
         .responsive-table {
             width: 100%; /* Ajusta el ancho de la tabla para que se adapte a la pantalla */
@@ -106,6 +137,11 @@
         border-top: 2px solid white; /* Borde superior blanco */
         border-bottom: 8px solid white; /* Borde inferior blanco */
         z-index: 9; /* Coloca el pseudo-elemento por detrás del contenido de la celda */
+    }
+
+    #floating-table th, td  {
+        font-size: 0.7rem !important;
+
     }
 
     /* Contenedor de la tabla para manejar el desplazamiento */
@@ -143,7 +179,7 @@
     }
 
     /* Ancho de las demás columnas <th> */
-    th:not(.work-site) {
+    .assignments-inform th:not(.work-site) {
         width: 12%; /* Define el ancho de cada columna sin work-site como un 80% de work-site */
     }
 
@@ -227,7 +263,6 @@
     th, td {
         font-size: 0.75rem; /* Reduce aún más el tamaño de la fuente */
         padding: 1px; /* Reduce el padding */
-        word-break: break-word;
     }
 
     th.work-site {
