@@ -2,10 +2,13 @@ import { processAndGenerateTable, fetchUsers, assignMonthlyShiftsWithCardio } fr
 import { countWeekdayShifts, countWeekendShifts, countSaturdayShifts } from './shiftAssignmentsUtils.js';
 import { updateShiftCountsTableWithAccumulated } from './shiftCountTable.js';
 import { initializeFloatingTable } from './floatingTable.js';
+import { fetchHolidays, isHoliday  } from './fetchHolidays.js';
 
 
 document.addEventListener('DOMContentLoaded', async function () {
     const apiUrl = window.location.hostname === 'localhost' ? 'http://localhost:3000' : 'https://adv-37d5b772f5fd.herokuapp.com';
+        
+    await fetchHolidays(apiUrl);
 
     const currentYear = new Date().getFullYear();
     const currentMonth = new Date().getMonth() + 1;
