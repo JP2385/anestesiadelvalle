@@ -101,4 +101,10 @@ label {
 
 #long-days-count-table td:nth-child(2) {
     font-weight: bold;
+    
+
+}
+
+#long-days-count-table, #shift-counts {
+    table-layout: auto;
 }
