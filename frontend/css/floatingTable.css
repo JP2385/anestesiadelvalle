@@ -50,7 +50,7 @@ input:checked + .slider:before {
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    width: 400px;
+    width: 500px;
     max-width: 90%; /* Ajuste para pantallas pequeñas */
     background-color: white;
     border: 1px solid #ccc;

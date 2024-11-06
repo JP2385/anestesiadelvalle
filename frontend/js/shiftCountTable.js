@@ -66,15 +66,15 @@ export async function updateShiftCountsTableWithAccumulated(weekCounts, weekendC
         row.appendChild(userCell);
 
         const weekCountCell = document.createElement('td');
-        weekCountCell.textContent = weekCounts[username] || 0;
+        weekCountCell.textContent = (weekCounts[username] || 0).toFixed(0);
         row.appendChild(weekCountCell);
 
         const weekendCountCell = document.createElement('td');
-        weekendCountCell.textContent = weekendCounts[username] || 0;
+        weekendCountCell.textContent = (weekendCounts[username] || 0).toFixed(0);
         row.appendChild(weekendCountCell);
 
         const saturdayCountCell = document.createElement('td');
-        saturdayCountCell.textContent = saturdayCounts[username] || 0;
+        saturdayCountCell.textContent = (saturdayCounts[username] || 0).toFixed(0);
         row.appendChild(saturdayCountCell);
 
         // Acumulado previo y cálculo del nuevo acumulado sumando los datos actuales del DOM
@@ -84,17 +84,18 @@ export async function updateShiftCountsTableWithAccumulated(weekCounts, weekendC
         const newAccumulatedSaturday = (previousAccumulated.saturday || 0) + (saturdayCounts[username] || 0);
 
         const accumulatedWeekCell = document.createElement('td');
-        accumulatedWeekCell.textContent = newAccumulatedWeek;
+        accumulatedWeekCell.textContent = newAccumulatedWeek.toFixed(0);
         row.appendChild(accumulatedWeekCell);
 
         const accumulatedWeekendCell = document.createElement('td');
-        accumulatedWeekendCell.textContent = newAccumulatedWeekend;
+        accumulatedWeekendCell.textContent = newAccumulatedWeekend.toFixed(0);
         row.appendChild(accumulatedWeekendCell);
 
         const accumulatedSaturdayCell = document.createElement('td');
-        accumulatedSaturdayCell.textContent = newAccumulatedSaturday;
+        accumulatedSaturdayCell.textContent = newAccumulatedSaturday.toFixed(0);
         row.appendChild(accumulatedSaturdayCell);
 
         shiftCountsBody.appendChild(row);
     });
 }
+

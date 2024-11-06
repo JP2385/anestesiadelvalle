@@ -30,14 +30,17 @@ export function countWeekdayShifts() {
         selects.forEach(select => {
             const dayOfWeek = parseInt(select.getAttribute('data-daynumber'), 10); // Obtener el día de la semana directamente de data-daynumber
 
+            // Verificar si el select corresponde a lunes a jueves, no está deshabilitado y tiene un valor asignado
             if (dayOfWeek >= 1 && dayOfWeek <= 4 && !select.disabled && select.value !== '' && select.value !== 'ND') {
-                userShiftCounts[username]++;
+                // Si el usuario es "nvela", cuenta cada guardia como 1.3 en lugar de 1
+                userShiftCounts[username] += (username === "nvela") ? 1.4 : 1;
             }
         });
     });
 
     return userShiftCounts;
 }
+
 
 // Función para contar las guardias asignadas a cada usuario de viernes a domingo
 export function countWeekendShifts() {
@@ -57,14 +60,17 @@ export function countWeekendShifts() {
         selects.forEach(select => {
             const dayOfWeek = parseInt(select.getAttribute('data-daynumber'), 10); // Obtener el día de la semana directamente de data-daynumber
 
+            // Verificar si el select corresponde a viernes a domingo, no está deshabilitado, y tiene un valor asignado
             if ((dayOfWeek === 5 || dayOfWeek === 6 || dayOfWeek === 0) && !select.disabled && select.value !== '' && select.value !== 'ND' && select.value !== 'P1') {
-                userShiftCounts[username]++;
+                // Si el usuario es "nvela", cuenta cada guardia como 1.3 en lugar de 1
+                userShiftCounts[username] += (username === "nvela") ? 1.4 : 1;
             }
         });
     });
     
     return userShiftCounts;
 }
+
 
 // Función para contar las guardias asignadas a "P1" para cada sábado
 export function countSaturdayShifts() {
