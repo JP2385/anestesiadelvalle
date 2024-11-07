@@ -67,9 +67,35 @@ document.getElementById('print-shifts').addEventListener('click', async () => {
         });
 
         console.log('Shift schedule saved successfully.');
-        
-        // Mostrar mensaje de éxito antes de la redirección
-        alert('El cronograma de guardias se generó exitosamente.');
+
+
+        const sendEmail = confirm('El cronograma de guardias se generó exitosamente ¿Desea enviar por mail el nuevo cronograma a las clínicas?');
+        if (sendEmail) {
+            const monthYearText = `${year}-${month}`;
+            const monthName = monthSelect.options[monthSelect.selectedIndex].text;
+            const yearText = yearSelect.value;
+
+            // Llamar a la API para enviar correos electrónicos
+            await fetch(`${apiUrl}/shift-schedule/send-schedule-email`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': 'Bearer ' + localStorage.getItem('token')
+                },
+                body: JSON.stringify({
+                    month: monthName,
+                    year: yearText,
+                    monthYearText: monthYearText
+                })
+            })
+            .then(response => response.json())
+            .then(result => {
+                alert(result.message); // Mostrar mensaje de resultado del envío de email
+            })
+            .catch(error => {
+                console.error('Error al enviar el correo:', error);
+            });
+        }
 
         // Redirigir al usuario a shiftInform.html con el año y mes en la URL
         window.location.href = `shiftInform.html?year=${year}&month=${month}`;

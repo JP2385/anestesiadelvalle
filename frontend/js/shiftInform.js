@@ -57,21 +57,29 @@ document.addEventListener('DOMContentLoaded', async () => {
         monthSelect.appendChild(option);
     });
 
-    // Seleccionar el año, mes y clínica según los parámetros de la URL, o los valores actuales si no hay parámetros
-    yearSelect.value = yearParam || currentYear;
-    monthSelect.value = monthParam ? (parseInt(monthParam, 10) - 1).toString() : currentMonth.toString();
+
+        // Agregar opciones de sitios al selector de sitios de guardia
+        Object.entries(shiftAssignmentLabels).forEach(([key, value]) => {
+            const option = document.createElement('option');
+            option.value = key;
+            option.textContent = value;
+            siteSelect.appendChild(option);
+        });
+        
+// Extraer el año y el mes del parámetro `month` si está en el formato `YYYY-MM`
+    const [extractedYear, extractedMonth] = monthParam && monthParam.includes('-') 
+    ? monthParam.split('-') 
+    : [yearParam, monthParam];
+
+    // Ajustar el valor de `yearSelect` y `monthSelect` usando el mes extraído
+    yearSelect.value = extractedYear || currentYear;
+    monthSelect.value = extractedMonth ? (parseInt(extractedMonth, 10) - 1).toString() : currentMonth.toString();
     siteSelect.value = siteParam;
 
     // Llamar a fetchAndDisplaySchedule para cargar el cronograma en función del año, mes y sitio seleccionados
     fetchAndDisplaySchedule(yearSelect.value, monthSelect.value, siteSelect.value);
 
-    // Agregar opciones de sitios al selector de sitios de guardia
-    Object.entries(shiftAssignmentLabels).forEach(([key, value]) => {
-        const option = document.createElement('option');
-        option.value = key;
-        option.textContent = value;
-        siteSelect.appendChild(option);
-    });
+
 
     function fetchAndDisplaySchedule(year, month, site) {
         const formattedMonth = `${year}-${String(Number(month) + 1).padStart(2, '0')}`;

@@ -1,4 +1,6 @@
 const ShiftSchedule = require('../models/shiftScheduleModel');
+const nodemailer = require('nodemailer');
+const config = require('../../../config');
 
 // Guardar o actualizar el horario del mes actual
 const saveShiftSchedule = async (req, res) => {
@@ -62,8 +64,64 @@ const getAllMonthlySchedules = async (req, res) => {
     }
 };
 
+
+const sendScheduleEmail = async (req, res) => {
+    const { month, year, monthYearText } = req.body;
+    const fundaEmail = 'anestesiafunda@gmail.com';
+    const imagesEmail = 'jpserranogamarra@gmail.com';
+
+    // Configurar nodemailer
+    const transporter = nodemailer.createTransport({
+        service: 'gmail',
+        auth: {
+            user: config.emailUser,
+            pass: config.emailPass,
+        }
+    });
+
+    // Configuración del mensaje para Fundación
+    const mailOptionsFunda = {
+        from: config.emailUser,
+        to: fundaEmail,
+        subject: `Guardias de Anestesia del mes de ${month} de ${year}`,
+        text: `Estimado/a:
+        
+Haciendo click en el siguiente link podrá acceder a las guardias de anestesia del mes de ${month} de ${year} de Fundación:
+https://adv-37d5b772f5fd.herokuapp.com/shiftInform.html?year=${year}&month=${monthYearText}&site=Fn
+
+Saludos,`
+    };
+
+    // Configuración del mensaje para Imágenes
+    const mailOptionsImages = {
+        from: config.emailUser,
+        to: imagesEmail,
+        subject: `Guardias de Anestesia del mes de ${month} de ${year}`,
+        text: `Estimado/a:
+        
+Haciendo click en el siguiente link podrá acceder a las guardias de anestesia del mes de ${month} de ${year} de Imágenes:
+https://adv-37d5b772f5fd.herokuapp.com/shiftInform.html?year=${year}&month=${monthYearText}&site=Im
+
+Saludos,`
+    };
+
+    // Enviar correos electrónicos
+    try {
+        await transporter.sendMail(mailOptionsFunda);
+        await transporter.sendMail(mailOptionsImages);
+
+        res.json({ message: 'Correos enviados exitosamente a Fundación e Imágenes.' });
+    } catch (error) {
+        console.error('Error al enviar correos:', error);
+        res.status(500).json({ message: 'Error al enviar los correos electrónicos: ' + error.message });
+    }
+};
+
+
+
 module.exports = {
     saveShiftSchedule,
     getShiftScheduleByMonth,
-    getAllMonthlySchedules
+    getAllMonthlySchedules,
+    sendScheduleEmail
 };

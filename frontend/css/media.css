@@ -93,6 +93,7 @@
 
     #shift-references-container {
         overflow-x: auto; /* Permite el scroll horizontal */
+        max-width: 100%;
     }
     #shift-references {
         width: auto; /* Restablece el ancho según el contenido */
