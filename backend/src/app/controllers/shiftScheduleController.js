@@ -67,8 +67,8 @@ const getAllMonthlySchedules = async (req, res) => {
 
 const sendScheduleEmail = async (req, res) => {
     const { month, year, monthYearText } = req.body;
-    const fundaEmail = 'anestesiafunda@gmail.com';
-    const imagesEmail = 'jpserranogamarra@gmail.com';
+    const fundaEmail = 'cima@lebensalud.com, jonathanpiras89@gmail.com';
+    const imagesEmail = 'jcabral@lebensalud.com, jonathanpiras89@gmail.com';
 
     // Configurar nodemailer
     const transporter = nodemailer.createTransport({
