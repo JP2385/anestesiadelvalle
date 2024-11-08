@@ -46,7 +46,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     })
     .catch(error => {
-        alert('Hubo un problema con la solicitud: ' + error.message);
+        // alert('Hubo un problema con la solicitud: ' + error.message);
         window.location.href = 'login.html';
     });
 });

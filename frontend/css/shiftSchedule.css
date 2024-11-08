@@ -32,19 +32,22 @@
     color: #555;
     font-weight: bold;
     padding: 2px;
-    margin-top: 10px;
-    margin-bottom: 10px;
+    margin-top: 20px;
+    margin-bottom: 20px;
 }
 
 .button-container {
     display: flex;
+    flex-direction: column;
     gap: 10px; /* Espacio entre los botones */
+
+    align-items: center;
     justify-content: flex-start; /* Alineación de los botones al inicio (puedes usar center si prefieres) */
     margin-top: 20px; /* Margen superior para separar de otros elementos */
 }
 
 .button-container button {
-    width: 200px;      
+    width: 180px;      
     padding: 10px 20px; /* Espaciado interno para los botones */
     font-size: 16px; /* Tamaño de fuente */
     border: 1px solid #ddd; /* Borde para los botones */
@@ -83,6 +86,10 @@
         z-index: 9; /* Coloca el pseudo-elemento por detrás del contenido de la celda */
     }
 
+    .table-wrapper-container {
+        width: 100%;
+    }
+
     .table-wrapper {
         position: relative;
         overflow-x: auto; /* Permite el desplazamiento horizontal */
@@ -98,29 +105,40 @@
 
     /* Contenedor principal para alinear los dos divs en fila */
 .instructions {
-    display: flex;
+    display: block;
     justify-content: space-between; /* Distribuye los elementos a la izquierda y derecha */
     align-items: flex-start; /* Alinea los elementos verticalmente al inicio */
     gap: 20px; /* Espacio entre el div izquierdo y el div derecho */
 }
 
-/* Alineación de los elementos dentro del primer div */
-.instructions > div:first-child {
+.form-reference-container {
     display: flex;
-    flex-direction: column;
-    gap: 15px; /* Espacio entre grupos de controles */
+    gap: 20px; /* Ajusta el espacio entre los elementos según prefieras */
+    overflow-x: auto;
+    top: 0; /* Se mantendrá en la parte superior al desplazarse */
+    background-color: white; /* Añade fondo para que no se superponga con otros elementos */
+    z-index: 10; /* Coloca el contenedor por encima de otros elementos */
+    padding: 10px;
+    z-index: 2;
+
 }
 
-/* Estilo para el contenedor de la tabla de referencias */
-#shift-references-container {
-    overflow-x: auto;
+.row-container {
+    display: flex;
+    justify-content: space-between
+}
+
+.form-reference-container > div {
+    flex: 1; /* Divide el espacio disponible entre los dos divs */
 }
 
 /* Estilo de la tabla */
 .shift-references {
     width: 100%;
+    margin-top:0;
     border-collapse: collapse;
-    table-layout: auto
+    table-layout: auto;
+    z-index: 1;
 }
 
 

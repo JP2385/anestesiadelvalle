@@ -215,6 +215,7 @@ select.default {
     justify-content: space-between;
     align-items: center;
     width: 100%;
+    margin-top: 10px;
     margin-bottom: 10px; /* Añadir margen inferior para separación */
 }
 

@@ -49,65 +49,84 @@
         </div>
         <div class="instructions">
             <div>
-                <div class="header-div">
-                    <h3>Asistente de programación de guardias</h3>
-                </div>
-        <!-- Selección de año y mes -->
-                <div class="form-group">
-                    <label for="year-select">Año:</label>
-                    <select id="year-select"></select>
-                    
-                    <label for="month-select">Mes:</label>
-                    <select id="month-select">
-                        <option value="0">Enero</option>
-                        <option value="1">Febrero</option>
-                        <option value="2">Marzo</option>
-                        <option value="3">Abril</option>
-                        <option value="4">Mayo</option>
-                        <option value="5">Junio</option>
-                        <option value="6">Julio</option>
-                        <option value="7">Agosto</option>
-                        <option value="8">Septiembre</option>
-                        <option value="9">Octubre</option>
-                        <option value="10">Noviembre</option>
-                        <option value="11">Diciembre</option>
-                    </select>
-                </div>
-                <div class="switch-container">
-                    <span class="switch-legend">
-                        Conteo de Guardias por Usuario
-                    </span>
-                   <!-- Switch con checkbox -->
-                    <label class="switch">
-                        <input type="checkbox" id="toggle-table" />
-                        <span class="slider"></span>
-                    </label>
-                </div>
-                <div class="button-container">
-                    <button id="assign-shifts">Asignar guardias</button>
+                <h3>Pasos para generar la programación</h3>
+                <ol>
+                    <li>1. Seleccione el año y mes para el que desea realizar la asignación (por defecto se muestra año y mes en curso)</li>
+                    <li>2. Verifique las asignaciones de carga pública que se realizan por defecto</li>
+                    <li>3. Cargue las guardias de carga pública</li>
+                    <li>4. Seleccione "ND" - No disponible" en aquellas celdas que desee que no reciban asignación</li>
+                    <li>5. Oprima el botón asignar guardias</li>
+                    <li>6. Oprima el botón imprimir guardias (una vez oprimido podrá elegir si desea enviar mails a las clínicas o no)</li>
+                </ol>
+            </div>
+        </div>
+        <div class="instructions">
+            <div class="row-container">
+                <div class="form-reference-container">
+                    <div>
+                        <div class="header-div">
+                        <h3>Asistente propiamente dicho</h3>
+                        </div>
+                        <div class="header-div">
+                        
+                        <div class="form-group">
+                            <label for="year-select">Año:</label>
+                            <select id="year-select"></select>
+                            
+                            <label for="month-select">Mes:</label>
+                            <select id="month-select">
+                                <option value="0">Enero</option>
+                                <option value="1">Febrero</option>
+                                <option value="2">Marzo</option>
+                                <option value="3">Abril</option>
+                                <option value="4">Mayo</option>
+                                <option value="5">Junio</option>
+                                <option value="6">Julio</option>
+                                <option value="7">Agosto</option>
+                                <option value="8">Septiembre</option>
+                                <option value="9">Octubre</option>
+                                <option value="10">Noviembre</option>
+                                <option value="11">Diciembre</option>
+                            </select>
 
-                    <button id="print-shifts">Imprimir guardias</button>
+                        </div>
+                    </div>
+                        <div class="switch-container">
+                            <span class="switch-legend">
+                                Conteo de Guardias por Usuario
+                            </span>
+                            <label class="switch">
+                                <input type="checkbox" id="toggle-table" />
+                                <span class="slider"></span>
+                            </label>
+                        </div>
+                        <div class="button-container">
+                            <button id="assign-shifts">Asignar guardias</button>
+
+                            <button id="print-shifts">Imprimir guardias</button>
+                        </div>
+                    </div>
+                </div>
+                <div>
+                    <div id="shift-references-container">
+                        <table id="shift-references" class="shift-references">
+                            <!-- Esta tabla se llenará dinámicamente con la función generateShiftReferencesTable -->
+                        </table>
+                    </div>
                 </div>
             </div>
-            <div id="shift-references-container">
-                <table id="shift-references" class="shift-references">
-                    <!-- Esta tabla se llenará dinámicamente con la función generateShiftReferencesTable -->
+            <div class="table-wrapper">
+                <table id="shift-schedule" class="shift-table">
+                    <thead>
+                        <tr id="days-header">
+                            <!-- Aquí se generarán dinámicamente los encabezados de los días -->
+                        </tr>
+                    </thead>
+                    <tbody id="users-body">
+                        <!-- Aquí se generarán dinámicamente las filas de los usuarios -->
+                    </tbody>
                 </table>
             </div>
-        </div>
-        <div class="instructions">    <!-- Tabla dinámica de asignación de guardias -->
-            <div class="table-wrapper">
-            <table id="shift-schedule" class="shift-table">
-                <thead>
-                    <tr id="days-header">
-                        <!-- Aquí se generarán dinámicamente los encabezados de los días -->
-                    </tr>
-                </thead>
-                <tbody id="users-body">
-                    <!-- Aquí se generarán dinámicamente las filas de los usuarios -->
-                </tbody>
-            </table>
-        </div>
         </div>
     </body>
     </html>

@@ -301,4 +301,8 @@
         width: 100%; /* Asegura que los botones ocupen todo el ancho en dispositivos pequeños */
         padding: 0.5rem; /* Ajusta el padding según sea necesario */
     }
+
+    #shift-references-container {
+        display: none; /* Oculta el contenedor de la tabla de referencias */
+    }
 }

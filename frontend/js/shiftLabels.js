@@ -10,6 +10,8 @@ export const shiftAssignmentLabels = {
     HH: "Hospital Heller",
     CM: "Hospital Chos Malal",
     P1: "Planta Sábado",
+    ND: "No Disponible",
+    V: "Vacaciones"
 
     // Agrega más equivalencias aquí según sea necesario
 };
