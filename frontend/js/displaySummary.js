@@ -291,7 +291,7 @@ function downloadTableAsImage(container) {
     document.body.appendChild(tempDiv); // Añadimos el clon temporal al DOM
 
     // Usar html2canvas en el clon dentro del fragmento
-    html2canvas(containerClone, { width: 1290, scrollX: 0, scrollY: 0 }).then(canvas => {
+    html2canvas(containerClone, { width: 1290, scrollX: 0, scrollY: 0, scale: 3 }).then(canvas => {
         // Remover el div temporal después de la captura
         document.body.removeChild(tempDiv);
 

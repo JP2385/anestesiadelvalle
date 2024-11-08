@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Cronograma de guardias</title>
     <script type="module" src="js/shiftInform.js" defer></script>
+    <script defer src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <link rel="icon" type="image/png" href="images/logo/logo64x64.png">
     <link rel="stylesheet" href="css/header.css">
     <link rel="stylesheet" href="css/media.css">
@@ -13,6 +14,7 @@
     <link rel="stylesheet" href="css/spinner.css">
     <link rel="stylesheet" href="css/vacationInform.css">
     <link rel="stylesheet" href="css/shiftInform.css">
+</head>
 <body>
     <header>
         <a href="index.html" class="app-logo-link">
@@ -26,44 +28,50 @@
     <main>
         <div class="instructions">
             <div class="header-div">
-            <h3>Informe de Guardias</h3>
+                <h3>Informe de Guardias</h3>
+                <!-- Botón de descarga -->
+                <button id="download-button" class="download-button">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-download">
+                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                        <polyline points="7 10 12 15 17 10"></polyline>
+                        <line x1="12" y1="15" x2="12" y2="3"></line>
+                    </svg>
+                </button>
             </div>
             <div class="header-div">
-            <form id="filter-form">
-                <div class="form-group">
-                    <!-- Selector de año -->
-                    <label for="year-select">Año:</label>
-                    <select id="year-select" class="user">
-                        <!-- Opciones se llenarán con JavaScript -->
-                    </select>
-                </div>
-                <div class="form-group">
-                    <!-- Selector de mes -->
-                    <label for="month-select">Mes:</label>
-                    <select id="month-select" class="user">
-                        <!-- Opciones se llenarán con JavaScript -->
-                    </select>
-                </div>
-                <div class="form-group">
-                    <!-- Selector de sitios de guardia -->
-                    <label for="site-select">Sitio de guardia:</label>
-                    <select id="site-select" class="user">
-                        <option value="all">Todos</option>
-                        <!-- Agregar más opciones si es necesario -->
-                    </select>
-                </div>
+                <form id="filter-form">
+                    <div class="form-group">
+                        <label for="year-select">Año:</label>
+                        <select id="year-select" class="user">
+                            <!-- Opciones se llenarán con JavaScript -->
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="month-select">Mes:</label>
+                        <select id="month-select" class="user">
+                            <!-- Opciones se llenarán con JavaScript -->
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="site-select">Sitio de guardia:</label>
+                        <select id="site-select" class="user">
+                            <option value="all">Todas las clínicas</option>
+                            <!-- Agregar más opciones si es necesario -->
+                        </select>
+                    </div>
+                </form>
             </div>
-                
-            </form>
-    
+        </div>
 
-        <!-- Tabla de cronograma -->
+       <div id="schedule-for-print" class="instructions"> <!-- Tabla de cronograma -->
+        <h3 id="dynamic-title">Guardias de Anestesia</h3>
         <section class="schedule">
             <table id="schedule-table">
                 <!-- Tabla generada dinámicamente -->
             </table>
+        
         </section>
-        </div>
+    </div>
     </main>
 </body>
 </html>

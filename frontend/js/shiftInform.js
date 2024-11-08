@@ -1,5 +1,6 @@
 import { shiftAssignmentLabels } from './shiftLabels.js';
 import { userRealNames } from './userLabels.js'; // Importar nombres reales
+import { downloadTableAsImage } from './shiftInformDownloadImage.js';
 
 let userPhoneNumbers = {};
 
@@ -9,9 +10,16 @@ document.addEventListener('DOMContentLoaded', async () => {
     const monthSelect = document.getElementById('month-select');
     const siteSelect = document.getElementById('site-select');
     const scheduleTable = document.getElementById('schedule-table');
+    const titleElement = document.getElementById('dynamic-title');
 
     const currentYear = new Date().getFullYear();
     const currentMonth = new Date().getMonth();
+
+    // Array de nombres de meses reutilizable
+    const months = [
+        'Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio',
+        'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'
+    ];
 
     // Obtener los parámetros de la URL
     const urlParams = new URLSearchParams(window.location.search);
@@ -46,10 +54,6 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
 
     // Llenar el select del mes
-    const months = [
-        'Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio',
-        'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'
-    ];
     months.forEach((month, index) => {
         const option = document.createElement('option');
         option.value = index;
@@ -57,29 +61,52 @@ document.addEventListener('DOMContentLoaded', async () => {
         monthSelect.appendChild(option);
     });
 
-
-        // Agregar opciones de sitios al selector de sitios de guardia
-        Object.entries(shiftAssignmentLabels).forEach(([key, value]) => {
-            const option = document.createElement('option');
-            option.value = key;
-            option.textContent = value;
-            siteSelect.appendChild(option);
-        });
-        
-// Extraer el año y el mes del parámetro `month` si está en el formato `YYYY-MM`
+    // Agregar opciones de sitios al selector de sitios de guardia
+    Object.entries(shiftAssignmentLabels).forEach(([key, value]) => {
+        const option = document.createElement('option');
+        option.value = key;
+        option.textContent = value;
+        siteSelect.appendChild(option);
+    });
+    
+    // Extraer el año y el mes del parámetro `month` si está en el formato `YYYY-MM`
     const [extractedYear, extractedMonth] = monthParam && monthParam.includes('-') 
-    ? monthParam.split('-') 
-    : [yearParam, monthParam];
+        ? monthParam.split('-') 
+        : [yearParam, monthParam];
 
     // Ajustar el valor de `yearSelect` y `monthSelect` usando el mes extraído
     yearSelect.value = extractedYear || currentYear;
     monthSelect.value = extractedMonth ? (parseInt(extractedMonth, 10) - 1).toString() : currentMonth.toString();
     siteSelect.value = siteParam;
 
-    // Llamar a fetchAndDisplaySchedule para cargar el cronograma en función del año, mes y sitio seleccionados
+    // Llama a fetchAndDisplaySchedule para cargar el cronograma en función del año, mes y sitio seleccionados
     fetchAndDisplaySchedule(yearSelect.value, monthSelect.value, siteSelect.value);
 
+    // Función para actualizar el título dinámico
+    function updateTitle() {
+        const selectedYear = yearSelect.value;
+        const selectedMonth = months[parseInt(monthSelect.value)];
+        const selectedSite = siteSelect.options[siteSelect.selectedIndex].text;
+    
+        titleElement.textContent = `Guardias de Anestesia de ${selectedSite} del mes de ${selectedMonth} de ${selectedYear}`;
+    }
 
+    // Agrega eventos para actualizar el título cuando se cambian los valores
+    yearSelect.addEventListener('change', () => {
+        updateTitle();
+        fetchAndDisplaySchedule(yearSelect.value, monthSelect.value, siteSelect.value);
+    });
+    monthSelect.addEventListener('change', () => {
+        updateTitle();
+        fetchAndDisplaySchedule(yearSelect.value, monthSelect.value, siteSelect.value);
+    });
+    siteSelect.addEventListener('change', () => {
+        updateTitle();
+        fetchAndDisplaySchedule(yearSelect.value, monthSelect.value, siteSelect.value);
+    });
+
+    // Inicializar el título al cargar la página
+    updateTitle();
 
     function fetchAndDisplaySchedule(year, month, site) {
         const formattedMonth = `${year}-${String(Number(month) + 1).padStart(2, '0')}`;
@@ -165,6 +192,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             }
         }
     }
+
 
     yearSelect.addEventListener('change', () => {
         fetchAndDisplaySchedule(yearSelect.value, monthSelect.value, siteSelect.value);
@@ -258,4 +286,6 @@ document.addEventListener('DOMContentLoaded', async () => {
     siteSelect.addEventListener('change', () => {
         fetchAndDisplaySchedule(yearSelect.value, monthSelect.value, siteSelect.value);
     });
+    // Agregar evento de clic al botón de descarga para iniciar la captura
+    document.getElementById('download-button').addEventListener('click', downloadTableAsImage);
 });

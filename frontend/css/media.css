@@ -193,8 +193,8 @@
         background-color: #f0f0f0;
     }
 
-    .instructions button {
-        width: 100%; /* Asegura que los botones ocupen todo el ancho en dispositivos pequeños */
+    .instructions-button {
+        width: 50%; /* Asegura que los botones ocupen todo el ancho en dispositivos pequeños */
         padding: 0.5rem; /* Ajusta el padding según sea necesario */
     }
 
@@ -288,8 +288,8 @@
         align-items: center;
     }
 
-    .instructions button {
-        width: 100%; /* Asegura que los botones ocupen todo el ancho en dispositivos pequeños */
+    .instructions-button {
+        width: 50%; /* Asegura que los botones ocupen todo el ancho en dispositivos pequeños */
         padding: 0.5rem; /* Ajusta el padding según sea necesario */
     }
 

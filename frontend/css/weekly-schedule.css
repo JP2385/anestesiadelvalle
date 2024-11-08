@@ -96,8 +96,8 @@ h3 {
     margin-bottom: 10px;
 }
 
-.instructions button {
-    width: 75%;
+.instructions-button {
+    width: 30%;
     padding: 10px;
     background-color: #0069d9;
     color: #fff;
