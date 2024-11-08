@@ -53,6 +53,9 @@
     border: 1px solid #ddd; /* Borde para los botones */
     border-radius: 5px; /* Bordes redondeados */
     cursor: pointer;
+    background-color: #0069d9;
+    font-weight: bold;
+    color: #fff;
 }
 
     th.user {

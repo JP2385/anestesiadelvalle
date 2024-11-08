@@ -2,6 +2,7 @@ import { assignIm, assignFn, assignWeekendIfLtotisAssigned, assignSaturdayP1} fr
 import { countWeekdayShifts, countWeekendShifts, countSaturdayShifts } from './shiftAssignmentsUtils.js';
 import { calculateAccumulatedShiftCounts} from './shiftCountTable.js';
 import { fetchLastDayAssignments} from './shiftLastDayAssignments.js';
+import { isHoliday } from './fetchHolidays.js';
 
 
 
@@ -365,9 +366,10 @@ function populateShiftSelect(selectElement, user, isSaturday, guardSites) {
     // Obtener los valores de los atributos directamente del select
     const username = selectElement.getAttribute('data-username');
     const dayOfWeek = selectElement.getAttribute('data-dayOfWeek');
+    const dateString = selectElement.getAttribute('data-day'); // Obtener la fecha en formato `YYYY-MM-DD`
 
-    // Deshabilitar select si se cumplen las condiciones basadas en username y día
-    if (shouldDisableSelect(username, dayOfWeek)) {
+    // Deshabilitar select solo si no es feriado y se cumplen las condiciones
+    if (shouldDisableSelect(username, dayOfWeek, dateString)) {
         selectElement.disabled = true;
         return;
     }
@@ -448,9 +450,14 @@ function populateRegularSites(selectElement, user, guardSites) {
     }
 }
 
-function shouldDisableSelect(username, dayOfWeek) {
+function shouldDisableSelect(username, dayOfWeek, dateString) {
     // Convertir dayOfWeek a minúsculas para asegurar que las comparaciones sean consistentes
     const day = dayOfWeek.toLowerCase();
+
+    // Si es feriado, no aplicar el disable
+    if (isHoliday(dateString)) {
+        return false;
+    }
 
     // Reglas para deshabilitar días específicos según el usuario
     const disableRules = {
@@ -462,12 +469,10 @@ function shouldDisableSelect(username, dayOfWeek) {
         msalvarezza: ['jue'],
     };
 
-    if (disableRules[username] && disableRules[username].includes(day)) {
-        return true;
-    }
-
-    return false;
+    // Si no es feriado y existe una regla, aplicar disable según la regla
+    return disableRules[username]?.includes(day) || false;
 }
+
 
 function applyDefaultAssignments(usersBody) {
     const defaultAssignments = {
