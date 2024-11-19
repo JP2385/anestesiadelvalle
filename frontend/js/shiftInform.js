@@ -29,20 +29,17 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     // Fetch de usuarios para obtener números de teléfono
     try {
-        const response = await fetch(`${apiUrl}/auth/users`, {
+        const response = await fetch(`${apiUrl}/public/public-users`, {
             method: 'GET',
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': 'Bearer ' + localStorage.getItem('token')
-            }
+            headers: { 'Content-Type': 'application/json' }
         });
         const users = await response.json();
         users.forEach(user => {
-            userPhoneNumbers[user.username] = user.phoneNumber; // Guardar los números de teléfono en el mapa
+            userPhoneNumbers[user.username] = user.phoneNumber || 'No phone';
         });
-        console.log("User phone numbers loaded:", userPhoneNumbers);
+        console.log("Public user data loaded:", userPhoneNumbers);
     } catch (error) {
-        console.error('Error al obtener usuarios:', error);
+        console.error('Error al obtener datos públicos de usuarios:', error);
     }
 
     // Llenar el select del año

@@ -13,6 +13,7 @@ const holidayRoutes = require('./src/app/routes/holidayRoutes');
 const path = require('path');
 const cron = require('node-cron');
 const Schedule = require('./src/app/models/scheduleModel');
+const publicRoutes = require('./src/app/routes/publicRoutes');
 const { getUsersAvailability } = require('./src/app/controllers/availabilityController');
 const { getAllVacations } = require('./src/app/controllers/vacationController');
 
@@ -50,6 +51,8 @@ app.get('/availability', getUsersAvailability);
 
 // Ruta para obtener las vacaciones de todos los usuarios
 app.get('/vacations', getAllVacations);
+
+app.use('/public', publicRoutes);
 
 // Servir archivos estáticos del frontend
 app.use(express.static(path.join(__dirname, '../frontend')));
