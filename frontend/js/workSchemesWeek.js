@@ -18,7 +18,7 @@ function groupUsersByDay(users) {
         for (let day in user.workSchedule) {
             const schedule = user.workSchedule[day];
             if (schedules[schedule]) {
-                schedules[schedule][day].push(user.username);
+                schedules[schedule][day].push({ username: user.username, schedule }); // Guardar también el esquema
             }
         }
     });
@@ -52,7 +52,19 @@ function populateTable(users) {
             for (let day of ['monday', 'tuesday', 'wednesday', 'thursday', 'friday']) {
                 const cell = document.createElement('td');
                 const user = days[day][rowIndex]; // Usuario correspondiente al día y fila
-                cell.textContent = user || ''; // Agregar el usuario si existe
+                
+                if (user) {
+                    cell.textContent = user.username; // Agregar el nombre del usuario
+                    // Aplicar la clase CSS según el esquema
+                    if (user.schedule === 'Mañana') {
+                        cell.classList.add('option-morning');
+                    } else if (user.schedule === 'Tarde') {
+                        cell.classList.add('option-afternoon');
+                    } else if (user.schedule === 'Variable') {
+                        cell.classList.add('option-long');
+                    }
+                }
+
                 row.appendChild(cell);
             }
 
