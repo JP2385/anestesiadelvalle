@@ -14,7 +14,10 @@ function groupUsersByDay(users) {
         Variable: { monday: [], tuesday: [], wednesday: [], thursday: [], friday: [] },
     };
 
-    users.forEach(user => {
+    // Filtrar al usuario montes_esposito
+    const filteredUsers = users.filter(user => user.username !== 'montes_esposito');
+
+    filteredUsers.forEach(user => {
         for (let day in user.workSchedule) {
             const schedule = user.workSchedule[day];
             if (schedules[schedule]) {
@@ -30,6 +33,9 @@ function groupUsersByDay(users) {
 function populateTable(users) {
     const tableBody = document.querySelector('#work-schedule-table tbody');
     const schedules = groupUsersByDay(users);
+
+    // Inicializar totales por día
+    const dailyTotals = { monday: 0, tuesday: 0, wednesday: 0, thursday: 0, friday: 0 };
 
     for (let [schedule, days] of Object.entries(schedules)) {
         const maxRows = Math.max(
@@ -61,6 +67,8 @@ function populateTable(users) {
                 
                 if (user) {
                     cell.textContent = user.username; // Agregar el nombre del usuario
+                    // Incrementar el contador del día
+                    dailyTotals[day]++;
                     // Aplicar la clase CSS según el esquema
                     if (user.schedule === 'Mañana') {
                         cell.classList.add('option-morning');
@@ -77,8 +85,24 @@ function populateTable(users) {
             tableBody.appendChild(row); // Agregar la fila a la tabla
         }
     }
-}
 
+    // Agregar fila de totales
+    const totalRow = document.createElement('tr');
+    const totalLabelCell = document.createElement('td');
+    totalLabelCell.textContent = 'Totales';
+    totalLabelCell.classList.add('work-site');
+    totalLabelCell.colSpan = 1; // Una sola columna para el título
+    totalRow.appendChild(totalLabelCell);
+
+    // Agregar los totales para cada día
+    for (let day of ['monday', 'tuesday', 'wednesday', 'thursday', 'friday']) {
+        const totalCell = document.createElement('td');
+        totalCell.textContent = dailyTotals[day]; // Número total de usuarios asignados
+        totalRow.appendChild(totalCell);
+    }
+
+    tableBody.appendChild(totalRow); // Agregar la fila de totales a la tabla
+}
 
 // Ejecutar la lógica al cargar la página
 window.addEventListener('DOMContentLoaded', () => {
