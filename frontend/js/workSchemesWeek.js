@@ -45,6 +45,12 @@ function populateTable(users) {
                 const scheduleCell = document.createElement('td');
                 scheduleCell.textContent = schedule;
                 scheduleCell.rowSpan = maxRows; // Fusionar tantas filas como sea necesario
+
+                // Agregar la clase 'work-site' a las celdas con "Mañana", "Tarde" y "Variable"
+                if (["Mañana", "Tarde", "Variable"].includes(schedule)) {
+                    scheduleCell.classList.add('work-site');
+                }
+
                 row.appendChild(scheduleCell);
             }
 
@@ -72,6 +78,7 @@ function populateTable(users) {
         }
     }
 }
+
 
 // Ejecutar la lógica al cargar la página
 window.addEventListener('DOMContentLoaded', () => {
