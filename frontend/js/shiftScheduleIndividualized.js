@@ -90,7 +90,9 @@ function generateShiftList(userShifts) {
         return list;
     }
 
-    userShifts.forEach(shift => {
+    userShifts
+    .filter(shift => shift.assignment !== 'ND') // Excluir asignaciones "No disponible"
+    .forEach(shift => {
         const listItem = document.createElement('li');
         
         // Formatear solo el día y la fecha corregida
@@ -102,6 +104,7 @@ function generateShiftList(userShifts) {
         listItem.textContent = `${formattedDate}: ${assignmentLabel}`;
         list.appendChild(listItem);
     });
+  
 
     return list;
 }

@@ -243,7 +243,9 @@ document.addEventListener('DOMContentLoaded', async () => {
                             user.shifts
                                 .filter(shift => 
                                     shift.day === date && 
-                                    (site === 'all' && shift.assignment !== 'V' || shift.assignment === site)
+                                    (site === 'all' 
+                                        ? shift.assignment !== 'V' && shift.assignment !== 'ND' 
+                                        : shift.assignment === site)
                                 )
                                 .map(shift => ({
                                     username: user.username,
