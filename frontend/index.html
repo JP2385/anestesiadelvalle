@@ -112,16 +112,16 @@
         </section>
         <section id="liquidaciones" class="content-section" style="display:none;">
             <!-- <h2>Liquidaciones e Ingresos</h2> -->
-            <button onclick="openFile('https://docs.google.com/spreadsheets/d/1gZCYAAnxdkvHWiVFM3DfMyzfKu9IDgfg45H95GWufGk/edit?usp=sharing')">Resumen de Liquidaciones</button>
-            <button onclick="openFile('https://docs.google.com/spreadsheets/d/1ondWWdxWX3So_pRfAgMhOkel8mMEgsJO4okDtE5TZSY/edit?usp=drive_link')">Resumen de Ingresos</button>
-            <button onclick="toggleUpcomingPayments()">Próximas liquidaciones</button>
-            <ul id="upcoming-payments" style="display:none;">
+            <h3>Las próximas liquidaciones serán:</h3>
+            <ul id="upcoming-payments">
                 <!-- Las fechas serán insertadas dinámicamente -->
             </ul>
+            <button onclick="openFile('https://docs.google.com/spreadsheets/d/1gZCYAAnxdkvHWiVFM3DfMyzfKu9IDgfg45H95GWufGk/edit?usp=sharing')">Resumen de Liquidaciones</button>
+            <button onclick="openFile('https://docs.google.com/spreadsheets/d/1ondWWdxWX3So_pRfAgMhOkel8mMEgsJO4okDtE5TZSY/edit?usp=drive_link')">Resumen de Ingresos</button>
         </section>
         <section id="reuniones" class="content-section" style="display:none;">
             <!-- <h2>Reuniones y Estatuto</h2> -->
-            <button onclick="toggleMeetingDates()">Fechas reuniones</button>
+            <h3>Las próximas reuniones serán:</h3>
             <ul id="meeting-dates"></ul>
             <button onclick="openFile('https://drive.google.com/drive/folders/1mOhFcf6yHZuIIpDmeWz3afzNZuz-5uje?usp=drive_link')">Resúmenes reuniones</button>
             <button onclick="openFile('https://drive.google.com/file/d/1XyDopUZhfHXkxZGXJnEa5UdmhqjR7HI1/view?usp=sharing')">Estatuto</button>
