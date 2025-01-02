@@ -151,3 +151,13 @@
     font-size: 0.7rem;
     text-align: left;
 }
+
+td.user.highlight-cell {
+    background-color:  #0069d9 !important;
+    color: white;
+    font-weight: bold;
+}
+
+.user {
+    font-weight: bold; 
+}

@@ -65,7 +65,28 @@ document.addEventListener('DOMContentLoaded', async function () {
             const weekendCounts = countWeekendShifts();
             const saturdayCounts = countSaturdayShifts();
             updateShiftCountsTableWithAccumulated(weekCounts, weekendCounts, saturdayCounts);
+            addHighlightListeners();
+        });
+    }
 
+    function addHighlightListeners() {
+        const selects = document.querySelectorAll('select');
+        selects.forEach(select => {
+            select.addEventListener('focus', (event) => {
+                const row = event.target.closest('tr'); // Obtén la fila más cercana
+                if (row) {
+                    const firstCell = row.querySelector('td:first-child'); // Selecciona la primera celda de la fila
+                    if (firstCell) firstCell.classList.add('highlight-cell');
+                }
+            });
+
+            select.addEventListener('blur', (event) => {
+                const row = event.target.closest('tr'); // Obtén la fila más cercana
+                if (row) {
+                    const firstCell = row.querySelector('td:first-child'); // Selecciona la primera celda de la fila
+                    if (firstCell) firstCell.classList.remove('highlight-cell');
+                }
+            });
         });
     }
 
