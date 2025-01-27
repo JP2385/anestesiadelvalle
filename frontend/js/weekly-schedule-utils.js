@@ -116,11 +116,6 @@ export async function populateSelectOptions(availability) {
                 if (user.username === 'lalvarez' && dayName === 'monday' && workSite.includes('Matutino') === false) {
                     return; // Excluir lalvarez de cualquier turno que no sea matutino los lunes
                 }
-
-                // Exclusión específica para sdegreef con esquema variable los lunes
-                if (user.username === 'sdegreef' && dayName === 'monday' && workSite.includes('Matutino') === false) {
-                    return; // Excluir sdegreef de cualquier turno que no sea matutino los lunes
-                }
                 
                 // Restricción adicional para miércoles en "Imágenes Quirofano 1 Matutino"
                 if (dayName === 'wednesday' && workSite.includes('Imágenes Q1') && workSite.includes('Matutino')) {

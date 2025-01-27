@@ -6,6 +6,7 @@ export async function autoAssignCaroSandraGabiByDay(apiUrl, dayIndex, availabili
     try {
         const montesEsposito = availability[Object.keys(availability)[dayIndex]].find(user => user.username === 'montes_esposito');
         const ggudino = availability[Object.keys(availability)[dayIndex]].find(user => user.username === 'ggudiño');
+        const nvela = availability[Object.keys(availability)[dayIndex]].find(user => user.username === 'nvela');
 
         const currentWeekNumber = getWeekNumber(new Date());
         const isOddWeek = currentWeekNumber % 2 !== 0;
@@ -13,6 +14,7 @@ export async function autoAssignCaroSandraGabiByDay(apiUrl, dayIndex, availabili
         const {
             montesEspositoScheme,
             ggudinoScheme,
+            nvelaScheme
         } = getWorkSchemes(isOddWeek);
 
         // Asignar a montes_esposito si está disponible
@@ -23,6 +25,10 @@ export async function autoAssignCaroSandraGabiByDay(apiUrl, dayIndex, availabili
         // Asignar a ggudino si está disponible
         if (ggudino) {
             assignSpecificUsersByDay(dayIndex, ggudinoScheme, ggudino);
+        }
+
+        if (nvela) {
+            assignSpecificUsersByDay(dayIndex, nvelaScheme, nvela);
         }
 
     } catch (error) {

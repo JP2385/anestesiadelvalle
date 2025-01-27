@@ -29,7 +29,12 @@ export function getWorkSchemes(isOddWeek) {
     };
 
     const sdegreefScheme = {
-        'wednesday-header': 'Hospital Castro Rendon Largo'
+        'wednesday-header': 'Hospital Castro Rendon Largo',
+        'thursday-header': 'Consultorio Dolor Vespertino'
+    };
+
+    const nvelaScheme = {
+        'friday-header': 'Consultorio Dolor Matutino'
     };
 
     return {
@@ -37,6 +42,7 @@ export function getWorkSchemes(isOddWeek) {
         ggudinoScheme,
         ltotisScheme,
         lburgueñoScheme,
-        sdegreefScheme
+        sdegreefScheme,
+        nvelaScheme
     };
 }
