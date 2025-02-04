@@ -73,12 +73,12 @@ function generateHolidayList(holidays, currentUser) {
 
         // Construcción del contenido con espaciado usando <p>
         let holidayText = `
-            <p style="margin-bottom: 2px;"><strong>${holiday.name}.</strong></p>
-            <p style="margin-bottom: 2px;">Del ${startDate} al ${endDate}.</p>
+            <div style="margin-bottom: 6px;"><strong>${holiday.name}.</strong></div>
+            <div style="margin-bottom: 6px;">Del ${startDate} al ${endDate}.</div>
         `;
 
         if (otherUsers.length > 0) {
-            holidayText += `<p style="margin-bottom: 4px;">Junto con ${otherUsers}.</p>`;
+            holidayText += `<div style="margin-bottom: 6px;">Junto con ${otherUsers}.</div>`;
         }
 
         listItem.innerHTML = holidayText;
