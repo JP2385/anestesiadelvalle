@@ -210,7 +210,7 @@ export async function populateSelectOptions(availability) {
                     if (user.doesCardio) {
                         select.appendChild(option);
                     }
-                } else if (workSite.includes('Fundación RNM TAC') || workSite.includes('COI')) {
+                } else if (workSite.includes('Fundación RNM TAC') || workSite.includes('COI')|| workSite.includes('Imágenes RNM')) {
                     if (user.doesRNM) {
                         select.appendChild(option);
                     }
