@@ -25,6 +25,7 @@
     <script src="js/weekly-schedule-individualized.js" defer></script>
     <script type="module" src="js/shiftScheduleIndividualized.js" defer></script>
     <script src="js/vacationInformIndividualized.js" defer></script>
+    <script src="js/holidayInformIndividualized.js" defer></script>
     <script type="module" src="js/notifications.js"></script>
     <script src="js/pwa-install.js" defer></script>
 <body>
@@ -66,6 +67,8 @@
             <button onclick="openFile('https://docs.google.com/spreadsheets/d/1CBU7nXGDil2BPH5Ow2KOA7YgT9-LyGmtJSqBaOOmwng/edit?usp=sharing')">Vacaciones y Guardias 2025</button> -->
         </section>
         <section id="guardias" class="content-section">
+            <h3>Tus fines de semana largos de este año son:</h3>
+            <div id="holiday-assignments"></div>
             <h3>Tus guardias para este mes son:</h3>
             <div id="shifts-assignments"></div>
             <a href="shiftInform.html"><button>Informe de guardias</button></a>

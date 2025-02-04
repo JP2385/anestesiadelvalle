@@ -1,4 +1,3 @@
-// models/holidayModel.js
 const mongoose = require('mongoose');
 
 const holidaySchema = new mongoose.Schema({
@@ -13,7 +12,11 @@ const holidaySchema = new mongoose.Schema({
     endDate: {
         type: Date,
         required: true
-    }
+    },
+    users: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User' // Referencia a la colección de usuarios
+    }]
 }, {
     timestamps: true // Crea campos `createdAt` y `updatedAt` automáticamente
 });
