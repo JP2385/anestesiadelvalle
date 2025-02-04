@@ -1,3 +1,5 @@
+import { fetchVacations } from './fetchVacations.js'; // ✅ Importa la función para obtener vacaciones
+
 document.addEventListener('DOMContentLoaded', function () {
     const apiUrl = window.location.hostname === 'localhost' ? 'http://localhost:3000' : 'https://adv-37d5b772f5fd.herokuapp.com';
 
@@ -170,47 +172,78 @@ document.addEventListener('DOMContentLoaded', function () {
         holidayList.appendChild(holidayItem);
     }
 
-    function updateHoliday(holiday, holidayItem) {
+    async function updateHoliday(holiday, holidayItem) {
         const updatedName = holidayItem.querySelector('strong').textContent;
         const updatedStartDate = new Date(holidayItem.querySelector('.holiday-start').value).toISOString();
         const updatedEndDate = new Date(holidayItem.querySelector('.holiday-end').value).toISOString();
         const updatedUsers = Array.from(holidayItem.querySelectorAll('ul li')).map(li => li.dataset.userId);
     
-        const updatedHoliday = {
-            name: updatedName,
-            startDate: updatedStartDate,
-            endDate: updatedEndDate,
-            users: updatedUsers
-        };
+        try {
+            // ✅ Obtener todas las vacaciones
+            const vacations = await fetchVacations(); // Asegúrate de que fetchVacations ya está disponible
+            const usersResponse = await fetch(`${apiUrl}/auth/users`, {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': 'Bearer ' + localStorage.getItem('token')
+                }
+            });
     
-        fetch(`${apiUrl}/holidays/${holiday._id}`, {
-            method: 'PUT',
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': 'Bearer ' + localStorage.getItem('token')
-            },
-            body: JSON.stringify(updatedHoliday)
-        })
-        .then(response => {
-            console.log('Respuesta de actualización:', response); // ✅ Verificar si la respuesta es válida
+            if (!usersResponse.ok) {
+                throw new Error('Error al obtener los usuarios.');
+            }
+    
+            const users = await usersResponse.json(); // ✅ Obtiene la lista de usuarios con sus usernames
+    
+            // ✅ Verificar si algún usuario tiene vacaciones en el rango del feriado
+            const usersOnVacation = updatedUsers.filter(userId => {
+                const userVacation = vacations.find(vac => vac._id === userId);
+                if (!userVacation) return false;
+    
+                return userVacation.vacations.some(vacation => 
+                    (new Date(updatedStartDate) <= new Date(vacation.endDate) && new Date(updatedEndDate) >= new Date(vacation.startDate))
+                );
+            });
+    
+            if (usersOnVacation.length > 0) {
+                // ✅ Convertir IDs en usernames para el mensaje de error
+                const usernamesOnVacation = users
+                    .filter(user => usersOnVacation.includes(user._id)) // Filtrar solo los usuarios en vacaciones
+                    .map(user => user.username) // Obtener sus usernames
+    
+                alert(`No puedes asignar este feriado a los siguientes usuarios porque están de vacaciones: ${usernamesOnVacation.join(', ')}`);
+                return;
+            }
+    
+            // ✅ Proceder con la actualización
+            const response = await fetch(`${apiUrl}/holidays/${holiday._id}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': 'Bearer ' + localStorage.getItem('token')
+                },
+                body: JSON.stringify({
+                    name: updatedName,
+                    startDate: updatedStartDate,
+                    endDate: updatedEndDate,
+                    users: updatedUsers
+                })
+            });
+    
+            console.log('Respuesta de actualización:', response);
     
             if (!response.ok) {
                 throw new Error(`Error al actualizar el feriado: ${response.status}`);
             }
     
-            // ⚠️ Si el backend responde con 204 No Content, evitar llamar a .json()
-            return response.status === 204 ? {} : response.json();
-        })
-        .then(data => {
-            console.log('Feriado actualizado correctamente:', data); // ✅ Verificar datos en consola
+            const data = response.status === 204 ? {} : await response.json();
+            console.log('Feriado actualizado correctamente:', data);
             alert('Feriado actualizado correctamente.');
-        })
-        .catch(error => {
+        } catch (error) {
             console.error('Hubo un problema al actualizar el feriado:', error);
             alert('Hubo un problema al actualizar el feriado: ' + error.message);
-        });
+        }
     }
-    
     
     function deleteHoliday(holidayId, holidayItem) {
         fetch(`${apiUrl}/holidays/${holidayId}`, {
