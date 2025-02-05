@@ -98,12 +98,21 @@ document.addEventListener("DOMContentLoaded", () => {
 
                 allUsers.forEach(user => {
                     if (excludedUsers.includes(user.username)) return; // ❌ Omitir usuarios excluidos
-
+                
+                    // ✅ Verificar si el usuario tiene vacaciones en el período del feriado
+                    const isOnVacation = user.vacations?.some(vacation => 
+                        new Date(holiday.startDate) <= new Date(vacation.endDate) &&
+                        new Date(holiday.endDate) >= new Date(vacation.startDate)
+                    );
+                
+                    if (isOnVacation) return; // ❌ Omitir si el usuario está de vacaciones en este feriado
+                
                     const option = document.createElement("option");
                     option.value = user._id;
                     option.textContent = user.username;
                     userSelect.appendChild(option);
                 });
+                
     
                     // ✅ Si hay un usuario asignado para este select, marcarlo como seleccionado
                     if (assignedUsers[i]) {
@@ -120,7 +129,7 @@ document.addEventListener("DOMContentLoaded", () => {
     
                 holidayTableBody.appendChild(row);
             });
-    
+            updateUserHolidayCount();
         } catch (error) {
             console.error("❌ Error en loadHolidays:", error);
             alert("Hubo un problema al obtener los feriados: " + error.message);
@@ -322,12 +331,186 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     
         console.log("📌 Contador de asignaciones finalizado:", userCounterWithNames);
+        updateUserHolidayCountFromDOM();
     });
+
+    async function updateUserHolidayCount() {
+        try {
+            const response = await fetch(`${apiUrl}/holidays`, {
+                method: "GET",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": "Bearer " + localStorage.getItem("token")
+                }
+            });
+    
+            if (!response.ok) throw new Error("Error al obtener los feriados.");
+    
+            const holidays = await response.json();
+            const excludedUsers = ["montes_esposito", "rconsigli", "mgioja", "ggudiño", "lespinosa"];
+    
+            // Obtener todos los usuarios y filtrar los excluidos
+            const allUsers = await fetchUsers();
+            const filteredUsers = allUsers.filter(user => !excludedUsers.includes(user.username));
+    
+            // Crear un objeto para almacenar el conteo por usuario y año
+            let holidayCount = {};
+            filteredUsers.forEach(user => holidayCount[user.username] = {});
+    
+            // Determinar los años en los feriados
+            let years = new Set();
+    
+            // Contar los feriados largos asignados a cada usuario
+            holidays.forEach(holiday => {
+                const year = new Date(holiday.startDate).getFullYear();
+                years.add(year);
+    
+                holiday.users.forEach(user => {
+                    const userData = allUsers.find(u => u._id === user._id);
+                    if (userData && !excludedUsers.includes(userData.username)) {
+                        if (!holidayCount[userData.username][year]) {
+                            holidayCount[userData.username][year] = 0;
+                        }
+                        holidayCount[userData.username][year]++;
+                    }
+                });
+            });
+    
+            // Convertir Set a Array y ordenarlo
+            years = Array.from(years).sort();
+    
+            // Actualizar la tabla
+            renderUserHolidayCountTable(holidayCount, years);
+        } catch (error) {
+            console.error("❌ Error en updateUserHolidayCount:", error);
+        }
+    }
+
+    function renderUserHolidayCountTable(holidayCount, years) {
+        const table = document.getElementById("user-holiday-count-table");
+        const thead = table.querySelector("thead");
+        const tbody = table.querySelector("tbody");
+    
+        // Limpiar encabezados y cuerpo de la tabla
+        thead.innerHTML = "";
+        tbody.innerHTML = "";
+    
+        // Ordenar años en orden descendente (más reciente a la izquierda)
+        years.sort((a, b) => b - a);
+    
+        // Crear encabezado
+        const headerRow = document.createElement("tr");
+        headerRow.appendChild(document.createElement("th")).textContent = "Usuario";
+    
+        years.forEach(year => {
+            const th = document.createElement("th");
+            th.textContent = year;
+            headerRow.appendChild(th);
+        });
+    
+        // Agregar columna "Total"
+        const totalTh = document.createElement("th");
+        totalTh.textContent = "Total";
+        headerRow.appendChild(totalTh);
+    
+        thead.appendChild(headerRow);
+    
+        // Crear filas de usuarios
+        Object.entries(holidayCount).forEach(([username, yearlyData]) => {
+            const row = document.createElement("tr");
+    
+            // Primera celda: Nombre de usuario
+            const userCell = document.createElement("td");
+            userCell.textContent = username;
+            row.appendChild(userCell);
+    
+            let total = 0; // Inicializar total de feriados largos por usuario
+    
+            // Celdas de conteo por año (en orden descendente)
+            years.forEach(year => {
+                const count = yearlyData[year] || 0;
+                total += count;
+    
+                const countCell = document.createElement("td");
+                countCell.textContent = count;
+                row.appendChild(countCell);
+            });
+    
+            // Agregar celda de total
+            const totalCell = document.createElement("td");
+            totalCell.textContent = total;
+            row.appendChild(totalCell);
+    
+            tbody.appendChild(row);
+        });
+    }
+
+    function updateUserHolidayCountFromDOM() {
+        const selectedYear = parseInt(yearFilter.value);
+        const currentYear = new Date().getFullYear();
+    
+        // Obtener los años existentes en la tabla para no sobrescribir
+        let years = Array.from(document.querySelectorAll("#user-holiday-count-table thead th"))
+            .map(th => parseInt(th.textContent))
+            .filter(year => !isNaN(year)); // Filtrar solo los años válidos
+    
+        // Agregar el año seleccionado y el actual si aún no están en la tabla
+        if (!years.includes(selectedYear)) years.push(selectedYear);
+        if (!years.includes(currentYear)) years.push(currentYear);
+    
+        // Ordenar años en orden descendente
+        years.sort((a, b) => b - a);
+    
+        // Excluir usuarios específicos
+        const excludedUsers = ["montes_esposito", "rconsigli", "mgioja", "ggudiño", "lespinosa"];
+    
+        // Mantener los datos actuales y solo actualizar lo necesario
+        let holidayCount = {};
+        allUsers
+            .filter(user => !excludedUsers.includes(user.username))
+            .forEach(user => {
+                if (!holidayCount[user.username]) {
+                    holidayCount[user.username] = {};
+                }
+                years.forEach(year => {
+                    if (!holidayCount[user.username][year]) {
+                        holidayCount[user.username][year] = 0;
+                    }
+                });
+            });
+    
+        // 📌 Recorrer la tabla de feriados y contar los usuarios asignados en el DOM
+        document.querySelectorAll("#holiday-table tbody tr").forEach(row => {
+            const year = selectedYear; // Todos los feriados en la tabla son del año seleccionado
+            const assignedUsers = Array.from(row.querySelectorAll("select"))
+                .map(select => select.value)
+                .filter(userId => userId); // Filtrar selects vacíos
+    
+            assignedUsers.forEach(userId => {
+                const user = allUsers.find(u => u._id === userId);
+                if (user && !excludedUsers.includes(user.username)) {
+                    if (!holidayCount[user.username]) {
+                        holidayCount[user.username] = {};
+                    }
+                    if (!holidayCount[user.username][year]) {
+                        holidayCount[user.username][year] = 0;
+                    }
+                    holidayCount[user.username][year]++;
+                }
+            });
+        });
+    
+        // 📌 Actualizar la tabla de conteo sin duplicar columnas
+        renderUserHolidayCountTable(holidayCount, years);
+    }
+    
+
     
     
-    
-    
-    
-    
-    
+
+    holidayTableBody.addEventListener("change", (event) => {
+        if (event.target.tagName === "SELECT") {
+            updateUserHolidayCountFromDOM(); // Llamar al cambiar manualmente un select
+        }
+    });
 });
