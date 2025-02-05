@@ -165,10 +165,7 @@ document.addEventListener('DOMContentLoaded', function () {
             userItem.appendChild(removeUserButton);
             userList.appendChild(userItem);
         });
-        holidayItem.appendChild(userSelectionDiv);
-        holidayItem.appendChild(userContainer);
         holidayItem.appendChild(deleteButton);
-        holidayItem.appendChild(updateButton);
         holidayList.appendChild(holidayItem);
     }
 
