@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Asistente de Asignación de Feriados Largos</title>
+    <link rel="stylesheet" href="css/weekly-schedule.css">
+    <link rel="stylesheet" href="css/header.css">
+    <link rel="stylesheet" href="css/spinner.css">
+    <link rel="stylesheet" href="css/tooltip.css">
+    <link rel="stylesheet" href="css/media.css">
+    <script src="js/holidayAssistant.js"></script>
+</head>
+<body>
+
+    <header>
+        <h1>Asistente de Asignación de Feriados Largos</h1>
+    </header>
+
+    <main>
+        <div class="filter-container">
+            <label for="year-filter">Seleccionar Año:</label>
+            <select id="year-filter"></select>
+        </div>
+
+        <button id="assign-holidays">Asignar Automáticamente</button>
+
+        <table id="holiday-table">
+            <thead>
+                <tr>
+                    <th>Feriado Largo</th>
+                    <th>Fechas</th>
+                    <th>Asignación de Usuarios</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Filas generadas dinámicamente -->
+            </tbody>
+        </table>
+    </main>
+</body>
+</html>
