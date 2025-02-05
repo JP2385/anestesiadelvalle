@@ -4,11 +4,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Asistente de Asignación de Feriados Largos</title>
-    <link rel="stylesheet" href="css/weekly-schedule.css">
     <link rel="stylesheet" href="css/header.css">
-    <link rel="stylesheet" href="css/spinner.css">
-    <link rel="stylesheet" href="css/tooltip.css">
     <link rel="stylesheet" href="css/media.css">
+    <link rel="stylesheet" href="css/admin.css">
+    <link rel="stylesheet" href="css/weekly-schedule.css">
+    <link rel="stylesheet" href="css/spinner.css">
     <script src="js/holidayAssistant.js"></script>
 </head>
 <body>
@@ -22,10 +22,11 @@
         </a>
     </header>
     <main>
-        <div class="filter-container">
+        <div class="instructions">
             <label for="year-filter">Seleccionar Año:</label>
             <select id="year-filter"></select>
         </div>
+        <div class="instructions">
         <h2>Conteo de Feriados Largos por Usuario</h2>
         <table id="user-holiday-count-table">
             <thead>
@@ -39,7 +40,7 @@
         </table>
         
         <h2>Asistente propiamente dicho</h2>
-        <button id="assign-holidays" class="instructions-button">Asignar Automáticamente</button>
+        <button id="assign-holidays" class="instructions-button">Asignar</button>
         <button id="print-holidays" class="instructions-button">Imprimir</button>
         <table id="holiday-table">
             <thead>
@@ -53,6 +54,7 @@
                 <!-- Filas generadas dinámicamente -->
             </tbody>
         </table>
+        </div>
     </main>
 </body>
 </html>
