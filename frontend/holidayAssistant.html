@@ -12,11 +12,15 @@
     <script src="js/holidayAssistant.js"></script>
 </head>
 <body>
-
     <header>
-        <h1>Asistente de Asignación de Feriados Largos</h1>
+        <a href="index.html" class="app-logo-link">
+            <img src="images/logo/logo.png" alt="Logo Anestesiólogos del Valle" class="app-logo">
+        </a>
+        <h1>Anestesiólogos del Valle</h1>
+        <a href="index.html" class="back-to-main-menu" title="Volver al menú principal">
+            <img src="images/icons/back-icon.svg" alt="Volver" class="back-icon">
+        </a>
     </header>
-
     <main>
         <div class="filter-container">
             <label for="year-filter">Seleccionar Año:</label>
@@ -35,8 +39,8 @@
         </table>
         
         <h2>Asistente propiamente dicho</h2>
-        <button id="assign-holidays">Asignar Automáticamente</button>
-
+        <button id="assign-holidays" class="instructions-button">Asignar Automáticamente</button>
+        <button id="print-holidays" class="instructions-button">Imprimir</button>
         <table id="holiday-table">
             <thead>
                 <tr>

@@ -125,7 +125,7 @@ h3 {
     background-color: #0056b3; /* Color de fondo al pasar el ratón por encima */
 }
 
-.instructions button:hover {
+.instructions-button:hover {
     background-color: #0056b3;
 }
 
