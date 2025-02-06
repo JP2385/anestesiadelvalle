@@ -4,7 +4,7 @@ let longDaysSumGlobal = {}; // Variable global para almacenar los días largos a
 
 // DOMContentLoaded event to fetch data and generate the table
 document.addEventListener('DOMContentLoaded', async () => {
-    const apiUrl = window.location.hostname === 'localhost' ? 'http://localhost:3000' : 'https://https://advalle-46fc1873b63d.herokuapp.com';
+    const apiUrl = window.location.hostname === 'localhost' ? 'http://localhost:3000' : 'https://advalle-46fc1873b63d.herokuapp.com';
 
     const users = await fetchUsers(apiUrl);
     const schedules = await fetchLastScheduleOfEachWeek(apiUrl);

@@ -1,7 +1,7 @@
 import { fetchVacations } from './fetchVacations.js'; // ✅ Importa la función para obtener vacaciones
 
 document.addEventListener('DOMContentLoaded', function () {
-    const apiUrl = window.location.hostname === 'localhost' ? 'http://localhost:3000' : 'https://https://advalle-46fc1873b63d.herokuapp.com';
+    const apiUrl = window.location.hostname === 'localhost' ? 'http://localhost:3000' : 'https://advalle-46fc1873b63d.herokuapp.com';
 
     const holidayList = document.getElementById('holiday-list');
     const addHolidayButton = document.getElementById('add-holiday');

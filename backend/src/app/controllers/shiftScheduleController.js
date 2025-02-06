@@ -87,7 +87,7 @@ const sendScheduleEmail = async (req, res) => {
         text: `Estimado/a:
         
 Haciendo click en el siguiente link podrá acceder a las guardias de anestesia del mes de ${month} de ${year} de Fundación:
-https://https://advalle-46fc1873b63d.herokuapp.com/shiftInform.html?year=${year}&month=${monthYearText}&site=Fn
+https://advalle-46fc1873b63d.herokuapp.com/shiftInform.html?year=${year}&month=${monthYearText}&site=Fn
 
 Saludos,`
     };
@@ -100,7 +100,7 @@ Saludos,`
         text: `Estimado/a:
         
 Haciendo click en el siguiente link podrá acceder a las guardias de anestesia del mes de ${month} de ${year} de Imágenes:
-https://https://advalle-46fc1873b63d.herokuapp.com/shiftInform.html?year=${year}&month=${monthYearText}&site=Im
+https://advalle-46fc1873b63d.herokuapp.com/shiftInform.html?year=${year}&month=${monthYearText}&site=Im
 
 Saludos,`
     };
