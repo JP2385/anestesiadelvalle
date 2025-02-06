@@ -1,6 +1,6 @@
 document.addEventListener('DOMContentLoaded', () => {
     const printButton = document.getElementById('print-schedule');
-    const apiUrl = window.location.hostname === 'localhost' ? 'http://localhost:3000' : 'https://adv-37d5b772f5fd.herokuapp.com';
+    const apiUrl = window.location.hostname === 'localhost' ? 'http://localhost:3000' : 'https://https://advalle-46fc1873b63d.herokuapp.com/';
     let currentUser = '';
 
     // Obtener la información del perfil del usuario

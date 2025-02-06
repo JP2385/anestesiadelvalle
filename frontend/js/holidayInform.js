@@ -10,7 +10,7 @@ document.addEventListener('DOMContentLoaded', async function () {
     async function fetchHolidaysAndUsers() {
         const apiUrl = window.location.hostname === 'localhost' 
             ? 'http://localhost:3000' 
-            : 'https://adv-37d5b772f5fd.herokuapp.com';
+            : 'https://https://advalle-46fc1873b63d.herokuapp.com/';
     
         try {
             const [usersResponse, holidaysResponse] = await Promise.all([
