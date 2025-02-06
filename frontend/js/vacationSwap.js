@@ -2,7 +2,7 @@ import { fetchVacations } from './fetchVacations.js';
 import { validateStartDate, validateEndDate, filterUsersByDate, resetDateInputs, populateUserList, divideIntoWeeks, resetForm } from './vacationSwapUtils.js';
 
 document.addEventListener('DOMContentLoaded', async () => {
-    const apiUrl = window.location.hostname === 'localhost' ? 'http://localhost:3000' : 'https://https://advalle-46fc1873b63d.herokuapp.com/';
+    const apiUrl = window.location.hostname === 'localhost' ? 'http://localhost:3000' : 'https://https://advalle-46fc1873b63d.herokuapp.com';
     const startDateInput = document.getElementById('startDate');
     const endDateInput = document.getElementById('endDate');
     const periodsToGiveSelect = document.getElementById('periodsToGive');
