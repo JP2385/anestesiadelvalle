@@ -166,6 +166,7 @@ document.addEventListener('DOMContentLoaded', function () {
             userList.appendChild(userItem);
         });
         holidayItem.appendChild(deleteButton);
+        holidayItem.appendChild(updateButton);
         holidayList.appendChild(holidayItem);
     }
 

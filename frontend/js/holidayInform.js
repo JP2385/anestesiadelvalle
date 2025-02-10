@@ -108,13 +108,21 @@ function generateHolidayReport(year, selectedUser, startDate, endDate, holidays)
     reportBody.innerHTML = '';
 
     // Aplicar filtro de feriados largos (>2 días)
-    const longHolidays = holidays.filter(h => (new Date(h.endDate) - new Date(h.startDate)) / (1000 * 60 * 60 * 24) + 1 > 2);
+    const longHolidays = holidays.filter(h => 
+        (new Date(h.endDate) - new Date(h.startDate)) / (1000 * 60 * 60 * 24) + 1 > 2
+    );
 
     const filteredHolidays = longHolidays.filter(holiday => {
-        const holidayStart = new Date(holiday.startDate);
-        const holidayEnd = new Date(holiday.endDate);
-        const isInYear = holidayStart.getFullYear() == year;
-        const isInDateRange = (!startDate || holidayStart >= new Date(startDate)) && (!endDate || holidayEnd <= new Date(endDate));
+        let holidayStart = new Date(holiday.startDate);
+        let holidayEnd = new Date(holiday.endDate);
+
+        // ✅ Ajustar las fechas a medianoche UTC-3
+        holidayStart.setUTCHours(3, 0, 0, 0);
+        holidayEnd.setUTCHours(3, 0, 0, 0);
+
+        const isInYear = holidayStart.getUTCFullYear() == year;
+        const isInDateRange = (!startDate || holidayStart >= new Date(startDate)) && 
+                              (!endDate || holidayEnd <= new Date(endDate));
         const hasUser = !selectedUser || holiday.users.some(user => user.username === selectedUser);
 
         return isInYear && isInDateRange && hasUser;
@@ -123,10 +131,21 @@ function generateHolidayReport(year, selectedUser, startDate, endDate, holidays)
     if (filteredHolidays.length > 0) {
         filteredHolidays.forEach(holiday => {
             const row = document.createElement('tr');
+            
+            // ✅ Convertir la fecha a string asegurando que se muestra correctamente en Argentina (UTC-3)
+            let startDateStr = new Date(holiday.startDate);
+            let endDateStr = new Date(holiday.endDate);
+
+            startDateStr.setUTCHours(3, 0, 0, 0);
+            endDateStr.setUTCHours(3, 0, 0, 0);
+
+            // ✅ Restar un día al startDate para que se muestre el día anterior
+            startDateStr.setDate(startDateStr.getDate() - 1);
+
             row.innerHTML = `
                 <td>${holiday.name}</td>
-                <td>${new Date(holiday.startDate).toLocaleDateString()}</td>
-                <td>${new Date(holiday.endDate).toLocaleDateString()}</td>
+                <td>${startDateStr.toLocaleDateString("es-ES")}</td>
+                <td>${endDateStr.toLocaleDateString("es-ES")}</td>
                 <td>${holiday.users.map(user => user.username).join(', ')}</td>
             `;
             reportBody.appendChild(row);
@@ -137,3 +156,5 @@ function generateHolidayReport(year, selectedUser, startDate, endDate, holidays)
         reportBody.appendChild(row);
     }
 }
+
+

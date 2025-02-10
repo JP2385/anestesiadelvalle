@@ -54,8 +54,12 @@ document.addEventListener("DOMContentLoaded", () => {
     // 🔹 Cargar los feriados largos del año seleccionado
     function loadHolidays(year) {
         try {
-            const filteredHolidays = allHolidays.filter(h => new Date(h.startDate).getFullYear() === parseInt(year));
-            const longHolidays = filteredHolidays.filter(h => (new Date(h.endDate) - new Date(h.startDate)) / (1000 * 60 * 60 * 24) + 1 > 2);
+            const filteredHolidays = allHolidays.filter(h => 
+                new Date(h.startDate).getUTCFullYear() === parseInt(year)
+            );
+            const longHolidays = filteredHolidays.filter(h => 
+                (new Date(h.endDate) - new Date(h.startDate)) / (1000 * 60 * 60 * 24) + 1 > 2
+            );
     
             holidayTableBody.innerHTML = "";
     
@@ -67,9 +71,16 @@ document.addEventListener("DOMContentLoaded", () => {
                 const holidayNameCell = document.createElement("td");
                 holidayNameCell.textContent = holiday.name;
     
-                // 📌 Fechas del feriado
+                // 📌 Fechas del feriado con ajuste de zona horaria
                 const holidayDatesCell = document.createElement("td");
-                holidayDatesCell.textContent = `${new Date(holiday.startDate).toLocaleDateString("es-ES")} - ${new Date(holiday.endDate).toLocaleDateString("es-ES")}`;
+    
+                const startDate = new Date(holiday.startDate);
+                const endDate = new Date(holiday.endDate);
+    
+                startDate.setUTCHours(3, 0, 0, 0); // Ajusta a Argentina (UTC-3)
+                endDate.setUTCHours(3, 0, 0, 0);
+    
+                holidayDatesCell.textContent = `${startDate.toLocaleDateString("es-ES")} - ${endDate.toLocaleDateString("es-ES")}`;
     
                 // 📌 Asignación de usuarios
                 const userAssignmentCell = document.createElement("td");
@@ -81,7 +92,10 @@ document.addEventListener("DOMContentLoaded", () => {
     
                     allUsers.forEach(user => {
                         if (excludedUsers.includes(user.username)) return;
-                        const isOnVacation = user.vacations?.some(v => new Date(holiday.startDate) <= new Date(v.endDate) && new Date(holiday.endDate) >= new Date(v.startDate));
+                        const isOnVacation = user.vacations?.some(v => 
+                            new Date(holiday.startDate) <= new Date(v.endDate) && 
+                            new Date(holiday.endDate) >= new Date(v.startDate)
+                        );
                         if (isOnVacation) return;
     
                         const option = document.createElement("option");
@@ -109,6 +123,7 @@ document.addEventListener("DOMContentLoaded", () => {
             alert("Hubo un problema al obtener los feriados.");
         }
     }
+    
     
 
     // 🔹 Contar feriados largos asignados a cada usuario
@@ -308,37 +323,46 @@ document.addEventListener("DOMContentLoaded", () => {
     
             // 📌 Paso 3: Si no se pudo asignar la pareja emparejada, elegir otro usuario bajo la misma lógica de equidad
             if (!secondUser) {
+                let firstUserData = allUsers.find(u => u._id === firstUser);
+                let excludeUsers = ["nvela", "msalvarezza", "lburgueño"];
+
+                // 📌 Si el usuario asignado en el primer select NO trabaja en privado Neuquén, excluir a mmelo y ltotis
+                if (firstUserData && firstUserData.worksInPrivateNeuquen === false) {
+                    excludeUsers.push("mmelo", "ltotis");
+                }
+
                 availableUsers = Array.from(selects[1].options)
-                    .filter(option => option.value && 
+                    .filter(option => option.value &&
                         !assignedUsers.has(option.value) &&
-                        !["nvela", "msalvarezza","lburgueño"].includes(allUsers.find(u => u._id === option.value)?.username) &&
+                        !excludeUsers.includes(allUsers.find(u => u._id === option.value)?.username) &&
                         userCounters[option.value] < maxAssignments // 🔹 Aplicar el filtro de equidad
                     )
                     .map(option => option.value);
-    
+
                 if (availableUsers.length === 0) {
                     availableUsers = Array.from(selects[1].options)
-                        .filter(option => option.value && 
+                        .filter(option => option.value &&
                             !assignedUsers.has(option.value) &&
-                            !["nvela", "msalvarezza","lburgueño"].includes(allUsers.find(u => u._id === option.value)?.username) &&
+                            !excludeUsers.includes(allUsers.find(u => u._id === option.value)?.username) &&
                             userCounters[option.value] <= maxAssignments // 🔹 PERMITIR SOLO A QUIENES NO LO SUPERAN
                         )
                         .map(option => option.value);
                 }
-    
+
                 if (availableUsers.length > 0) {
                     secondUser = availableUsers[0];
                 }
             }
-    
+
             if (secondUser) {
                 selects[1].value = secondUser;
                 assignedUsers.add(secondUser);
                 userCounters[secondUser]++;
             }
-    
+
             let secondUsername = allUsers.find(u => u._id === secondUser)?.username || secondUser;
             console.log(`📌 Asignado segundo usuario: ${secondUsername}`);
+
     
             // 📌 Paso 4: Asignación emparejada del tercer usuario (validando que no haya sido ya asignado)
             let thirdUser = null;
@@ -356,26 +380,60 @@ document.addEventListener("DOMContentLoaded", () => {
             let hasCardio = [firstUser, secondUser].some(user => {
                 return allUsers.find(u => u._id === user)?.doesCardio;
             });
-    
+
+            // 📌 Obtener datos de los usuarios asignados en primer y segundo lugar
+            let firstUserData = allUsers.find(u => u._id === firstUser);
+            let secondUserData = allUsers.find(u => u._id === secondUser);
+
+            // 📌 Si ambos usuarios NO trabajan en privado Neuquén, excluir a quienes tampoco trabajan en privado Neuquén
+            let excludePrivateNeuquen = (firstUserData?.worksInPrivateNeuquen === false && secondUserData?.worksInPrivateNeuquen === false);
+
+            // 📌 Si ambos usuarios NO trabajan en privado Río Negro, excluir a quienes tampoco trabajan en privado Río Negro
+            let excludePrivateRioNegro = (firstUserData?.worksInPrivateRioNegro === false && secondUserData?.worksInPrivateRioNegro === false);
+
             if (!thirdUser) {
                 availableUsers = Array.from(selects[2].options)
-                    .filter(option => option.value && 
-                        !assignedUsers.has(option.value) && 
-                        !["mquiroga", "lharriague", "mmelo", "ltotis", "nvela", "msalvarezza","lburgueño"].includes(allUsers.find(u => u._id === option.value)?.username) &&
-                        userCounters[option.value] < maxAssignments // 🔹 Aplicar el filtro de equidad
-                    )
+                    .filter(option => {
+                        let userData = allUsers.find(u => u._id === option.value);
+                        return option.value &&
+                            !assignedUsers.has(option.value) &&
+                            !["mquiroga", "lharriague", "mmelo", "ltotis", "nvela", "msalvarezza", "lburgueño"].includes(userData?.username) &&
+                            userCounters[option.value] < maxAssignments &&
+                            (!excludePrivateNeuquen || userData?.worksInPrivateNeuquen) &&
+                            (!excludePrivateRioNegro || userData?.worksInPrivateRioNegro);
+                    })
                     .map(option => option.value);
-    
+
+                // 📌 Segundo intento: Permitir usuarios que no superen `maxAssignments`
                 if (availableUsers.length === 0) {
                     availableUsers = Array.from(selects[2].options)
-                        .filter(option => option.value && 
-                            !assignedUsers.has(option.value) &&
-                            !["mquiroga", "lharriague", "mmelo", "ltotis", "nvela", "msalvarezza","lburgueño"].includes(allUsers.find(u => u._id === option.value)?.username) &&
-                            userCounters[option.value] <= maxAssignments // 🔹 PERMITIR SOLO A QUIENES NO LO SUPERAN
-                        )
+                        .filter(option => {
+                            let userData = allUsers.find(u => u._id === option.value);
+                            return option.value &&
+                                !assignedUsers.has(option.value) &&
+                                !["mquiroga", "lharriague", "mmelo", "ltotis", "nvela", "msalvarezza", "lburgueño"].includes(userData?.username) &&
+                                userCounters[option.value] <= maxAssignments &&
+                                (!excludePrivateNeuquen || userData?.worksInPrivateNeuquen) &&
+                                (!excludePrivateRioNegro || userData?.worksInPrivateRioNegro);
+                        })
                         .map(option => option.value);
                 }
-    
+
+                // 📌 Último intento: Seleccionar al usuario con menos asignaciones, aunque supere `maxAssignments`
+                if (availableUsers.length === 0) {
+                    availableUsers = Array.from(selects[2].options)
+                        .filter(option => {
+                            let userData = allUsers.find(u => u._id === option.value);
+                            return option.value &&
+                                !assignedUsers.has(option.value) &&
+                                !["mquiroga", "lharriague", "mmelo", "ltotis", "nvela", "msalvarezza", "lburgueño"].includes(userData?.username) &&
+                                (!excludePrivateNeuquen || userData?.worksInPrivateNeuquen) &&
+                                (!excludePrivateRioNegro || userData?.worksInPrivateRioNegro);
+                        })
+                        .map(option => option.value)
+                        .sort((a, b) => userCounters[a] - userCounters[b]); // Ordenar por menor cantidad de asignaciones
+                }
+
                 if (availableUsers.length > 0) {
                     if (hasCardio) {
                         availableUsers.sort((a, b) => userCounters[a] - userCounters[b]);
@@ -384,22 +442,23 @@ document.addEventListener("DOMContentLoaded", () => {
                             return allUsers.find(u => u._id === user)?.doesCardio;
                         });
                     }
-                    
+
                     if (availableUsers.length > 0) {
                         thirdUser = availableUsers[0];
                     }
                 }
             }
-    
+
             if (thirdUser) {
                 selects[2].value = thirdUser;
                 assignedUsers.add(thirdUser);
                 userCounters[thirdUser]++;
             }
-    
+
             let thirdUsername = allUsers.find(u => u._id === thirdUser)?.username || thirdUser;
             console.log(`📌 Asignado tercer usuario: ${thirdUsername}`);
-        });
+
+
     
         // 📌 Log del contador de asignaciones con usernames
         let userCounterWithNames = {};
@@ -412,6 +471,8 @@ document.addEventListener("DOMContentLoaded", () => {
         updateUserHolidayCountFromDOM();
     });
 
+});
+
     printHolidaysButton.addEventListener("click", async () => {
         try {
             const holidayRows = document.querySelectorAll("#holiday-table tbody tr");
@@ -422,31 +483,34 @@ document.addEventListener("DOMContentLoaded", () => {
             }
     
             for (const row of holidayRows) {
-                const holidayId = row.getAttribute("data-holiday-id"); // 📌 Obtener `_id` del feriado en la tabla
+                const holidayId = row.getAttribute("data-holiday-id");
     
                 if (!holidayId) {
                     console.error("❌ No se encontró el ID del feriado en la tabla.");
                     alert("⚠️ No se encontró un ID válido para un feriado. Asegúrate de que los datos están bien cargados.");
-                    continue; // Saltar este feriado y seguir con el siguiente
+                    continue;
                 }
     
                 const name = row.children[0].textContent.trim();
                 const dates = row.children[1].textContent.trim().split(" - ");
-                const startDate = new Date(dates[0].split("/").reverse().join("-")); // DD/MM/YYYY → YYYY-MM-DD
-                const endDate = new Date(dates[1].split("/").reverse().join("-"));
+                
+                let startDate = new Date(dates[0].split("/").reverse().join("-")); // Convertir DD/MM/YYYY → YYYY-MM-DD
+                let endDate = new Date(dates[1].split("/").reverse().join("-"));
     
-                const selectedUsers = Array.from(row.querySelectorAll("select"))
-                    .map(select => select.value)
-                    .filter(userId => userId); // Excluir selects vacíos
+                // ✅ Ajustar las fechas a medianoche en UTC para evitar desfasajes
+                startDate.setUTCHours(3, 0, 0, 0);
+                endDate.setUTCHours(3, 0, 0, 0);
     
+                // ✅ Convertir a formato ISO para evitar problemas de zona horaria en la API
                 const holidayData = {
                     name,
-                    startDate,
-                    endDate,
-                    users: selectedUsers
+                    startDate: startDate.toISOString().split("T")[0], // Enviar solo la fecha YYYY-MM-DD
+                    endDate: endDate.toISOString().split("T")[0],
+                    users: Array.from(row.querySelectorAll("select"))
+                        .map(select => select.value)
+                        .filter(userId => userId)
                 };
     
-                // 📌 Actualizar feriado existente con `PUT` usando `_id`
                 const response = await fetch(`${apiUrl}/holidays/${holidayId}`, {
                     method: "PUT",
                     headers: {
@@ -465,8 +529,6 @@ document.addEventListener("DOMContentLoaded", () => {
             }
     
             alert("Feriados actualizados exitosamente.");
-    
-            // 📌 Redirigir a holidayInform.html después de actualizar todos los feriados
             window.location.href = "holidayInform.html";
     
         } catch (error) {
@@ -474,6 +536,7 @@ document.addEventListener("DOMContentLoaded", () => {
             alert(error.message || "Hubo un problema al actualizar los feriados.");
         }
     });
+    
     
      
 });
