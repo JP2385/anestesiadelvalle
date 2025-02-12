@@ -156,62 +156,53 @@ document.addEventListener("DOMContentLoaded", () => {
 
     function updateUserHolidayCountFromDOM() {
         const selectedYear = parseInt(yearFilter.value);
-        const currentYear = new Date().getFullYear();
     
-        // Obtener los años existentes en la tabla para no sobrescribir
-        let years = Array.from(document.querySelectorAll("#user-holiday-count-table thead th"))
+        // 📌 Obtener los años existentes en la tabla antes de modificarla
+        let existingYears = Array.from(document.querySelectorAll("#user-holiday-count-table thead th"))
             .map(th => parseInt(th.textContent))
             .filter(year => !isNaN(year)); // Filtrar solo los años válidos
     
-        // Agregar el año seleccionado y el actual si aún no están en la tabla
-        if (!years.includes(selectedYear)) years.push(selectedYear);
-        if (!years.includes(currentYear)) years.push(currentYear);
+        // 📌 Mantener los años que ya estaban en la tabla
+        if (!existingYears.includes(selectedYear)) existingYears.push(selectedYear);
     
-        // Ordenar años en orden descendente
-        years.sort((a, b) => b - a);
-    
-        // Excluir usuarios específicos
-        const excludedUsers = ["montes_esposito", "rconsigli", "mgioja", "ggudiño", "lespinosa"];
-    
-        // Mantener los datos actuales y solo actualizar lo necesario
+        // 📌 Estructura para mantener el histórico de conteo
         let holidayCount = {};
-        allUsers
-            .filter(user => !excludedUsers.includes(user.username))
-            .forEach(user => {
-                if (!holidayCount[user.username]) {
-                    holidayCount[user.username] = {};
-                }
-                years.forEach(year => {
-                    if (!holidayCount[user.username][year]) {
-                        holidayCount[user.username][year] = 0;
-                    }
-                });
-            });
     
-        // 📌 Recorrer la tabla de feriados y contar los usuarios asignados en el DOM
+        // 🔹 Recuperar datos actuales de la tabla (evita eliminar otros años)
+        document.querySelectorAll("#user-holiday-count-table tbody tr").forEach(row => {
+            const username = row.cells[0].textContent.trim();
+            holidayCount[username] = {};
+    
+            // Guardar el conteo actual de cada año
+            existingYears.forEach((year, index) => {
+                holidayCount[username][year] = parseInt(row.cells[index + 1]?.textContent) || 0;
+            });
+        });
+    
+        // 🔹 Reiniciar solo el conteo del año seleccionado
+        Object.keys(holidayCount).forEach(username => {
+            holidayCount[username][selectedYear] = 0;
+        });
+    
+        // 📌 Contar las asignaciones actuales del DOM para el año seleccionado
         document.querySelectorAll("#holiday-table tbody tr").forEach(row => {
-            const year = selectedYear; // Todos los feriados en la tabla son del año seleccionado
             const assignedUsers = Array.from(row.querySelectorAll("select"))
                 .map(select => select.value)
-                .filter(userId => userId); // Filtrar selects vacíos
+                .filter(userId => userId);
     
             assignedUsers.forEach(userId => {
                 const user = allUsers.find(u => u._id === userId);
                 if (user && !excludedUsers.includes(user.username)) {
-                    if (!holidayCount[user.username]) {
-                        holidayCount[user.username] = {};
-                    }
-                    if (!holidayCount[user.username][year]) {
-                        holidayCount[user.username][year] = 0;
-                    }
-                    holidayCount[user.username][year]++;
+                    if (!holidayCount[user.username]) holidayCount[user.username] = {};
+                    holidayCount[user.username][selectedYear] = (holidayCount[user.username][selectedYear] || 0) + 1;
                 }
             });
         });
     
-        // 📌 Actualizar la tabla de conteo sin duplicar columnas
-        renderUserHolidayCountTable(holidayCount, years);
+        // 📌 Renderizar la tabla SIN borrar otros años
+        renderUserHolidayCountTable(holidayCount, existingYears);
     }
+    
 
     // 🔹 Renderizar la tabla de conteo de feriados largos
     function renderUserHolidayCountTable(holidayCount, years) {
@@ -266,9 +257,17 @@ document.addEventListener("DOMContentLoaded", () => {
     assignHolidaysButton.addEventListener("click", () => {
         const holidayRows = document.querySelectorAll("#holiday-table tbody tr");
         const userCounters = {}; // 📌 Contador de asignaciones por usuario
-    
-        // Inicializar contador de usuarios
-        allUsers.forEach(user => userCounters[user._id] = 0);
+
+        // 📌 Obtener conteo total acumulado desde la tabla
+        document.querySelectorAll("#user-holiday-count-table tbody tr").forEach(row => {
+            const username = row.cells[0].textContent.trim();
+            const total = parseInt(row.lastElementChild.textContent) || 0; // 📌 Última celda es el total acumulado
+            const user = allUsers.find(u => u.username === username);
+            if (user) {
+                userCounters[user._id] = total;
+            }
+        });
+        
     
         holidayRows.forEach(row => {
             const selects = row.querySelectorAll("select");
@@ -471,7 +470,7 @@ document.addEventListener("DOMContentLoaded", () => {
         updateUserHolidayCountFromDOM();
     });
 
-});
+    });
 
     printHolidaysButton.addEventListener("click", async () => {
         try {
