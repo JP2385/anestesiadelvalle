@@ -28,9 +28,9 @@ export async function calculateAccumulatedShiftCounts(selectedYear, selectedMont
                         accumulatedCounts[username] = { week: 0, weekend: 0, saturday: 0 };
                     }
 
-                    // Aplicar el multiplicador de 1.4 para el usuario "nvela"
-                    const adjustedWeekdayShifts = username === "nvela" ? weekdayShifts * 1.4 : weekdayShifts;
-                    const adjustedWeekendShifts = username === "nvela" ? weekendShifts * 1.4 : weekendShifts;
+                    // Aplicar el multiplicador de 1.1667 para el usuario "nvela"
+                    const adjustedWeekdayShifts = username === "nvela" ? weekdayShifts * 1.1667 : weekdayShifts;
+                    const adjustedWeekendShifts = username === "nvela" ? weekendShifts * 1.1667 : weekendShifts;
 
                     // Acumular valores ajustados
                     accumulatedCounts[username].week += adjustedWeekdayShifts;
@@ -72,9 +72,9 @@ export async function updateShiftCountsTableWithAccumulated(weekCounts, weekendC
         const weekendCount = weekendCounts[username] || 0;
         const saturdayCount = saturdayCounts[username] || 0;
 
-        // Ajusta los valores para el usuario "nvela" dividiendo por 1.4
-        const adjustedWeekCount = username === "nvela" ? Math.round(weekCount / 1.4) : weekCount;
-        const adjustedWeekendCount = username === "nvela" ? Math.round(weekendCount / 1.4) : weekendCount;        
+        // Ajusta los valores para el usuario "nvela" dividiendo por 1.1667
+        const adjustedWeekCount = username === "nvela" ? Math.round(weekCount / 1.1667) : weekCount;
+        const adjustedWeekendCount = username === "nvela" ? Math.round(weekendCount / 1.1667) : weekendCount;        
 
         const weekCountCell = document.createElement('td');
         weekCountCell.textContent = adjustedWeekCount % 1 !== 0 ? adjustedWeekCount.toFixed(1) : adjustedWeekCount.toFixed(0);
@@ -91,9 +91,9 @@ export async function updateShiftCountsTableWithAccumulated(weekCounts, weekendC
         // Acumulado previo y cálculo del nuevo acumulado sumando los datos actuales del DOM
         const previousAccumulated = previousAccumulatedCounts[username] || { week: 0, weekend: 0, saturday: 0 };
         
-        // Ajusta el acumulado previo para "nvela" dividiendo por 1.4
-        const adjustedPreviousWeek = username === "nvela" ? Math.round(previousAccumulated.week / 1.4) : previousAccumulated.week;
-        const adjustedPreviousWeekend = username === "nvela" ? Math.round(previousAccumulated.weekend / 1.4) : previousAccumulated.weekend;
+        // Ajusta el acumulado previo para "nvela" dividiendo por 1.1667
+        const adjustedPreviousWeek = username === "nvela" ? Math.round(previousAccumulated.week / 1.1667) : previousAccumulated.week;
+        const adjustedPreviousWeekend = username === "nvela" ? Math.round(previousAccumulated.weekend / 1.1667) : previousAccumulated.weekend;
 
         const newAccumulatedWeek = adjustedPreviousWeek + adjustedWeekCount;
         const newAccumulatedWeekend = adjustedPreviousWeekend + adjustedWeekendCount;

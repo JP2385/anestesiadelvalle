@@ -40,7 +40,7 @@ export function countWeekdayShifts() {
                 if (assignment === "HH") {
                     userShiftCounts[username] += 1.5;
                 } else if (username === "nvela") {
-                    userShiftCounts[username] += 1.4;
+                    userShiftCounts[username] += 1.1667;
                 } else {
                     userShiftCounts[username] += 1;
                 }
@@ -77,7 +77,7 @@ export function countWeekendShifts() {
                 if (assignment === "HH") {
                     userShiftCounts[username] += 1.5;
                 } else if (username === "nvela") {
-                    userShiftCounts[username] += 1.4;
+                    userShiftCounts[username] += 1.1667;
                 } else {
                     userShiftCounts[username] += 1;
                 }
