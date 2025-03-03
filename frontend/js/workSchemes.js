@@ -29,7 +29,6 @@ export function getWorkSchemes(isOddWeek) {
     };
 
     const sdegreefScheme = {
-        'wednesday-header': 'Hospital Castro Rendon Largo',
         'thursday-header': 'Consultorio Dolor Vespertino'
     };
 
