@@ -180,7 +180,7 @@ export function assignWeekendIfLtotisAssigned(users) {
 
 function assignShift(selects, assignmentType, isLharriagueAssignedToday, isMquirogaAssignedToday, userShiftCounts, isCardioCheck, isWeekend) {
     let minShifts = Math.min(...Object.values(userShiftCounts).filter(count => count > 0));
-    const maxShifts = calculateMaxShifts(userShiftCounts); // Ajuste de maxShifts como el valor más común en userShiftCounts
+    let maxShifts = calculateMaxShifts(userShiftCounts); // Ajuste de maxShifts como el valor más común en userShiftCounts
     let noAssignment = true; // Para rastrear si se hizo una asignación
     let ignoreRestrictions = false; // Indicador para ignorar restricciones cuando se supera maxShifts
 
@@ -191,6 +191,8 @@ function assignShift(selects, assignmentType, isLharriagueAssignedToday, isMquir
     console.log(`Chequeo de cardio para asignación: ${isCardioCheck}`);
 
     while (noAssignment) {
+        console.log(`\nIntento de asignación con minShifts = ${minShifts}`);
+
         for (const select of selects) {
             const username = select.getAttribute('data-username');
             const day = select.getAttribute('data-day');
@@ -250,17 +252,20 @@ function assignShift(selects, assignmentType, isLharriagueAssignedToday, isMquir
             minShifts++;
             console.log(`No se encontró una asignación válida. Incrementando minShifts a ${minShifts} y reintentando.`);
 
-            // Activar ignorar restricciones si minShifts supera maxShifts
+            // Activar ignorar restricciones y aumentar maxShifts si minShifts supera maxShifts
             if (minShifts > maxShifts) {
                 ignoreRestrictions = true;
+                maxShifts *= 2; // Duplicamos maxShifts
                 minShifts = Math.min(...Object.values(userShiftCounts).filter(count => count > 0));
-                console.log(`Superado maxShifts. Ignorando restricciones de asignación consecutiva y reiniciando minShifts.`);
+                console.log(`Superado maxShifts. Ignorando restricciones de asignación consecutiva y duplicando maxShifts a ${maxShifts}. Reiniciando minShifts a ${minShifts}.`);
             }
         }
     }
     console.log(`No se pudo asignar ${assignmentType} a ningún usuario para el día ${day}.`);
     return null; // No se asignó ningún usuario
 }
+
+
 
 // Puede ajustar el offset para obtener días específicos antes (ej., -2 para domingo anterior)
 function getPreviousDay(currentDay, offset = 1) {
