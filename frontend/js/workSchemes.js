@@ -36,12 +36,18 @@ export function getWorkSchemes(isOddWeek) {
         'friday-header': 'Consultorio Dolor Matutino'
     };
 
+    const lalvarezScheme = {
+        'monday-header': 'Hospital Cipolletti Largo'
+    };
+
+
     return {
         montesEspositoScheme,
         ggudinoScheme,
         ltotisScheme,
         lburgueñoScheme,
         sdegreefScheme,
-        nvelaScheme
+        nvelaScheme,
+        lalvarezScheme,
     };
 }

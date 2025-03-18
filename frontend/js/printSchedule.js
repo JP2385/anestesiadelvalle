@@ -126,9 +126,6 @@ document.addEventListener('DOMContentLoaded', () => {
         const scheduleBody = document.getElementById('schedule-body');
         const rows = scheduleBody.getElementsByTagName('tr');
     
-        let lalvarezAssignedOnMonday = false; // Variable para rastrear si "lalvarez" tiene asignación el lunes
-        const lalvarezId = '66849bb060db6c808e86bcfd'; // El ID de "lalvarez"
-    
         for (let row of rows) {
             const workSiteElement = row.querySelector('.work-site');
             if (workSiteElement) {
@@ -166,26 +163,14 @@ document.addEventListener('DOMContentLoaded', () => {
                             }
                             longDaysCount[userId].count++;
                         }
-    
-                        // Verificar si "lalvarez" tiene asignación el lunes (index 0 corresponde al lunes)
-                        if (userId === lalvarezId && index === 0) { // index 0 es el lunes
-                            lalvarezAssignedOnMonday = true;
-                        }
                     }
                 });
             }
         }
     
-        // Si "lalvarez" tiene asignación el lunes, añadir un día largo adicional
-        if (lalvarezAssignedOnMonday) {
-            if (!longDaysCount[lalvarezId]) {
-                longDaysCount[lalvarezId] = { username: 'lalvarez', count: 0 };
-            }
-            longDaysCount[lalvarezId].count++; // Incrementar el contador en 1
-        }
-    
         return { assignments, longDaysCount };
     }
+    
     
     function collectDayHeaders() {
         const dayHeaders = {};

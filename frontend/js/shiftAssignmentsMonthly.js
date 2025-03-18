@@ -180,9 +180,10 @@ export function assignWeekendIfLtotisAssigned(users) {
 
 function assignShift(selects, assignmentType, isLharriagueAssignedToday, isMquirogaAssignedToday, userShiftCounts, isCardioCheck, isWeekend) {
     let minShifts = Math.min(...Object.values(userShiftCounts).filter(count => count > 0));
-    let maxShifts = calculateMaxShifts(userShiftCounts); // Ajuste de maxShifts como el valor más común en userShiftCounts
+    let maxShifts = calculateMaxShifts(userShiftCounts); // Inicialización de maxShifts como el valor más común en userShiftCounts
     let noAssignment = true; // Para rastrear si se hizo una asignación
     let ignoreRestrictions = false; // Indicador para ignorar restricciones cuando se supera maxShifts
+    let highestShiftCount = Math.max(...Object.values(userShiftCounts)); // Mayor cantidad de guardias asignadas
 
     console.log(`\nIniciando asignación para ${assignmentType}`);
     console.log(`minShifts al inicio: ${minShifts}`);
@@ -191,7 +192,7 @@ function assignShift(selects, assignmentType, isLharriagueAssignedToday, isMquir
     console.log(`Chequeo de cardio para asignación: ${isCardioCheck}`);
 
     while (noAssignment) {
-        console.log(`\nIntento de asignación con minShifts = ${minShifts}`);
+        console.log(`\nIntento de asignación con minShifts = ${minShifts} y maxShifts = ${maxShifts}`);
 
         for (const select of selects) {
             const username = select.getAttribute('data-username');
@@ -252,18 +253,30 @@ function assignShift(selects, assignmentType, isLharriagueAssignedToday, isMquir
             minShifts++;
             console.log(`No se encontró una asignación válida. Incrementando minShifts a ${minShifts} y reintentando.`);
 
-            // Activar ignorar restricciones y aumentar maxShifts si minShifts supera maxShifts
+            // Activar ignorar restricciones si minShifts supera maxShifts
             if (minShifts > maxShifts) {
                 ignoreRestrictions = true;
-                maxShifts *= 2; // Duplicamos maxShifts
-                minShifts = Math.min(...Object.values(userShiftCounts).filter(count => count > 0));
-                console.log(`Superado maxShifts. Ignorando restricciones de asignación consecutiva y duplicando maxShifts a ${maxShifts}. Reiniciando minShifts a ${minShifts}.`);
+                console.log(`Superado maxShifts. Ignorando restricciones de asignación consecutiva.`);
+                
+                // Si minShifts vuelve a alcanzar maxShifts después de ignorar restricciones, incrementamos maxShifts
+                if (minShifts >= maxShifts) {
+                    maxShifts++; 
+                    console.log(`Incrementando maxShifts a ${maxShifts}`);
+                }
+
+                // Si maxShifts supera la mayor cantidad de guardias asignadas a un usuario, terminamos la función
+                if (maxShifts > highestShiftCount) {
+                    console.log(`MaxShifts (${maxShifts}) ha superado la cantidad máxima de guardias de un usuario (${highestShiftCount}). Finalizando asignación.`);
+                    return null;
+                }
             }
         }
     }
+    
     console.log(`No se pudo asignar ${assignmentType} a ningún usuario para el día ${day}.`);
     return null; // No se asignó ningún usuario
 }
+
 
 
 
