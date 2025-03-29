@@ -147,12 +147,6 @@ function transformShiftCounts() {
         let weekendShifts = weekendCounts[username] || 0;
         const saturdayShifts = saturdayCounts[username] || 0;
 
-         // Dividir los conteos de nvela por 1.1667 y redondear los resultados
-         if (username === "nvela") {
-            weekdayShifts = Math.round(weekdayShifts / 1.1667); // Divide y redondea
-            weekendShifts = Math.round(weekendShifts / 1.1667); // Divide y redondea
-        }        
-
         return {
             username,
             weekdayShifts,

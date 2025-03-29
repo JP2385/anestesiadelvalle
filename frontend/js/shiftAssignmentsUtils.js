@@ -39,8 +39,6 @@ export function countWeekdayShifts() {
                 // Contar asignaciones especiales
                 if (assignment === "HH") {
                     userShiftCounts[username] += 1.5;
-                } else if (username === "nvela") {
-                    userShiftCounts[username] += 1.1667;
                 } else {
                     userShiftCounts[username] += 1;
                 }
@@ -76,8 +74,6 @@ export function countWeekendShifts() {
                 // Contar asignaciones especiales
                 if (assignment === "HH") {
                     userShiftCounts[username] += 1.5;
-                } else if (username === "nvela") {
-                    userShiftCounts[username] += 1.1667;
                 } else {
                     userShiftCounts[username] += 1;
                 }

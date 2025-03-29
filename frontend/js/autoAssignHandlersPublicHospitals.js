@@ -4,7 +4,7 @@ import { getWorkSchemes } from './workSchemes.js';
 
 export async function autoAssignPublicHospitalsByDay(apiUrl, dayIndex, availability) {
     try {
-        const ltotis = availability[Object.keys(availability)[dayIndex]].find(user => user.username === 'ltotis');
+        const msalvarezza = availability[Object.keys(availability)[dayIndex]].find(user => user.username === 'msalvarezza');
         const lburgueño = availability[Object.keys(availability)[dayIndex]].find(user => user.username === 'lburgueño');
         const sdegreef = availability[Object.keys(availability)[dayIndex]].find(user => user.username === 'sdegreef');
         const lalvarez = availability[Object.keys(availability)[dayIndex]].find(user => user.username === 'lalvarez');
@@ -13,16 +13,11 @@ export async function autoAssignPublicHospitalsByDay(apiUrl, dayIndex, availabil
         const isOddWeek = currentWeekNumber % 2 !== 0;
 
         const {
-            ltotisScheme,
             lburgueñoScheme,
             sdegreefScheme,
-            lalvarezScheme
+            lalvarezScheme,
+            msalvarezzaScheme,
         } = getWorkSchemes(isOddWeek);
-
-        // Asignar a ltotis si está disponible
-        if (ltotis) {
-            assignSpecificUsersByDay(dayIndex, ltotisScheme, ltotis);
-        }
 
         // Asignar a lburgueño si está disponible
         if (lburgueño) {
@@ -36,6 +31,10 @@ export async function autoAssignPublicHospitalsByDay(apiUrl, dayIndex, availabil
 
         if (lalvarez ){
             assignSpecificUsersByDay(dayIndex, lalvarezScheme, lalvarez);
+        }
+
+        if (msalvarezza ){
+            assignSpecificUsersByDay(dayIndex, msalvarezzaScheme, msalvarezza);
         }
 
     } catch (error) {

@@ -21,9 +21,6 @@ export function getWorkSchemes(isOddWeek) {
         'friday-header': ['COI Largo', 'COI Matutino', 'COI Vespertino']
     };
 
-    const ltotisScheme = {
-    };
-
     const lburgueñoScheme = {
         'tuesday-header': 'Hospital Allen Largo'
     };
@@ -33,6 +30,7 @@ export function getWorkSchemes(isOddWeek) {
     };
 
     const nvelaScheme = {
+        'thursday-header': 'Hospital Castro Rendon Largo',
         'friday-header': 'Consultorio Dolor Matutino'
     };
 
@@ -40,14 +38,18 @@ export function getWorkSchemes(isOddWeek) {
         'monday-header': 'Hospital Cipolletti Largo'
     };
 
+    const msalvarezzaScheme = {
+        'thursday-header': 'Hospital Allen Largo'
+    };
+
 
     return {
         montesEspositoScheme,
         ggudinoScheme,
-        ltotisScheme,
         lburgueñoScheme,
         sdegreefScheme,
         nvelaScheme,
         lalvarezScheme,
+        msalvarezzaScheme,
     };
 }

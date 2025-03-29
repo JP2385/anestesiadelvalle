@@ -465,8 +465,6 @@ function shouldDisableSelect(username, dayOfWeek, dateString) {
         mmelo: ['lun', 'mar', 'jue'],
         ltotis: ['lun', 'jue'],
         ngrande: ['lun', 'mar'],
-        nvela: ['jue'],
-        msalvarezza: ['jue'],
     };
 
     // Si no es feriado y existe una regla, aplicar disable según la regla
@@ -478,7 +476,9 @@ function applyDefaultAssignments(usersBody) {
     const defaultAssignments = {
         'lburgueño': { day: 'Mar', value: 'Al' },
         'sdegreef': { day: 'Mie', value: 'Ce' },
-        'lalvarez': { day: 'Lun', value: 'Cp' }
+        'lalvarez': { day: 'Lun', value: 'Cp' },
+        'nvela': { day: 'Jue', value: 'CR' },
+        'msalvarezza': { day: 'Jue', value: 'Al'},
     };
 
     // Recorrer cada fila (usuario) de la tabla
