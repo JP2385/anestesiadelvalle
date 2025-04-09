@@ -51,7 +51,7 @@
         <button onclick="showSection('facturacion')">Facturación y Nomenclado</button>
         <button onclick="showSection('liquidaciones')">Liquidaciones e Ingresos</button>
         <button onclick="showSection('reuniones')">Reuniones y Estatuto</button>
-        <button onclick="showSection('varios')">Varios</button>
+        <button onclick="showSection('varios')">Tutoriales y otros</button>
     </nav>
     <main>
     <div id="notification-area"></div>
@@ -137,7 +137,12 @@
             <button onclick="openFile('https://drive.google.com/file/d/1XyDopUZhfHXkxZGXJnEa5UdmhqjR7HI1/view?usp=sharing')">Estatuto</button>
         </section>
         <section id="varios" class="content-section" style="display:none;">
-            <!-- <h2>Varios</h2> -->
+            <button onclick="toggleTutoriales()">Tutoriales</button>
+            <ul id="tutoriales-list" class="hidden" style="display:none;">
+                <li><a href="https://drive.google.com/file/d/1RnvQy77VVhoQojQVvyT9Rff27vpwcQ-b/view?usp=drive_link" target="_blank"><img src="images/icons/pdf-icon.png" alt="PDF"> Subir archivos a datatech</a></li>
+                <li><a href="https://drive.google.com/file/d/1vJPaQgBMRb5Nk0XUaxQJhmnOgIrrh0Rq/view?usp=drive_link" target="_blank"><img src="images/icons/pdf-icon.png" alt="PDF"> Pedir hemoderivados</a></li>
+                <li><a href="https://drive.google.com/file/d/1aKbTZqYVo3EJNAyURRn9T9g_By7InhR_/view?usp=drive_link" target="_blank"><img src="images/icons/pdf-icon.png" alt="PDF"> Pasos a cumplimentar en caso de incidente</a></li>
+            </ul>
             <button onclick="openFile('https://docs.google.com/spreadsheets/d/1rHyyYz1Ceotfd47ZuikEYOEjeMizu8Oq/edit?usp=sharing&ouid=116849778907664010256&rtpof=true&sd=true')">Equipamiento propio</button>
             <button onclick="openFile('https://drive.google.com/file/d/1U38nU0W1rJhKxsI2cYug_5eTxkgmovIf/view?usp=sharing')">Datos S.A.</button>
             <button onclick="openFile('https://docs.google.com/document/d/1BiGKJPhTOPBPZRofbY1KbjD1MLGZnL-Ekjf_RW1ibQE/edit?usp=drive_link')">Contraseñas</button>

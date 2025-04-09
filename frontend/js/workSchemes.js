@@ -31,7 +31,7 @@ export function getWorkSchemes(isOddWeek) {
 
     const nvelaScheme = {
         'thursday-header': 'Hospital Castro Rendon Largo',
-        'friday-header': 'Consultorio Dolor Matutino'
+        'friday-header': 'Consultorio Dolor Vespertino'
     };
 
     const lalvarezScheme = {

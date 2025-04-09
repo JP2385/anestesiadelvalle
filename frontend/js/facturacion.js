@@ -17,4 +17,13 @@ document.addEventListener('DOMContentLoaded', function() {
             nomencladoresList.style.display = 'none';
         }
     };
+
+    window.toggleTutoriales = function() {
+        const nomencladoresList = document.getElementById('tutoriales-list');
+        if (nomencladoresList.style.display === 'none') {
+            nomencladoresList.style.display = 'block';
+        } else {
+            nomencladoresList.style.display = 'none';
+        }
+    };
 });
