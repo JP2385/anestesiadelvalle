@@ -1,4 +1,5 @@
 import { countWeekdayShifts, countWeekendShifts, countSaturdayShifts } from './shiftAssignmentsUtils.js';
+import { validateMquirogaLharriague, validateCardioAssignedEachDay, validateFnAndImAssignedEachDay } from './shiftValidationUtils.js';
 
 document.getElementById('print-shifts').addEventListener('click', async () => {
     const apiUrl = window.location.hostname === 'localhost' ? 'http://localhost:3000' : 'https://advalle-46fc1873b63d.herokuapp.com';
@@ -9,7 +10,7 @@ document.getElementById('print-shifts').addEventListener('click', async () => {
     const month = (parseInt(monthSelect.value) + 1).toString().padStart(2, '0'); 
 
     const monthYear = `${year}-${month}`; 
-
+    
     async function getCurrentUser() {
         const token = localStorage.getItem('token') || sessionStorage.getItem('token');
         try {
@@ -49,6 +50,38 @@ document.getElementById('print-shifts').addEventListener('click', async () => {
             isDisabled: select.disabled,
         }))
         .filter(config => config.assignment && config.assignment.trim() !== "");
+
+    const daysMissingFnOrIm = validateFnAndImAssignedEachDay();
+    if (daysMissingFnOrIm.length > 0) {
+        let message = 'Los siguientes días tienen problemas:\n\n';
+        daysMissingFnOrIm.forEach(item => {
+            message += `${item.day}: `;
+            if (item.missingFn) message += 'falta Fn ';
+            if (item.missingIm) message += 'falta Im ';
+            message += '\n';
+        });
+    
+        const proceed = confirm(`${message}\n¿Desea continuar imprimiendo?`);
+        if (!proceed) {
+            return; // Cancelar flujo
+        }
+    }        
+
+    const daysWithBothAssigned = validateMquirogaLharriague(selectConfig);
+    if (daysWithBothAssigned.length > 0) {
+        const proceed = confirm(`Mquiroga y lharriague han sido asignados juntos los días: ${daysWithBothAssigned.join(', ')}. ¿Desea continuar imprimiendo?`);
+        if (!proceed) {
+            return; // Cancelar flujo
+        }
+    }
+    
+    const daysWithoutCardio = validateCardioAssignedEachDay();
+    if (daysWithoutCardio.length > 0) {
+        const proceed = confirm(`Los siguientes días no hay anestesiólogo que haga cardio asignado: ${daysWithoutCardio.join(', ')}. ¿Desea continuar imprimiendo?`);
+        if (!proceed) {
+            return; // Cancelar flujo
+        }
+    }
 
     try {
         await fetch(`${apiUrl}/shift-schedule/save-shift-schedule`, {
