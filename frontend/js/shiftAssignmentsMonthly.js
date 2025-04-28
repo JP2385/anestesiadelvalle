@@ -237,6 +237,16 @@ function assignShift(selects, assignmentType, isLharriagueAssignedToday, isMquir
                 }
             }
 
+            if (username === 'mquiroga' && isLharriagueAssignedToday) {
+                console.log(`No se asigna a mquiroga porque lharriague ya fue asignada hoy.`);
+                continue;
+            }
+
+            if (username === 'lharriague' && isMquirogaAssignedToday) {
+                console.log(`No se asigna a lharriague porque mquiroga ya fue asignado hoy.`);
+                continue;
+            }
+
             // Chequeo final antes de asignar, verificando todas las condiciones
             if (select && !select.disabled && select.value === '' && shiftOption && isCardioUser) {
                 console.log(`Asignación exitosa: ${assignmentType} asignado a ${username} para el día ${day}`);
