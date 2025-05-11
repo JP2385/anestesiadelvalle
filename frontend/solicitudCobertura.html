@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Administrar Usuarios - Anestesiólogos del Valle</title>
+    <link rel="icon" type="image/png" href="images/logo/logo64x64.png">
+    <link rel="stylesheet" href="css/base.css">
+    <link rel="stylesheet" href="css/header.css">
+    <link rel="stylesheet" href="css/login.css">
+    <link rel="stylesheet" href="css/media.css">
+    <link rel="stylesheet" href="css/nav.css">
+    <link rel="stylesheet" href="css/main.css">
+    <link rel="stylesheet" href="css/spinner.css">
+    <link rel="stylesheet" href="css/admin.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script> 
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/es.js"></script>
+    <script>
+        flatpickr(".selector", {
+            locale: "es", // Configura el idioma a español
+            dateFormat: "d-m-Y" // Formato de la fecha opcional
+        });
+    </script>
+    <script defer src="js/bundle.js"></script>
+    <script defer src="js/spinner.js"></script>
+    <script defer src="js/solicitudCobertura.js" type="module"></script>
+</head>
+<body>
+  <header>
+    <a href="index.html" class="app-logo-link">
+      <img src="images/logo/logo.png" alt="Logo" class="app-logo">
+    </a>
+    <h1>Anestesiólogos del Valle</h1>
+    <a href="index.html" class="back-to-main-menu" title="Volver al menú principal">
+      <img src="images/icons/back-icon.svg" alt="Volver" class="back-icon">
+    </a>
+  </header>
+
+  <main class="form-container">
+    <div class="admin-form-wrapper">
+      <form id="solicitud-form">
+        <h2>Solicitud de coberturas/intercambios</h2>
+        <div class="admin-input-group">
+          <label for="tipoSolicitud">Tipo de solicitud:</label>
+          <select id="tipoSolicitud" name="tipoSolicitud">
+            <option value="intercambio">Intercambio</option>
+            <option value="cobertura">Cobertura</option>
+          </select>
+        </div>
+
+        <div class="admin-input-group">
+          <label for="fechaSolicitud">Fecha de la solicitud:</label>
+          <input type="text" id="fechaSolicitud" class="selector" name="fechaSolicitud" />
+        </div>
+
+        <h3>Datos del solicitante</h3>
+        <div class="admin-input-group">
+          <label for="usuarioSolicitante">Usuario:</label>
+          <input type="text" id="usuarioSolicitante" name="usuarioSolicitante" readonly />
+        </div>
+        <div class="admin-input-group">
+          <label for="regimenSolicitante">Régimen de trabajo ese día:</label>
+          <input type="text" id="regimenSolicitante" name="regimenSolicitante" readonly />
+        </div>
+
+        <h3>Datos de quien realizará la cobertura/intercambio</h3>
+        <div class="admin-input-group">
+          <label for="usuarioCobertura">Usuario:</label>
+          <select id="usuarioCobertura" name="usuarioCobertura"></select>
+        </div>
+        <div class="admin-input-group">
+          <label for="regimenCobertura">Régimen de trabajo ese día:</label>
+          <input type="text" id="regimenCobertura" name="regimenCobertura" readonly />
+        </div>
+
+        <button type="submit" class="main-menu-button">Enviar solicitud</button>
+      </form>
+    </div>
+  </main>
+</body>
+</html>
