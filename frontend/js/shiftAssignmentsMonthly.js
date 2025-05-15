@@ -14,13 +14,9 @@ export function assignIm(rows, selects, isLharriagueAssignedToday, isMquirogaAss
             userShiftCounts[username] += accumulated;
         }
     });
-
-    console.log("Conteo de guardias actual para cada usuario (inicio de asignación Im) con acumulados:", userShiftCounts);
     
     // Verificar si ya hay un usuario asignado a Im en el día actual
     assignedImUser = isAlreadyAssigned(selects, 'Im');
-    console.log(`¿Ya hay usuario asignado a Im? ${assignedImUser ? 'Sí' : 'No'}`);
-
     if (!assignedImUser) {
         // Llamar a la función de asignación sin necesidad de verificar si Fn hace cardio
         assignedImUser = assignShift(
@@ -33,12 +29,9 @@ export function assignIm(rows, selects, isLharriagueAssignedToday, isMquirogaAss
         );
 
         if (assignedImUser) {
-            console.log(`Asignación exitosa: Im asignado a ${assignedImUser.getAttribute('data-username')} para el día ${selects[0].getAttribute('data-day')}`);
         } else {
-            console.log("No se pudo asignar Im tras iterar sobre los usuarios disponibles.");
         }
     } else {
-        console.log(`Asignación omitida: Im ya está asignado a ${assignedImUser.getAttribute('data-username')}`);
     }
 
     return assignedImUser;
@@ -172,7 +165,6 @@ export function assignWeekendIfLtotisAssigned(users) {
         const mmeloSelect = document.querySelector(`.shift-select[data-username="mmelo"][data-day="${day}"]`);
         if (mmeloSelect && mmeloSelect.value === '') { // Solo asignar si está vacío
             mmeloSelect.value = assignedValue;
-            console.log(`Asignando a mmelo ${assignedValue} para el día ${day} (mismo que ltotis, excluyendo P1)`);
         }
     });
 }
@@ -185,14 +177,7 @@ function assignShift(selects, assignmentType, isLharriagueAssignedToday, isMquir
     let ignoreRestrictions = false; // Indicador para ignorar restricciones cuando se supera maxShifts
     let highestShiftCount = Math.max(...Object.values(userShiftCounts)); // Mayor cantidad de guardias asignadas
 
-    console.log(`\nIniciando asignación para ${assignmentType}`);
-    console.log(`minShifts al inicio: ${minShifts}`);
-    console.log(`maxShifts al inicio: ${maxShifts}`);
-    console.log(`¿Es fin de semana? ${isWeekend}`);
-    console.log(`Chequeo de cardio para asignación: ${isCardioCheck}`);
-
     while (noAssignment) {
-        console.log(`\nIntento de asignación con minShifts = ${minShifts} y maxShifts = ${maxShifts}`);
 
         for (const select of selects) {
             const username = select.getAttribute('data-username');
@@ -202,88 +187,76 @@ function assignShift(selects, assignmentType, isLharriagueAssignedToday, isMquir
             const isCardioUser = isCardioCheck ? select.dataset.cardio === 'true' : true; // Chequeo de cardio
 
             if (!username || !day) {
-                console.log(`Select sin username o day: ${select}`);
                 continue;
             }
 
-            console.log(`Evaluando ${username} para el día ${day}`);
-            console.log(`Guardias actuales de ${username}: ${userShiftCounts[username]}`);
-            console.log(`Mínimo permitido para asignación: ${minShifts}`);
-
             // Verificar si el usuario tiene más guardias que el mínimo permitido
             if (userShiftCounts[username] > minShifts) {
-                console.log(`${username} tiene más guardias que el mínimo. Saltando.`);
                 continue;
             }
 
             // Verificar restricciones solo si ignoreRestrictions es falso
             if (!ignoreRestrictions) {
-                // Verificar si el día anterior tiene asignación
+                // Verificar si el día anterior tiene asignación, excepto si es viernes y el usuario es nvela
                 const previousDay = getPreviousDay(day);
                 const previousSelect = document.querySelector(`.shift-select[data-username="${username}"][data-day="${previousDay}"]`);
-                if (previousSelect && previousSelect.value !== '') {
-                    console.log(`${username} ya tiene asignación el día anterior (${previousDay}). Saltando.`);
+                const isFriday = dayNumber === 5;
+
+                if (
+                    previousSelect &&
+                    previousSelect.value !== '' &&
+                    !(username === 'nvela' && isFriday)
+                ) {
                     continue;
-                }
+                }   
+
 
                 // Excluir usuario si tiene asignación en domingo y estamos asignando el lunes
                 if (!isWeekend && dayNumber === 1) { // Lunes
                     const sunday = getPreviousDay(day, 2); // Obtener el domingo anterior
                     const sundaySelect = document.querySelector(`.shift-select[data-username="${username}"][data-day="${sunday}"]`);
                     if (sundaySelect && sundaySelect.value !== '') {
-                        console.log(`${username} ya tiene asignación el domingo anterior (${sunday}). Saltando.`);
                         continue;
                     }
                 }
             }
 
             if (username === 'mquiroga' && isLharriagueAssignedToday) {
-                console.log(`No se asigna a mquiroga porque lharriague ya fue asignada hoy.`);
                 continue;
             }
 
             if (username === 'lharriague' && isMquirogaAssignedToday) {
-                console.log(`No se asigna a lharriague porque mquiroga ya fue asignado hoy.`);
                 continue;
             }
 
             // Chequeo final antes de asignar, verificando todas las condiciones
             if (select && !select.disabled && select.value === '' && shiftOption && isCardioUser) {
-                console.log(`Asignación exitosa: ${assignmentType} asignado a ${username} para el día ${day}`);
                 select.value = assignmentType;
                 noAssignment = false; // Se hizo una asignación, salimos del ciclo
                 return select; // Retornamos el select asignado
             }
-
-            console.log(`${username} no cumple con todos los requisitos para la asignación.`);
         }
 
         // Si no se ha asignado ningún usuario, incrementamos minShifts
         if (noAssignment) {
             minShifts++;
-            console.log(`No se encontró una asignación válida. Incrementando minShifts a ${minShifts} y reintentando.`);
 
             // Activar ignorar restricciones si minShifts supera maxShifts
             if (minShifts > maxShifts) {
                 ignoreRestrictions = true;
-                console.log(`Superado maxShifts. Ignorando restricciones de asignación consecutiva.`);
                 
                 // Si minShifts vuelve a alcanzar maxShifts después de ignorar restricciones, incrementamos maxShifts
                 if (minShifts >= maxShifts) {
                     maxShifts++; 
-                    console.log(`Incrementando maxShifts a ${maxShifts}`);
                 }
 
                 // Si maxShifts supera la mayor cantidad de guardias asignadas a un usuario, terminamos la función
                 if (maxShifts > highestShiftCount) {
-                    console.log(`MaxShifts (${maxShifts}) ha superado la cantidad máxima de guardias de un usuario (${highestShiftCount}). Finalizando asignación.`);
                     return null;
                 }
             }
         }
     }
-    
-    console.log(`No se pudo asignar ${assignmentType} a ningún usuario para el día ${day}.`);
     return null; // No se asignó ningún usuario
 }
 

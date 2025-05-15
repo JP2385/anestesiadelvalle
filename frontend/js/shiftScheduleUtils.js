@@ -475,7 +475,6 @@ function shouldDisableSelect(username, dayOfWeek, dateString) {
 function applyDefaultAssignments(usersBody) {
     const defaultAssignments = {
         'lburgueño': { day: 'Mar', value: 'Al' },
-        'sdegreef': { day: 'Mie', value: 'Ce' },
         'lalvarez': { day: 'Lun', value: 'Cp' },
         'nvela': { day: 'Jue', value: 'CR' },
         'msalvarezza': { day: 'Jue', value: 'Al'},
