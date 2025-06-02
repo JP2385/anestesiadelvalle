@@ -205,11 +205,10 @@ function assignShift(selects, assignmentType, isLharriagueAssignedToday, isMquir
                 if (
                     previousSelect &&
                     previousSelect.value !== '' &&
-                    !(username === 'nvela' && isFriday)
+                    !(isFriday && (username === 'nvela' || username === 'msalvarezza'))
                 ) {
                     continue;
-                }   
-
+                }
 
                 // Excluir usuario si tiene asignación en domingo y estamos asignando el lunes
                 if (!isWeekend && dayNumber === 1) { // Lunes
