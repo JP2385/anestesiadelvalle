@@ -20,7 +20,6 @@ const handleVacationSwap = (sender, receiver, selectedPeriodObj, notification) =
     const cedidoStart = new Date(selectedPeriodObj.startDate);
     const cedidoEnd = new Date(selectedPeriodObj.endDate);
 
-    // Buscar los períodos originales de sender y receiver sin eliminarlos
     const originalVacationSender = sender.vacations.find(vacation =>
         new Date(vacation.startDate).getTime() <= cedidoStart.getTime() &&
         new Date(vacation.endDate).getTime() >= cedidoEnd.getTime()
@@ -30,109 +29,106 @@ const handleVacationSwap = (sender, receiver, selectedPeriodObj, notification) =
         new Date(vacation.endDate).getTime() >= new Date(notification.vacationPeriod.endDate).getTime()
     );
 
+    console.log('👉 Original del sender:', originalVacationSender);
+    console.log('👉 Original del receiver:', originalVacationReceiver);
+    console.log('📤 Período cedido por sender:', selectedPeriodObj);
+    console.log('📥 Período solicitado por sender:', notification.vacationPeriod);
+
     if (originalVacationSender && originalVacationReceiver) {
-        const originalDurationSender = Math.round((new Date(originalVacationSender.endDate) - new Date(originalVacationSender.startDate)) / (1000 * 60 * 60 * 24)) + 1;
-        const originalDurationReceiver = Math.round((new Date(originalVacationReceiver.endDate) - new Date(originalVacationReceiver.startDate)) / (1000 * 60 * 60 * 24)) + 1;
-        const cedidoDuration = Math.round((cedidoEnd - cedidoStart) / (1000 * 60 * 60 * 24)) + 1;
+        const originalDurationSender = daysBetween(originalVacationSender.startDate, originalVacationSender.endDate);
+        const originalDurationReceiver = daysBetween(originalVacationReceiver.startDate, originalVacationReceiver.endDate);
+        const cedidoDuration = daysBetween(cedidoStart, cedidoEnd);
 
+        console.log('⏱ Duraciones -> Sender:', originalDurationSender, '| Receiver:', originalDurationReceiver, '| Cedido:', cedidoDuration);
 
-        // Caso 1: Intercambio directo si los períodos tienen la misma duración
-        if (originalDurationSender === cedidoDuration && originalDurationReceiver === cedidoDuration) {
-            sender.vacations.push(notification.vacationPeriod);
-            receiver.vacations.push(selectedPeriodObj);
-        } 
-        // Caso 2: Si el período del receiver es más largo
-        else if (originalDurationReceiver > cedidoDuration) {
+        // Intercambio básico
+        sender.vacations.push(notification.vacationPeriod);
+        receiver.vacations.push(selectedPeriodObj);
+        console.log('✅ Intercambio base aplicado.');
+
+        // 🔁 Si el receiver da un período más largo, agregar sus remanentes
+        if (originalDurationReceiver > cedidoDuration) {
+            console.log('🔄 El receiver da un período más largo.');
+
+            const requestedStart = new Date(notification.vacationPeriod.startDate).getTime();
+            const requestedEnd = new Date(notification.vacationPeriod.endDate).getTime();
+            const receiverStart = new Date(originalVacationReceiver.startDate).getTime();
+            const receiverEnd = new Date(originalVacationReceiver.endDate).getTime();
+
             let remainingPeriods = [];
 
-            // Nueva condición: Si el período solicitado coincide exactamente con el período original del receiver
-            if (notification.vacationPeriod.startDate.getTime() === originalVacationReceiver.startDate.getTime() &&
-                notification.vacationPeriod.endDate.getTime() === originalVacationReceiver.endDate.getTime()) {
-                
-                // Intercambio directo: no hay período restante
-                sender.vacations.push(notification.vacationPeriod);
-                receiver.vacations.push(selectedPeriodObj);
-
+            if (requestedStart === receiverStart && requestedEnd === receiverEnd) {
+                console.log('⚖️ Período solicitado coincide exactamente con el original del receiver (no hay remanente).');
+            } else if (requestedStart === receiverStart) {
+                let remStart = new Date(notification.vacationPeriod.endDate);
+                remStart.setDate(remStart.getDate() + 1);
+                let remEnd = new Date(originalVacationReceiver.endDate);
+                remainingPeriods.push({ startDate: remStart, endDate: remEnd });
+            } else if (requestedEnd === receiverEnd) {
+                let remStart = new Date(originalVacationReceiver.startDate);
+                let remEnd = new Date(notification.vacationPeriod.startDate);
+                remEnd.setDate(remEnd.getDate() - 1);
+                remainingPeriods.push({ startDate: remStart, endDate: remEnd });
             } else {
-                // Caso donde el período solicitado no coincide completamente con el período original del receiver
-                if (notification.vacationPeriod.startDate.getTime() === originalVacationReceiver.startDate.getTime()) {
-                    let remainingStart = new Date(notification.vacationPeriod.endDate);
-                    remainingStart.setDate(remainingStart.getDate() + 1);
-                    let remainingEnd = new Date(originalVacationReceiver.endDate);
-
-                    remainingPeriods.push({ startDate: remainingStart, endDate: remainingEnd });
-                } else if (notification.vacationPeriod.endDate.getTime() === originalVacationReceiver.endDate.getTime()) {
-                    let remainingStart = new Date(originalVacationReceiver.startDate);
-                    let remainingEnd = new Date(notification.vacationPeriod.startDate);
-                    remainingEnd.setDate(remainingEnd.getDate() - 1);
-
-                    remainingPeriods.push({ startDate: remainingStart, endDate: remainingEnd });
-                } else {
-                    let remainingStartBefore = new Date(originalVacationReceiver.startDate);
-                    let remainingEndBefore = new Date(notification.vacationPeriod.startDate);
-                    remainingEndBefore.setDate(remainingEndBefore.getDate() - 1);
-
-                    let remainingStartAfter = new Date(notification.vacationPeriod.endDate);
-                    remainingStartAfter.setDate(remainingStartAfter.getDate() + 1);
-                    let remainingEndAfter = new Date(originalVacationReceiver.endDate);
-
-                    remainingPeriods.push({ startDate: remainingStartBefore, endDate: remainingEndBefore });
-                    remainingPeriods.push({ startDate: remainingStartAfter, endDate: remainingEndAfter });
-                }
-                let adjustedPeriods = remainingPeriods.map(period => ajustarPeriodoRestante(period.startDate, period.endDate));
-
-                adjustedPeriods.forEach(period => {
-                    receiver.vacations.push({ startDate: period.startDate, endDate: period.endDate });
-                });
-
-                sender.vacations.push(notification.vacationPeriod);
-                receiver.vacations.push(selectedPeriodObj);
-            }
-        }
-
-        // Caso 3: Si el período del sender es más largo
-        else if (originalDurationSender > cedidoDuration) {
-            let remainingPeriods = [];
-
-            if (cedidoStart.getTime() === originalVacationSender.startDate.getTime()) {
-                let remainingStart = new Date(cedidoEnd);
-                remainingStart.setDate(remainingStart.getDate() + 1);
-                let remainingEnd = new Date(originalVacationSender.endDate);
-
-                remainingPeriods.push({ startDate: remainingStart, endDate: remainingEnd });
-            } else if (cedidoEnd.getTime() === originalVacationSender.endDate.getTime()) {
-                let remainingStart = new Date(originalVacationSender.startDate);
-                let remainingEnd = new Date(cedidoStart);
-                remainingEnd.setDate(remainingEnd.getDate() - 1);
-
-                remainingPeriods.push({ startDate: remainingStart, endDate: remainingEnd });
-            } else {
-                let remainingStartBefore = new Date(originalVacationSender.startDate);
-                let remainingEndBefore = new Date(cedidoStart);
-                remainingEndBefore.setDate(remainingEndBefore.getDate() - 1);
-
-                let remainingStartAfter = new Date(cedidoEnd);
-                remainingStartAfter.setDate(remainingStartAfter.getDate() + 1);
-                let remainingEndAfter = new Date(originalVacationSender.endDate);
-
-                remainingPeriods.push({ startDate: remainingStartBefore, endDate: remainingEndBefore });
-                remainingPeriods.push({ startDate: remainingStartAfter, endDate: remainingEndAfter });
+                let remStart1 = new Date(originalVacationReceiver.startDate);
+                let remEnd1 = new Date(notification.vacationPeriod.startDate);
+                remEnd1.setDate(remEnd1.getDate() - 1);
+                let remStart2 = new Date(notification.vacationPeriod.endDate);
+                remStart2.setDate(remStart2.getDate() + 1);
+                let remEnd2 = new Date(originalVacationReceiver.endDate);
+                remainingPeriods.push({ startDate: remStart1, endDate: remEnd1 });
+                remainingPeriods.push({ startDate: remStart2, endDate: remEnd2 });
             }
 
-            let adjustedPeriods = remainingPeriods.map(period => ajustarPeriodoRestante(period.startDate, period.endDate));
-
-            adjustedPeriods.forEach(period => {
-                sender.vacations.push({ startDate: period.startDate, endDate: period.endDate });
+            let adjusted = remainingPeriods.map(p => ajustarPeriodoRestante(p.startDate, p.endDate));
+            adjusted.forEach(p => {
+                receiver.vacations.push(p);
+                console.log('📌 Período restante agregado al receiver:', p);
             });
-
-            sender.vacations.push(notification.vacationPeriod);
-            receiver.vacations.push(selectedPeriodObj);
-
         }
-    } 
 
+        // 🔁 Si el sender cede solo parte de su período original, agregar remanente
+        if (originalDurationSender > cedidoDuration) {
+            console.log('🔄 El sender cede un período más corto que el suyo.');
+
+            let remainingPeriods = [];
+
+            if (cedidoStart.getTime() === new Date(originalVacationSender.startDate).getTime()) {
+                let remStart = new Date(cedidoEnd);
+                remStart.setDate(remStart.getDate() + 1);
+                let remEnd = new Date(originalVacationSender.endDate);
+                remainingPeriods.push({ startDate: remStart, endDate: remEnd });
+            } else if (cedidoEnd.getTime() === new Date(originalVacationSender.endDate).getTime()) {
+                let remStart = new Date(originalVacationSender.startDate);
+                let remEnd = new Date(cedidoStart);
+                remEnd.setDate(remEnd.getDate() - 1);
+                remainingPeriods.push({ startDate: remStart, endDate: remEnd });
+            } else {
+                let remStart1 = new Date(originalVacationSender.startDate);
+                let remEnd1 = new Date(cedidoStart);
+                remEnd1.setDate(remEnd1.getDate() - 1);
+                let remStart2 = new Date(cedidoEnd);
+                remStart2.setDate(remStart2.getDate() + 1);
+                let remEnd2 = new Date(originalVacationSender.endDate);
+                remainingPeriods.push({ startDate: remStart1, endDate: remEnd1 });
+                remainingPeriods.push({ startDate: remStart2, endDate: remEnd2 });
+            }
+
+            let adjusted = remainingPeriods.map(p => ajustarPeriodoRestante(p.startDate, p.endDate));
+            adjusted.forEach(p => {
+                sender.vacations.push(p);
+                console.log('📌 Período restante agregado al sender:', p);
+            });
+        }
+    }
     return { originalVacationSender, originalVacationReceiver };
 };
+
+// Helper para días entre dos fechas (inclusive)
+function daysBetween(start, end) {
+    return Math.round((new Date(end) - new Date(start)) / (1000 * 60 * 60 * 24)) + 1;
+}
+
 
 // Función para ajustar el período restante
 const ajustarPeriodoRestante = (startDate, endDate) => {
