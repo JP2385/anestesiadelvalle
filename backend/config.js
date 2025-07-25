@@ -29,5 +29,6 @@ module.exports = {
         'familiaserranoesandi@gmail.com',
         'ngvela.05@gmail.com',
         'maxi.salvarezza@gmail.com',
+        'valenti.bruno1993@gmail.com',
     ]
 };

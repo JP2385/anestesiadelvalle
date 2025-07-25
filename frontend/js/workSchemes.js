@@ -26,12 +26,10 @@ export function getWorkSchemes(isOddWeek) {
     };
 
     const sdegreefScheme = {
-        'thursday-header': 'Consultorio Dolor Vespertino'
     };
 
     const nvelaScheme = {
         'thursday-header': 'Hospital Castro Rendon Largo',
-        'friday-header': 'Consultorio Dolor Vespertino'
     };
 
     const lalvarezScheme = {
