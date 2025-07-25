@@ -463,7 +463,7 @@ function shouldDisableSelect(username, dayOfWeek, dateString) {
     const disableRules = {
         mschvartzman: ['lun'],
         mmelo: ['lun', 'mar', 'jue'],
-        ltotis: ['lun', 'jue'],
+        ltotis: ['jue'],
         ngrande: ['lun', 'mar'],
     };
 

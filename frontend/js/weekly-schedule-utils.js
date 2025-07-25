@@ -190,7 +190,7 @@ export async function populateSelectOptions(availability) {
 
                 // Exclusiones para la usuaria lharriague
                 if (user.username === 'lharriague') {
-                    const exclusionesGenerales = ['Hemo', 'RNM', 'Q3', 'COI', 'Hospital', 'CMAC Q1', 'CMAC Q2'];
+                    const exclusionesGenerales = ['Hemo', 'RNM', 'Q3', 'COI'];
                     const exclusionDiaEspecifico = dayName === 'wednesday' && workSite.includes('4to piso');
 
                     const tieneExclusionGeneral = exclusionesGenerales.some(palabra => workSite.includes(palabra));
