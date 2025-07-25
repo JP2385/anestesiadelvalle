@@ -23,9 +23,6 @@ export const userRealNames = {
     "nvela": "Nicolás Vela",
     "gcastro": "Gonzalo Castro",
     "msalvarezza": "Máximo Salvarezza",
-    "montes_esposito": "Carolina Montes"
-
-    
-    
-    // Agrega todas las equivalencias necesarias
+    "montes_esposito": "Carolina Montes",
+    "bvalenti": "Bruno Valenti",
 };

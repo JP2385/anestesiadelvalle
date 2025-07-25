@@ -40,6 +40,13 @@ export function getWorkSchemes(isOddWeek) {
         'thursday-header': 'Hospital Allen Largo'
     };
 
+    const bvalentiScheme = isOddWeek ? {
+        'tuesday-header': 'Imágenes Q1 Vespertino',
+        'thursday-header': 'Imágenes Q2 Vespertino',
+    } : {
+        'tuesday-header': 'Imágenes Q2 Vespertino',
+        'thursday-header': 'Imágenes Q1 Vespertino',
+    };
 
     return {
         montesEspositoScheme,
@@ -49,5 +56,6 @@ export function getWorkSchemes(isOddWeek) {
         nvelaScheme,
         lalvarezScheme,
         msalvarezzaScheme,
+        bvalentiScheme,
     };
 }
