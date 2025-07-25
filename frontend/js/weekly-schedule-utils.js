@@ -188,6 +188,18 @@ export async function populateSelectOptions(availability) {
                     }
                 }
 
+                // Exclusiones para la usuaria lharriague
+                if (user.username === 'lharriague') {
+                    const exclusionesGenerales = ['Hemo', 'RNM', 'Q3', 'COI', 'Hospital', 'CMAC Q1', 'CMAC Q2'];
+                    const exclusionDiaEspecifico = dayName === 'wednesday' && workSite.includes('4to piso');
+
+                    const tieneExclusionGeneral = exclusionesGenerales.some(palabra => workSite.includes(palabra));
+
+                    if (tieneExclusionGeneral || exclusionDiaEspecifico) {
+                        return; // Excluir lharriague en estos casos
+                    }
+                }
+
                 const option = document.createElement('option');
                 option.value = user._id || user.username; // Asegurarse de usar user._id si está disponible
                 option.textContent = user.username;

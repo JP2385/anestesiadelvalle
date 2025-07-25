@@ -123,6 +123,10 @@ export function assignSaturdayP1(users, accumulatedCounts) {
 
             // Intentar asignar "P1" al primer usuario disponible de la lista ordenada
             for (const user of sortedUsers) {
+                // excluir al usuario bvalenti
+                if (user.username === 'bvalenti') {
+                continue;
+                }
                 const select = user.row.querySelector(`.shift-select[data-day="${currentDay}"]`);
                 
                 // Verificar si el select está habilitado antes de asignar "P1"
@@ -181,6 +185,11 @@ function assignShift(selects, assignmentType, isLharriagueAssignedToday, isMquir
 
         for (const select of selects) {
             const username = select.getAttribute('data-username');
+            
+            // 🔴 EXCLUIR bvalenti de toda asignación automática
+            if (username === 'bvalenti') {
+                continue;
+            }
             const day = select.getAttribute('data-day');
             const dayNumber = parseInt(select.getAttribute('data-daynumber'), 10); // Obtener el número del día (0-6)
             const shiftOption = Array.from(select.options).find(option => option.value === assignmentType);
