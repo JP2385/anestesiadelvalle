@@ -16,37 +16,24 @@ document.addEventListener('DOMContentLoaded', () => {
             alert(`Error: ${data.message}`);
             window.location.href = 'login.html';
         } else {
-            const currentUser = data.username;
+            const vacations = data.vacations || [];
 
-            // Obtener los usuarios y sus vacaciones desde el backend
-            fetch(`${apiUrl}/vacations`)
-                .then(response => response.json())
-                .then(users => {
-                    // Buscar el usuario actual en el array de usuarios
-                    const user = users.find(u => u.username === currentUser);
+            if (vacations.length === 0) {
+                vacationInformContainer.textContent = 'No tienes vacaciones registradas.';
+                return;
+            }
 
-                    if (!user || user.vacations.length === 0) {
-                        vacationInformContainer.textContent = 'No tienes vacaciones registradas.';
-                        return;
-                    }
+            const upcomingVacations = filterUpcomingVacations(vacations);
 
-                    // Filtrar las próximas vacaciones del usuario
-                    const upcomingVacations = filterUpcomingVacations(user.vacations);
-
-                    if (upcomingVacations.length > 0) {
-                        const vacationList = generateVacationList(upcomingVacations);
-                        vacationInformContainer.appendChild(vacationList);
-                    } else {
-                        vacationInformContainer.textContent = 'No tienes vacaciones próximas.';
-                    }
-                })
-                .catch(error => {
-                    alert('Hubo un problema al obtener las vacaciones: ' + error.message);
-                });
+            if (upcomingVacations.length > 0) {
+                const vacationList = generateVacationList(upcomingVacations);
+                vacationInformContainer.appendChild(vacationList);
+            } else {
+                vacationInformContainer.textContent = 'No tienes vacaciones próximas.';
+            }
         }
     })
-    .catch(error => {
-        // alert('Hubo un problema con la solicitud: ' + error.message);
+    .catch(() => {
         window.location.href = 'login.html';
     });
 });
@@ -55,16 +42,9 @@ document.addEventListener('DOMContentLoaded', () => {
 function filterUpcomingVacations(vacations) {
     const today = new Date();
 
-    // Filtrar vacaciones futuras
-    const futureVacations = vacations.filter(vacation => {
-        const startDate = new Date(vacation.startDate);
-        return startDate >= today;
-    });
-
-    // Ordenar por la fecha de inicio más cercana
+    const futureVacations = vacations.filter(vacation => new Date(vacation.startDate) >= today);
     futureVacations.sort((a, b) => new Date(a.startDate) - new Date(b.startDate));
 
-    // Retornar solo los próximos 4 períodos
     return futureVacations.slice(0, 4);
 }
 
@@ -75,20 +55,17 @@ function generateVacationList(vacations) {
     vacations.forEach(vacation => {
         const listItem = document.createElement('li');
 
-        // Función para sumar 3 horas a una fecha
-        function addThreeHours(dateString) {
-            const date = new Date(dateString);
-            date.setHours(date.getHours() + 3);
-            return date;
-        }
+        const options = { day: 'numeric', month: 'long', year: 'numeric' };
 
-        const options = { day: 'numeric', month: 'long', year: 'numeric' };  // Opciones para el formato
-        
-        // Sumar 3 horas a las fechas antes de mostrarlas
-        const startDate = addThreeHours(vacation.startDate).toLocaleDateString('es-ES', options);
-        const endDate = addThreeHours(vacation.endDate).toLocaleDateString('es-ES', options);
+        const startDate = new Date(vacation.startDate);
+        startDate.setHours(startDate.getHours() + 3);
+        const endDate = new Date(vacation.endDate);
+        endDate.setHours(endDate.getHours() + 3);
 
-        listItem.textContent = `Del ${startDate} hasta el ${endDate}.`;
+        const formattedStart = startDate.toLocaleDateString('es-ES', options);
+        const formattedEnd = endDate.toLocaleDateString('es-ES', options);
+
+        listItem.textContent = `Del ${formattedStart} hasta el ${formattedEnd}.`;
         list.appendChild(listItem);
     });
 

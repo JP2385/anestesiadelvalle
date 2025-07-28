@@ -15,6 +15,7 @@ const publicRoutes = require('./src/app/routes/publicRoutes');
 const { getUsersAvailability } = require('./src/app/controllers/availabilityController');
 const { getAllVacations } = require('./src/app/controllers/vacationController');
 const coverageRequestRoutes = require('./src/app/routes/coverageRequestRoutes');
+const otherLeaveRoutes = require('./src/app/routes/otherLeaveRoutes');
 
 const app = express();
 app.use(express.json());
@@ -54,6 +55,8 @@ app.get('/vacations', getAllVacations);
 app.use('/public', publicRoutes);
 
 app.use('/coverage-requests', coverageRequestRoutes);
+
+app.use('/other-leaves', otherLeaveRoutes);
 
 
 // Servir archivos estáticos del frontend

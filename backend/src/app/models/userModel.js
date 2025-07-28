@@ -14,6 +14,21 @@ const vacationSchema = new Schema({
     endDate: Date
 });
 
+const otherLeaveSchema = new Schema({
+    type: {
+        type: String,
+        required: true
+    },
+    startDate: {
+        type: Date,
+        required: true
+    },
+    endDate: {
+        type: Date,
+        required: true
+    }
+});
+
 const userSchema = new Schema({
     username: {
         type: String,
@@ -103,7 +118,8 @@ const userSchema = new Schema({
             default: 'Variable'
         }
     },
-    vacations: [vacationSchema]
+    vacations: [vacationSchema],
+    otherLeaves: [otherLeaveSchema]
 });
 
 // Hash the password before saving the user model

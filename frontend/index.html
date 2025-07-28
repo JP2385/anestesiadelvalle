@@ -26,6 +26,7 @@
     <script type="module" src="js/shiftScheduleIndividualized.js" defer></script>
     <script src="js/vacationInformIndividualized.js" defer></script>
     <script src="js/holidayInformIndividualized.js" defer></script>
+    <script src="js/otherLeaveInformIndividualized.js" defer></script>
     <script type="module" src="js/notifications.js"></script>
 <body>
     <div class="spinner" id="spinner"></div>
@@ -46,7 +47,7 @@
     <nav>
         <button onclick="showSection('programacion')">Plantas</button>
         <button onclick="showSection('guardias')">Guardias</button>
-        <button onclick="showSection('vacaciones')">Vacaciones</button>
+        <button onclick="showSection('vacaciones')">Vacaciones y otras licencias</button>
         <button onclick="showSection('findeslargos')">Findes largos</button>
         <button onclick="showSection('facturacion')">Facturación y Nomenclado</button>
         <button onclick="showSection('liquidaciones')">Liquidaciones e Ingresos</button>
@@ -83,6 +84,7 @@
         <section id="vacaciones" class="content-section">
         <h3>Tus próximos períodos de vacaciones son:</h3>
             <div id="vacation-inform"></div>
+            <div id="other-leaves-inform"></div>
             <a href="vacationInform.html"><button>Informe de vacaciones</button></a>
             <a href="vacationSwap.html"><button>Intercambio de vacaciones</button></a>
             <button onclick="openFile('https://docs.google.com/spreadsheets/d/1IIAo4YHyBavQmA7iN3xVwhW9NncDwYU-3PpnL81d4TE/edit?usp=sharing')">Vacaciones y Guardias 2024</button>

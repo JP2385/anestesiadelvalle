@@ -248,6 +248,20 @@ if (loginForm) {
                     li.textContent = `Del ${vacation.startDate.split('T')[0]} al ${vacation.endDate.split('T')[0]}`;
                     vacationList.appendChild(li);
                 });
+
+                const otherLeavesList = document.getElementById('other-leaves-list');
+                    otherLeavesList.innerHTML = '';
+                    (data.otherLeaves || []).forEach(leave => {
+                        const li = document.createElement('li');
+                        if (leave.startDate && leave.endDate) {
+                            li.textContent = `${leave.type ? leave.type + ': ' : ''}Del ${leave.startDate.split('T')[0]} al ${leave.endDate.split('T')[0]}`;
+                        } else if (leave.date) {
+                            li.textContent = `${leave.type ? leave.type + ': ' : ''}${leave.date.split('T')[0]}`;
+                        } else {
+                            li.textContent = leave.type || 'Licencia sin fecha especificada';
+                        }
+                        otherLeavesList.appendChild(li);
+                    });
             }
         })
         .catch(error => {

@@ -8,6 +8,13 @@ document.addEventListener('DOMContentLoaded', function () {
     const vacationList = document.getElementById('vacation-list');
     const addVacationButton = document.getElementById('add-vacation');
     const beginningDateElement = document.getElementById('beginningDate');
+    const otherLeavesList = document.getElementById('other-leaves-list');
+    const addOtherLeaveButton = document.getElementById('add-other-leave');
+    const otherLeaveStartInput = document.getElementById('other-leave-start');
+    const otherLeaveEndInput = document.getElementById('other-leave-end');
+    const otherLeaveTypeSelect = document.getElementById('other-leave-type');
+    const otherLeaveCustomTypeGroup = document.getElementById('other-leave-custom-type-group');
+
     // Nuevo campo para el número de teléfono
     const phoneNumberInput = document.createElement('phoneNumber');
     // Añadirlo al contenedor del formulario en el DOM
@@ -93,6 +100,11 @@ document.addEventListener('DOMContentLoaded', function () {
             vacations: Array.from(vacationList.children).map(item => ({
                 startDate: item.querySelector('.vacation-start').value,
                 endDate: item.querySelector('.vacation-end').value
+            })),
+            otherLeaves: Array.from(otherLeavesList.children).map(item => ({
+                type: item.querySelector('.leave-type')?.value || '',
+                startDate: item.querySelector('.leave-start').value,
+                endDate: item.querySelector('.leave-end').value
             }))
         };
 
@@ -148,6 +160,49 @@ document.addEventListener('DOMContentLoaded', function () {
         // Limpiar los campos de fecha
         startDateInput.value = '';
         endDateInput.value = '';
+    });
+
+    addOtherLeaveButton.addEventListener('click', () => {
+        const startDate = otherLeaveStartInput.value;
+        const endDate = otherLeaveEndInput.value;
+        const selectedType = otherLeaveTypeSelect.value;
+        const customType = document.getElementById('other-leave-custom-type').value;
+        const leaveType = selectedType === 'Otro' ? customType : selectedType;
+
+        if (!startDate || !endDate || !leaveType) {
+            alert('Por favor, complete las fechas y seleccione un concepto.');
+            return;
+        }
+
+        const leaveItem = document.createElement('li');
+        leaveItem.innerHTML = `
+            <strong>${leaveType}:</strong>
+            Del <input type="date" class="leave-start" value="${startDate}">
+            al <input type="date" class="leave-end" value="${endDate}">
+            <input type="hidden" class="leave-type" value="${leaveType}">
+            <button class="delete-leave">❌</button>
+        `;
+
+        leaveItem.querySelector('.delete-leave').addEventListener('click', () => leaveItem.remove());
+
+        otherLeavesList.insertBefore(leaveItem, otherLeavesList.firstChild);
+
+        // Limpiar inputs
+        otherLeaveStartInput.value = '';
+        otherLeaveEndInput.value = '';
+        otherLeaveTypeSelect.value = '';
+        document.getElementById('other-leave-custom-type').value = '';
+        otherLeaveCustomTypeGroup.style.display = 'none';
+    });
+
+    
+    otherLeaveTypeSelect.addEventListener('change', () => {
+        if (otherLeaveTypeSelect.value === 'Otro') {
+            otherLeaveCustomTypeGroup.style.display = 'block';
+        } else {
+            otherLeaveCustomTypeGroup.style.display = 'none';
+            document.getElementById('other-leave-custom-type').value = '';
+        }
     });
 
     // Función para manejar el cambio de fechas y realizar otras acciones si es necesario
@@ -213,6 +268,24 @@ document.addEventListener('DOMContentLoaded', function () {
 
                     vacationList.appendChild(vacationItem);
                 });
+
+                otherLeavesList.innerHTML = '';
+
+                    (user.otherLeaves || []).sort((a, b) => new Date(b.startDate) - new Date(a.startDate)).forEach(leave => {
+                        const leaveItem = document.createElement('li');
+                    leaveItem.innerHTML = `
+                        <strong>${leave.type || 'Licencia'}:</strong>
+                        Del <input type="date" class="leave-start" value="${new Date(leave.startDate).toISOString().split('T')[0]}">
+                        al <input type="date" class="leave-end" value="${new Date(leave.endDate).toISOString().split('T')[0]}">
+                        <input type="hidden" class="leave-type" value="${leave.type || ''}">
+                        <button class="delete-leave">❌</button>
+                    `;
+
+                        leaveItem.querySelector('.delete-leave').addEventListener('click', () => leaveItem.remove());
+
+                        otherLeavesList.appendChild(leaveItem);
+                    });
+
             } else {
                 const errorData = await response.json();
                 alert(`Error: ${errorData.message}`);
