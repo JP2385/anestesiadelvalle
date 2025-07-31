@@ -21,7 +21,7 @@ document.addEventListener('DOMContentLoaded', async function () {
     const dayAbbreviations = ['Dom', 'Lun', 'Mar', 'Mie', 'Jue', 'Vie', 'Sab'];
 
     const guardSites = {
-        publicNeuquen: ['HH', 'Ce', 'CM', 'CR'],
+        publicNeuquen: ['HH', 'Ce', 'CM', 'CR','HP'],
         privateNeuquen: ['Im'],
         privateRioNegro: ['Fn'],
         publicRioNegro: ['Cp', 'Al', 'Jb'],

@@ -9,6 +9,7 @@ export const shiftAssignmentLabels = {
     CR: "Hospital Castro Rendon",
     Ce: "Hospital Centenario",
     HH: "Hospital Heller",
+    HP: "Hospital Plottier",
     CM: "Hospital Chos Malal",
     P1: "Planta Sábado",
     ND: "No Disponible",
