@@ -108,11 +108,11 @@ function generateTable(users, yearSelect, monthSelect, dayAbbreviations, guardSi
                 const vacationStartPrevDay = new Date(new Date(vacationStartDate).getTime() - 86400000).toISOString().slice(0, 10);
 
                 if (vacationStartPrevDay <= dayString && vacationEndDate >= dayString) {
-                    select.innerHTML = ''; 
                     const vacationOption = document.createElement('option');
                     vacationOption.value = 'V';
                     vacationOption.textContent = 'V';
                     select.appendChild(vacationOption);
+                    select.value = 'V';
                 }
             });
 
@@ -368,27 +368,47 @@ function populateShiftSelect(selectElement, user, isSaturday, guardSites) {
     const dateString = selectElement.getAttribute('data-day'); // Obtener la fecha en formato `YYYY-MM-DD`
 
     // Deshabilitar select solo si no es feriado y se cumplen las condiciones
+    let shouldAutoSelectND = false;
+
     if (shouldDisableSelect(username, dayOfWeek, dateString)) {
-        selectElement.innerHTML = ''; // Vaciar opciones actuales
-        const ndOption = document.createElement('option');
-        ndOption.value = 'ND';
-        ndOption.textContent = 'ND';
-        selectElement.appendChild(ndOption);
-        selectElement.value = 'ND';
-        return; // Ya completamos el select con ND
+        shouldAutoSelectND = true;
     }
 
-    // Agregar la opción vacía para todos los selects
+    // Agregar la opción vacía
     const emptyOption = document.createElement('option');
     emptyOption.value = '';
     emptyOption.textContent = '';
     selectElement.appendChild(emptyOption);
 
-    // Agregar la opción "ND" para todos los selects
+    // Agregar siempre "ND"
     const ndOption = document.createElement('option');
     ndOption.value = 'ND';
     ndOption.textContent = 'ND';
     selectElement.appendChild(ndOption);
+
+    // Agregar P1 si corresponde
+    if (!user.doesShifts && isSaturday) {
+        const option = document.createElement('option');
+        option.value = 'P1';
+        option.textContent = 'P1';
+        selectElement.appendChild(option);
+    }
+
+    // Agregar los sitios regulares
+    if (user.doesShifts) {
+        if (isSaturday) {
+            const option = document.createElement('option');
+            option.value = 'P1';
+            option.textContent = 'P1';
+            selectElement.appendChild(option);
+        }
+        populateRegularSites(selectElement, user, guardSites);
+    }
+
+    // Autoseleccionar ND si corresponde
+    if (shouldAutoSelectND) {
+        selectElement.value = 'ND';
+    }
 
     // Si el usuario no hace guardias
     if (!user.doesShifts) {
