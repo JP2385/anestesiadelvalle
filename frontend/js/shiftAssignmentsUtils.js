@@ -35,7 +35,14 @@ export function countWeekdayShifts() {
             const assignment = select.value; // Valor del select para la asignación de guardia
 
             // Verificar si es un día entre lunes y jueves, no está deshabilitado, tiene un valor asignado, y no es feriado
-            if (dayOfWeek >= 1 && dayOfWeek <= 4 && !select.disabled && assignment !== '' && assignment !== 'ND' && !isHoliday(dayString)) {
+            if (
+                dayOfWeek >= 1 && dayOfWeek <= 4 &&
+                !select.disabled &&
+                assignment !== '' &&
+                assignment !== 'ND' &&
+                assignment !== 'V' && // 👈 excluir V
+                !isHoliday(dayString)
+            ) {
                 // Contar asignaciones especiales
                 if (assignment === "HH") {
                     userShiftCounts[username] += 1.5;
@@ -70,7 +77,14 @@ export function countWeekendShifts() {
             const assignment = select.value; // Valor del select para la asignación de guardia
 
             // Verificar si el día corresponde a viernes a domingo o es un feriado
-            if ((dayOfWeek === 5 || dayOfWeek === 6 || dayOfWeek === 0 || isHoliday(dayString)) && !select.disabled && assignment !== '' && assignment !== 'ND' && assignment !== 'P1') {
+            if (
+                (dayOfWeek === 5 || dayOfWeek === 6 || dayOfWeek === 0 || isHoliday(dayString)) &&
+                !select.disabled &&
+                assignment !== '' &&
+                assignment !== 'ND' &&
+                assignment !== 'V' && // 👈 excluir V
+                assignment !== 'P1'
+            ) {
                 // Contar asignaciones especiales
                 if (assignment === "HH") {
                     userShiftCounts[username] += 1.5;
