@@ -101,21 +101,6 @@ function generateTable(users, yearSelect, monthSelect, dayAbbreviations, guardSi
             // Poblar el select con opciones regulares
             populateShiftSelect(select, user, isSaturday, guardSites);
 
-            // Verificar vacaciones y deshabilitar si corresponde
-            user.vacations.forEach(vacation => {
-                const vacationStartDate = vacation.startDate.slice(0, 10);
-                const vacationEndDate = vacation.endDate.slice(0, 10);
-                const vacationStartPrevDay = new Date(new Date(vacationStartDate).getTime() - 86400000).toISOString().slice(0, 10);
-
-                if (vacationStartPrevDay <= dayString && vacationEndDate >= dayString) {
-                    const vacationOption = document.createElement('option');
-                    vacationOption.value = 'V';
-                    vacationOption.textContent = 'V';
-                    select.appendChild(vacationOption);
-                    select.value = 'V';
-                }
-            });
-
             // Si existe una configuración de asignación, solo seleccionar la opción sin sobrescribir las existentes
             const existingConfig = selectConfigMap[selectKey];
             if (existingConfig) {
@@ -362,17 +347,28 @@ function getNextDay(currentDay, dayOfWeek) {
 
 // Función para poblar los selects basados en las reglas del usuario
 function populateShiftSelect(selectElement, user, isSaturday, guardSites) {
-    // Obtener los valores de los atributos directamente del select
     const username = selectElement.getAttribute('data-username');
     const dayOfWeek = selectElement.getAttribute('data-dayOfWeek');
-    const dateString = selectElement.getAttribute('data-day'); // Obtener la fecha en formato `YYYY-MM-DD`
+    const dateString = selectElement.getAttribute('data-day');
 
-    // Deshabilitar select solo si no es feriado y se cumplen las condiciones
     let shouldAutoSelectND = false;
+    let shouldAutoSelectV = false;
 
+    // Verificar si aplica ND
     if (shouldDisableSelect(username, dayOfWeek, dateString)) {
         shouldAutoSelectND = true;
     }
+
+    // Verificar si aplica V
+    user.vacations.forEach(vacation => {
+        const vacationStartDate = vacation.startDate.slice(0, 10);
+        const vacationEndDate = vacation.endDate.slice(0, 10);
+        const vacationStartPrevDay = new Date(new Date(vacationStartDate).getTime() - 86400000).toISOString().slice(0, 10);
+
+        if (vacationStartPrevDay <= dateString && vacationEndDate >= dateString) {
+            shouldAutoSelectV = true;
+        }
+    });
 
     // Agregar la opción vacía
     const emptyOption = document.createElement('option');
@@ -380,60 +376,45 @@ function populateShiftSelect(selectElement, user, isSaturday, guardSites) {
     emptyOption.textContent = '';
     selectElement.appendChild(emptyOption);
 
-    // Agregar siempre "ND"
+    // Agregar "V"
+    const vacationOption = document.createElement('option');
+    vacationOption.value = 'V';
+    vacationOption.textContent = 'V';
+    selectElement.appendChild(vacationOption);
+
+    // Agregar "ND"
     const ndOption = document.createElement('option');
     ndOption.value = 'ND';
     ndOption.textContent = 'ND';
     selectElement.appendChild(ndOption);
 
-    // Agregar P1 si corresponde
+    // Agregar "P1" para sábados si no hace guardias
     if (!user.doesShifts && isSaturday) {
-        const option = document.createElement('option');
-        option.value = 'P1';
-        option.textContent = 'P1';
-        selectElement.appendChild(option);
+        const p1Option = document.createElement('option');
+        p1Option.value = 'P1';
+        p1Option.textContent = 'P1';
+        selectElement.appendChild(p1Option);
     }
 
-    // Agregar los sitios regulares
+    // Agregar sitios regulares si hace guardias
     if (user.doesShifts) {
         if (isSaturday) {
-            const option = document.createElement('option');
-            option.value = 'P1';
-            option.textContent = 'P1';
-            selectElement.appendChild(option);
+            const p1Option = document.createElement('option');
+            p1Option.value = 'P1';
+            p1Option.textContent = 'P1';
+            selectElement.appendChild(p1Option);
         }
         populateRegularSites(selectElement, user, guardSites);
     }
 
-    // Autoseleccionar ND si corresponde
-    if (shouldAutoSelectND) {
+    // Autoselección según la regla
+    if (shouldAutoSelectV) {
+        selectElement.value = 'V';
+    } else if (shouldAutoSelectND) {
         selectElement.value = 'ND';
     }
-
-    // Si el usuario no hace guardias
-    if (!user.doesShifts) {
-        selectElement.disabled = !isSaturday;  // Deshabilitar los selects excepto los de los sábados
-        if (isSaturday) {
-            // Solo agregar P1 para los sábados si el usuario no hace guardias
-            const option = document.createElement('option');
-            option.value = 'P1';
-            option.textContent = 'P1';
-            selectElement.appendChild(option);
-        }
-        return;  // Salir de la función si no hace guardias
-    }
-
-    // Si el usuario hace guardias, agregar "P1" para los sábados y poblar otros días con guardSites
-    if (isSaturday) {
-        const option = document.createElement('option');
-        option.value = 'P1';
-        option.textContent = 'P1';
-        selectElement.appendChild(option);
-    }
-
-    // Para usuarios que hacen guardias, poblar el select con los sitios regulares de guardia
-    populateRegularSites(selectElement, user, guardSites);
 }
+
 
 // Función auxiliar para poblar los sitios regulares según el perfil del usuario
 function populateRegularSites(selectElement, user, guardSites) {
