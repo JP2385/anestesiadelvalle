@@ -117,11 +117,37 @@ Saludos,`
     }
 };
 
+// Obtener el acumulado total de guardias por usuario
+const getTotalAccumulatedShiftCounts = async (req, res) => {
+    try {
+        const allSchedules = await ShiftSchedule.find({});
+        const accumulatedCounts = {};
 
+        allSchedules.forEach(schedule => {
+            schedule.shiftCounts.forEach(count => {
+                const { username, weekdayShifts = 0, weekendShifts = 0, saturdayShifts = 0 } = count;
+
+                if (!accumulatedCounts[username]) {
+                    accumulatedCounts[username] = { week: 0, weekend: 0, saturday: 0 };
+                }
+
+                accumulatedCounts[username].week += weekdayShifts;
+                accumulatedCounts[username].weekend += weekendShifts;
+                accumulatedCounts[username].saturday += saturdayShifts;
+            });
+        });
+
+        res.status(200).json(accumulatedCounts);
+    } catch (error) {
+        console.error('Error al calcular el acumulado total de guardias:', error);
+        res.status(500).json({ error: 'Error al calcular el acumulado total de guardias' });
+    }
+};
 
 module.exports = {
     saveShiftSchedule,
     getShiftScheduleByMonth,
     getAllMonthlySchedules,
-    sendScheduleEmail
+    sendScheduleEmail,
+    getTotalAccumulatedShiftCounts
 };

@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Informe de Guardias Acumuladas</title>
+    <link rel="icon" type="image/png" href="images/logo/logo64x64.png">
+    <link rel="stylesheet" href="css/header.css">
+    <link rel="stylesheet" href="css/media.css">
+    <link rel="stylesheet" href="css/admin.css">
+    <link rel="stylesheet" href="css/weekly-schedule.css">
+    <link rel="stylesheet" href="css/spinner.css">
+    <link rel="stylesheet" href="css/vacationInform.css">
+    <script type="module" src="js/totalShiftAccumulated.js"></script>
+    <script defer src="js/bundle.js"></script>
+</head>
+<body>
+    <header>
+        <a href="index.html" class="app-logo-link">
+            <img src="images/logo/logo.png" alt="Logo Anestesiólogos del Valle" class="app-logo">
+        </a>
+        <h1>Anestesiólogos del Valle</h1>
+        <a href="index.html" class="back-to-main-menu" title="Volver al menú principal">
+            <img src="images/icons/back-icon.svg" alt="Volver" class="back-icon">
+        </a>
+    </header>
+
+    <main class="container">
+        <h3>Conteo acumulado de guardias</h3>
+        <table class="tabla-turnos">
+            <thead>
+                <tr>
+                    <th>Usuario</th>
+                    <th>Guardias Semana</th>
+                    <th>Guardias Fin de Semana</th>
+                    <th>Plantas Sábado</th>
+                </tr>
+            </thead>
+            <tbody id="accumulated-shift-counts-body">
+                <!-- Se completará dinámicamente -->
+            </tbody>
+        </table>
+    </main>
+</body>
+</html>
