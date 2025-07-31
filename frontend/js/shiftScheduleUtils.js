@@ -113,7 +113,6 @@ function generateTable(users, yearSelect, monthSelect, dayAbbreviations, guardSi
                     vacationOption.value = 'V';
                     vacationOption.textContent = 'V';
                     select.appendChild(vacationOption);
-                    select.disabled = true;
                 }
             });
 
@@ -370,8 +369,13 @@ function populateShiftSelect(selectElement, user, isSaturday, guardSites) {
 
     // Deshabilitar select solo si no es feriado y se cumplen las condiciones
     if (shouldDisableSelect(username, dayOfWeek, dateString)) {
-        selectElement.disabled = true;
-        return;
+        selectElement.innerHTML = ''; // Vaciar opciones actuales
+        const ndOption = document.createElement('option');
+        ndOption.value = 'ND';
+        ndOption.textContent = 'ND';
+        selectElement.appendChild(ndOption);
+        selectElement.value = 'ND';
+        return; // Ya completamos el select con ND
     }
 
     // Agregar la opción vacía para todos los selects
