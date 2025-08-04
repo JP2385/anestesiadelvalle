@@ -15,12 +15,16 @@ export async function handleRandomizeButtonClickForWeek(apiUrl, dayIndex, availa
     const enabledSelectsCount = countEnabledSelectsByDay();
     const maxAssignments = enabledSelectsCount.counts[dayIndex];
 
+    // Capturamos el DOM una vez
+    const scheduleBody = document.getElementById('schedule-body');
+    const allRows = Array.from(scheduleBody.getElementsByTagName('tr'));
+
     let reachedMaxIterations = false;
 
     for (let i = 1; i <= 100; i++) {
         unassignUsersByDay(dayIndex);
         const assignedUsers = new Set();
-        
+
         await autoAssignCaroSandraGabiByDay(apiUrl, dayIndex, availability, assignedUsers);
         await autoAssignPublicHospitalsByDay(apiUrl, dayIndex, availability, assignedUsers);
         await autoAssignMorningsByDay(apiUrl, dayIndex, availability, assignedUsers);
@@ -30,7 +34,12 @@ export async function handleRandomizeButtonClickForWeek(apiUrl, dayIndex, availa
 
         const { counts } = await countAssignmentsByDay();
         const assignmentCount = Object.values(counts)[dayIndex];
-        assignments.push({ iteration: i + 1, data: collectAssignmentsData(dayIndex), assignmentCount });
+
+        assignments.push({
+            iteration: i + 1,
+            data: collectAssignmentsData(allRows, dayIndex),
+            assignmentCount
+        });
 
         if (assignmentCount >= maxAssignments) break;
         if (i === 100) reachedMaxIterations = true;
@@ -45,26 +54,16 @@ export async function handleRandomizeButtonClickForWeek(apiUrl, dayIndex, availa
 }
 
 
-function collectAssignmentsData(dayIndex) {
-    const assignments = [];
-    const scheduleBody = document.getElementById('schedule-body');
-    const rows = scheduleBody.getElementsByTagName('tr');
-
-    for (let row of rows) {
+function collectAssignmentsData(rows, dayIndex) {
+    return rows.map(row => {
         const workSiteElement = row.querySelector('.work-site');
-        if (workSiteElement) {
-            const workSite = workSiteElement.textContent.trim();
-            const select = row.querySelectorAll('select')[dayIndex];
-            const selectedUser = select.options[select.selectedIndex].text;
+        if (!workSiteElement) return null;
 
-            if (selectedUser !== "") {
-                assignments.push({
-                    workSite: workSite,
-                    user: selectedUser
-                });
-            }
-        }
-    }
+        const workSite = workSiteElement.textContent.trim();
+        const select = row.querySelectorAll('select')[dayIndex];
+        const selectedUser = select?.options[select.selectedIndex]?.text;
 
-    return assignments;
+        return selectedUser ? { workSite, user: selectedUser } : null;
+    }).filter(Boolean);
 }
+

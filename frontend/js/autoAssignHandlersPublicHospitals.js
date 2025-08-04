@@ -4,11 +4,14 @@ import { getWorkSchemes } from './workSchemes.js';
 
 export async function autoAssignPublicHospitalsByDay(apiUrl, dayIndex, availability, assignedUsers) {
     try {
-        const msalvarezza = availability[Object.keys(availability)[dayIndex]].find(user => user.username === 'msalvarezza');
-        const lburgueño = availability[Object.keys(availability)[dayIndex]].find(user => user.username === 'lburgueño');
-        const sdegreef = availability[Object.keys(availability)[dayIndex]].find(user => user.username === 'sdegreef');
-        const lalvarez = availability[Object.keys(availability)[dayIndex]].find(user => user.username === 'lalvarez');
-        const bvalenti = availability[Object.keys(availability)[dayIndex]].find(user => user.username === 'bvalenti');
+        const dayKey = Object.keys(availability)[dayIndex];
+        const workSiteElements = document.querySelectorAll('.work-site');
+
+        const msalvarezza = availability[dayKey].find(user => user.username === 'msalvarezza');
+        const lburgueño = availability[dayKey].find(user => user.username === 'lburgueño');
+        const sdegreef = availability[dayKey].find(user => user.username === 'sdegreef');
+        const lalvarez = availability[dayKey].find(user => user.username === 'lalvarez');
+        const bvalenti = availability[dayKey].find(user => user.username === 'bvalenti');
 
         const currentWeekNumber = getWeekNumber(new Date());
         const isOddWeek = currentWeekNumber % 2 !== 0;
@@ -21,29 +24,27 @@ export async function autoAssignPublicHospitalsByDay(apiUrl, dayIndex, availabil
             bvalentiScheme,
         } = getWorkSchemes(isOddWeek);
 
-        // Asignar a lburgueño si está disponible
         if (lburgueño) {
-            assignSpecificUsersByDay(dayIndex, lburgueñoScheme, lburgueño, assignedUsers);
+            assignSpecificUsersByDay(dayIndex, lburgueñoScheme, lburgueño, assignedUsers, workSiteElements);
         }
 
-        // Asignar a sdegreef si está disponible
         if (sdegreef) {
-            assignSpecificUsersByDay(dayIndex, sdegreefScheme, sdegreef, assignedUsers);
+            assignSpecificUsersByDay(dayIndex, sdegreefScheme, sdegreef, assignedUsers, workSiteElements);
         }
 
-        if (lalvarez ){
-            assignSpecificUsersByDay(dayIndex, lalvarezScheme, lalvarez, assignedUsers);
+        if (lalvarez) {
+            assignSpecificUsersByDay(dayIndex, lalvarezScheme, lalvarez, assignedUsers, workSiteElements);
         }
 
-        if (msalvarezza ){
-            assignSpecificUsersByDay(dayIndex, msalvarezzaScheme, msalvarezza, assignedUsers);
+        if (msalvarezza) {
+            assignSpecificUsersByDay(dayIndex, msalvarezzaScheme, msalvarezza, assignedUsers, workSiteElements);
         }
+
         if (bvalenti) {
-            assignSpecificUsersByDay(dayIndex, bvalentiScheme, bvalenti, assignedUsers);
+            assignSpecificUsersByDay(dayIndex, bvalentiScheme, bvalenti, assignedUsers, workSiteElements);
         }
 
     } catch (error) {
         console.error('Hubo un problema con la solicitud:', error.message);
     }
 }
-
