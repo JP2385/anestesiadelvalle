@@ -362,7 +362,7 @@ export async function handleSelectChange(event, availability) {
 }
 
 export async function handleAutoAssignForWeek(apiUrl, dayIndices, availability) {
-    showProgressBar(); // Mostrar la barra de progreso al inicio
+    showProgressBar();
 
     try {
         const isValid = await validateAllDays();
@@ -372,42 +372,35 @@ export async function handleAutoAssignForWeek(apiUrl, dayIndices, availability) 
         }
 
         const allLongDaysCounts = [];
-        const allAssignments = []; // Para almacenar las asignaciones de cada configuración
+        const allAssignments = [];
 
-        for (let i = 0; i < 200; i++) { // Cambiar a 100 iteraciones
+        // Capturar el DOM una sola vez para reutilizar
+        const scheduleBody = document.getElementById('schedule-body');
+        const preCapturedRows = Array.from(scheduleBody.getElementsByTagName('tr'));
+
+        for (let i = 0; i < 200; i++) {
             const promises = dayIndices.map(dayIndex =>
                 handleRandomizeButtonClickForWeek(apiUrl, dayIndex, availability)
             );
             await Promise.all(promises);
 
-            // Obtener el conteo de días largos para esta configuración
-            const longDaysCount = countLongDays();
-            allLongDaysCounts.push(longDaysCount);
+            allLongDaysCounts.push(countLongDays());
+            allAssignments.push(collectAssignments(preCapturedRows));
 
-            // Guardar las asignaciones de esta iteración
-            const currentAssignments = collectAssignments();
-            allAssignments.push(currentAssignments);
-
-            // Actualizar la barra de progreso
-            const progress = Math.round(((i + 1) / 200) * 100);
-            updateProgressBar(progress);
-
-            // Actualizar el mensaje de progreso
+            // ✅ Actualizar UI en cada iteración
+            updateProgressBar(Math.round(((i + 1) / 200) * 100));
             updateProgressMessage(`Esquema semanal ${i + 1} de 200 completado.`);
 
-            // Esperar un pequeño retraso para permitir que la UI se repinte
+            // ✅ Permitir repintado de la interfaz sin demorar perceptiblemente
             await new Promise(resolve => setTimeout(resolve, 0));
         }
 
-        // Seleccionar la mejor configuración usando allLongDaysCounts y allAssignments
         const bestConfigurationIndex = selectBestConfiguration(allLongDaysCounts, allAssignments);
+        const bestAssignments = allAssignments[bestConfigurationIndex];
 
-        // Aplicar la mejor configuración
-        const bestAssignments = allAssignments[bestConfigurationIndex]; // Ahora deberías obtener las asignaciones correctas
         console.log("Mejor configuración seleccionada: ", bestAssignments);
         applyBestConfiguration(bestAssignments);
 
-        // Actualizar colores y reportes para cada día
         dayIndices.forEach(dayIndex => {
             autoAssignReportBgColorsUpdate(dayIndex);
             compareAvailabilitiesForEachDay(dayIndex);
@@ -415,6 +408,6 @@ export async function handleAutoAssignForWeek(apiUrl, dayIndices, availability) 
         });
 
     } finally {
-        hideProgressBar(); // Ocultar la barra de progreso al finalizar
+        hideProgressBar();
     }
 }

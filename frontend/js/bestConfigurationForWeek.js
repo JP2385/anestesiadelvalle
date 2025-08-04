@@ -33,11 +33,9 @@ export function countLongDays() {
     return longDaysCount;
 }
 
-export function collectAssignments() {
+export function collectAssignments(rows) {
     const assignments = {};
-
-    const scheduleBody = document.getElementById('schedule-body');
-    const rows = scheduleBody.getElementsByTagName('tr');
+    const WEEK_DAYS = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday'];
 
     for (let row of rows) {
         const workSiteElement = row.querySelector('.work-site');
@@ -50,7 +48,8 @@ export function collectAssignments() {
             const userId = select.value;
             if (!userId) return;
 
-            const username = select.options[select.selectedIndex].getAttribute('data-username') || select.options[select.selectedIndex].text;
+            const selectedOption = select.options[select.selectedIndex];
+            const username = selectedOption.getAttribute('data-username') || selectedOption.text;
             const day = WEEK_DAYS[index];
 
             if (!assignments[day]) assignments[day] = [];
@@ -61,6 +60,7 @@ export function collectAssignments() {
 
     return assignments;
 }
+
 
 export function selectBestConfiguration(allLongDaysCounts, allAssignments) {
     const longDaysSumGlobal = getAccumulatedLongDays();
