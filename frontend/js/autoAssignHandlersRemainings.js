@@ -1,7 +1,7 @@
 import { updateSelectBackgroundColors, fetchAvailability } from './assignUtils.js';
 import { autoAssignRemainingSlotsByDay } from './autoAssignDayFunctions.js';
 
-export async function autoAssignRemainingsByDay(apiUrl, dayIndex, availability) {
+export async function autoAssignRemainingsByDay(apiUrl, dayIndex, availability, assignedUsers) {
     try {
         const dayNames = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday'];
         const dayName = dayNames[dayIndex];
@@ -12,7 +12,7 @@ export async function autoAssignRemainingsByDay(apiUrl, dayIndex, availability) 
         }
 
         const availableUsers = availability[dayName];
-        autoAssignRemainingSlotsByDay(dayIndex, availableUsers);
+        autoAssignRemainingSlotsByDay(dayIndex, availableUsers, dayName, assignedUsers); // ✅ corregido
     } catch (error) {
         alert('Hubo un problema con la solicitud: ' + error.message);
     }

@@ -1,6 +1,6 @@
 import { autoAssignMorningWorkersByDay } from './autoAssignDayFunctions.js';
 
-export async function autoAssignMorningsByDay(apiUrl, dayIndex, availability) {
+export async function autoAssignMorningsByDay(apiUrl, dayIndex, availability, assignedUsers) {
     try {
         const dayNames = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday'];
         const dayName = dayNames[dayIndex];
@@ -11,7 +11,7 @@ export async function autoAssignMorningsByDay(apiUrl, dayIndex, availability) {
         }
 
         const availableUsers = availability[dayName];
-        autoAssignMorningWorkersByDay(dayIndex, availableUsers, dayName);
+        autoAssignMorningWorkersByDay(dayIndex, availableUsers, dayName, assignedUsers);
     } catch (error) {
         alert('Hubo un problema con la solicitud: ' + error.message);
     }

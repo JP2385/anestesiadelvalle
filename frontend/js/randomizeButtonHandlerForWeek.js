@@ -11,7 +11,6 @@ import { countAssignmentsByDay } from './autoAssignFunctions.js';
 import { countEnabledSelectsByDay } from './autoAssignFunctions.js';
 
 export async function handleRandomizeButtonClickForWeek(apiUrl, dayIndex, availability) {
-
     const assignments = [];
     const enabledSelectsCount = countEnabledSelectsByDay();
     const maxAssignments = enabledSelectsCount.counts[dayIndex];
@@ -20,36 +19,31 @@ export async function handleRandomizeButtonClickForWeek(apiUrl, dayIndex, availa
 
     for (let i = 1; i <= 100; i++) {
         unassignUsersByDay(dayIndex);
-        await autoAssignCaroSandraGabiByDay(apiUrl, dayIndex, availability);
-        await autoAssignPublicHospitalsByDay(apiUrl, dayIndex, availability);
-        await autoAssignMorningsByDay(apiUrl, dayIndex, availability);
-        await autoAssignAfternoonsByDay(apiUrl, dayIndex, availability);
-        await autoAssignLongDaysByDay(apiUrl, dayIndex, availability);
-        await autoAssignRemainingsByDay(apiUrl, dayIndex, availability);
+        const assignedUsers = new Set();
+        
+        await autoAssignCaroSandraGabiByDay(apiUrl, dayIndex, availability, assignedUsers);
+        await autoAssignPublicHospitalsByDay(apiUrl, dayIndex, availability, assignedUsers);
+        await autoAssignMorningsByDay(apiUrl, dayIndex, availability, assignedUsers);
+        await autoAssignAfternoonsByDay(apiUrl, dayIndex, availability, assignedUsers);
+        await autoAssignLongDaysByDay(apiUrl, dayIndex, availability, assignedUsers);
+        await autoAssignRemainingsByDay(apiUrl, dayIndex, availability, assignedUsers);
 
         const { counts } = await countAssignmentsByDay();
         const assignmentCount = Object.values(counts)[dayIndex];
         assignments.push({ iteration: i + 1, data: collectAssignmentsData(dayIndex), assignmentCount });
 
-        if (assignmentCount >= maxAssignments) {
-            break;
-        }
-        if (i === 100) {
-            reachedMaxIterations = true;
-        }
+        if (assignmentCount >= maxAssignments) break;
+        if (i === 100) reachedMaxIterations = true;
     }
 
-    if (reachedMaxIterations) {
-    }
-
-    // Find the assignment with the highest assignmentCount
-    const bestAssignment = assignments.reduce((max, assignment) => 
-        assignment.assignmentCount > max.assignmentCount ? assignment : max, 
+    const bestAssignment = assignments.reduce((max, assignment) =>
+        assignment.assignmentCount > max.assignmentCount ? assignment : max,
         { assignmentCount: -1 }
     );
 
     return bestAssignment;
 }
+
 
 function collectAssignmentsData(dayIndex) {
     const assignments = [];

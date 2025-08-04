@@ -25,7 +25,10 @@ export function unassignUsersByDay(dayIndex) {
     updateSelectBackgroundColors();
 }
 
-export function assignSpecificUsersByDay(dayIndex, scheme, user) {
+export function assignSpecificUsersByDay(dayIndex, scheme, user, assignedUsers) {
+    // Evitar doble asignación
+    if (assignedUsers.has(user.username)) return;
+
     const dayHeaders = ['monday-header', 'tuesday-header', 'wednesday-header', 'thursday-header', 'friday-header'];
     const dayHeaderId = dayHeaders[dayIndex];
 
@@ -45,45 +48,33 @@ export function assignSpecificUsersByDay(dayIndex, scheme, user) {
     Object.entries(scheme).forEach(([headerId, workSites]) => {
         if (headerId === dayHeaderId) {
             const workSiteList = Array.isArray(workSites) ? workSites : [workSites];
-            // console.log(`Worksites for ${headerId}: ${workSiteList.join(', ')}`);
 
-            let foundMatch = false;
-
-            // Iterar sobre todas las filas
             for (let row of document.querySelectorAll('.work-site')) {
                 const workSiteText = row.innerText.trim();
-                // console.log(`Checking row: ${workSiteText}`);
 
                 if (workSiteList.includes(workSiteText)) {
-                    // console.log(`Found matching row for worksite: ${workSiteText}`);
                     const selectCell = row.closest('tr').querySelector(`td:nth-child(${dayColumnIndex})`);
                     const select = selectCell.querySelector('select');
-                    if (select && !select.disabled) {
+                    
+                    if (select && !select.disabled && !select.value) {
                         const option = Array.from(select.options).find(option => option.text === user.username);
                         if (option) {
                             select.value = option.value;
                             select.classList.add('assigned');
                             select.classList.remove('default');
-                            // console.log(`Assigned user ${user.username} to select`);
-                            foundMatch = true; // Se encontró y asignó a un `select`
-                            break; // Salir del bucle
-                        } else {
-                            // console.error(`Option with username ${user.username} not found in select`);
+                            assignedUsers.add(user.username); // ✅ Marcar como asignado SOLO si fue exitoso
+                            return; // Salir una vez asignado
                         }
-                    } else {
-                        // console.error(`Select element not found or is disabled for worksite ${workSiteText}`);
                     }
                 }
             }
 
-            if (!foundMatch) {
-                console.error(`No valid select found for worksites ${workSiteList.join(', ')}`);
-            }
+            console.error(`No valid select found for worksites ${workSiteList.join(', ')}`);
         }
     });
 }
 
-export function autoAssignMorningWorkersByDay(dayIndex, users) {
+export function autoAssignMorningWorkersByDay(dayIndex, users, dayName, assignedUsers) {
     const dayHeaders = ['monday-header', 'tuesday-header', 'wednesday-header', 'thursday-header', 'friday-header'];
     const dayHeaderId = dayHeaders[dayIndex];
 
@@ -99,7 +90,7 @@ export function autoAssignMorningWorkersByDay(dayIndex, users) {
     }
 
     const dayColumnIndex = Array.from(dayHeader.parentElement.children).indexOf(dayHeader);
-    const selects = Array.from(document.querySelectorAll(`td:nth-child(${dayColumnIndex + 1}) select`)); // Convertimos NodeList a Array
+    const selects = Array.from(document.querySelectorAll(`td:nth-child(${dayColumnIndex + 1}) select`));
 
     // Función para mezclar el array aleatoriamente
     function shuffle(array) {
@@ -110,85 +101,74 @@ export function autoAssignMorningWorkersByDay(dayIndex, users) {
         return array;
     }
 
-    // Mezclamos los selects
     const shuffledSelects = shuffle(selects);
 
-    // Primera etapa: Asignar usuarios a sitios específicos
+    // Helper para elegir usuarios disponibles válidos
+    function getValidUsers(select, conditionFn) {
+        return Array.from(select.options)
+            .filter(option =>
+                option.value &&
+                !Array.from(shuffledSelects).some(otherSelect =>
+                    otherSelect !== select &&
+                    otherSelect.value === option.value &&
+                    otherSelect.closest('td').cellIndex === dayColumnIndex
+                )
+            )
+            .map(option => users.find(user =>
+                user && user._id === option.value &&
+                !assignedUsers.has(user._id) &&
+                conditionFn(user)
+            ))
+            .filter(user => user);
+    }
+
+    // Primera etapa: asignar usuarios a sitios específicos
     shuffledSelects.forEach(select => {
         const workSite = select.closest('tr').querySelector('.work-site').innerText.toLowerCase();
 
-        if (workSite.includes('matutino') 
-        && (workSite.includes('imágenes') || workSite.includes('coi') || workSite.includes('heller') 
-        || workSite.includes('plottier') || workSite.includes('centenario') || workSite.includes('castro')) 
-        && !select.value && !select.disabled) {
-            const availableUsers = Array.from(select.options)
-                .filter(option => option.value && !Array.from(shuffledSelects).some(otherSelect => {
-                    return otherSelect !== select && otherSelect.value === option.value && otherSelect.closest('td').cellIndex === dayColumnIndex;
-                }))
-                .map(option => {
-                    const user = users.find(user => user && user._id === option.value && !user.worksInPrivateRioNegro);
-                    if (user && user.workSchedule[dayHeaderId.split('-')[0]] === 'Mañana') {
-                        return user;
-                    }
-                    return null;
-                })
-                .filter(user => user); // Filter out any null users
+        if (!select.value && !select.disabled && workSite.includes('matutino')) {
+            let availableUsers = [];
 
-            if (availableUsers.length > 0) {
-                const randomUser = availableUsers[Math.floor(Math.random() * availableUsers.length)];
-                select.value = randomUser._id;
+            if (['imágenes', 'coi', 'heller', 'plottier', 'centenario', 'castro'].some(site => workSite.includes(site))) {
+                availableUsers = getValidUsers(select, user =>
+                    !user.worksInPrivateRioNegro &&
+                    user.workSchedule[dayName] === 'Mañana'
+                );
+            } else if (['fundación', 'cmac', 'allen', 'cipolletti'].some(site => workSite.includes(site))) {
+                availableUsers = getValidUsers(select, user =>
+                    !user.worksInPrivateNeuquen &&
+                    user.workSchedule[dayName] === 'Mañana'
+                );
             }
-        } else if (workSite.includes('matutino') 
-        && (workSite.includes('fundación') || workSite.includes('cmac') || workSite.includes('allen') 
-        || workSite.includes('cipolletti')) 
-        && !select.value && !select.disabled) {
-            const availableUsers = Array.from(select.options)
-                .filter(option => option.value && !Array.from(shuffledSelects).some(otherSelect => {
-                    return otherSelect !== select && otherSelect.value === option.value && otherSelect.closest('td').cellIndex === dayColumnIndex;
-                }))
-                .map(option => {
-                    const user = users.find(user => user && user._id === option.value && !user.worksInPrivateNeuquen);
-                    if (user && user.workSchedule[dayHeaderId.split('-')[0]] === 'Mañana') {
-                        return user;
-                    }
-                    return null;
-                })
-                .filter(user => user); // Filter out any null users
 
             if (availableUsers.length > 0) {
                 const randomUser = availableUsers[Math.floor(Math.random() * availableUsers.length)];
                 select.value = randomUser._id;
+                assignedUsers.add(randomUser._id); // ✅ lo bloqueamos para el resto del día
             }
         }
     });
 
-    // Segunda etapa: Asignar usuarios a los sitios restantes
+    // Segunda etapa: asignar a los sitios restantes
     shuffledSelects.forEach(select => {
         const workSite = select.closest('tr').querySelector('.work-site').innerText.toLowerCase();
 
         if (workSite.includes('matutino') && !select.value && !select.disabled) {
-            const availableUsers = Array.from(select.options)
-                .filter(option => option.value && !Array.from(shuffledSelects).some(otherSelect => {
-                    return otherSelect !== select && otherSelect.value === option.value && otherSelect.closest('td').cellIndex === dayColumnIndex;
-                }))
-                .map(option => {
-                    const user = users.find(user => user && user._id === option.value);
-                    if (user && user.workSchedule[dayHeaderId.split('-')[0]] === 'Mañana') {
-                        return user;
-                    }
-                    return null;
-                })
-                .filter(user => user); // Filter out any null users
+            const availableUsers = getValidUsers(select, user =>
+                user.workSchedule[dayName] === 'Mañana'
+            );
 
             if (availableUsers.length > 0) {
                 const randomUser = availableUsers[Math.floor(Math.random() * availableUsers.length)];
                 select.value = randomUser._id;
+                assignedUsers.add(randomUser._id); // ✅ marcar como asignado
             }
         }
     });
 }
 
-export function autoAssignAfternoonWorkersByDay(dayIndex, users) {
+
+export function autoAssignAfternoonWorkersByDay(dayIndex, users, dayName, assignedUsers) {
     const dayHeaders = ['monday-header', 'tuesday-header', 'wednesday-header', 'thursday-header', 'friday-header'];
     const dayHeaderId = dayHeaders[dayIndex];
 
@@ -204,9 +184,8 @@ export function autoAssignAfternoonWorkersByDay(dayIndex, users) {
     }
 
     const dayColumnIndex = Array.from(dayHeader.parentElement.children).indexOf(dayHeader);
-    const selects = Array.from(document.querySelectorAll(`td:nth-child(${dayColumnIndex + 1}) select`)); // Convertimos NodeList a Array
+    const selects = Array.from(document.querySelectorAll(`td:nth-child(${dayColumnIndex + 1}) select`));
 
-    // Función para mezclar el array aleatoriamente
     function shuffle(array) {
         for (let i = array.length - 1; i > 0; i--) {
             const j = Math.floor(Math.random() * (i + 1));
@@ -215,85 +194,72 @@ export function autoAssignAfternoonWorkersByDay(dayIndex, users) {
         return array;
     }
 
-    // Mezclamos los selects
     const shuffledSelects = shuffle(selects);
 
-    // Primera etapa: Asignar usuarios a sitios específicos
+    function getValidUsers(select, conditionFn) {
+        return Array.from(select.options)
+            .filter(option =>
+                option.value &&
+                !Array.from(shuffledSelects).some(otherSelect =>
+                    otherSelect !== select &&
+                    otherSelect.value === option.value &&
+                    otherSelect.closest('td').cellIndex === dayColumnIndex
+                )
+            )
+            .map(option => users.find(user =>
+                user && user._id === option.value &&
+                !assignedUsers.has(user._id) &&
+                conditionFn(user)
+            ))
+            .filter(user => user);
+    }
+
+    // Primera etapa: asignar a sitios específicos
     shuffledSelects.forEach(select => {
         const workSite = select.closest('tr').querySelector('.work-site').innerText.toLowerCase();
 
-        if (workSite.includes('matutino') 
-            && (workSite.includes('imágenes') || workSite.includes('coi') || workSite.includes('heller') 
-            || workSite.includes('plottier') || workSite.includes('centenario') || workSite.includes('castro')) 
-            && !select.value && !select.disabled) {
-            const availableUsers = Array.from(select.options)
-                .filter(option => option.value && !Array.from(shuffledSelects).some(otherSelect => {
-                    return otherSelect !== select && otherSelect.value === option.value && otherSelect.closest('td').cellIndex === dayColumnIndex;
-                }))
-                .map(option => {
-                    const user = users.find(user => user && user._id === option.value && !user.worksInPrivateRioNegro);
-                    if (user && user.workSchedule[dayHeaderId.split('-')[0]] === 'Tarde') {
-                        return user;
-                    }
-                    return null;
-                })
-                .filter(user => user); // Filter out any null users
+        if (!select.value && !select.disabled && workSite.includes('vespertino')) {
+            let availableUsers = [];
 
-            if (availableUsers.length > 0) {
-                const randomUser = availableUsers[Math.floor(Math.random() * availableUsers.length)];
-                select.value = randomUser._id;
+            if (['imágenes', 'coi', 'heller', 'plottier', 'centenario', 'castro'].some(site => workSite.includes(site))) {
+                availableUsers = getValidUsers(select, user =>
+                    !user.worksInPrivateRioNegro &&
+                    user.workSchedule[dayName] === 'Tarde'
+                );
+            } else if (['fundación', 'cmac', 'allen', 'cipolletti'].some(site => workSite.includes(site))) {
+                availableUsers = getValidUsers(select, user =>
+                    !user.worksInPrivateNeuquen &&
+                    user.workSchedule[dayName] === 'Tarde'
+                );
             }
-        } else if (workSite.includes('vespertino') 
-            && (workSite.includes('fundación') || workSite.includes('cmac') || workSite.includes('allen') 
-            || workSite.includes('cipolletti')) 
-            && !select.value && !select.disabled) {
-            const availableUsers = Array.from(select.options)
-                .filter(option => option.value && !Array.from(shuffledSelects).some(otherSelect => {
-                    return otherSelect !== select && otherSelect.value === option.value && otherSelect.closest('td').cellIndex === dayColumnIndex;
-                }))
-                .map(option => {
-                    const user = users.find(user => user && user._id === option.value && !user.worksInPrivateNeuquen);
-                    if (user && user.workSchedule[dayHeaderId.split('-')[0]] === 'Tarde') {
-                        return user;
-                    }
-                    return null;
-                })
-                .filter(user => user); // Filter out any null users
 
             if (availableUsers.length > 0) {
                 const randomUser = availableUsers[Math.floor(Math.random() * availableUsers.length)];
                 select.value = randomUser._id;
+                assignedUsers.add(randomUser._id);
             }
         }
     });
 
-    // Segunda etapa: Asignar usuarios a los sitios restantes
+    // Segunda etapa: asignar a los restantes
     shuffledSelects.forEach(select => {
         const workSite = select.closest('tr').querySelector('.work-site').innerText.toLowerCase();
 
         if (workSite.includes('vespertino') && !select.value && !select.disabled) {
-            const availableUsers = Array.from(select.options)
-                .filter(option => option.value && !Array.from(shuffledSelects).some(otherSelect => {
-                    return otherSelect !== select && otherSelect.value === option.value && otherSelect.closest('td').cellIndex === dayColumnIndex;
-                }))
-                .map(option => {
-                    const user = users.find(user => user && user._id === option.value);
-                    if (user && user.workSchedule[dayHeaderId.split('-')[0]] === 'Tarde') {
-                        return user;
-                    }
-                    return null;
-                })
-                .filter(user => user); // Filter out any null users
+            const availableUsers = getValidUsers(select, user =>
+                user.workSchedule[dayName] === 'Tarde'
+            );
 
             if (availableUsers.length > 0) {
                 const randomUser = availableUsers[Math.floor(Math.random() * availableUsers.length)];
                 select.value = randomUser._id;
+                assignedUsers.add(randomUser._id);
             }
         }
     });
 }
 
-export function autoAssignLongDayWorkersByDay(dayIndex, users) {
+export function autoAssignLongDayWorkersByDay(dayIndex, users, dayName, assignedUsers) {
     const dayHeaders = ['monday-header', 'tuesday-header', 'wednesday-header', 'thursday-header', 'friday-header'];
     const dayHeaderId = dayHeaders[dayIndex];
 
@@ -309,9 +275,8 @@ export function autoAssignLongDayWorkersByDay(dayIndex, users) {
     }
 
     const dayColumnIndex = Array.from(dayHeader.parentElement.children).indexOf(dayHeader);
-    const selects = Array.from(document.querySelectorAll(`td:nth-child(${dayColumnIndex + 1}) select`)); // Convertimos NodeList a Array
+    const selects = Array.from(document.querySelectorAll(`td:nth-child(${dayColumnIndex + 1}) select`));
 
-    // Función para mezclar el array aleatoriamente
     function shuffle(array) {
         for (let i = array.length - 1; i > 0; i--) {
             const j = Math.floor(Math.random() * (i + 1));
@@ -320,84 +285,73 @@ export function autoAssignLongDayWorkersByDay(dayIndex, users) {
         return array;
     }
 
-    // Mezclamos los selects
     const shuffledSelects = shuffle(selects);
 
-    // Primera etapa: Asignar usuarios a sitios específicos
+    function getValidUsers(select, conditionFn) {
+        return Array.from(select.options)
+            .filter(option =>
+                option.value &&
+                !Array.from(shuffledSelects).some(otherSelect =>
+                    otherSelect !== select &&
+                    otherSelect.value === option.value &&
+                    otherSelect.closest('td').cellIndex === dayColumnIndex
+                )
+            )
+            .map(option => users.find(user =>
+                user && user._id === option.value &&
+                !assignedUsers.has(user._id) &&
+                conditionFn(user)
+            ))
+            .filter(user => user);
+    }
+
+    // Primera etapa: asignar a sitios específicos
     shuffledSelects.forEach(select => {
         const workSite = select.closest('tr').querySelector('.work-site').innerText.toLowerCase();
 
-        if (workSite.includes('largo') 
-            && (workSite.includes('imágenes') || workSite.includes('coi') || workSite.includes('heller') 
-            || workSite.includes('plottier') || workSite.includes('centenario') || workSite.includes('castro')) 
-            && !select.value && !select.disabled) {
-            const availableUsers = Array.from(select.options)
-                .filter(option => option.value && !Array.from(shuffledSelects).some(otherSelect => {
-                    return otherSelect !== select && otherSelect.value === option.value && otherSelect.closest('td').cellIndex === dayColumnIndex;
-                }))
-                .map(option => {
-                    const user = users.find(user => user && user._id === option.value && !user.worksInPrivateRioNegro);
-                    if (user && user.workSchedule[dayHeaderId.split('-')[0]] === 'Variable') {
-                        return user;
-                    }
-                    return null;
-                })
-                .filter(user => user); // Filter out any null users
+        if (!select.value && !select.disabled && workSite.includes('largo')) {
+            let availableUsers = [];
 
-            if (availableUsers.length > 0) {
-                const randomUser = availableUsers[Math.floor(Math.random() * availableUsers.length)];
-                select.value = randomUser._id;
+            if (['imágenes', 'coi', 'heller', 'plottier', 'centenario', 'castro'].some(site => workSite.includes(site))) {
+                availableUsers = getValidUsers(select, user =>
+                    !user.worksInPrivateRioNegro &&
+                    user.workSchedule[dayName] === 'Variable'
+                );
+            } else if (['fundación', 'cmac', 'allen', 'cipolletti'].some(site => workSite.includes(site))) {
+                availableUsers = getValidUsers(select, user =>
+                    !user.worksInPrivateNeuquen &&
+                    user.workSchedule[dayName] === 'Variable'
+                );
             }
-        } else if (workSite.includes('largo') 
-            && (workSite.includes('fundación') || workSite.includes('cmac') || workSite.includes('allen') 
-            || workSite.includes('cipolletti')) && !select.value && !select.disabled) {
-            const availableUsers = Array.from(select.options)
-                .filter(option => option.value && !Array.from(shuffledSelects).some(otherSelect => {
-                    return otherSelect !== select && otherSelect.value === option.value && otherSelect.closest('td').cellIndex === dayColumnIndex;
-                }))
-                .map(option => {
-                    const user = users.find(user => user && user._id === option.value && !user.worksInPrivateNeuquen);
-                    if (user && user.workSchedule[dayHeaderId.split('-')[0]] === 'Variable') {
-                        return user;
-                    }
-                    return null;
-                })
-                .filter(user => user); // Filter out any null users
 
             if (availableUsers.length > 0) {
                 const randomUser = availableUsers[Math.floor(Math.random() * availableUsers.length)];
                 select.value = randomUser._id;
+                assignedUsers.add(randomUser._id);
             }
         }
     });
 
-    // Segunda etapa: Asignar usuarios a los sitios restantes
+    // Segunda etapa: asignar a los sitios restantes
     shuffledSelects.forEach(select => {
         const workSite = select.closest('tr').querySelector('.work-site').innerText.toLowerCase();
 
         if (workSite.includes('largo') && !select.value && !select.disabled) {
-            const availableUsers = Array.from(select.options)
-                .filter(option => option.value && !Array.from(shuffledSelects).some(otherSelect => {
-                    return otherSelect !== select && otherSelect.value === option.value && otherSelect.closest('td').cellIndex === dayColumnIndex;
-                }))
-                .map(option => {
-                    const user = users.find(user => user && user._id === option.value);
-                    if (user && user.workSchedule[dayHeaderId.split('-')[0]] === 'Variable') {
-                        return user;
-                    }
-                    return null;
-                })
-                .filter(user => user); // Filter out any null users
+            const availableUsers = getValidUsers(select, user =>
+                user.workSchedule[dayName] === 'Variable'
+            );
 
             if (availableUsers.length > 0) {
                 const randomUser = availableUsers[Math.floor(Math.random() * availableUsers.length)];
                 select.value = randomUser._id;
+                assignedUsers.add(randomUser._id);
             }
         }
     });
 }
 
-export function autoAssignRemainingSlotsByDay(dayIndex, users) {
+
+export function autoAssignRemainingSlotsByDay(dayIndex, users, dayName, assignedUsers) {
     const dayHeaders = ['monday-header', 'tuesday-header', 'wednesday-header', 'thursday-header', 'friday-header'];
     const dayHeaderId = dayHeaders[dayIndex];
 
@@ -413,9 +367,8 @@ export function autoAssignRemainingSlotsByDay(dayIndex, users) {
     }
 
     const dayColumnIndex = Array.from(dayHeader.parentElement.children).indexOf(dayHeader);
-    const selects = Array.from(document.querySelectorAll(`td:nth-child(${dayColumnIndex + 1}) select`)); // Convertimos NodeList a Array
+    const selects = Array.from(document.querySelectorAll(`td:nth-child(${dayColumnIndex + 1}) select`));
 
-    // Función para mezclar el array aleatoriamente
     function shuffle(array) {
         for (let i = array.length - 1; i > 0; i--) {
             const j = Math.floor(Math.random() * (i + 1));
@@ -424,77 +377,68 @@ export function autoAssignRemainingSlotsByDay(dayIndex, users) {
         return array;
     }
 
-    // Mezclamos los selects
     const shuffledSelects = shuffle(selects);
 
-    // Primera etapa: Asignar usuarios a sitios específicos
-    shuffledSelects.forEach(select => {
-        const workSite = select.closest('tr').querySelector('.work-site').innerText.toLowerCase();
+    function getValidUsers(select, conditionFn) {
+        return Array.from(select.options)
+            .filter(option =>
+                option.value &&
+                !Array.from(shuffledSelects).some(otherSelect =>
+                    otherSelect !== select &&
+                    otherSelect.value === option.value &&
+                    otherSelect.closest('td').cellIndex === dayColumnIndex
+                )
+            )
+            .map(option => users.find(user =>
+                user && user._id === option.value &&
+                !assignedUsers.has(user._id) &&
+                conditionFn(user)
+            ))
+            .filter(user => user);
+    }
 
-        if ((workSite.includes('imágenes') || workSite.includes('coi') || workSite.includes('heller') 
-            || workSite.includes('plottier') || workSite.includes('centenario')  || workSite.includes('castro')) 
-            && !select.value && !select.disabled) {
-            const availableUsers = Array.from(select.options)
-                .filter(option => option.value && !Array.from(shuffledSelects).some(otherSelect => {
-                    return otherSelect !== select && otherSelect.value === option.value && otherSelect.closest('td').cellIndex === dayColumnIndex;
-                }))
-                .map(option => {
-                    const user = users.find(user => user && user._id === option.value && !user.worksInPrivateRioNegro);
-                    if (user && user.workSchedule[dayHeaderId.split('-')[0]] === 'Variable') {
-                        return user;
-                    }
-                    return null;
-                })
-                .filter(user => user); // Filter out any null users
-
-            if (availableUsers.length > 0) {
-                const randomUser = availableUsers[Math.floor(Math.random() * availableUsers.length)];
-                select.value = randomUser._id;
-            }
-        } else if ((workSite.includes('fundación') || workSite.includes('cmac') || workSite.includes('allen') 
-            || workSite.includes('cipolletti')) && !select.value && !select.disabled) {
-            const availableUsers = Array.from(select.options)
-                .filter(option => option.value && !Array.from(shuffledSelects).some(otherSelect => {
-                    return otherSelect !== select && otherSelect.value === option.value && otherSelect.closest('td').cellIndex === dayColumnIndex;
-                }))
-                .map(option => {
-                    const user = users.find(user => user && user._id === option.value && !user.worksInPrivateNeuquen);
-                    if (user && user.workSchedule[dayHeaderId.split('-')[0]] === 'Variable') {
-                        return user;
-                    }
-                    return null;
-                })
-                .filter(user => user); // Filter out any null users
-
-            if (availableUsers.length > 0) {
-                const randomUser = availableUsers[Math.floor(Math.random() * availableUsers.length)];
-                select.value = randomUser._id;
-            }
-        }
-    });
-
-    // Segunda etapa: Asignar usuarios a los sitios restantes
+    // Primera etapa: asignar a sitios específicos
     shuffledSelects.forEach(select => {
         const workSite = select.closest('tr').querySelector('.work-site').innerText.toLowerCase();
 
         if (!select.value && !select.disabled) {
-            const availableUsers = Array.from(select.options)
-                .filter(option => option.value && !Array.from(shuffledSelects).some(otherSelect => {
-                    return otherSelect !== select && otherSelect.value === option.value && otherSelect.closest('td').cellIndex === dayColumnIndex;
-                }))
-                .map(option => {
-                    const user = users.find(user => user && user._id === option.value);
-                    if (user && user.workSchedule[dayHeaderId.split('-')[0]] === 'Variable') {
-                        return user;
-                    }
-                    return null;
-                })
-                .filter(user => user); // Filter out any null users
+            let availableUsers = [];
+
+            if (['imágenes', 'coi', 'heller', 'plottier', 'centenario', 'castro'].some(site => workSite.includes(site))) {
+                availableUsers = getValidUsers(select, user =>
+                    !user.worksInPrivateRioNegro &&
+                    user.workSchedule[dayName] === 'Variable'
+                );
+            } else if (['fundación', 'cmac', 'allen', 'cipolletti'].some(site => workSite.includes(site))) {
+                availableUsers = getValidUsers(select, user =>
+                    !user.worksInPrivateNeuquen &&
+                    user.workSchedule[dayName] === 'Variable'
+                );
+            }
 
             if (availableUsers.length > 0) {
                 const randomUser = availableUsers[Math.floor(Math.random() * availableUsers.length)];
                 select.value = randomUser._id;
+                assignedUsers.add(randomUser._id);
+            }
+        }
+    });
+
+    // Segunda etapa: asignar a cualquier sitio restante
+    shuffledSelects.forEach(select => {
+        const workSite = select.closest('tr').querySelector('.work-site').innerText.toLowerCase();
+
+        if (!select.value && !select.disabled) {
+            const availableUsers = getValidUsers(select, user =>
+                user.workSchedule[dayName] === 'Variable'
+            );
+
+            if (availableUsers.length > 0) {
+                const randomUser = availableUsers[Math.floor(Math.random() * availableUsers.length)];
+                select.value = randomUser._id;
+                assignedUsers.add(randomUser._id);
             }
         }
     });
 }
+

@@ -26,8 +26,9 @@ document.addEventListener('DOMContentLoaded', async function() {
     for (const dayIndex of dayIndices) {
         try {
             showSpinner();
-            await autoAssignCaroSandraGabiByDay(apiUrl, dayIndex, availability);
-            await autoAssignPublicHospitalsByDay(apiUrl, dayIndex, availability);
+            const assignedUsers = new Set();
+            await autoAssignCaroSandraGabiByDay(apiUrl, dayIndex, availability, assignedUsers);
+            await autoAssignPublicHospitalsByDay(apiUrl, dayIndex, availability,assignedUsers);
             await countAssignmentsByDay(dayIndex);
             autoAssignReportBgColorsUpdate(dayIndex);
             updateSelectColors(dayIndex, availability);

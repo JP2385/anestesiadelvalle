@@ -28,12 +28,13 @@ export async function handleRandomizeButtonClick(apiUrl, availability, dayIndex)
 
     for (let i = 1; i <= 100; i++) {
         unassignUsersByDay(dayIndex);
-        await autoAssignCaroSandraGabiByDay(apiUrl, dayIndex, availability);
-        await autoAssignPublicHospitalsByDay(apiUrl, dayIndex, availability);
-        await autoAssignMorningsByDay(apiUrl, dayIndex, availability);
-        await autoAssignAfternoonsByDay(apiUrl, dayIndex, availability);
-        await autoAssignLongDaysByDay(apiUrl, dayIndex, availability);
-        await autoAssignRemainingsByDay(apiUrl, dayIndex, availability);
+        const assignedUsers = new Set();
+        await autoAssignCaroSandraGabiByDay(apiUrl, dayIndex, availability, assignedUsers);
+        await autoAssignPublicHospitalsByDay(apiUrl, dayIndex, availability, assignedUsers);
+        await autoAssignMorningsByDay(apiUrl, dayIndex, availability, assignedUsers);
+        await autoAssignAfternoonsByDay(apiUrl, dayIndex, availability, assignedUsers);
+        await autoAssignLongDaysByDay(apiUrl, dayIndex, availability, assignedUsers);
+        await autoAssignRemainingsByDay(apiUrl, dayIndex, availability, assignedUsers);
 
         const { counts } = await countAssignmentsByDay();
         const assignmentCount = Object.values(counts)[dayIndex];

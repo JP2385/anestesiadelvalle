@@ -1,7 +1,7 @@
 import { updateSelectBackgroundColors } from './assignUtils.js';
 import { autoAssignAfternoonWorkersByDay } from './autoAssignDayFunctions.js';
 
-export async function autoAssignAfternoonsByDay(apiUrl, dayIndex, availability) {
+export async function autoAssignAfternoonsByDay(apiUrl, dayIndex, availability, assignedUsers) {
     try {
         const dayNames = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday'];
         const dayName = dayNames[dayIndex];
@@ -12,8 +12,9 @@ export async function autoAssignAfternoonsByDay(apiUrl, dayIndex, availability) 
         }
 
         const availableUsers = availability[dayName];
-        autoAssignAfternoonWorkersByDay(dayIndex, availableUsers);
+        autoAssignAfternoonWorkersByDay(dayIndex, availableUsers, dayName, assignedUsers); // ✅ corregido
     } catch (error) {
         alert('Hubo un problema con la solicitud: ' + error.message);
     }
 }
+

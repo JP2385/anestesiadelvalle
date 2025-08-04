@@ -2,7 +2,7 @@ import { getWeekNumber } from './assignUtils.js';
 import { assignSpecificUsersByDay } from './autoAssignDayFunctions.js';
 import { getWorkSchemes } from './workSchemes.js';
 
-export async function autoAssignPublicHospitalsByDay(apiUrl, dayIndex, availability) {
+export async function autoAssignPublicHospitalsByDay(apiUrl, dayIndex, availability, assignedUsers) {
     try {
         const msalvarezza = availability[Object.keys(availability)[dayIndex]].find(user => user.username === 'msalvarezza');
         const lburgueño = availability[Object.keys(availability)[dayIndex]].find(user => user.username === 'lburgueño');
@@ -23,23 +23,23 @@ export async function autoAssignPublicHospitalsByDay(apiUrl, dayIndex, availabil
 
         // Asignar a lburgueño si está disponible
         if (lburgueño) {
-            assignSpecificUsersByDay(dayIndex, lburgueñoScheme, lburgueño);
+            assignSpecificUsersByDay(dayIndex, lburgueñoScheme, lburgueño, assignedUsers);
         }
 
         // Asignar a sdegreef si está disponible
         if (sdegreef) {
-            assignSpecificUsersByDay(dayIndex, sdegreefScheme, sdegreef);
+            assignSpecificUsersByDay(dayIndex, sdegreefScheme, sdegreef, assignedUsers);
         }
 
         if (lalvarez ){
-            assignSpecificUsersByDay(dayIndex, lalvarezScheme, lalvarez);
+            assignSpecificUsersByDay(dayIndex, lalvarezScheme, lalvarez, assignedUsers);
         }
 
         if (msalvarezza ){
-            assignSpecificUsersByDay(dayIndex, msalvarezzaScheme, msalvarezza);
+            assignSpecificUsersByDay(dayIndex, msalvarezzaScheme, msalvarezza, assignedUsers);
         }
         if (bvalenti) {
-            assignSpecificUsersByDay(dayIndex, bvalentiScheme, bvalenti);
+            assignSpecificUsersByDay(dayIndex, bvalentiScheme, bvalenti, assignedUsers);
         }
 
     } catch (error) {
