@@ -30,5 +30,6 @@ module.exports = {
         'ngvela.05@gmail.com',
         'maxi.salvarezza@gmail.com',
         'valenti.bruno1993@gmail.com',
+        'juliabonqn@hotmail.com',
     ]
 };

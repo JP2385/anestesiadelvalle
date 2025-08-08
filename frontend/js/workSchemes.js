@@ -48,6 +48,12 @@ export function getWorkSchemes(isOddWeek) {
         'thursday-header': 'Imágenes Q1 Vespertino',
     };
 
+    const jboScheme = isOddWeek ? {
+        'friday-header': 'Imágenes Q1 Vespertino',
+    } : {
+        'friday-header': 'Imágenes Q2 Vespertino',
+    };
+
     return {
         montesEspositoScheme,
         ggudinoScheme,
@@ -57,5 +63,6 @@ export function getWorkSchemes(isOddWeek) {
         lalvarezScheme,
         msalvarezzaScheme,
         bvalentiScheme,
+        jboScheme,
     };
 }

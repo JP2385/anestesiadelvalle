@@ -127,6 +127,10 @@ export function assignSaturdayP1(users, accumulatedCounts) {
                 if (user.username === 'bvalenti') {
                 continue;
                 }
+                // excluir al usuario jbo
+                if (user.username === 'jbo') {
+                continue;
+                }
                 const select = user.row.querySelector(`.shift-select[data-day="${currentDay}"]`);
                 
                 // Verificar si el select está habilitado antes de asignar "P1"
@@ -188,6 +192,10 @@ function assignShift(selects, assignmentType, isLharriagueAssignedToday, isMquir
             
             // 🔴 EXCLUIR bvalenti de toda asignación automática
             if (username === 'bvalenti') {
+                continue;
+            }
+            // 🔴 EXCLUIR jbo de toda asignación automática
+            if (username === 'jbo') {
                 continue;
             }
             const day = select.getAttribute('data-day');
