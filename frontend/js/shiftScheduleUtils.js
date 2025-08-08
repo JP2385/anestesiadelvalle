@@ -3,7 +3,7 @@ import { countWeekdayShifts, countWeekendShifts, countSaturdayShifts } from './s
 import { calculateAccumulatedShiftCounts} from './shiftCountTable.js';
 import { fetchLastDayAssignments} from './shiftLastDayAssignments.js';
 import { isHoliday } from './fetchHolidays.js';
-
+import { getMeetingDateForMonth } from './meetingsUtils.js';
 
 
 // Función auxiliar para obtener el número de días de un mes y año
@@ -456,26 +456,43 @@ function populateRegularSites(selectElement, user, guardSites) {
 }
 
 function shouldDisableSelect(username, dayOfWeek, dateString) {
-    // Convertir dayOfWeek a minúsculas para asegurar que las comparaciones sean consistentes
     const day = dayOfWeek.toLowerCase();
 
-    // Si es feriado, no aplicar el disable
     if (isHoliday(dateString)) {
         return false;
     }
 
-    // Reglas para deshabilitar días específicos según el usuario
     const disableRules = {
         mschvartzman: ['lun'],
-        mmelo: ['lun', 'mar', 'jue'],
+        mmelo: ['mar', 'jue'],
         ltotis: ['jue'],
         ngrande: ['lun', 'mar'],
     };
 
-    // Si no es feriado y existe una regla, aplicar disable según la regla
+    // ✅ Crear fecha en horario LOCAL para evitar errores de desfase
+    const [yearStr, monthStr, dayStr] = dateString.split('-');
+    const date = new Date(Number(yearStr), Number(monthStr) - 1, Number(dayStr));
+    const year = date.getFullYear();
+    const month = date.getMonth(); // 0-indexed
+
+    const meetingDate = getMeetingDateForMonth(year, month);
+
+    if (username === 'jserrano' && (month + 1) % 2 === 0 && isSameLocalDate(date, meetingDate)) {
+        return true;
+    }
+
+    if (username === 'sdegreef' && (month + 1) % 2 !== 0 && isSameLocalDate(date, meetingDate)) {
+        return true;
+    }
+
     return disableRules[username]?.includes(day) || false;
 }
 
+function isSameLocalDate(d1, d2) {
+    return d1.getFullYear() === d2.getFullYear() &&
+           d1.getMonth() === d2.getMonth() &&
+           d1.getDate() === d2.getDate();
+}
 
 function applyDefaultAssignments(usersBody) {
     const defaultAssignments = {
