@@ -80,7 +80,7 @@ document.addEventListener('DOMContentLoaded', () => {
 function cleanDayHeaders(dayHeaders) {
     const cleanedDayHeaders = {};
     Object.keys(dayHeaders).forEach(day => {
-        cleanedDayHeaders[day] = dayHeaders[day].replace(/🔄/g, '').trim();
+        cleanedDayHeaders[day] = dayHeaders[day].replace(/MK🔄/g, '').trim();
     });
     return cleanedDayHeaders;
 }
