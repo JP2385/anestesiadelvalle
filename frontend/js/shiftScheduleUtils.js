@@ -14,7 +14,6 @@ export function getDaysInMonth(year, month) {
 
 // Función para obtener los usuarios desde la API
 export function fetchUsers(apiUrl, callback) {
-    console.log("Llamando a la API para obtener usuarios..."); // Log de inicio de fetchUsers
 
     fetch(`${apiUrl}/auth/users`, {
         method: 'GET',
@@ -25,11 +24,30 @@ export function fetchUsers(apiUrl, callback) {
     })
     .then(response => response.json())
     .then(users => {
-        console.log("Usuarios obtenidos:", users); // Confirmar que se obtienen los usuarios
         callback(users);
     })
     .catch(error => {
         console.error('Hubo un problema al obtener la lista de usuarios:', error.message);
+    });
+}
+
+// Función para obtener las otherLeaves desde la API
+export function fetchOtherLeaves(apiUrl, callback) {
+ 
+
+    fetch(`${apiUrl}/other-leaves`, {
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer ' + localStorage.getItem('token')
+        }
+    })
+    .then(response => response.json())
+    .then(usersWithLeaves => {
+        callback(usersWithLeaves);
+    })
+    .catch(error => {
+        console.error('Hubo un problema al obtener las otherLeaves:', error.message);
     });
 }
 
@@ -119,7 +137,6 @@ function generateTable(users, yearSelect, monthSelect, dayAbbreviations, guardSi
 
     // Realizar el recuento de guardias asignadas después de aplicar las asignaciones por defecto
     const shiftCounts = countWeekdayShifts();
-    console.log('Conteo de guardias luego de las asignaciones por defecto:', shiftCounts);
 
     // Llamar a la función para resaltar feriados
     highlightHolidays(apiUrl, year, month);
@@ -133,11 +150,9 @@ export function processAndGenerateTable(users, yearSelect, monthSelect, dayAbbre
     const year = parseInt(yearSelect.value);
     const month = parseInt(monthSelect.value) + 1; // Ajuste por mes basado en índice 0
 
-    console.log("processAndGenerateTable - Año y mes seleccionados:", year, month);
 
     // Excluimos el usuario con username "montes_esposito"
     const filteredUsers = users.filter(user => user.username !== 'montes_esposito');
-    console.log("Usuarios después de filtrar:", filteredUsers);
 
     // Ordenamos los usuarios alfabéticamente por nombre de usuario
     filteredUsers.sort((a, b) => a.username.localeCompare(b.username));
@@ -153,16 +168,13 @@ export async function assignMonthlyShiftsWithCardio(users, selectedYear, selecte
 
     // Obtener acumulados previos y asignaciones del último día del mes anterior
     const accumulatedCounts = await calculateAccumulatedShiftCounts(selectedYear, selectedMonth);
-    console.log("Conteo de acumulados previo para cada usuario:", accumulatedCounts);
     const lastDayAssignments = await fetchLastDayAssignments(selectedYear, selectedMonth);
-    console.log("Asignaciones del último día:", lastDayAssignments);
 
     const uniqueDays = Array.from(new Set(Array.from(daysInMonth)
         .map(select => select.getAttribute('data-day'))
     )).sort();
 
     uniqueDays.forEach(currentDay => {
-        console.log(`Asignando turnos para el día: ${currentDay}`);
         const selects = Array.from(document.querySelectorAll(`select[data-day="${currentDay}"]`));
         const dayNumber = parseInt(selects[0].getAttribute('data-daynumber'), 10);
         const isWeekend = (dayNumber === 5 || dayNumber === 6 || dayNumber === 0);
@@ -172,7 +184,6 @@ export async function assignMonthlyShiftsWithCardio(users, selectedYear, selecte
        // Bloque para el primer día del mes
 const dayOfMonth = parseInt(currentDay.split('-')[2]);
 if (dayOfMonth === 1 && lastDayAssignments.length > 0) {
-    console.log(`Es el primer día del mes (${currentDay}). Aplicando replicación de turnos u omisiones según corresponda.`);
     
     // Lista de usuarios a omitir en la asignación regular
     const usersToExclude = [];
@@ -186,28 +197,22 @@ if (dayOfMonth === 1 && lastDayAssignments.length > 0) {
             const lastAssignmentDate = new Date(Date.UTC(year, month - 1, day));
             const lastDayOfWeek = lastAssignmentDate.getUTCDay();
 
-            console.log(`Evaluando asignación del último día para ${username}: ${JSON.stringify(lastAssignment)}`);
-            console.log(`Día de la semana para el último día (${lastAssignment.day}): ${lastDayOfWeek} (0=Domingo, 6=Sábado)`);
 
             if (lastDayOfWeek === 5 || lastDayOfWeek === 6) {
                 // Si el último día fue viernes o sábado, replicar asignación de Im o Fn
                 if (lastAssignment.assignment === "Im" || lastAssignment.assignment === "Fn") {
                     select.value = lastAssignment.assignment;
-                    console.log(`Replicando guardia de ${username} para ${currentDay} con turno ${lastAssignment.assignment}.`);
                 }
             } else if (lastDayOfWeek >= 0 && lastDayOfWeek <= 4) {
                 // Si el último día fue de domingo a jueves, añadir a la lista de exclusión
                 usersToExclude.push(username);
-                console.log(`Usuario ${username} será excluido de la asignación regular en ${currentDay} por haber sido asignado el último día del mes anterior.`);
             }
         } else {
-            console.log(`No se encontró asignación del último día del mes anterior para ${username}.`);
         }
     });
 
     // Si el último día fue de domingo a jueves, omitimos la replicación y procedemos con la asignación regular excluyendo usuarios
     if (usersToExclude.length > 0) {
-        console.log(`Aplicando asignación regular en ${currentDay}, excluyendo a los usuarios:`, usersToExclude);
         
         // Lógica de asignación regular excluyendo a los usuarios que estuvieron asignados el día anterior
         let isLharriagueAssignedToday = selects.some(select => select.getAttribute('data-username') === 'lharriague' && select.value !== '');
@@ -254,7 +259,6 @@ if (dayOfMonth === 1 && lastDayAssignments.length > 0) {
 // Bloque para replicar asignación del sábado en domingo
 const dayOfWeek = new Date(currentDay).getUTCDay();
 if (dayOfWeek === 0) { // 0 representa el domingo
-    console.log(`Es domingo (${currentDay}). Verificando asignaciones del sábado anterior.`);
     
     const saturday = getPreviousDay(currentDay, 1); // Obtener el sábado anterior
     selects.forEach(select => {
@@ -263,9 +267,7 @@ if (dayOfWeek === 0) { // 0 representa el domingo
         
         if (saturdaySelect && saturdaySelect.value !== '' && !["V", "ND", "P1", "Ce", "HH", "CM", "Cp", "Al", "Jb","HP"].includes(saturdaySelect.value)) {
             select.value = saturdaySelect.value;
-            console.log(`Replicando guardia de ${username} del sábado ${saturday} para el domingo ${currentDay} con turno ${saturdaySelect.value}.`);
         } else {
-            console.log(`No se encontró asignación válida para ${username} el sábado anterior (${saturday}) o es una asignación no válida.`);
         }
     });
     return;
@@ -316,9 +318,6 @@ if (dayOfWeek === 0) { // 0 representa el domingo
     const userShiftCountsWeek = countWeekdayShifts();
     const userShiftCountsWeekend = countWeekendShifts();
     const saturdayCounts = countSaturdayShifts();
-    console.log('Conteo final de guardias asignadas de lunes a jueves:', userShiftCountsWeek);
-    console.log('Conteo final de guardias asignadas de viernes a domingo:', userShiftCountsWeekend);
-    console.log('Conteo final de guardias asignadas P1 y P2 los sábados:', saturdayCounts);
 }
 
 
@@ -330,7 +329,6 @@ function assignWeekendDays(currentDay, assignedUsername, assignmentType) {
         daySelects.forEach(select => {
             if (select.getAttribute('data-username') === assignedUsername && select.value === '') {
                 select.value = assignmentType;
-                // console.log(`Asignando ${assignmentType} a ${assignedUsername} para el ${index === 0 ? 'sábado' : 'domingo'}`);
             }
         });
     });
@@ -368,6 +366,16 @@ function populateShiftSelect(selectElement, user, isSaturday, guardSites) {
 
         if (vacationStartPrevDay <= dateString && vacationEndDate >= dateString) {
             shouldAutoSelectV = true;
+        }
+    });
+
+    // Verificar si aplica ND por otherLeaves
+    user.otherLeaves?.forEach(leave => {
+        const leaveStartDate = leave.startDate.slice(0, 10);
+        const leaveEndDate = leave.endDate.slice(0, 10);
+
+        if (leaveStartDate <= dateString && leaveEndDate >= dateString) {
+            shouldAutoSelectND = true;
         }
     });
 
@@ -555,13 +563,11 @@ function highlightHolidays(apiUrl, year, month) {
     })
     .then(response => response.json())
     .then(holidays => {
-        console.log("Feriados obtenidos:", holidays);
 
         holidays.forEach(holiday => {
             const holidayStart = holiday.startDate.slice(0, 10); // Formato YYYY-MM-DD
             const holidayEnd = holiday.endDate.slice(0, 10);     // Formato YYYY-MM-DD
 
-            console.log(`Procesando feriado: ${holiday.name} - Desde ${holidayStart} hasta ${holidayEnd} (UTC)`);
 
             // Recorrer las fechas entre holidayStart y holidayEnd en formato de cadena
             let currentDate = holidayStart;
@@ -571,7 +577,6 @@ function highlightHolidays(apiUrl, year, month) {
 
                 if (currentYear === year && currentMonth === month + 1) {
                     const dayString = `${year}-${String(month + 1).padStart(2, '0')}-${String(currentDay).padStart(2, '0')}`;
-                    console.log(`Buscando selects con data-day="${dayString}"`);
 
                     // Seleccionar todos los selects con el atributo data-day
                     const selects = document.querySelectorAll(`select[data-day="${dayString}"]`);
@@ -580,11 +585,9 @@ function highlightHolidays(apiUrl, year, month) {
                             const cell = select.closest('td'); // Encontrar el td contenedor del select
                             if (cell) {
                                 cell.classList.add('holiday'); // Aplicar la clase al td
-                                console.log(`Celda encontrada y clase holiday aplicada en data-day="${dayString}"`);
                             }
                         });
                     } else {
-                        console.log(`No se encontraron selects con data-day="${dayString}"`);
                     }
                 }
 

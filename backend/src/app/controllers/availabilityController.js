@@ -2,7 +2,7 @@ const User = require('../models/userModel');
 
 const getUsersAvailability = async (req, res) => {
     try {
-        const users = await User.find({}, 'username workSchedule vacations worksInCmacOnly worksInPrivateRioNegro worksInPublicRioNegro worksInPublicNeuquen worksInPrivateNeuquen doesPediatrics doesCardio doesRNM _id');
+        const users = await User.find({}, 'username workSchedule vacations otherLeaves worksInCmacOnly worksInPrivateRioNegro worksInPublicRioNegro worksInPublicNeuquen worksInPrivateNeuquen doesPediatrics doesCardio doesRNM _id');
 
         const availability = {
             monday: [],
@@ -57,6 +57,13 @@ const getUsersAvailability = async (req, res) => {
                 return isOnVacation;
             });
 
+            const onLeave = (day) => user.otherLeaves.some(leave => {
+                const start = adjustForTimezone(new Date(leave.startDate));
+                const end = adjustForTimezone(new Date(leave.endDate));
+                const isOnLeave = (day >= start && day <= end) || isSameDay(day, start) || isSameDay(day, end);
+                return isOnLeave;
+            });
+
             const userData = {
                 _id: user._id,
                 username: user.username,
@@ -71,22 +78,22 @@ const getUsersAvailability = async (req, res) => {
                 doesRNM: user.doesRNM
             };
 
-            if (user.workSchedule.monday !== 'No trabaja' && !onVacation(daysOfWeek[0])) {
+            if (user.workSchedule.monday !== 'No trabaja' && !onVacation(daysOfWeek[0]) && !onLeave(daysOfWeek[0])) {
                 availability.monday.push(userData);
             }
-            if (user.workSchedule.tuesday !== 'No trabaja' && !onVacation(daysOfWeek[1])) {
+            if (user.workSchedule.tuesday !== 'No trabaja' && !onVacation(daysOfWeek[1]) && !onLeave(daysOfWeek[1])) {
                 availability.tuesday.push(userData);
             }
-            if (user.workSchedule.wednesday !== 'No trabaja' && !onVacation(daysOfWeek[2])) {
+            if (user.workSchedule.wednesday !== 'No trabaja' && !onVacation(daysOfWeek[2]) && !onLeave(daysOfWeek[2])) {
                 availability.wednesday.push(userData);
             }
-            if (user.workSchedule.thursday !== 'No trabaja' && !onVacation(daysOfWeek[3])) {
+            if (user.workSchedule.thursday !== 'No trabaja' && !onVacation(daysOfWeek[3]) && !onLeave(daysOfWeek[3])) {
                 availability.thursday.push(userData);
             }
-            if (user.workSchedule.friday !== 'No trabaja' && !onVacation(daysOfWeek[4])) {
+            if (user.workSchedule.friday !== 'No trabaja' && !onVacation(daysOfWeek[4]) && !onLeave(daysOfWeek[4])) {
                 availability.friday.push(userData);
             }
-            if (user.workSchedule.saturday !== 'No trabaja' && !onVacation(daysOfWeek[5])) {
+            if (user.workSchedule.saturday !== 'No trabaja' && !onVacation(daysOfWeek[5]) && !onLeave(daysOfWeek[5])) {
                 availability.saturday.push(userData);
             }
         });

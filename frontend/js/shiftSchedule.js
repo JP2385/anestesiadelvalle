@@ -1,4 +1,4 @@
-import { processAndGenerateTable, fetchUsers, assignMonthlyShiftsWithCardio } from './shiftScheduleUtils.js';
+import { processAndGenerateTable, fetchUsers, fetchOtherLeaves, assignMonthlyShiftsWithCardio } from './shiftScheduleUtils.js';
 import { countWeekdayShifts, countWeekendShifts, countSaturdayShifts } from './shiftAssignmentsUtils.js';
 import { updateShiftCountsTableWithAccumulated } from './shiftCountTable.js';
 import { initializeFloatingTable } from './floatingTable.js';
@@ -58,14 +58,25 @@ document.addEventListener('DOMContentLoaded', async function () {
         const existingSchedule = await loadSchedule(selectedYear, selectedMonth);
     
         fetchUsers(apiUrl, (users) => {
-            processAndGenerateTable(users, yearSelect, monthSelect, dayAbbreviations, guardSites, usersBody, daysHeader, existingSchedule, apiUrl);
-            
-            // Definir los conteos antes de actualizar la tabla de conteo de guardias
-            const weekCounts = countWeekdayShifts();
-            const weekendCounts = countWeekendShifts();
-            const saturdayCounts = countSaturdayShifts();
-            updateShiftCountsTableWithAccumulated(weekCounts, weekendCounts, saturdayCounts);
-            addHighlightListeners();
+            fetchOtherLeaves(apiUrl, (usersWithLeaves) => {
+                // Combinar datos de usuarios con otherLeaves
+                const usersWithOtherLeaves = users.map(user => {
+                    const userWithLeaves = usersWithLeaves.find(u => u.username === user.username);
+                    return {
+                        ...user,
+                        otherLeaves: userWithLeaves ? userWithLeaves.otherLeaves : []
+                    };
+                });
+                
+                processAndGenerateTable(usersWithOtherLeaves, yearSelect, monthSelect, dayAbbreviations, guardSites, usersBody, daysHeader, existingSchedule, apiUrl);
+                
+                // Definir los conteos antes de actualizar la tabla de conteo de guardias
+                const weekCounts = countWeekdayShifts();
+                const weekendCounts = countWeekendShifts();
+                const saturdayCounts = countSaturdayShifts();
+                updateShiftCountsTableWithAccumulated(weekCounts, weekendCounts, saturdayCounts);
+                addHighlightListeners();
+            });
         });
     }
 
