@@ -150,13 +150,27 @@ document.addEventListener('DOMContentLoaded', async function() {
                             option.setAttribute('data-username', assignment.username);
                             option.selected = true;
                             select.appendChild(option);
+                            
+                            // Aplicar colores basados en el usuario asignado y availability
+                            const user = availability[day]?.find(u => u._id === assignment.userId || u.username === assignment.user);
+                            if (user) {
+                                select.classList.add('assigned');
+                                // Aplicar clase de color basada en el horario de trabajo del usuario
+                                if (user.workSchedule[day] === 'Mañana') {
+                                    select.classList.add('option-morning');
+                                } else if (user.workSchedule[day] === 'Tarde') {
+                                    select.classList.add('option-afternoon');
+                                } else if (user.workSchedule[day] === 'Variable') {
+                                    select.classList.add('option-long');
+                                }
+                            }
+                        } else {
+                            // Si no hay usuario asignado, aplicar clase default
+                            select.classList.add('default');
                         }
 
                         if (config) {
                             select.disabled = config.disabled;
-
-                            // Aplicar la clase almacenada en selectConfig           
-                            select.className = config.className;
                         }
                     });
                 }

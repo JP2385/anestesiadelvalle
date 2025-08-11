@@ -8,6 +8,30 @@ import { updateSelectColors } from './updateSelectColors.js';
 import { countLongDays, selectBestConfiguration, applyBestConfiguration, collectAssignments } from './bestConfigurationForWeek.js';
 import { showProgressBar, updateProgressBar, hideProgressBar, updateProgressMessage} from './progressBar.js'
 
+// Variable global para controlar el modo Mortal Combat
+let mortalCombatMode = false;
+// Variables para controlar el modo Mortal Combat por día
+let dailyMortalCombatMode = {
+    monday: false,
+    tuesday: false,
+    wednesday: false,
+    thursday: false,
+    friday: false
+};
+
+// Función para obtener el estado del modo Mortal Combat
+export function getMortalCombatMode() {
+    return mortalCombatMode;
+}
+
+// Función para obtener el estado del modo Mortal Combat diario
+export function getDailyMortalCombatMode(dayName) {
+    return dailyMortalCombatMode[dayName] || false;
+}
+
+// Usuarios que mantienen sus restricciones de horario incluso en modo Mortal Combat
+const SPECIAL_USERS = ['bvalenti', 'jbo', 'montes_esposito'];
+
 export function updateWeekDates(apiUrl, availability) {
     const currentDate = new Date();
     const currentDay = currentDate.getDay();
@@ -25,10 +49,43 @@ export function updateWeekDates(apiUrl, availability) {
 
     const dateOptions = { day: 'numeric' };
 
+    function createDailyMortalCombatButton(dayId, dayIndex) {
+        const button = document.createElement('button');
+        button.classList.add('daily-mortal-combat-button');
+        button.style.cssText = `
+            width: 20px; 
+            height: 20px; 
+            border-radius: 50%; 
+            background: red; 
+            border: 2px solid #333; 
+            cursor: pointer; 
+            margin: 0; 
+            display: inline-flex; 
+            align-items: center; 
+            justify-content: center; 
+            font-weight: bold; 
+            font-size: 9px; 
+            color: black; 
+            font-family: Arial, sans-serif;
+            vertical-align: middle;
+        `;
+        button.textContent = 'MK';
+        button.title = '⚔️ Modo Mortal Combat Diario: Quita restricciones de horario en este día';
+        
+        const dayName = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday'][dayIndex];
+        
+        button.addEventListener('click', () => {
+            toggleDailyMortalCombatMode(dayName, dayIndex, availability);
+        });
+        
+        return button;
+    }
+
     function createRandomizeButton(dayId, dayIndex) {
         const button = document.createElement('button');
         button.innerText = '🔄';
         button.classList.add('randomize-button');
+        button.style.cssText = 'margin: 0;'; // Quitar margin lateral
         button.addEventListener('click', async () => {
             try {
                 showSpinner();
@@ -45,8 +102,31 @@ export function updateWeekDates(apiUrl, availability) {
 
     function updateHeader(dayId, dayName, date, dayIndex) {
         const header = document.getElementById(dayId);
-        header.innerText = `${dayName} ${date.toLocaleDateString('es-ES', dateOptions)}`;
-        header.appendChild(createRandomizeButton(dayId, dayIndex));
+        
+        // Limpiar el contenido existente
+        header.innerHTML = '';
+        
+        // Crear contenedor flex para mantener todo en línea
+        const container = document.createElement('div');
+        container.style.cssText = 'display: flex; align-items: center; justify-content: space-between; width: 100%; padding: 0 2px;';
+        
+        // Crear el texto del día
+        const dayText = document.createElement('span');
+        dayText.textContent = `${dayName} ${date.toLocaleDateString('es-ES', dateOptions)}`;
+        dayText.style.cssText = 'white-space: nowrap;';
+        
+        // Crear contenedor para los botones en el lado derecho
+        const buttonsContainer = document.createElement('div');
+        buttonsContainer.style.cssText = 'display: flex; align-items: center; gap: 2px;';
+        buttonsContainer.appendChild(createDailyMortalCombatButton(dayId, dayIndex));
+        buttonsContainer.appendChild(createRandomizeButton(dayId, dayIndex));
+        
+        // Agregar elementos al contenedor principal
+        container.appendChild(dayText);
+        container.appendChild(buttonsContainer);
+        
+        // Agregar el contenedor al header
+        header.appendChild(container);
     }
 
     updateHeader('monday-header', 'Lunes', nextMondayDate, 0);
@@ -175,10 +255,17 @@ export async function populateSelectOptions(availability) {
                 //     if (!user.worksInPrivateNeuquen) return;
                 // }
 
-                if (workSite.includes('Matutino') && user.workSchedule[dayName] === 'Tarde') return;
-                if (workSite.includes('Vespertino') && user.workSchedule[dayName] === 'Mañana') return;
-                if (workSite.includes('Largo') && user.workSchedule[dayName] === 'Mañana') return;
-                if (workSite.includes('Largo') && user.workSchedule[dayName] === 'Tarde') return;
+                // En modo Mortal Combat (global o diario), ignorar las restricciones de horario excepto para usuarios especiales
+                const isSpecialUser = SPECIAL_USERS.includes(user.username);
+                const isDailyMortalCombat = dailyMortalCombatMode[dayName];
+                const isAnyMortalCombat = mortalCombatMode || isDailyMortalCombat;
+                
+                if (!isAnyMortalCombat || isSpecialUser) {
+                    if (workSite.includes('Matutino') && user.workSchedule[dayName] === 'Tarde') return;
+                    if (workSite.includes('Vespertino') && user.workSchedule[dayName] === 'Mañana') return;
+                    if (workSite.includes('Largo') && user.workSchedule[dayName] === 'Mañana') return;
+                    if (workSite.includes('Largo') && user.workSchedule[dayName] === 'Tarde') return;
+                }
 
                 if (workSite.includes('CMAC Endoscopia')) {
                     if (user.worksInPrivateRioNegro || user.username === 'mgioja') {
@@ -205,12 +292,18 @@ export async function populateSelectOptions(availability) {
                 option.textContent = user.username;
 
                 // Asignar clases CSS según el horario de trabajo
-                if (user.workSchedule[dayName] === 'Mañana') {
-                    option.classList.add('option-morning');
-                } else if (user.workSchedule[dayName] === 'Tarde') {
-                    option.classList.add('option-afternoon');
-                } else if (user.workSchedule[dayName] === 'Variable') {
+                if (isAnyMortalCombat && !isSpecialUser) {
+                    // En modo Mortal Combat (global o diario), todos los usuarios normales usan el estilo de variable
                     option.classList.add('option-long');
+                } else {
+                    // Usuarios especiales o modo normal mantienen sus estilos originales
+                    if (user.workSchedule[dayName] === 'Mañana') {
+                        option.classList.add('option-morning');
+                    } else if (user.workSchedule[dayName] === 'Tarde') {
+                        option.classList.add('option-afternoon');
+                    } else if (user.workSchedule[dayName] === 'Variable') {
+                        option.classList.add('option-long');
+                    }
                 }
 
                 if (workSite.includes('Cardio')) {
@@ -347,12 +440,22 @@ export async function handleSelectChange(event, availability) {
 
         // Asignar la clase CSS correspondiente al horario de trabajo
         if (user) {
-            if (user.workSchedule[dayName] === 'Mañana') {
-                select.classList.add('option-morning');
-            } else if (user.workSchedule[dayName] === 'Tarde') {
-                select.classList.add('option-afternoon');
-            } else if (user.workSchedule[dayName] === 'Variable') {
+            const isSpecialUser = SPECIAL_USERS.includes(user.username);
+            const isDailyMortalCombat = dailyMortalCombatMode[dayName];
+            const isAnyMortalCombat = mortalCombatMode || isDailyMortalCombat;
+            
+            if (isAnyMortalCombat && !isSpecialUser) {
+                // En modo Mortal Combat (global o diario), usuarios normales usan el estilo de variable
                 select.classList.add('option-long');
+            } else {
+                // Usuarios especiales o modo normal mantienen sus estilos originales
+                if (user.workSchedule[dayName] === 'Mañana') {
+                    select.classList.add('option-morning');
+                } else if (user.workSchedule[dayName] === 'Tarde') {
+                    select.classList.add('option-afternoon');
+                } else if (user.workSchedule[dayName] === 'Variable') {
+                    select.classList.add('option-long');
+                }
             }
         }
     }
@@ -409,5 +512,153 @@ export async function handleAutoAssignForWeek(apiUrl, dayIndices, availability) 
 
     } finally {
         hideProgressBar();
+    }
+}
+
+// Función para guardar las asignaciones actuales de todos los selects
+function saveCurrentAssignments() {
+    const assignments = {};
+    const selects = document.querySelectorAll('select');
+    
+    selects.forEach(select => {
+        if (select.value !== '') {
+            assignments[select.id] = select.value;
+        }
+    });
+    
+    return assignments;
+}
+
+// Función para restaurar las asignaciones guardadas
+function restoreAssignments(assignments, availability) {
+    Object.entries(assignments).forEach(([selectId, value]) => {
+        const select = document.getElementById(selectId);
+        if (select && select.querySelector(`option[value="${value}"]`)) {
+            select.value = value;
+            // Simular el evento change para aplicar los estilos correctos
+            const event = { target: select };
+            handleSelectChange(event, availability);
+        }
+    });
+}
+
+// Función para activar/desactivar el modo Mortal Combat
+export async function toggleMortalCombatMode(availability) {
+    // Guardar las asignaciones actuales antes de cambiar el modo
+    const currentAssignments = saveCurrentAssignments();
+    
+    mortalCombatMode = !mortalCombatMode;
+    const button = document.getElementById('mortal-combat-button');
+    const img = button.querySelector('img');
+    
+    const legend = document.getElementById('mortal-combat-legend');
+    
+    if (mortalCombatMode) {
+        // Estado activo - efectos visuales
+        img.style.filter = 'brightness(1.5) saturate(1.5)';
+        img.style.transform = 'scale(1.1)';
+        button.title = 'Desactivar Mortal Combat';
+        legend.style.display = 'block';
+        console.log('Modo Mortal Combat ACTIVADO - Sin restricciones de horario');
+    } else {
+        // Estado inactivo - brightness y saturate solamente
+        img.style.filter = 'brightness(1.5) saturate(1.5)';
+        img.style.transform = '';
+        button.title = 'Activar Modo Mortal Combat';
+        legend.style.display = 'none';
+        console.log('Modo Mortal Combat DESACTIVADO - Restricciones de horario restauradas');
+    }
+    
+    // Repoblar todos los selects con las nuevas reglas
+    populateSelectOptions(availability);
+    
+    // Restaurar las asignaciones previas
+    restoreAssignments(currentAssignments, availability);
+    
+    // Re-aplicar asignaciones automáticas de usuarios especiales
+    const assignedUsers = new Set();
+    const apiUrl = window.location.hostname === 'localhost' ? 'http://localhost:3000' : 'https://advalle-46fc1873b63d.herokuapp.com';
+    
+    // Asignar para cada día de la semana
+    for (let dayIndex = 0; dayIndex < 5; dayIndex++) {
+        const dayAssignedUsers = new Set();
+        try {
+            const { autoAssignCaroSandraGabiByDay } = await import('./autoAssignHandlersCaroSandraGabi.js');
+            const { autoAssignPublicHospitalsByDay } = await import('./autoAssignHandlersPublicHospitals.js');
+            
+            await autoAssignCaroSandraGabiByDay(apiUrl, dayIndex, availability, dayAssignedUsers);
+            await autoAssignPublicHospitalsByDay(apiUrl, dayIndex, availability, dayAssignedUsers);
+        } catch (error) {
+            console.error('Error re-aplicando asignaciones automáticas:', error);
+        }
+    }
+}
+
+// Función para activar/desactivar el modo Mortal Combat diario
+function toggleDailyMortalCombatMode(dayName, dayIndex, availability) {
+    // Guardar las asignaciones actuales del día antes de cambiar el modo
+    const dayColumnIndex = dayIndex + 1; // +1 porque la primera columna es work-site
+    const daySelects = document.querySelectorAll(`td:nth-child(${dayColumnIndex + 1}) select`);
+    const currentDayAssignments = {};
+    
+    daySelects.forEach(select => {
+        if (select.value !== '') {
+            currentDayAssignments[select.id] = select.value;
+        }
+    });
+    
+    // Cambiar el estado del día
+    dailyMortalCombatMode[dayName] = !dailyMortalCombatMode[dayName];
+    
+    // Actualizar el botón visual
+    const dayButtons = document.querySelectorAll('.daily-mortal-combat-button');
+    const button = dayButtons[dayIndex];
+    
+    if (dailyMortalCombatMode[dayName]) {
+        // Estado activo - fondo más oscuro y efectos
+        button.style.background = '#cc0000';
+        button.style.border = '2px solid #000';
+        button.style.boxShadow = '0 0 6px rgba(255, 0, 0, 0.8)';
+        button.style.transform = 'scale(1.1)';
+        button.title = '⚔️ ACTIVO - Clic para desactivar Modo Mortal Combat de este día';
+        console.log(`Modo Mortal Combat ACTIVADO para ${dayName}`);
+    } else {
+        // Estado inactivo - fondo rojo normal
+        button.style.background = 'red';
+        button.style.border = '2px solid #333';
+        button.style.boxShadow = 'none';
+        button.style.transform = '';
+        button.title = '⚔️ Modo Mortal Combat Diario: Quita restricciones de horario para usuarios normales en este día';
+        console.log(`Modo Mortal Combat DESACTIVADO para ${dayName}`);
+    }
+    
+    // Repoblar solo los selects de este día
+    repopulateDaySelects(dayName, dayIndex, availability);
+    
+    // Restaurar las asignaciones previas para este día
+    Object.entries(currentDayAssignments).forEach(([selectId, value]) => {
+        const select = document.getElementById(selectId);
+        if (select && select.querySelector(`option[value="${value}"]`)) {
+            select.value = value;
+            // Simular el evento change para aplicar los estilos correctos
+            const event = { target: select };
+            handleSelectChange(event, availability);
+        }
+    });
+}
+
+// Función para repoblar los selects de un día específico
+function repopulateDaySelects(dayName, dayIndex, availability) {
+    // Simplemente llamar a populateSelectOptions que ya maneja el modo diario
+    populateSelectOptions(availability);
+}
+
+// Función para inicializar el listener del botón Mortal Combat
+export function initializeMortalCombatButton(availability) {
+    const button = document.getElementById('mortal-combat-button');
+    if (button) {
+        button.addEventListener('click', async () => {
+            await toggleMortalCombatMode(availability);
+        });
     }
 }

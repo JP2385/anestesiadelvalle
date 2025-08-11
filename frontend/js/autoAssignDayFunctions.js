@@ -1,7 +1,24 @@
 import { updateSelectBackgroundColors } from './assignUtils.js';
+import { getMortalCombatMode, getDailyMortalCombatMode } from './weekly-schedule-utils.js';
 
 export const grupoRioNegro = ['imágenes', 'coi', 'heller', 'plottier', 'centenario', 'castro'];
 export const grupoNeuquen = ['fundación', 'cmac', 'allen', 'cipolletti'];
+
+// Usuarios que mantienen sus restricciones de horario incluso en modo Mortal Combat
+const SPECIAL_USERS = ['bvalenti', 'jbo', 'montes_esposito'];
+
+// Helper para obtener el horario de trabajo considerando el modo Mortal Combat
+function getEffectiveWorkSchedule(user, dayName, mortalCombatMode = false) {
+    const isDailyMortalCombat = getDailyMortalCombatMode(dayName);
+    const isAnyMortalCombat = mortalCombatMode || isDailyMortalCombat;
+    
+    // Si el modo Mortal Combat (global o diario) está activo y no es un usuario especial
+    if (isAnyMortalCombat && !SPECIAL_USERS.includes(user.username)) {
+        return 'Variable'; // Todos los usuarios normales se consideran Variable
+    }
+    // Caso normal: usar el horario original del usuario
+    return user.workSchedule[dayName];
+}
 
 function shuffle(array) {
     for (let i = array.length - 1; i > 0; i--) {
@@ -50,6 +67,7 @@ function assignRandomUser(select, availableUsers, assignedUsers) {
 export function autoAssignMorningWorkersByDay(rows, dayColumnIndex, users, dayName, assignedUsers) {
     const shuffledRows = shuffle(rows);
     const getValidUsers = getValidUsersFactory(shuffledRows, dayColumnIndex, users, assignedUsers);
+    const mortalCombatMode = getMortalCombatMode();
 
     // Primera etapa: asignar por zona
     shuffledRows.forEach(({ workSiteText, select, zona }) => {
@@ -58,11 +76,11 @@ export function autoAssignMorningWorkersByDay(rows, dayColumnIndex, users, dayNa
 
             if (zona === 'rioNegro') {
                 availableUsers = getValidUsers(select, user =>
-                    !user.worksInPrivateRioNegro && user.workSchedule[dayName] === 'Mañana'
+                    !user.worksInPrivateRioNegro && getEffectiveWorkSchedule(user, dayName, mortalCombatMode) === 'Mañana'
                 );
             } else if (zona === 'neuquen') {
                 availableUsers = getValidUsers(select, user =>
-                    !user.worksInPrivateNeuquen && user.workSchedule[dayName] === 'Mañana'
+                    !user.worksInPrivateNeuquen && getEffectiveWorkSchedule(user, dayName, mortalCombatMode) === 'Mañana'
                 );
             }
 
@@ -74,7 +92,7 @@ export function autoAssignMorningWorkersByDay(rows, dayColumnIndex, users, dayNa
     shuffledRows.forEach(({ workSiteText, select }) => {
         if (workSiteText.includes('matutino') && !select.value && !select.disabled) {
             const availableUsers = getValidUsers(select, user =>
-                user.workSchedule[dayName] === 'Mañana'
+                getEffectiveWorkSchedule(user, dayName, mortalCombatMode) === 'Mañana'
             );
             assignRandomUser(select, availableUsers, assignedUsers);
         }
@@ -85,6 +103,7 @@ export function autoAssignMorningWorkersByDay(rows, dayColumnIndex, users, dayNa
 export function autoAssignAfternoonWorkersByDay(rows, dayColumnIndex, users, dayName, assignedUsers) {
     const shuffledRows = shuffle(rows);
     const getValidUsers = getValidUsersFactory(shuffledRows, dayColumnIndex, users, assignedUsers);
+    const mortalCombatMode = getMortalCombatMode();
 
     // Primera etapa: asignar por zona
     shuffledRows.forEach(({ workSiteText, select, zona }) => {
@@ -93,11 +112,11 @@ export function autoAssignAfternoonWorkersByDay(rows, dayColumnIndex, users, day
 
             if (zona === 'rioNegro') {
                 availableUsers = getValidUsers(select, user =>
-                    !user.worksInPrivateRioNegro && user.workSchedule[dayName] === 'Tarde'
+                    !user.worksInPrivateRioNegro && getEffectiveWorkSchedule(user, dayName, mortalCombatMode) === 'Tarde'
                 );
             } else if (zona === 'neuquen') {
                 availableUsers = getValidUsers(select, user =>
-                    !user.worksInPrivateNeuquen && user.workSchedule[dayName] === 'Tarde'
+                    !user.worksInPrivateNeuquen && getEffectiveWorkSchedule(user, dayName, mortalCombatMode) === 'Tarde'
                 );
             }
 
@@ -109,7 +128,7 @@ export function autoAssignAfternoonWorkersByDay(rows, dayColumnIndex, users, day
     shuffledRows.forEach(({ workSiteText, select }) => {
         if (workSiteText.includes('vespertino') && !select.value && !select.disabled) {
             const availableUsers = getValidUsers(select, user =>
-                user.workSchedule[dayName] === 'Tarde'
+                getEffectiveWorkSchedule(user, dayName, mortalCombatMode) === 'Tarde'
             );
             assignRandomUser(select, availableUsers, assignedUsers);
         }
@@ -119,6 +138,7 @@ export function autoAssignAfternoonWorkersByDay(rows, dayColumnIndex, users, day
 export function autoAssignLongDayWorkersByDay(rows, dayColumnIndex, users, dayName, assignedUsers) {
     const shuffledRows = shuffle(rows);
     const getValidUsers = getValidUsersFactory(shuffledRows, dayColumnIndex, users, assignedUsers);
+    const mortalCombatMode = getMortalCombatMode();
 
     // Primera etapa: asignar por zona
     shuffledRows.forEach(({ workSiteText, select, zona }) => {
@@ -127,11 +147,11 @@ export function autoAssignLongDayWorkersByDay(rows, dayColumnIndex, users, dayNa
 
             if (zona === 'rioNegro') {
                 availableUsers = getValidUsers(select, user =>
-                    !user.worksInPrivateRioNegro && user.workSchedule[dayName] === 'Variable'
+                    !user.worksInPrivateRioNegro && getEffectiveWorkSchedule(user, dayName, mortalCombatMode) === 'Variable'
                 );
             } else if (zona === 'neuquen') {
                 availableUsers = getValidUsers(select, user =>
-                    !user.worksInPrivateNeuquen && user.workSchedule[dayName] === 'Variable'
+                    !user.worksInPrivateNeuquen && getEffectiveWorkSchedule(user, dayName, mortalCombatMode) === 'Variable'
                 );
             }
 
@@ -143,7 +163,7 @@ export function autoAssignLongDayWorkersByDay(rows, dayColumnIndex, users, dayNa
     shuffledRows.forEach(({ workSiteText, select }) => {
         if (workSiteText.includes('largo') && !select.value && !select.disabled) {
             const availableUsers = getValidUsers(select, user =>
-                user.workSchedule[dayName] === 'Variable'
+                getEffectiveWorkSchedule(user, dayName, mortalCombatMode) === 'Variable'
             );
             assignRandomUser(select, availableUsers, assignedUsers);
         }
@@ -153,6 +173,7 @@ export function autoAssignLongDayWorkersByDay(rows, dayColumnIndex, users, dayNa
 export function autoAssignRemainingSlotsByDay(rows, dayColumnIndex, users, dayName, assignedUsers) {
     const shuffledRows = shuffle(rows);
     const getValidUsers = getValidUsersFactory(shuffledRows, dayColumnIndex, users, assignedUsers);
+    const mortalCombatMode = getMortalCombatMode();
 
     // Primera etapa: asignar por zona
     shuffledRows.forEach(({ workSiteText, select, zona }) => {
@@ -161,11 +182,11 @@ export function autoAssignRemainingSlotsByDay(rows, dayColumnIndex, users, dayNa
 
             if (zona === 'rioNegro') {
                 availableUsers = getValidUsers(select, user =>
-                    !user.worksInPrivateRioNegro && user.workSchedule[dayName] === 'Variable'
+                    !user.worksInPrivateRioNegro && getEffectiveWorkSchedule(user, dayName, mortalCombatMode) === 'Variable'
                 );
             } else if (zona === 'neuquen') {
                 availableUsers = getValidUsers(select, user =>
-                    !user.worksInPrivateNeuquen && user.workSchedule[dayName] === 'Variable'
+                    !user.worksInPrivateNeuquen && getEffectiveWorkSchedule(user, dayName, mortalCombatMode) === 'Variable'
                 );
             }
 
@@ -177,7 +198,7 @@ export function autoAssignRemainingSlotsByDay(rows, dayColumnIndex, users, dayNa
     shuffledRows.forEach(({ workSiteText, select }) => {
         if (!select.value && !select.disabled) {
             const availableUsers = getValidUsers(select, user =>
-                user.workSchedule[dayName] === 'Variable'
+                getEffectiveWorkSchedule(user, dayName, mortalCombatMode) === 'Variable'
             );
             assignRandomUser(select, availableUsers, assignedUsers);
         }

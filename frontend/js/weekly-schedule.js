@@ -5,7 +5,7 @@ import { countAssignmentsByDay } from './autoAssignFunctions.js';
 import { compareAvailabilities } from './compareArrays.js';
 import { autoAssignReportBgColorsUpdate } from './autoAssignReportBgColorsUpdate.js';
 import { updateSelectColors } from './updateSelectColors.js';
-import { updateWeekDates, populateSelectOptions, initializeLockButtons, handleSelectChange, handleAutoAssignForWeek } from './weekly-schedule-utils.js';
+import { updateWeekDates, populateSelectOptions, initializeLockButtons, handleSelectChange, handleAutoAssignForWeek, initializeMortalCombatButton } from './weekly-schedule-utils.js';
 import { initializeFloatingTable } from './floatingTable.js';
 
 document.addEventListener('DOMContentLoaded', async function() {
@@ -17,7 +17,8 @@ document.addEventListener('DOMContentLoaded', async function() {
         availability = await fetchAvailability(apiUrl);
         await updateWeekDates(apiUrl, availability);
         await populateSelectOptions(availability);
-        initializeLockButtons();  
+        initializeLockButtons();
+        initializeMortalCombatButton(availability);
     } finally {
         hideSpinner();
     }

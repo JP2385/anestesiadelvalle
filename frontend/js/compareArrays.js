@@ -1,5 +1,6 @@
 import { fetchAvailability } from './assignUtils.js';
 import { countAssignmentsByDay } from './autoAssignFunctions.js';
+import { getMortalCombatMode, getDailyMortalCombatMode } from './weekly-schedule-utils.js';
 
 export async function compareAvailabilities() {
     try {
@@ -83,7 +84,21 @@ function convertDayIndexToName(dayIndex) {
     return days[dayIndex];
 }
 
-function formatWorkScheduleForDay(workSchedule, day) {
+// Usuarios que mantienen sus restricciones incluso en modo Mortal Combat
+const SPECIAL_USERS = ['bvalenti', 'jbo', 'montes_esposito'];
+
+function formatWorkScheduleForDay(workSchedule, day, username) {
+    const mortalCombatMode = getMortalCombatMode();
+    const isDailyMortalCombat = getDailyMortalCombatMode(day);
+    const isAnyMortalCombat = mortalCombatMode || isDailyMortalCombat;
+    const isSpecialUser = SPECIAL_USERS.includes(username);
+    
+    // Si el modo Mortal Combat (global o diario) está activo y no es un usuario especial
+    if (isAnyMortalCombat && !isSpecialUser) {
+        return 'Variable'; // Mostrar como Variable
+    }
+    
+    // Caso normal: usar el horario original del usuario
     return workSchedule[day] || 'No asignado';
 }
 
@@ -109,7 +124,7 @@ function updateDOMWithDifferences(differences) {
                     let htmlContent = '';
 
                     const userSchedules = users.filter(user => onlyInServer.includes(user.username))
-                                               .map(user => `${user.username} (${formatWorkScheduleForDay(user.workSchedule, day)})`);
+                                               .map(user => `${user.username} (${formatWorkScheduleForDay(user.workSchedule, day, user.username)})`);
 
                     if (userSchedules.length > 0) {
                         htmlContent += `${userSchedules.join('<br>')}<br>`;
@@ -154,7 +169,7 @@ function updateDOMWithDifferencesForDay(differences, dayIndex) {
                 let htmlContent = '';
 
                 const userSchedules = users.filter(user => onlyInServer.includes(user.username))
-                                           .map(user => `${user.username} (${formatWorkScheduleForDay(user.workSchedule, day)})`);
+                                           .map(user => `${user.username} (${formatWorkScheduleForDay(user.workSchedule, day, user.username)})`);
 
                 if (userSchedules.length > 0) {
                     htmlContent += `${userSchedules.join('<br>')}<br>`;

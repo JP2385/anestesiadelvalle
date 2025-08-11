@@ -16,20 +16,20 @@ document.addEventListener('DOMContentLoaded', () => {
             fetch(`${apiUrl}/availability`)
                 .then(response => response.json())
                 .then(availability => {
-                    // Limpiar los encabezados de cualquier símbolo de actualización
+                    // Limpiar los encabezados de cualquier símbolo de actualización y botones MK
                     const cleanedDayHeaders = {
-                        monday: dayHeaders.monday.replace(/🔄/g, ''),
-                        tuesday: dayHeaders.tuesday.replace(/🔄/g, ''),
-                        wednesday: dayHeaders.wednesday.replace(/🔄/g, ''),
-                        thursday: dayHeaders.thursday.replace(/🔄/g, ''),
-                        friday: dayHeaders.friday.replace(/🔄/g, '')
+                        monday: dayHeaders.monday.replace(/🔄/g, '').replace(/MK/g, '').trim(),
+                        tuesday: dayHeaders.tuesday.replace(/🔄/g, '').replace(/MK/g, '').trim(),
+                        wednesday: dayHeaders.wednesday.replace(/🔄/g, '').replace(/MK/g, '').trim(),
+                        thursday: dayHeaders.thursday.replace(/🔄/g, '').replace(/MK/g, '').trim(),
+                        friday: dayHeaders.friday.replace(/🔄/g, '').replace(/MK/g, '').trim()
                     };
 
                     // Generar la tabla de resumen basada en selectConfig
                     let summaryTable = generateSummaryTable(cleanedDayHeaders, selectConfig.monday);
 
-                    // Poblar la tabla con los assignments y availability
-                    populateAssignments(assignments, summaryTable, availability);
+                    // Poblar la tabla con los assignments, availability y selectConfig
+                    populateAssignments(assignments, summaryTable, availability, selectConfig);
 
                     // Eliminar filas vacías
                     removeEmptyRows(summaryTable);
@@ -140,17 +140,17 @@ function generateSummaryTable(dayHeaders, selectConfig) {
 }
 
 
-function populateAssignments(assignments, table, availability) {
+function populateAssignments(assignments, table, availability, selectConfig) {
     const tbody = table.querySelector('tbody');
     const rows = Array.from(tbody.getElementsByTagName('tr'));
 
-    rows.forEach(row => {
+    rows.forEach((row, rowIndex) => {
         const workSiteCell = row.querySelector('.work-site');
         const workSite = workSiteCell.textContent.trim();
 
         // Iterar sobre cada día de la semana
-        ['monday', 'tuesday', 'wednesday', 'thursday', 'friday'].forEach((day, index) => {
-            const cell = row.getElementsByTagName('td')[index + 1]; // Saltar la primera celda (work-site)
+        ['monday', 'tuesday', 'wednesday', 'thursday', 'friday'].forEach((day, dayIndex) => {
+            const cell = row.getElementsByTagName('td')[dayIndex + 1]; // Saltar la primera celda (work-site)
             const assignment = assignments[day]?.find(a => a.workSite === workSite);
 
             // Hacer la celda editable
@@ -160,17 +160,29 @@ function populateAssignments(assignments, table, availability) {
             if (assignment && assignment.user !== 'Select user') {
                 cell.textContent = assignment.user;
 
-                // Obtener el usuario en la disponibilidad para aplicar la clase CSS correspondiente
-                const user = availability[day]?.find(u => u._id === assignment.user || u.username === assignment.user);
-
-                if (user) {
-                    // Asignar la clase CSS correspondiente al horario de trabajo
-                    if (user.workSchedule[day] === 'Mañana') {
-                        cell.classList.add('option-morning');
-                    } else if (user.workSchedule[day] === 'Tarde') {
-                        cell.classList.add('option-afternoon');
-                    } else if (user.workSchedule[day] === 'Variable') {
-                        cell.classList.add('option-long');
+                // Obtener la configuración del select correspondiente para aplicar la clase correcta
+                const selectConfigForDay = selectConfig[day];
+                const selectConfigForWorkSite = selectConfigForDay?.find(config => config.workSite === workSite);
+                
+                if (selectConfigForWorkSite && selectConfigForWorkSite.className) {
+                    // Aplicar las clases que tenía el select original
+                    const classes = selectConfigForWorkSite.className.split(' ');
+                    classes.forEach(className => {
+                        if (className.includes('option-')) {
+                            cell.classList.add(className);
+                        }
+                    });
+                } else {
+                    // Fallback: usar el esquema del usuario si no hay selectConfig
+                    const user = availability[day]?.find(u => u._id === assignment.user || u.username === assignment.user);
+                    if (user) {
+                        if (user.workSchedule[day] === 'Mañana') {
+                            cell.classList.add('option-morning');
+                        } else if (user.workSchedule[day] === 'Tarde') {
+                            cell.classList.add('option-afternoon');
+                        } else if (user.workSchedule[day] === 'Variable') {
+                            cell.classList.add('option-long');
+                        }
                     }
                 }
             }
