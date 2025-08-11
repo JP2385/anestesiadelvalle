@@ -1,4 +1,4 @@
-import { assignIm, assignFn, assignWeekendIfLtotisAssigned, assignSaturdayP1} from './shiftAssignmentsMonthly.js';
+import { assignIm, assignFn, assignWeekendIfLtotisAssigned, assignSaturdayP1, assignSaturdayP2} from './shiftAssignmentsMonthly.js';
 import { countWeekdayShifts, countWeekendShifts, countSaturdayShifts } from './shiftAssignmentsUtils.js';
 import { calculateAccumulatedShiftCounts} from './shiftCountTable.js';
 import { fetchLastDayAssignments} from './shiftLastDayAssignments.js';
@@ -311,13 +311,14 @@ if (dayOfWeek === 0) { // 0 representa el domingo
     });
 
     assignSaturdayP1(users, accumulatedCounts);
+    assignSaturdayP2(users, accumulatedCounts);
 
     const userShiftCountsWeek = countWeekdayShifts();
     const userShiftCountsWeekend = countWeekendShifts();
     const saturdayCounts = countSaturdayShifts();
     console.log('Conteo final de guardias asignadas de lunes a jueves:', userShiftCountsWeek);
     console.log('Conteo final de guardias asignadas de viernes a domingo:', userShiftCountsWeekend);
-    console.log('Conteo final de guardias asignadas P1 los sábados:', saturdayCounts);
+    console.log('Conteo final de guardias asignadas P1 y P2 los sábados:', saturdayCounts);
 }
 
 
@@ -396,6 +397,14 @@ function populateShiftSelect(selectElement, user, isSaturday, guardSites) {
         selectElement.appendChild(p1Option);
     }
 
+    // Agregar "P2" para sábados si no hace guardias
+    if (!user.doesShifts && isSaturday) {
+        const p2Option = document.createElement('option');
+        p2Option.value = 'P2';
+        p2Option.textContent = 'P2';
+        selectElement.appendChild(p2Option);
+    }
+
     // Agregar sitios regulares si hace guardias
     if (user.doesShifts) {
         if (isSaturday) {
@@ -403,6 +412,11 @@ function populateShiftSelect(selectElement, user, isSaturday, guardSites) {
             p1Option.value = 'P1';
             p1Option.textContent = 'P1';
             selectElement.appendChild(p1Option);
+
+            const p2Option = document.createElement('option');
+            p2Option.value = 'P2';
+            p2Option.textContent = 'P2';
+            selectElement.appendChild(p2Option);
         }
         populateRegularSites(selectElement, user, guardSites);
     }

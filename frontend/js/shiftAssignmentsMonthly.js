@@ -1,4 +1,4 @@
-import { isAlreadyAssigned, countWeekdayShifts, countWeekendShifts, countSaturdayShifts } from './shiftAssignmentsUtils.js';
+import { isAlreadyAssigned, countWeekdayShifts, countWeekendShifts, countSaturdayShifts, countSaturdayP2Shifts } from './shiftAssignmentsUtils.js';
 
 export function assignIm(rows, selects, isLharriagueAssignedToday, isMquirogaAssignedToday, assignedFnUser, assignedImUser, isWeekend, accumulatedCounts) {
     console.log(`\nIniciando asignación de Im para el día: ${selects[0].getAttribute('data-day')}, es fin de semana: ${isWeekend}`);
@@ -131,6 +131,18 @@ export function assignSaturdayP1(users, accumulatedCounts) {
                 if (user.username === 'jbo') {
                 continue;
                 }
+
+                // Verificar si el usuario ya fue asignado a P1 o P2 en algún sábado del mes
+                const userSaturdaySelects = user.row.querySelectorAll('select[data-daynumber="6"]');
+                const hasP1OrP2Assignment = Array.from(userSaturdaySelects).some(satSelect => 
+                    satSelect.value === 'P1' || satSelect.value === 'P2'
+                );
+
+                if (hasP1OrP2Assignment) {
+                    console.log(`Usuario ${user.username} ya tiene asignación P1 o P2 en el mes, excluyendo para P1 en ${currentDay}.`);
+                    continue;
+                }
+
                 const select = user.row.querySelector(`.shift-select[data-day="${currentDay}"]`);
                 
                 // Verificar si el select está habilitado antes de asignar "P1"
@@ -141,6 +153,110 @@ export function assignSaturdayP1(users, accumulatedCounts) {
                 } else {
                     console.log(`No se puede asignar P1 a ${user.username} para el sábado ${currentDay} porque el select está deshabilitado o ya tiene un valor.`);
                 }
+            }
+        }
+    });
+}
+
+export function assignSaturdayP2(users, accumulatedCounts) {
+    const rows = document.querySelectorAll('#users-body tr');
+    const daysInMonth = document.querySelectorAll('.shift-select[data-day]');
+
+    // Filtrar y ordenar los selects para obtener solo los días sábado en orden cronológico
+    const saturdays = Array.from(daysInMonth)
+        .filter(select => parseInt(select.getAttribute('data-daynumber'), 10) === 6) // Solo sábados
+        .sort((a, b) => new Date(a.getAttribute('data-day')) - new Date(b.getAttribute('data-day'))); // Ordenar por fecha
+
+    saturdays.forEach(saturdaySelect => {
+        const currentDay = saturdaySelect.getAttribute('data-day');
+
+        // Verificar si ya existe una asignación de "P2" en el sábado actual
+        const isP2Assigned = Array.from(document.querySelectorAll(`.shift-select[data-day="${currentDay}"]`))
+            .some(select => select.value === 'P2');
+
+        if (!isP2Assigned) {
+            // Obtener el usuario asignado a P1 en este sábado
+            const p1Select = Array.from(document.querySelectorAll(`.shift-select[data-day="${currentDay}"]`))
+                .find(select => select.value === 'P1');
+            
+            if (p1Select) {
+                const p1Username = p1Select.getAttribute('data-username');
+                const p1User = users.find(user => user.username === p1Username);
+                
+                // Contar asignaciones "P2" en el mes actual
+                let userShiftCounts = countSaturdayP2Shifts();
+
+                // Sumar acumulado previo de "P2" en sábados al conteo actual
+                Object.keys(userShiftCounts).forEach(username => {
+                    if (accumulatedCounts[username]) {
+                        userShiftCounts[username] += accumulatedCounts[username].saturday || 0;
+                    }
+                });
+
+                // Filtrar usuarios según la lógica de pairing regional
+                let eligibleUsers = Array.from(rows)
+                    .map(row => {
+                        const username = row.cells[0].textContent.trim();
+                        const user = users.find(u => u.username === username);
+                        const totalP2Shifts = userShiftCounts[username] || 0;
+                        return { row, username, user, totalP2Shifts };
+                    })
+                    .filter(userObj => {
+                        // Excluir usuarios específicos
+                        if (userObj.username === 'bvalenti' || userObj.username === 'jbo') {
+                            return false;
+                        }
+                        
+                        // Excluir el usuario ya asignado a P1
+                        if (userObj.username === p1Username) {
+                            return false;
+                        }
+
+                        // Verificar si el usuario ya fue asignado a P1 o P2 en algún sábado del mes
+                        const userSaturdaySelects = userObj.row.querySelectorAll('select[data-daynumber="6"]');
+                        const hasP1OrP2Assignment = Array.from(userSaturdaySelects).some(satSelect => 
+                            satSelect.value === 'P1' || satSelect.value === 'P2'
+                        );
+
+                        if (hasP1OrP2Assignment) {
+                            console.log(`Usuario ${userObj.username} ya tiene asignación P1 o P2 en el mes, excluyendo para P2 en ${currentDay}.`);
+                            return false;
+                        }
+
+                        if (!userObj.user) return false;
+
+                        // Aplicar lógica de pairing regional
+                        if (p1User.worksInPrivateRioNegro && !p1User.worksInPrivateNeuquen) {
+                            // P1 es de Río Negro, P2 debe ser de Neuquén
+                            return userObj.user.worksInPrivateNeuquen;
+                        } else if (p1User.worksInPrivateNeuquen && !p1User.worksInPrivateRioNegro) {
+                            // P1 es de Neuquén, P2 debe ser de Neuquén
+                            return userObj.user.worksInPrivateNeuquen;
+                        } else if (p1User.worksInPrivateRioNegro && p1User.worksInPrivateNeuquen) {
+                            // P1 es mixto, P2 puede ser cualquiera que trabaje en privado
+                            return userObj.user.worksInPrivateRioNegro || userObj.user.worksInPrivateNeuquen;
+                        } else {
+                            // P1 no trabaja en privado, P2 puede ser cualquiera
+                            return true;
+                        }
+                    })
+                    .sort((a, b) => a.totalP2Shifts - b.totalP2Shifts);
+
+                // Intentar asignar "P2" al primer usuario disponible de la lista filtrada
+                for (const userObj of eligibleUsers) {
+                    const select = userObj.row.querySelector(`.shift-select[data-day="${currentDay}"]`);
+                    
+                    // Verificar si el select está habilitado antes de asignar "P2"
+                    if (select && !select.disabled && select.value === '') {
+                        select.value = 'P2';
+                        console.log(`Asignado P2 a ${userObj.username} para el sábado ${currentDay}. P1 asignado a ${p1Username} (RN: ${p1User.worksInPrivateRioNegro}, NQ: ${p1User.worksInPrivateNeuquen}).`);
+                        break; // Salir del bucle al encontrar una asignación exitosa
+                    } else {
+                        console.log(`No se puede asignar P2 a ${userObj.username} para el sábado ${currentDay} porque el select está deshabilitado o ya tiene un valor.`);
+                    }
+                }
+            } else {
+                console.log(`No se encontró usuario asignado a P1 para el sábado ${currentDay}, no se puede asignar P2.`);
             }
         }
     });

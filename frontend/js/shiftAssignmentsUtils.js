@@ -101,7 +101,7 @@ export function countWeekendShifts() {
 
 
 
-// Función para contar las guardias asignadas a "P1" para cada sábado
+// Función para contar las guardias asignadas a "P1" y "P2" para cada sábado
 export function countSaturdayShifts() {
     const userShiftCounts = {}; // Objeto para almacenar las guardias por usuario en sábado
 
@@ -120,12 +120,41 @@ export function countSaturdayShifts() {
         selects.forEach(select => {
             const dayOfWeek = parseInt(select.getAttribute('data-daynumber'), 10); // Obtener el día de la semana (0=Dom, ..., 6=Sab)
             
-            // Contar solo si es sábado (dayOfWeek === 6) y la guardia es "P1"
-            if (dayOfWeek === 6 && select.value === 'P1' && !select.disabled) {
+            // Contar solo si es sábado (dayOfWeek === 6) y la guardia es "P1" o "P2"
+            if (dayOfWeek === 6 && (select.value === 'P1' || select.value === 'P2') && !select.disabled) {
                 userShiftCounts[username]++;
             }
         });
     });
 
-    return userShiftCounts; // Retornar el objeto con los conteos de guardias de "P1" en sábado por usuario
+    return userShiftCounts; // Retornar el objeto con los conteos de guardias de "P1" y "P2" en sábado por usuario
+}
+
+// Función específica para contar solo las guardias asignadas a "P2" para cada sábado
+export function countSaturdayP2Shifts() {
+    const userShiftCounts = {}; // Objeto para almacenar las guardias por usuario en sábado
+
+    // Seleccionamos todas las filas de la tabla de usuarios
+    const rows = document.querySelectorAll('#users-body tr');
+
+    rows.forEach(row => {
+        const username = row.cells[0].textContent.trim(); // Obtener el nombre de usuario de la primera celda
+        const selects = row.querySelectorAll('td select'); // Obtener todos los selects de la fila
+
+        // Inicializar el conteo de guardias para el usuario si no existe
+        if (!userShiftCounts[username]) {
+            userShiftCounts[username] = 0;
+        }
+
+        selects.forEach(select => {
+            const dayOfWeek = parseInt(select.getAttribute('data-daynumber'), 10); // Obtener el día de la semana (0=Dom, ..., 6=Sab)
+            
+            // Contar solo si es sábado (dayOfWeek === 6) y la guardia es "P2"
+            if (dayOfWeek === 6 && select.value === 'P2' && !select.disabled) {
+                userShiftCounts[username]++;
+            }
+        });
+    });
+
+    return userShiftCounts; // Retornar el objeto con los conteos de guardias de "P2" en sábado por usuario
 }

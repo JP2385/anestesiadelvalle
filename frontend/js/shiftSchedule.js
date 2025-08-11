@@ -25,7 +25,7 @@ document.addEventListener('DOMContentLoaded', async function () {
         privateNeuquen: ['Im'],
         privateRioNegro: ['Fn'],
         publicRioNegro: ['Cp', 'Al', 'Jb'],
-        saturday: ['P1']
+        saturday: ['P1', 'P2']
     };
 
      // Genera la tabla de referencias de los lugares de guardia
