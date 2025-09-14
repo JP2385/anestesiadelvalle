@@ -345,11 +345,14 @@ export function initializeLockButtons() {
             // Cambiar el estado del select actual
             select.disabled = !select.disabled;
             button.textContent = select.disabled ? '🔓' : '🔒';
-        
+
             if (select.disabled) {
                 // Cambiar el select a su valor por defecto (primera opción)
                 select.selectedIndex = 0;
-                
+
+                // Guardar la clase original antes de cambiarla
+                select.dataset.originalClass = select.className;
+
                 // Eliminar las clases previas y agregar la clase default
                 select.classList = ' ';
                 select.classList.add('default'); // Añadir la clase default
@@ -357,8 +360,23 @@ export function initializeLockButtons() {
                 // Llamar a handleSelectChange para reflejar el cambio
                 handleSelectChange({ target: select });
             } else {
-                // Si el select se desbloquea, eliminar la clase default
-                select.classList.remove('default');
+                // Si el select se desbloquea, restaurar la clase original
+                if (select.dataset.originalClass) {
+                    select.className = select.dataset.originalClass;
+                    delete select.dataset.originalClass;
+                } else {
+                    // Fallback: derivar la clase del ID si no hay clase original guardada
+                    const selectId = select.id;
+                    if (selectId.includes('short')) {
+                        select.className = 'short';
+                    } else if (selectId.includes('long')) {
+                        select.className = 'long';
+                    } else if (selectId.includes('afternoon')) {
+                        select.className = 'afternoon';
+                    } else {
+                        select.classList.remove('default');
+                    }
+                }
             }
         
             // Obtener el id del select actual
