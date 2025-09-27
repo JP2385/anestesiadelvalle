@@ -489,6 +489,7 @@ function shouldDisableSelect(username, dayOfWeek, dateString) {
         mmelo: ['mar', 'jue'],
         ltotis: ['jue'],
         ngrande: ['lun', 'mar'],
+        esanmartin: ['lun']
     };
 
     // ✅ Crear fecha en horario LOCAL para evitar errores de desfase
