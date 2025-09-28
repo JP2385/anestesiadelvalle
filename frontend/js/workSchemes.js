@@ -22,7 +22,6 @@ export function getWorkSchemes(isOddWeek) {
     };
 
     const lburgueñoScheme = {
-        'tuesday-header': 'Hospital Allen Largo'
     };
 
     const sdegreefScheme = {
@@ -33,11 +32,10 @@ export function getWorkSchemes(isOddWeek) {
     };
 
     const lalvarezScheme = {
-        'monday-header': 'Hospital Cipolletti Largo'
+        'tuesday-header': 'Hospital Allen Largo'
     };
 
     const msalvarezzaScheme = {
-        'thursday-header': 'Hospital Allen Largo'
     };
 
     const bvalentiScheme = isOddWeek ? {
