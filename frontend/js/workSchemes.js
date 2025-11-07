@@ -38,7 +38,7 @@ export function getWorkSchemes(isOddWeek) {
     const msalvarezzaScheme = {
     };
 
-    const bvalentiScheme = isOddWeek ? {
+    const ecesarScheme = isOddWeek ? {
         'tuesday-header': 'Imágenes Q1 Vespertino',
         'thursday-header': 'Imágenes Q2 Vespertino',
     } : {
@@ -60,7 +60,7 @@ export function getWorkSchemes(isOddWeek) {
         nvelaScheme,
         lalvarezScheme,
         msalvarezzaScheme,
-        bvalentiScheme,
+        ecesarScheme,
         jboScheme,
     };
 }

@@ -11,7 +11,7 @@ export async function autoAssignPublicHospitalsByDay(apiUrl, dayIndex, availabil
         const lburgueño = availability[dayKey].find(user => user.username === 'lburgueño');
         const sdegreef = availability[dayKey].find(user => user.username === 'sdegreef');
         const lalvarez = availability[dayKey].find(user => user.username === 'lalvarez');
-        const bvalenti = availability[dayKey].find(user => user.username === 'bvalenti');
+        const ecesar = availability[dayKey].find(user => user.username === 'ecesar');
         const jbo = availability[dayKey].find(user => user.username === 'jbo');
 
         const currentWeekNumber = getWeekNumber(new Date());
@@ -22,7 +22,7 @@ export async function autoAssignPublicHospitalsByDay(apiUrl, dayIndex, availabil
             sdegreefScheme,
             lalvarezScheme,
             msalvarezzaScheme,
-            bvalentiScheme,
+            ecesarScheme,
             jboScheme,
         } = getWorkSchemes(isOddWeek);
 
@@ -42,8 +42,8 @@ export async function autoAssignPublicHospitalsByDay(apiUrl, dayIndex, availabil
             assignSpecificUsersByDay(dayIndex, msalvarezzaScheme, msalvarezza, assignedUsers, workSiteElements);
         }
 
-        if (bvalenti) {
-            assignSpecificUsersByDay(dayIndex, bvalentiScheme, bvalenti, assignedUsers, workSiteElements);
+        if (ecesar) {
+            assignSpecificUsersByDay(dayIndex, ecesarScheme, ecesar, assignedUsers, workSiteElements);
         }
         if (jbo) {
             assignSpecificUsersByDay(dayIndex, jboScheme, jbo, assignedUsers, workSiteElements);

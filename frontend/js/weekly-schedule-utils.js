@@ -30,7 +30,7 @@ export function getDailyMortalCombatMode(dayName) {
 }
 
 // Usuarios que mantienen sus restricciones de horario incluso en modo Mortal Combat
-const SPECIAL_USERS = ['bvalenti', 'jbo', 'montes_esposito'];
+const SPECIAL_USERS = ['ecesar', 'jbo', 'montes_esposito'];
 
 export function updateWeekDates(apiUrl, availability) {
     const currentDate = new Date();

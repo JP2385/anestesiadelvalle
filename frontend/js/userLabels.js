@@ -24,6 +24,6 @@ export const userRealNames = {
     "gcastro": "Gonzalo Castro",
     "msalvarezza": "Máximo Salvarezza",
     "montes_esposito": "Carolina Montes",
-    "bvalenti": "Bruno Valenti",
+    "ecesar": "Eugenia Cesar",
     "jbo": "Julia Bo",
 }

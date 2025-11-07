@@ -1,7 +1,7 @@
 import { getMortalCombatMode, getDailyMortalCombatMode } from './weekly-schedule-utils.js';
 
 // Usuarios que mantienen sus restricciones incluso en modo Mortal Combat
-const SPECIAL_USERS = ['bvalenti', 'jbo', 'montes_esposito'];
+const SPECIAL_USERS = ['ecesar', 'jbo', 'montes_esposito'];
 
 export function updateSelectColors(dayIndex, availability) {
     const dayNames = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday'];

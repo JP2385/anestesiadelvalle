@@ -5,7 +5,7 @@ export const grupoRioNegro = ['imágenes', 'coi', 'heller', 'plottier', 'centena
 export const grupoNeuquen = ['fundación', 'cmac', 'allen', 'cipolletti'];
 
 // Usuarios que mantienen sus restricciones de horario incluso en modo Mortal Combat
-const SPECIAL_USERS = ['bvalenti', 'jbo', 'montes_esposito'];
+const SPECIAL_USERS = ['ecesar', 'jbo', 'montes_esposito'];
 
 // Helper para obtener el horario de trabajo considerando el modo Mortal Combat
 function getEffectiveWorkSchedule(user, dayName, mortalCombatMode = false) {
