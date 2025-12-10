@@ -40,7 +40,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 
                     if (userShiftsData && Array.isArray(userShiftsData.shifts) && userShiftsData.shifts.length > 0) {
                         const sortedAssignments = userShiftsData.shifts
-                            .filter(shift => !shift.isDisabled) // Excluir asignaciones deshabilitadas
                             .sort((a, b) => new Date(a.day) - new Date(b.day)); // Ordenar por fecha
 
 
@@ -91,7 +90,7 @@ function generateShiftList(userShifts) {
     }
 
     userShifts
-    .filter(shift => shift.assignment !== 'ND') // Excluir asignaciones "No disponible"
+    .filter(shift => shift.assignment !== 'ND' && shift.assignment !== 'V') // Excluir asignaciones "No disponible" y "Vacaciones"
     .forEach(shift => {
         const listItem = document.createElement('li');
         
