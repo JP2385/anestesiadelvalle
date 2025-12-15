@@ -16,6 +16,7 @@ const saveShiftSchedule = async (req, res) => {
             existingSchedule.shiftCounts = shiftCounts;
             existingSchedule.selectConfig = selectConfig;
             existingSchedule.printedBy = printedBy;
+            existingSchedule.updatedAt = new Date();
             await existingSchedule.save();
             res.status(200).json({ message: 'Shift schedule updated successfully' });
         } else {

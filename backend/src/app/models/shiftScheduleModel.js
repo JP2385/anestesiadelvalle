@@ -34,7 +34,8 @@ const shiftScheduleSchema = new mongoose.Schema({
     shiftCounts: [shiftCountSchema],                        // Conteo de guardias
     selectConfig: [selectConfigSchema],                     // Configuración completa de selects
     printedBy: { type: String, required: true },            // Usuario que imprimió el horario
-    createdAt: { type: Date, default: Date.now }            // Fecha de creación
+    createdAt: { type: Date, default: Date.now },           // Fecha de creación
+    updatedAt: { type: Date, default: Date.now }            // Fecha de última actualización
 });
 
 // Crear el modelo basado en el esquema

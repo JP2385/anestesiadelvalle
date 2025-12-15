@@ -6,10 +6,11 @@ document.addEventListener("DOMContentLoaded", () => {
     const userHolidayCountTable = document.getElementById("user-holiday-count-table");
     const apiUrl = window.location.hostname === 'localhost' ? 'http://localhost:3000' : 'https://advalle-46fc1873b63d.herokuapp.com';
     const printHolidaysButton = document.getElementById("print-holidays");
+    const clearAssignmentsButton = document.getElementById("clear-assignments");
 
     let allUsers = []; // Almacena la lista de usuarios en memoria
     let allHolidays = []; // Almacena la lista de feriados en memoria
-    const excludedUsers = ["montes_esposito", "rconsigli", "mgioja", "ggudiño", "lespinosa"];
+    const excludedUsers = ["montes_esposito", "rconsigli", "mgioja", "ggudiño", "lespinosa", "jbo", "ecesar", "bvalenti"];
 
     // 🔹 Cargar los últimos 5 años y el siguiente en el select
     const currentYear = new Date().getFullYear();
@@ -92,12 +93,18 @@ document.addEventListener("DOMContentLoaded", () => {
     
                     allUsers.forEach(user => {
                         if (excludedUsers.includes(user.username)) return;
-                        const isOnVacation = user.vacations?.some(v => 
-                            new Date(holiday.startDate) <= new Date(v.endDate) && 
+                        const isOnVacation = user.vacations?.some(v =>
+                            new Date(holiday.startDate) <= new Date(v.endDate) &&
                             new Date(holiday.endDate) >= new Date(v.startDate)
                         );
                         if (isOnVacation) return;
-    
+
+                        const isOnOtherLeave = user.otherLeaves?.some(leave =>
+                            new Date(holiday.startDate) <= new Date(leave.endDate) &&
+                            new Date(holiday.endDate) >= new Date(leave.startDate)
+                        );
+                        if (isOnOtherLeave) return;
+
                         const option = document.createElement("option");
                         option.value = user._id;
                         option.textContent = user.username;
@@ -280,7 +287,7 @@ document.addEventListener("DOMContentLoaded", () => {
             let availableUsers = Array.from(selects[0].options)
                 .filter(option => option.value && 
                     !assignedUsers.has(option.value) &&
-                    !["nvela", "msalvarezza","lburgueño"].includes(allUsers.find(u => u._id === option.value)?.username) &&
+                    !["msalvarezza"].includes(allUsers.find(u => u._id === option.value)?.username) &&
                     userCounters[option.value] < maxAssignments // 🔹 EXCLUIR USUARIOS CON EL MÁXIMO DE ASIGNACIONES
                 )
                 .map(option => option.value);
@@ -290,7 +297,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 availableUsers = Array.from(selects[0].options)
                     .filter(option => option.value && 
                         !assignedUsers.has(option.value) &&
-                        !["nvela", "msalvarezza","lburgueño"].includes(allUsers.find(u => u._id === option.value)?.username) &&
+                        !["msalvarezza"].includes(allUsers.find(u => u._id === option.value)?.username) &&
                         userCounters[option.value] <= maxAssignments // 🔹 PERMITIR SOLO A QUIENES NO LO SUPERAN
                     )
                     .map(option => option.value);
@@ -323,7 +330,7 @@ document.addEventListener("DOMContentLoaded", () => {
             // 📌 Paso 3: Si no se pudo asignar la pareja emparejada, elegir otro usuario bajo la misma lógica de equidad
             if (!secondUser) {
                 let firstUserData = allUsers.find(u => u._id === firstUser);
-                let excludeUsers = ["nvela", "msalvarezza", "lburgueño"];
+                let excludeUsers = ["msalvarezza"];
 
                 // 📌 Si el usuario asignado en el primer select NO trabaja en privado Neuquén, excluir a mmelo y ltotis
                 if (firstUserData && firstUserData.worksInPrivateNeuquen === false) {
@@ -396,7 +403,7 @@ document.addEventListener("DOMContentLoaded", () => {
                         let userData = allUsers.find(u => u._id === option.value);
                         return option.value &&
                             !assignedUsers.has(option.value) &&
-                            !["mquiroga", "lharriague", "mmelo", "ltotis", "nvela", "msalvarezza", "lburgueño"].includes(userData?.username) &&
+                            !["mquiroga", "lharriague", "mmelo", "ltotis", "msalvarezza"].includes(userData?.username) &&
                             userCounters[option.value] < maxAssignments &&
                             (!excludePrivateNeuquen || userData?.worksInPrivateNeuquen) &&
                             (!excludePrivateRioNegro || userData?.worksInPrivateRioNegro);
@@ -410,7 +417,7 @@ document.addEventListener("DOMContentLoaded", () => {
                             let userData = allUsers.find(u => u._id === option.value);
                             return option.value &&
                                 !assignedUsers.has(option.value) &&
-                                !["mquiroga", "lharriague", "mmelo", "ltotis", "nvela", "msalvarezza", "lburgueño"].includes(userData?.username) &&
+                                !["mquiroga", "lharriague", "mmelo", "ltotis", "msalvarezza"].includes(userData?.username) &&
                                 userCounters[option.value] <= maxAssignments &&
                                 (!excludePrivateNeuquen || userData?.worksInPrivateNeuquen) &&
                                 (!excludePrivateRioNegro || userData?.worksInPrivateRioNegro);
@@ -425,7 +432,7 @@ document.addEventListener("DOMContentLoaded", () => {
                             let userData = allUsers.find(u => u._id === option.value);
                             return option.value &&
                                 !assignedUsers.has(option.value) &&
-                                !["mquiroga", "lharriague", "mmelo", "ltotis", "nvela", "msalvarezza", "lburgueño"].includes(userData?.username) &&
+                                !["mquiroga", "lharriague", "mmelo", "ltotis", "msalvarezza"].includes(userData?.username) &&
                                 (!excludePrivateNeuquen || userData?.worksInPrivateNeuquen) &&
                                 (!excludePrivateRioNegro || userData?.worksInPrivateRioNegro);
                         })
@@ -470,6 +477,27 @@ document.addEventListener("DOMContentLoaded", () => {
         updateUserHolidayCountFromDOM();
     });
 
+    });
+
+    clearAssignmentsButton.addEventListener("click", () => {
+        const confirmation = confirm("¿Estás seguro de que deseas limpiar todas las asignaciones del año seleccionado?");
+
+        if (!confirmation) return;
+
+        // Limpiar todos los selects de la tabla de feriados
+        const holidayRows = document.querySelectorAll("#holiday-table tbody tr");
+
+        holidayRows.forEach(row => {
+            const selects = row.querySelectorAll("select");
+            selects.forEach(select => {
+                select.value = ""; // Resetear a la opción vacía
+            });
+        });
+
+        // Actualizar el conteo de feriados para reflejar que no hay asignaciones
+        updateUserHolidayCountFromDOM();
+
+        alert("Todas las asignaciones han sido limpiadas.");
     });
 
     printHolidaysButton.addEventListener("click", async () => {
