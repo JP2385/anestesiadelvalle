@@ -43,6 +43,16 @@ const scheduleSchema = new mongoose.Schema({
         thursday: { type: availabilitySchema, required: true },
         friday: { type: availabilitySchema, required: true }
     }, // Información sobre disponibilidad por día
+    mortalCombat: {
+        globalMode: { type: Boolean, default: false },
+        dailyModes: {
+            monday: { type: Boolean, default: false },
+            tuesday: { type: Boolean, default: false },
+            wednesday: { type: Boolean, default: false },
+            thursday: { type: Boolean, default: false },
+            friday: { type: Boolean, default: false }
+        }
+    }, // Estado del modo Mortal Kombat
     createdAt: { type: Date, default: Date.now, expires: '1y' }, // Campo de expiración
     printedBy: { type: String, required: true },
     longDaysInform: { type: String, required: false }

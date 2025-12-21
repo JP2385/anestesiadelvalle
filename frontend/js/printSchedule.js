@@ -36,6 +36,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const selectConfig = collectSelectConfig(); // Recolectar configuración de los selects
         const longDaysInform = collectLongDaysInform();
         const availabilityInform = collectAvailabilityInform(); // Recolectar información de disponibilidad
+        const mortalCombat = await collectMortalCombatState(); // Recolectar estado de Mortal Kombat
 
         if (assignments && currentUser) {
 
@@ -46,14 +47,15 @@ document.addEventListener('DOMContentLoaded', () => {
                     headers: {
                         'Content-Type': 'application/json'
                     },
-                    body: JSON.stringify({ 
-                        timestamp, 
-                        assignments, 
-                        dayHeaders, 
-                        selectConfig, 
+                    body: JSON.stringify({
+                        timestamp,
+                        assignments,
+                        dayHeaders,
+                        selectConfig,
                         longDaysCount,
                         longDaysInform,
                         availabilityInform, // Enviar la información de disponibilidad
+                        mortalCombat, // Enviar el estado de Mortal Kombat
                         printedBy: currentUser // Incluir el usuario que hace la acción
                     })
                 });
@@ -220,5 +222,47 @@ document.addEventListener('DOMContentLoaded', () => {
         // Obtener el contenido del span con id 'long-days-inform'
         const longDaysSpan = document.getElementById('long-days-inform');
         return longDaysSpan ? longDaysSpan.textContent.trim() : '';
+    }
+
+    async function collectMortalCombatState() {
+        try {
+            // Intentar importar las funciones desde weekly-schedule-utils.js
+            const { getMortalCombatMode, getAllDailyMortalCombatModes } = await import('./weekly-schedule-utils.js');
+
+            return {
+                globalMode: getMortalCombatMode(),
+                dailyModes: getAllDailyMortalCombatModes()
+            };
+        } catch (error) {
+            // Si falla el import, usar método de fallback basado en UI
+            console.warn('No se pudo importar weekly-schedule-utils, usando método de fallback');
+
+            const mortalCombatLegend = document.getElementById('mortal-combat-legend');
+            const globalMode = mortalCombatLegend && mortalCombatLegend.style.display === 'block';
+
+            const dailyModes = {
+                monday: false,
+                tuesday: false,
+                wednesday: false,
+                thursday: false,
+                friday: false
+            };
+
+            const dailyButtons = document.querySelectorAll('.daily-mortal-combat-button');
+            const days = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday'];
+
+            dailyButtons.forEach((button, index) => {
+                if (index < days.length) {
+                    const isActive = button.style.background === 'rgb(204, 0, 0)' ||
+                                    button.style.background === '#cc0000';
+                    dailyModes[days[index]] = isActive;
+                }
+            });
+
+            return {
+                globalMode,
+                dailyModes
+            };
+        }
     }
 });

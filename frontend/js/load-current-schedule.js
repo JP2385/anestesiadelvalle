@@ -31,11 +31,17 @@ document.addEventListener('DOMContentLoaded', async function() {
     // Recuperar el último horario guardado
     fetch(`${apiUrl}/schedule/last-schedule`)
         .then(response => response.json())
-        .then(schedule => {
+        .then(async schedule => {
             const assignments = schedule.assignments;
             const selectConfig = schedule.selectConfig;
             const longDaysInform = schedule.longDaysInform;
             const availabilityInform = schedule.availabilityInform;
+            const mortalCombat = schedule.mortalCombat;
+
+            // IMPORTANTE: Restaurar estado de Mortal Kombat ANTES de popular selects
+            if (mortalCombat) {
+                await restoreMortalCombatState(mortalCombat, availability);
+            }
 
             const scheduleBody = document.getElementById('schedule-body');
             const rows = scheduleBody.getElementsByTagName('tr');
@@ -180,6 +186,58 @@ document.addEventListener('DOMContentLoaded', async function() {
             console.error('Error fetching schedule:', error);
         });
 
+    // Función para restaurar el estado de Mortal Kombat
+    async function restoreMortalCombatState(mortalCombatData, availability) {
+        if (!mortalCombatData) return;
+
+        const { globalMode, dailyModes } = mortalCombatData;
+
+        // Importar las funciones necesarias de weekly-schedule-utils
+        const { setMortalCombatMode, setDailyMortalCombatMode } = await import('./weekly-schedule-utils.js');
+
+        // Restaurar modo global
+        if (globalMode) {
+            setMortalCombatMode(true);
+            updateMortalCombatButtonUI(true);
+            console.log('✓ Modo Mortal Kombat global restaurado');
+        }
+
+        // Restaurar modos diarios
+        if (dailyModes) {
+            Object.keys(dailyModes).forEach(day => {
+                if (dailyModes[day]) {
+                    setDailyMortalCombatMode(day, true);
+                    console.log(`✓ Modo Mortal Kombat restaurado para ${day}`);
+                }
+            });
+        }
+
+        // Re-popular las opciones con el estado de Mortal Kombat correcto
+        await populateSelectOptions(availability);
+    }
+
+    // Función para actualizar la UI del botón de Mortal Kombat
+    function updateMortalCombatButtonUI(isActive) {
+        const button = document.getElementById('mortal-combat-button');
+        const legend = document.getElementById('mortal-combat-legend');
+
+        if (button && legend) {
+            const img = button.querySelector('img');
+
+            if (isActive) {
+                img.style.filter = 'brightness(1.5) saturate(1.5)';
+                img.style.transform = 'scale(1.1)';
+                legend.style.display = 'block';
+                button.title = 'Desactivar Modo Mortal Kombat';
+            } else {
+                img.style.filter = 'brightness(1.5) saturate(1.5)';
+                img.style.transform = '';
+                legend.style.display = 'none';
+                button.title = 'Activar Modo Mortal Kombat';
+            }
+        }
+    }
+
     initializeFloatingTable();
-    
+
 });

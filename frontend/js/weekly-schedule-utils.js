@@ -29,6 +29,23 @@ export function getDailyMortalCombatMode(dayName) {
     return dailyMortalCombatMode[dayName] || false;
 }
 
+// Función para setear el estado del modo Mortal Combat
+export function setMortalCombatMode(value) {
+    mortalCombatMode = value;
+}
+
+// Función para setear el estado del modo Mortal Combat diario
+export function setDailyMortalCombatMode(dayName, value) {
+    if (dailyMortalCombatMode.hasOwnProperty(dayName)) {
+        dailyMortalCombatMode[dayName] = value;
+    }
+}
+
+// Función para obtener todos los modos diarios
+export function getAllDailyMortalCombatModes() {
+    return { ...dailyMortalCombatMode };
+}
+
 // Usuarios que mantienen sus restricciones de horario incluso en modo Mortal Combat
 const SPECIAL_USERS = ['ecesar', 'jbo', 'montes_esposito'];
 
