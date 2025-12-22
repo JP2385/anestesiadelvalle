@@ -1,5 +1,5 @@
 import { fetchAvailability } from './assignUtils.js';
-import { updateWeekDates, populateSelectOptions, initializeLockButtons, handleSelectChange, handleAutoAssignForWeek } from './weekly-schedule-utils.js';
+import { updateWeekDates, populateSelectOptions, initializeLockButtons, handleSelectChange, handleAutoAssignForWeek, initializeMortalCombatButton } from './weekly-schedule-utils.js';
 import { initializeFloatingTable } from './floatingTable.js';
 
 document.addEventListener('DOMContentLoaded', async function() {
@@ -11,7 +11,8 @@ document.addEventListener('DOMContentLoaded', async function() {
         availability = await fetchAvailability(apiUrl);
         await updateWeekDates(apiUrl, availability);
         await populateSelectOptions(availability);
-        initializeLockButtons();  
+        initializeLockButtons();
+        initializeMortalCombatButton(availability);  // Inicializar botón de Mortal Combat
     } finally {
         hideSpinner();
     }

@@ -73,17 +73,26 @@
             <h3>Informe de asignaciones</h3>
             </div>
             <div class="header-div">
-            <div class="switch-container">
-                <span class="switch-legend">
-                    Acumulado de días largos: 
-                </span>
-            
-        
-                <!-- Switch con checkbox -->
-                <label class="switch">
-                    <input type="checkbox" id="toggle-table" />
-                    <span class="slider"></span>
-                </label>
+            <div class="switch-container" style="display: flex; align-items: center; justify-content: space-between; width: 100%;">
+                <div style="display: flex; align-items: center;">
+                    <span class="switch-legend">
+                        Acumulado de días largos:
+                    </span>
+
+                    <!-- Switch con checkbox -->
+                    <label class="switch">
+                        <input type="checkbox" id="toggle-table" />
+                        <span class="slider"></span>
+                    </label>
+                </div>
+
+                <!-- Botón Modo Mortal Combat -->
+                <div style="display: flex; flex-direction: column; align-items: center; position: relative; transform: translateX(-50px);">
+                    <button id="mortal-combat-button" title="Activar Modo Mortal Combat" style="background: none; border: none; cursor: pointer; display: flex; align-items: center; padding: 0;">
+                        <img src="images/buttons/mortal_kombat.png" alt="Modo Mortal Combat" style="height: 60px; width: auto; filter: brightness(1.5) saturate(1.5);" />
+                    </button>
+                    <span id="mortal-combat-legend" style="font-size: 12px; color: red; font-weight: bold; position: absolute; top: 65px; white-space: nowrap; display: none;">Modo Mortal Combat ACTIVO</span>
+                </div>
             </div>
             <!-- Tabla flotante -->
 
