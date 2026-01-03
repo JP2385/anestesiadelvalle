@@ -226,6 +226,10 @@ document.addEventListener('DOMContentLoaded', function () {
                 const user = await response.json();
                 // Cargar el número de teléfono si está disponible
                 document.getElementById('phoneNumber').value = user.phoneNumber || '';
+
+                // Cargar el rol del usuario
+                document.getElementById('userRole').value = user.role || 'user';
+
                 document.getElementById('doesCardio').checked = user.doesCardio;
                 document.getElementById('doesPediatrics').checked = user.doesPediatrics;
                 document.getElementById('doesRNM').checked = user.doesRNM;
@@ -294,4 +298,38 @@ document.addEventListener('DOMContentLoaded', function () {
             alert('Hubo un problema con la solicitud: ' + error.message);
         }
     }
+
+    // Botón para actualizar rol
+    document.getElementById('update-role-btn').addEventListener('click', async () => {
+        const userId = userSelect.value;
+        const newRole = document.getElementById('userRole').value;
+
+        if (!userId) {
+            alert('Por favor selecciona un usuario');
+            return;
+        }
+
+        if (confirm(`¿Estás seguro de cambiar el rol de este usuario a "${newRole === 'admin' ? 'Administrador' : 'Usuario'}"?`)) {
+            try {
+                const response = await fetch(`${apiUrl}/users/${userId}/role`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': 'Bearer ' + localStorage.getItem('token')
+                    },
+                    body: JSON.stringify({ newRole: newRole })
+                });
+
+                if (response.ok) {
+                    const result = await response.json();
+                    alert(result.message || 'Rol actualizado correctamente');
+                } else {
+                    const errorData = await response.json();
+                    alert(`Error: ${errorData.message}`);
+                }
+            } catch (error) {
+                alert('Hubo un problema al actualizar el rol: ' + error.message);
+            }
+        }
+    });
 });

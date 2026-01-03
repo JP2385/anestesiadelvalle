@@ -10,6 +10,7 @@ const shiftScheduleRoutes = require('./src/app/routes/shiftScheduleRoutes'); // 
 const vacationSwapRoutes = require('./src/app/routes/vacationSwapRoutes');
 const notificationRoutes = require('./src/app/routes/notificationRoutes');
 const holidayRoutes = require('./src/app/routes/holidayRoutes');
+const roleRoutes = require('./src/app/routes/roleRoutes');
 const path = require('path');
 const publicRoutes = require('./src/app/routes/publicRoutes');
 const { getUsersAvailability } = require('./src/app/controllers/availabilityController');
@@ -45,6 +46,9 @@ app.use('/vacation-swap', vacationSwapRoutes);
 app.use('/notifications', notificationRoutes);
 
 app.use('/holidays', holidayRoutes); // Rutas para feriados
+
+// Rutas para gestión de roles y permisos
+app.use('/', roleRoutes);
 
 // Ruta para consultar disponibilidad
 app.get('/availability', getUsersAvailability);

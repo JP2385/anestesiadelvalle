@@ -5,6 +5,7 @@ const { getAllUsers, updateUser, getUserById } = require('../controllers/userCon
 const { getUsersAvailability } = require('../controllers/availabilityController');
 const { getAllVacations } = require('../controllers/vacationController');  // Asegúrate de que la ruta al controlador sea correcta
 const authMiddleware = require('../middlewares/authMiddleware');
+const { requireAdmin } = require('../middlewares/authorization');
 const router = express.Router();
 
 router.post('/register', register);
@@ -14,10 +15,10 @@ router.post('/reset-password', resetPassword);
 router.post('/change-password', authMiddleware, changePassword);
 router.get('/profile', authMiddleware, getProfile);
 router.get('/user/:userId', authMiddleware, getUserById);
-router.put('/user/:userId', authMiddleware, updateUser);
+router.put('/user/:userId', authMiddleware, requireAdmin, updateUser);
 
 // Rutas de administración
-router.get('/users', authMiddleware, getAllUsers);
+router.get('/users', authMiddleware, requireAdmin, getAllUsers);
 router.get('/availability', authMiddleware, getUsersAvailability);
 
 // Ruta para obtener las vacaciones de todos los usuarios

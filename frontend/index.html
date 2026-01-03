@@ -28,6 +28,14 @@
     <script src="js/holidayInformIndividualized.js" defer></script>
     <script src="js/otherLeaveInformIndividualized.js" defer></script>
     <script type="module" src="js/notifications.js"></script>
+    <script type="module">
+        import { initializePermissions, showIfHasRole } from './js/authUtils.js';
+
+        document.addEventListener('DOMContentLoaded', async function() {
+            await initializePermissions();
+            showIfHasRole('.admin-only', 'admin');
+        });
+    </script>
 <body>
     <div class="spinner" id="spinner"></div>
     <header>
@@ -40,7 +48,7 @@
         </div>
         <div class="dropdown-menu" id="dropdown-menu">
             <a href="profile.html">Mi perfil</a>
-            <a href="admin.html">Administrador de perfiles</a>
+            <a href="admin.html" class="admin-only">Administrador de perfiles</a>
             <a href="login.html" id="logout">Cerrar sesión</a>
         </div>
     </header>

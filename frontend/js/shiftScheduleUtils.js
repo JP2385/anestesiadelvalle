@@ -115,6 +115,7 @@ function generateTable(users, yearSelect, monthSelect, dayAbbreviations, guardSi
             select.setAttribute('data-dayOfWeek', dayOfWeekAbbreviation);
             select.setAttribute('data-daynumber', dayOfWeek);
             select.setAttribute('data-cardio', user.doesCardio);
+            select.setAttribute('data-privaterioneegro', user.worksInPrivateRioNegro);
 
             // Poblar el select con opciones regulares
             populateShiftSelect(select, user, isSaturday, guardSites);

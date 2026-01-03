@@ -23,8 +23,17 @@
         });
     </script>
     <script defer src="js/bundle.js"></script>
-    <script type=module defer src="js/admin.js"></script>
+    <script type="module" defer src="js/admin.js"></script>
     <script defer src="js/spinner.js"></script>
+    <script type="module">
+        import { initializePermissions, redirectIfNoRole } from './js/authUtils.js';
+
+        // Proteger esta página - solo admin puede acceder
+        document.addEventListener('DOMContentLoaded', async function() {
+            await initializePermissions();
+            redirectIfNoRole('/index.html', 'admin');
+        });
+    </script>
 </head>
 <body>
     <div class="spinner" id="spinner"></div>
@@ -50,6 +59,17 @@
             <label for="phoneNumber">Número de Teléfono:</label>
             <input type="text" id="phoneNumber" name="phoneNumber" placeholder="+1234567890">
         </div>
+
+        <h3>Gestión de Rol:</h3>
+        <div class="admin-input-group">
+            <label for="userRole">Rol de Usuario:</label>
+            <select id="userRole" name="userRole">
+                <option value="user">Usuario</option>
+                <option value="admin">Administrador</option>
+            </select>
+        </div>
+        <button type="button" id="update-role-btn" class="main-menu-button">Actualizar Rol</button>
+
         <form id="admin-form">
             <h3>Actualizar perfil para la asignación de trabajo programado:</h3>
             
