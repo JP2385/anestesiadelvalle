@@ -7,6 +7,7 @@ import { autoAssignReportBgColorsUpdate } from './autoAssignReportBgColorsUpdate
 import { updateSelectColors } from './updateSelectColors.js';
 import { updateWeekDates, populateSelectOptions, initializeLockButtons, handleSelectChange, handleAutoAssignForWeek, initializeMortalCombatButton } from './weekly-schedule-utils.js';
 import { initializeFloatingTable } from './floatingTable.js';
+import { initializeScheduleTable } from './loadWorkSites.js';
 
 document.addEventListener('DOMContentLoaded', async function() {
     const apiUrl = window.location.hostname === 'localhost' ? 'http://localhost:3000' : 'https://advalle-46fc1873b63d.herokuapp.com';
@@ -14,6 +15,11 @@ document.addEventListener('DOMContentLoaded', async function() {
     let availability;
     try {
         showSpinner();
+
+        // PRIMERO: Cargar la tabla de sitios de trabajo desde la BD
+        await initializeScheduleTable();
+
+        // LUEGO: Continuar con la inicialización normal
         availability = await fetchAvailability(apiUrl);
         await updateWeekDates(apiUrl, availability);
         await populateSelectOptions(availability);

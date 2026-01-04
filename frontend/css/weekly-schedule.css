@@ -57,6 +57,13 @@ td.separator-thick {
     height: 0;
 }
 
+td.separator-institution {
+    border-top: 3px solid #ccc;
+    background-color: #fff;
+    padding: 0;
+    height: 0;
+}
+
 td.work-site {
     font-weight: 600;
     width: 250px; /* Ancho fijo para la primera columna */

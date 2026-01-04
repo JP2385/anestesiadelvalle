@@ -9,7 +9,9 @@
       "Bash(git restore:*)",
       "Bash(node scripts/migrateWorkSites.js:*)",
       "Bash(node scripts/fixWorkSiteIndexes.js:*)",
-      "Bash(node scripts/listWorkSites.js:*)"
+      "Bash(node scripts/listWorkSites.js:*)",
+      "Bash(awk:*)",
+      "Bash(node scripts/cleanDuplicates.js:*)"
     ],
     "deny": [],
     "ask": []

@@ -7,10 +7,14 @@ const {
     getWorkSiteById,
     createWorkSite,
     updateWorkSite,
-    deleteWorkSite
+    deleteWorkSite,
+    getWorkSitesForSchedule
 } = require('../controllers/workSiteController');
 
-// Todas las rutas requieren autenticación y rol de admin
+// Ruta pública para obtener datos de programación (solo requiere autenticación)
+router.get('/schedule/data', authMiddleware, getWorkSitesForSchedule);
+
+// Rutas de administración (requieren autenticación y rol de admin)
 router.get('/', authMiddleware, requireAdmin, getAllWorkSites);
 router.get('/:id', authMiddleware, requireAdmin, getWorkSiteById);
 router.post('/', authMiddleware, requireAdmin, createWorkSite);

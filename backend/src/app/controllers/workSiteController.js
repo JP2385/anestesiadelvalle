@@ -77,12 +77,15 @@ exports.createWorkSite = async (req, res) => {
             });
         }
 
-        // Verificar si ya existe una boca de trabajo con ese nombre
-        const existingWorkSite = await WorkSite.findOne({ name });
+        // Verificar si ya existe una boca de trabajo con ese nombre EN ESTA INSTITUCIÓN
+        const existingWorkSite = await WorkSite.findOne({
+            name,
+            institution
+        });
         if (existingWorkSite) {
             return res.status(400).json({
                 success: false,
-                message: 'Ya existe una boca de trabajo con ese nombre'
+                message: 'Ya existe una boca de trabajo con ese nombre en esta institución'
             });
         }
 
@@ -169,13 +172,21 @@ exports.updateWorkSite = async (req, res) => {
             });
         }
 
-        // Si se está cambiando el nombre, verificar que no exista otra con ese nombre
-        if (name && name !== workSite.name) {
-            const existingWorkSite = await WorkSite.findOne({ name });
+        // Si se está cambiando el nombre o la institución, verificar unicidad EN ESA INSTITUCIÓN
+        const finalName = name || workSite.name;
+        const finalInstitution = institution || workSite.institution.toString();
+
+        if ((name && name !== workSite.name) || (institution && institution !== workSite.institution.toString())) {
+            const existingWorkSite = await WorkSite.findOne({
+                name: finalName,
+                institution: finalInstitution,
+                _id: { $ne: workSite._id }
+            });
+
             if (existingWorkSite) {
                 return res.status(400).json({
                     success: false,
-                    message: 'Ya existe una boca de trabajo con ese nombre'
+                    message: 'Ya existe una boca de trabajo con ese nombre en esta institución'
                 });
             }
         }
@@ -241,6 +252,124 @@ exports.deleteWorkSite = async (req, res) => {
         res.status(500).json({
             success: false,
             message: 'Error al eliminar boca de trabajo',
+            error: error.message
+        });
+    }
+};
+
+// Obtener sitios de trabajo agrupados por institución para weekly-schedule
+exports.getWorkSitesForSchedule = async (req, res) => {
+    try {
+        // Obtener solo instituciones activas (para programación de cirugías)
+        const institutions = await Institution.find({
+            isActive: true
+        });
+
+        // Ordenar instituciones según especificación:
+        // 1. Privados: Fundación, CMAC, Imágenes, COI
+        // 2. Hospitales Río Negro (públicos)
+        // 3. Hospitales Neuquén (públicos)
+        const orderMap = {
+            'Fundación': 1,
+            'CMAC': 2,
+            'Imágenes': 3,
+            'COI': 4
+        };
+
+        institutions.sort((a, b) => {
+            // Si ambos están en el orderMap (privados), usar ese orden
+            if (orderMap[a.name] && orderMap[b.name]) {
+                return orderMap[a.name] - orderMap[b.name];
+            }
+            // Si solo uno está en orderMap, el que está va primero
+            if (orderMap[a.name]) return -1;
+            if (orderMap[b.name]) return 1;
+
+            // Para hospitales públicos, ordenar por provincia y luego por nombre
+            if (a.sector === 'Sector Público' && b.sector === 'Sector Público') {
+                // Río Negro primero, luego Neuquén
+                if (a.province !== b.province) {
+                    return a.province === 'Río Negro' ? -1 : 1;
+                }
+                // Dentro de la misma provincia, orden alfabético
+                return a.name.localeCompare(b.name);
+            }
+
+            // Fallback: orden alfabético
+            return a.name.localeCompare(b.name);
+        });
+
+        const scheduleData = [];
+
+        for (const institution of institutions) {
+            // Obtener sitios de trabajo activos de esta institución
+            const workSites = await WorkSite.find({
+                institution: institution._id,
+                isActive: true
+            }).sort({ name: 1 });
+
+            // Agrupar por sitio de trabajo y especialidad
+            const groupedSites = [];
+
+            for (const site of workSites) {
+                // Para cada régimen habilitado, crear una entrada
+                const regimes = [];
+
+                if (site.scheduleTypes?.matutino?.enabled) {
+                    regimes.push({
+                        regime: 'matutino',
+                        displayName: `${institution.name} ${site.name} Matutino`,
+                        abbreviation: site.abbreviation,
+                        weeklySchedule: site.scheduleTypes.matutino.weeklySchedule,
+                        specialty: site.specialties?.isCardio ? 'cardio' : null
+                    });
+                }
+
+                if (site.scheduleTypes?.vespertino?.enabled) {
+                    regimes.push({
+                        regime: 'vespertino',
+                        displayName: `${institution.name} ${site.name} Vespertino`,
+                        abbreviation: site.abbreviation,
+                        weeklySchedule: site.scheduleTypes.vespertino.weeklySchedule,
+                        specialty: site.specialties?.isCardio ? 'cardio' : null
+                    });
+                }
+
+                if (site.scheduleTypes?.largo?.enabled) {
+                    regimes.push({
+                        regime: 'largo',
+                        displayName: `${institution.name} ${site.name} Largo`,
+                        abbreviation: site.abbreviation,
+                        weeklySchedule: site.scheduleTypes.largo.weeklySchedule,
+                        specialty: site.specialties?.isCardio ? 'cardio' : null
+                    });
+                }
+
+                groupedSites.push(...regimes);
+            }
+
+            if (groupedSites.length > 0) {
+                scheduleData.push({
+                    institution: {
+                        _id: institution._id,
+                        name: institution.name,
+                        province: institution.province,
+                        sector: institution.sector
+                    },
+                    workSites: groupedSites
+                });
+            }
+        }
+
+        res.json({
+            success: true,
+            count: scheduleData.length,
+            data: scheduleData
+        });
+    } catch (error) {
+        res.status(500).json({
+            success: false,
+            message: 'Error al obtener datos para programación',
             error: error.message
         });
     }
