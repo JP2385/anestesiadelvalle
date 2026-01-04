@@ -11,6 +11,8 @@ const vacationSwapRoutes = require('./src/app/routes/vacationSwapRoutes');
 const notificationRoutes = require('./src/app/routes/notificationRoutes');
 const holidayRoutes = require('./src/app/routes/holidayRoutes');
 const roleRoutes = require('./src/app/routes/roleRoutes');
+const institutionRoutes = require('./src/app/routes/institutionRoutes');
+const workSiteRoutes = require('./src/app/routes/workSiteRoutes');
 const path = require('path');
 const publicRoutes = require('./src/app/routes/publicRoutes');
 const { getUsersAvailability } = require('./src/app/controllers/availabilityController');
@@ -62,6 +64,9 @@ app.use('/coverage-requests', coverageRequestRoutes);
 
 app.use('/other-leaves', otherLeaveRoutes);
 
+app.use('/institutions', institutionRoutes);
+
+app.use('/work-sites', workSiteRoutes);
 
 // Servir archivos estáticos del frontend
 app.use(express.static(path.join(__dirname, '../frontend')));

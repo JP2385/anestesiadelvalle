@@ -5,7 +5,11 @@
       "Bash(npm install:*)",
       "Bash(netstat:*)",
       "Bash(findstr:*)",
-      "Bash(taskkill:*)"
+      "Bash(taskkill:*)",
+      "Bash(git restore:*)",
+      "Bash(node scripts/migrateWorkSites.js:*)",
+      "Bash(node scripts/fixWorkSiteIndexes.js:*)",
+      "Bash(node scripts/listWorkSites.js:*)"
     ],
     "deny": [],
     "ask": []
