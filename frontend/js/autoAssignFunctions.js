@@ -95,3 +95,69 @@ function updateSiteCounts(counts) {
     elements.Thursday.textContent = `${counts[3]}`;
     elements.Friday.textContent = `${counts[4]}`;
 }
+
+/**
+ * Muestra los anestesiólogos NO asignados por día
+ * Compara la disponibilidad con los assignments actuales
+ * @param {Object} availability - Objeto con disponibilidad por día {monday: [...], tuesday: [...], ...}
+ */
+export async function displayUnassignedUsers(availability) {
+    const days = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday'];
+
+    // Obtener los usuarios asignados desde countAssignmentsByDay
+    const { contents: assignedUsers } = await countAssignmentsByDay();
+
+    // Para cada día, encontrar los usuarios NO asignados
+    days.forEach(day => {
+        const availableUsers = availability[day] || [];
+        const assigned = assignedUsers[day] || [];
+
+        // Obtener nombres completos de usuarios asignados para comparación
+        const assignedNames = assigned.map(name => name.trim().toLowerCase());
+
+        // Filtrar usuarios no asignados
+        const unassigned = availableUsers.filter(user => {
+            // Construir el nombre como se muestra en los selects
+            let displayName = '';
+            if (user.firstName && user.lastName) {
+                displayName = `${user.firstName} ${user.lastName}`.trim().toLowerCase();
+            } else if (user.firstName) {
+                displayName = user.firstName.trim().toLowerCase();
+            } else {
+                displayName = (user.username || '').toLowerCase();
+            }
+
+            // Verificar si está asignado comparando con los nombres en los selects
+            return !assignedNames.includes(displayName);
+        });
+
+        // Actualizar el span correspondiente
+        const spanId = `${day}-compare`;
+        const span = document.getElementById(spanId);
+
+        if (span) {
+            // Limpiar contenido anterior
+            span.innerHTML = '';
+            span.title = ''; // Limpiar tooltip
+
+            if (unassigned.length === 0) {
+                span.textContent = '-';
+            } else {
+                // Crear lista de nombres con régimen entre paréntesis
+                const userList = unassigned.map(user => {
+                    // Usar username directamente
+                    const name = user.username;
+
+                    // Obtener el régimen completo
+                    const regime = user.workSchedule ? user.workSchedule[day] : 'Sin régimen';
+
+                    return `${name} (${regime})`;
+                }).join(', ');
+
+                span.textContent = userList;
+            }
+        }
+    });
+
+    console.log('✓ Lista de no asignados actualizada');
+}

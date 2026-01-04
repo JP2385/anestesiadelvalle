@@ -1,4 +1,5 @@
 // Módulo para cargar dinámicamente los sitios de trabajo desde la base de datos
+import { buildWorkSiteName } from './workSiteNameUtils.js';
 
 const apiUrl = window.location.hostname === 'localhost'
     ? 'http://localhost:3000'
@@ -100,19 +101,16 @@ function buildScheduleTable(scheduleData) {
                 const regimeSuffix = site.regime === 'matutino' ? 'short' :
                                    site.regime === 'vespertino' ? 'short' : 'long';
 
-                // Determinar el nombre del sitio de trabajo
-                let workSiteName = institution.name;
-
-                // Si tiene más de un sitio de trabajo, agregar la abreviatura
-                // (la abreviatura ya incluye "Cardio" si es cardio)
-                if (!hasOnlyOneSite) {
-                    workSiteName += ' ' + site.abbreviation;
-                }
-
-                // Agregar régimen
-                const regimeLabel = site.regime === 'matutino' ? ' Matutino' :
-                                  site.regime === 'vespertino' ? ' Vespertino' : ' Largo';
-                workSiteName += regimeLabel;
+                // Construir nombre usando la utilidad compartida
+                // Nota: hasMultipleRegimes siempre true aquí porque en loadWorkSites
+                // cada régimen se carga por separado, entonces siempre mostramos el régimen
+                const workSiteName = buildWorkSiteName(
+                    site,
+                    institution,
+                    site.regime,
+                    !hasOnlyOneSite, // Mostrar abreviatura solo si tiene múltiples sitios
+                    true // Siempre mostrar régimen en weekly-schedule
+                );
 
                 // Crear celdas para cada día de la semana
                 const days = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday'];
@@ -125,9 +123,10 @@ function buildScheduleTable(scheduleData) {
                     const isDisabled = !site.weeklySchedule[day];
                     const disabledAttr = isDisabled ? ' disabled' : '';
 
+                    // IMPORTANTE: Agregar data-worksite-id y data-regime para mapeo en carga de cronogramas
                     rowHTML += `
                         <td class="droppable">
-                            <select id="${selectId}"${disabledAttr}></select>
+                            <select id="${selectId}" data-worksite-id="${site._id}" data-regime="${site.regime}"${disabledAttr}></select>
                         </td>
                     `;
                 });

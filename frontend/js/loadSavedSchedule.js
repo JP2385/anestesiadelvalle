@@ -1,5 +1,6 @@
 /**
- * Función compartida para cargar el cronograma guardado más reciente
+ * Función para cargar el cronograma guardado de la semana actual
+ * Compatible con la NUEVA estructura optimizada de Schedule
  * Retorna true si se cargó un cronograma, false si no existe
  */
 
@@ -8,159 +9,159 @@ export async function loadSavedSchedule(apiUrl, availability) {
         const response = await fetch(`${apiUrl}/schedule/last-schedule`);
 
         if (!response.ok) {
-            console.log('No hay cronograma guardado');
             return false;
         }
 
-        const schedule = await response.json();
+        const result = await response.json();
 
-        if (!schedule || !schedule.assignments) {
-            console.log('Cronograma vacío');
+        if (!result.success || !result.schedule) {
             return false;
         }
 
-        const { assignments, selectConfig, longDaysInform, availabilityInform, mortalCombat } = schedule;
+        const schedule = result.schedule;
+
+        if (!schedule.assignments) {
+            return false;
+        }
 
         // IMPORTANTE: Restaurar estado de Mortal Kombat ANTES de poblar selects
-        if (mortalCombat) {
-            await restoreMortalCombatState(mortalCombat, availability);
+        if (schedule.mortalCombat) {
+            await restoreMortalCombatState(schedule.mortalCombat, availability);
         }
 
-        const scheduleBody = document.getElementById('schedule-body');
-        const rows = scheduleBody.getElementsByTagName('tr');
-
-        // Actualizar longDaysInform
-        const longDaysSpan = document.getElementById('long-days-inform');
-        if (longDaysSpan && longDaysInform) {
-            const items = longDaysInform.split('-').map(item => item.trim()).filter(item => item.length > 0);
-            const ul = document.createElement('ul');
-
-            items.forEach(item => {
-                const li = document.createElement('li');
-                li.textContent = `- ${item.trim()}`;
-                ul.appendChild(li);
-            });
-
-            longDaysSpan.innerHTML = '';
-            longDaysSpan.appendChild(ul);
+        // Restaurar longDaysInform
+        if (schedule.longDaysInform) {
+            restoreLongDaysInform(schedule.longDaysInform);
         }
 
-        // Actualizar availabilityInform
-        if (availabilityInform) {
-            ['monday', 'tuesday', 'wednesday', 'thursday', 'friday'].forEach(day => {
-                const sitesElement = document.getElementById(`${day}-sites`);
-                const availableElement = document.getElementById(`${day}-available`);
-                const assignmentsElement = document.getElementById(`${day}-assignments`);
-                const compareElement = document.getElementById(`${day}-compare`);
+        // Restaurar las asignaciones en los selects
+        await restoreAssignments(schedule.assignments, availability);
 
-                if (sitesElement && availableElement && assignmentsElement && compareElement) {
-                    const sitesTd = sitesElement.closest('td');
-                    const availableTd = availableElement.closest('td');
-                    const assignmentsTd = assignmentsElement.closest('td');
-                    const compareTd = compareElement.closest('td');
+        // Actualizar el informe de asignaciones por día y no asignados
+        await updateAssignmentCounts(availability);
 
-                    // Actualizar valores de texto
-                    sitesElement.textContent = availabilityInform[day].sitesEnabled.value || 0;
-                    availableElement.textContent = availabilityInform[day].available.value || 0;
-                    assignmentsElement.textContent = availabilityInform[day].assigned.value || 0;
-                    compareElement.innerHTML = availabilityInform[day].unassigned.value || '';
-
-                    // Actualizar backgroundColor y tooltips
-                    if (sitesTd) {
-                        sitesTd.style.backgroundColor = availabilityInform[day].sitesEnabled.backgroundColor || 'transparent';
-                        const sitesTooltip = availabilityInform[day].sitesEnabled.tooltip || '';
-                        if (sitesTooltip) {
-                            sitesTd.querySelector('.tooltip-wrapper').setAttribute('data-tooltip', sitesTooltip);
-                        } else {
-                            sitesTd.querySelector('.tooltip-wrapper').removeAttribute('data-tooltip');
-                        }
-                    }
-                    if (availableTd) {
-                        availableTd.style.backgroundColor = availabilityInform[day].available.backgroundColor || 'transparent';
-                        const availableTooltip = availabilityInform[day].available.tooltip || '';
-                        if (availableTooltip) {
-                            availableTd.querySelector('.tooltip-wrapper').setAttribute('data-tooltip', availableTooltip);
-                        } else {
-                            availableTd.querySelector('.tooltip-wrapper').removeAttribute('data-tooltip');
-                        }
-                    }
-                    if (assignmentsTd) {
-                        assignmentsTd.style.backgroundColor = availabilityInform[day].assigned.backgroundColor || 'transparent';
-                        const assignmentsTooltip = availabilityInform[day].assigned.tooltip || '';
-                        if (assignmentsTooltip) {
-                            assignmentsTd.querySelector('.tooltip-wrapper').setAttribute('data-tooltip', assignmentsTooltip);
-                        } else {
-                            assignmentsTd.querySelector('.tooltip-wrapper').removeAttribute('data-tooltip');
-                        }
-                    }
-                    if (compareTd) {
-                        compareTd.style.backgroundColor = availabilityInform[day].unassigned.backgroundColor || 'transparent';
-                        const compareTooltip = availabilityInform[day].unassigned.tooltip || '';
-                        if (compareTooltip) {
-                            compareTd.querySelector('.tooltip-wrapper').setAttribute('data-tooltip', compareTooltip);
-                        } else {
-                            compareTd.querySelector('.tooltip-wrapper').removeAttribute('data-tooltip');
-                        }
-                    }
-                }
-            });
-        }
-
-        // Procesar las filas de trabajo y los selects
-        for (let row of rows) {
-            const workSiteElement = row.querySelector('.work-site');
-            if (workSiteElement) {
-                const workSite = workSiteElement.textContent.trim();
-
-                const selects = row.querySelectorAll('select');
-                selects.forEach((select, index) => {
-                    const day = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday'][index];
-                    const assignment = assignments[day]?.find(a => a.workSite === workSite);
-                    const config = selectConfig[day]?.find(c => c.workSite === workSite);
-
-                    if (assignment && assignment.user !== 'Select user') {
-                        const option = document.createElement('option');
-                        option.value = assignment.userId;
-                        option.textContent = assignment.user;
-                        option.setAttribute('data-username', assignment.username);
-                        option.selected = true;
-                        select.appendChild(option);
-
-                        // Aplicar colores basados en el usuario asignado y availability
-                        const user = availability[day]?.find(u => u._id === assignment.userId || u.username === assignment.user);
-                        if (user) {
-                            select.classList.add('assigned');
-                            // Aplicar clase de color basada en el horario de trabajo del usuario
-                            if (user.workSchedule[day] === 'Mañana') {
-                                select.classList.add('option-morning');
-                            } else if (user.workSchedule[day] === 'Tarde') {
-                                select.classList.add('option-afternoon');
-                            } else if (user.workSchedule[day] === 'Variable') {
-                                select.classList.add('option-long');
-                            }
-                        }
-                    } else {
-                        // Si no hay usuario asignado, aplicar clase default
-                        select.classList.add('default');
-                    }
-
-                    if (config) {
-                        select.disabled = config.disabled;
-                    }
-                });
-            }
-        }
-
-        console.log('✓ Cronograma cargado exitosamente');
         return true;
 
     } catch (error) {
-        console.error('Error cargando cronograma guardado:', error);
+        console.error('Error cargando cronograma:', error);
         return false;
     }
 }
 
-// Función para restaurar el estado de Mortal Kombat
+/**
+ * Restaura las asignaciones en los selects del DOM
+ * Convierte del formato optimizado {workSiteId, userId, regime} al DOM
+ * IMPORTANTE: Deshabilita los selects que NO están en el cronograma guardado
+ */
+async function restoreAssignments(assignments, availability) {
+    const scheduleBody = document.getElementById('schedule-body');
+    const rows = scheduleBody.getElementsByTagName('tr');
+
+    // Crear un mapa de assignments por workSiteId y día
+    const assignmentMap = createAssignmentMap(assignments);
+
+    // Paso 1: Deshabilitar TODOS los selects primero
+    for (let row of rows) {
+        if (row.querySelector('.separator-thin, .separator-thick, .separator-institution')) {
+            continue;
+        }
+
+        const selects = row.querySelectorAll('select');
+        selects.forEach(select => {
+            select.disabled = true;
+            select.classList.add('disabled-worksite');
+        });
+    }
+
+    // Paso 2: Restaurar y habilitar solo los selects que están en el cronograma guardado
+    for (let row of rows) {
+        // Saltar separadores
+        if (row.querySelector('.separator-thin, .separator-thick, .separator-institution')) {
+            continue;
+        }
+
+        const workSiteElement = row.querySelector('.work-site');
+        if (!workSiteElement) continue;
+
+        const selects = row.querySelectorAll('select');
+
+        selects.forEach((select, index) => {
+            const day = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday'][index];
+
+            // Buscar el workSiteId y regime correspondientes a este select
+            const workSiteId = select.getAttribute('data-worksite-id');
+            const regime = select.getAttribute('data-regime');
+
+            if (!workSiteId || !regime) {
+                return;
+            }
+
+            // Buscar la asignación para este workSite, día Y régimen
+            const assignment = assignmentMap.get(`${workSiteId}_${day}_${regime}`);
+
+            if (assignment) {
+                // Habilitar este select porque está en el cronograma guardado
+                select.disabled = false;
+                select.classList.remove('disabled-worksite');
+
+                // Si userId es null, significa que el select estaba enabled pero vacío
+                if (!assignment.userId) {
+                    return;
+                }
+
+                // Buscar el usuario en availability para obtener sus datos
+                const user = availability[day]?.find(u => u._id === assignment.userId._id);
+
+                if (user) {
+                    // Crear y agregar la opción al select
+                    const option = document.createElement('option');
+                    option.value = user._id;
+                    option.textContent = user.firstName && user.lastName
+                        ? `${user.firstName} ${user.lastName}`
+                        : user.username;
+                    option.setAttribute('data-username', user.username);
+                    option.selected = true;
+
+                    select.appendChild(option);
+                    select.classList.remove('default');
+                    select.classList.add('assigned');
+
+                    // Aplicar clase de color basada en el horario de trabajo del usuario
+                    if (user.workSchedule[day] === 'Mañana') {
+                        select.classList.add('option-morning');
+                    } else if (user.workSchedule[day] === 'Tarde') {
+                        select.classList.add('option-afternoon');
+                    } else if (user.workSchedule[day] === 'Variable') {
+                        select.classList.add('option-long');
+                    }
+                }
+            }
+        });
+    }
+}
+
+/**
+ * Crea un mapa de assignments para búsqueda rápida
+ * Key: "workSiteId_day_regime", Value: assignment object
+ */
+function createAssignmentMap(assignments) {
+    const map = new Map();
+
+    ['monday', 'tuesday', 'wednesday', 'thursday', 'friday'].forEach(day => {
+        if (assignments[day]) {
+            assignments[day].forEach(assignment => {
+                const key = `${assignment.workSiteId._id}_${day}_${assignment.regime}`;
+                map.set(key, assignment);
+            });
+        }
+    });
+
+    return map;
+}
+
+/**
+ * Función para restaurar el estado de Mortal Kombat
+ */
 async function restoreMortalCombatState(mortalCombatData, availability) {
     if (!mortalCombatData) return;
 
@@ -173,7 +174,6 @@ async function restoreMortalCombatState(mortalCombatData, availability) {
     if (globalMode) {
         setMortalCombatMode(true);
         updateMortalCombatButtonUI(true);
-        console.log('✓ Modo Mortal Kombat global restaurado');
     }
 
     // Restaurar modos diarios
@@ -181,7 +181,6 @@ async function restoreMortalCombatState(mortalCombatData, availability) {
         Object.keys(dailyModes).forEach(day => {
             if (dailyModes[day]) {
                 setDailyMortalCombatMode(day, true);
-                console.log(`✓ Modo Mortal Kombat restaurado para ${day}`);
             }
         });
     }
@@ -190,7 +189,9 @@ async function restoreMortalCombatState(mortalCombatData, availability) {
     await populateSelectOptions(availability);
 }
 
-// Función para actualizar la UI del botón de Mortal Kombat
+/**
+ * Función para actualizar la UI del botón de Mortal Kombat
+ */
 function updateMortalCombatButtonUI(isActive) {
     const button = document.getElementById('mortal-combat-button');
     const legend = document.getElementById('mortal-combat-legend');
@@ -209,5 +210,59 @@ function updateMortalCombatButtonUI(isActive) {
             legend.style.display = 'none';
             button.title = 'Activar Modo Mortal Kombat';
         }
+    }
+}
+
+/**
+ * Restaura el contenido de longDaysInform en el DOM
+ */
+function restoreLongDaysInform(longDaysInform) {
+    const longDaysSpan = document.getElementById('long-days-inform');
+    if (!longDaysSpan) return;
+
+    // Dividir la cadena longDaysInform en base al "-" para separar las líneas
+    const items = longDaysInform.split('-').map(item => item.trim()).filter(item => item.length > 0);
+
+    // Crear un nuevo elemento <ul>
+    const ul = document.createElement('ul');
+
+    // Recorrer los elementos separados por "-"
+    items.forEach(item => {
+        // Crear un nuevo <li> para cada elemento
+        const li = document.createElement('li');
+        li.textContent = `- ${item.trim()}`;
+        ul.appendChild(li);
+    });
+
+    // Limpiar el contenido anterior y añadir la nueva lista <ul> al elemento longDaysSpan
+    longDaysSpan.innerHTML = '';
+    longDaysSpan.appendChild(ul);
+}
+
+/**
+ * Actualiza los contadores de asignaciones por día y lista de no asignados
+ * Llama a countAssignmentsByDay y displayUnassignedUsers desde autoAssignFunctions
+ * También actualiza los estilos de las celdas cuando lugares > anestesiólogos
+ */
+async function updateAssignmentCounts(availability) {
+    try {
+        // Importar dinámicamente las funciones de conteo
+        const { countAssignmentsByDay, displayUnassignedUsers } = await import('./autoAssignFunctions.js');
+        const { autoAssignReportBgColorsUpdate } = await import('./autoAssignReportBgColorsUpdate.js');
+
+        // Ejecutar el conteo que actualiza los spans en el DOM
+        await countAssignmentsByDay();
+
+        // Mostrar lista de no asignados si tenemos availability
+        if (availability) {
+            await displayUnassignedUsers(availability);
+        }
+
+        // Actualizar estilos dinámicos de las celdas para cada día
+        for (let dayIndex = 0; dayIndex < 5; dayIndex++) {
+            autoAssignReportBgColorsUpdate(dayIndex);
+        }
+    } catch (error) {
+        console.error('Error actualizando contadores:', error);
     }
 }
