@@ -59,7 +59,8 @@ document.addEventListener('DOMContentLoaded', function () {
             },
             specialties: {
                 isCardio: document.getElementById('new-cardio').checked,
-                isPediatrics: document.getElementById('new-pediatrics').checked
+                isPediatrics: document.getElementById('new-pediatrics').checked,
+                isRNM: document.getElementById('new-RNM').checked
             }
         };
 
@@ -114,6 +115,8 @@ document.addEventListener('DOMContentLoaded', function () {
                 matchesSpecialty = workSite.specialties.isCardio;
             } else if (specialtyFilter === 'pediatrics') {
                 matchesSpecialty = workSite.specialties.isPediatrics;
+            } else if (specialtyFilter === 'RNM') {
+                matchesSpecialty = workSite.specialties.isRNM;
             }
 
             return matchesSearch && matchesInstitution && matchesSpecialty;
@@ -176,7 +179,8 @@ document.addEventListener('DOMContentLoaded', function () {
             },
             specialties: {
                 isCardio: document.getElementById('edit-cardio').checked,
-                isPediatrics: document.getElementById('edit-pediatrics').checked
+                isPediatrics: document.getElementById('edit-pediatrics').checked,
+                isRNM: document.getElementById('edit-RNM').checked
             }
         };
 
@@ -338,6 +342,7 @@ document.addEventListener('DOMContentLoaded', function () {
             const specialties = [];
             if (workSite.specialties.isCardio) specialties.push('Cardio');
             if (workSite.specialties.isPediatrics) specialties.push('Pediatría');
+            if (workSite.specialties.isRNM) specialties.push('RNM');
             const specialtiesHTML = specialties.length > 0
                 ? specialties.map(s => `<span class="badge badge-specialty">${s}</span>`).join(' ')
                 : '<span style="color: #999;">Ninguna</span>';
@@ -404,6 +409,7 @@ document.addEventListener('DOMContentLoaded', function () {
         // Especialidades
         document.getElementById('edit-cardio').checked = workSite.specialties.isCardio;
         document.getElementById('edit-pediatrics').checked = workSite.specialties.isPediatrics;
+        document.getElementById('edit-RNM').checked = workSite.specialties.isRNM;
 
         editModal.style.display = 'block';
     }
