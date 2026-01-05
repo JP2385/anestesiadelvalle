@@ -68,6 +68,10 @@ const workSiteSchema = new mongoose.Schema({
         isPediatrics: {
             type: Boolean,
             default: false
+        },
+        isRNM : {
+            type: Boolean,
+            default: false
         }
     },
     isActive: {
