@@ -1,7 +1,8 @@
 document.addEventListener('DOMContentLoaded', () => {
     const printButton = document.getElementById('print-schedule');
     const apiUrl = window.location.hostname === 'localhost' ? 'http://localhost:3000' : 'https://advalle-46fc1873b63d.herokuapp.com';
-    let currentUser = '';
+    let currentUserId = '';
+    let currentUsername = '';
 
     // Obtener la información del perfil del usuario
     const token = localStorage.getItem('token') || sessionStorage.getItem('token');
@@ -18,7 +19,8 @@ document.addEventListener('DOMContentLoaded', () => {
             alert(`Error: ${data.message}`);
             window.location.href = 'login.html';
         } else {
-            currentUser = data.username; // Guardar el nombre de usuario
+            currentUserId = data._id; // Guardar el ID del usuario
+            currentUsername = data.username; // Guardar el nombre de usuario
         }
     })
     .catch(error => {
@@ -27,50 +29,69 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     printButton.addEventListener('click', async () => {
-        // Almacenar el momento en que se oprimió
-        const timestamp = new Date().toISOString();
+        if (!currentUserId) {
+            alert('Error: No se pudo obtener la información del usuario');
+            return;
+        }
 
-        // Almacenar las asignaciones y fechas de los encabezados
-        const { assignments, longDaysCount } = collectAssignments();
-        const dayHeaders = collectDayHeaders();
-        const selectConfig = collectSelectConfig(); // Recolectar configuración de los selects
-        const longDaysInform = collectLongDaysInform();
-        const availabilityInform = collectAvailabilityInform(); // Recolectar información de disponibilidad
-        const mortalCombat = await collectMortalCombatState(); // Recolectar estado de Mortal Kombat
+        try {
+            // Calcular fechas de la semana (sábado a viernes)
+            const { weekStart, weekEnd } = calculateWeekDates();
 
-        if (assignments && currentUser) {
+            // Recolectar asignaciones en el NUEVO formato optimizado
+            const assignments = await collectAssignmentsOptimized();
 
-            try {
-                // Enviar los datos al backend
-                const response = await fetch(`${apiUrl}/schedule/save-schedule`, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({
-                        timestamp,
-                        assignments,
-                        dayHeaders,
-                        selectConfig,
-                        longDaysCount,
-                        longDaysInform,
-                        availabilityInform, // Enviar la información de disponibilidad
-                        mortalCombat, // Enviar el estado de Mortal Kombat
-                        printedBy: currentUser // Incluir el usuario que hace la acción
-                    })
-                });
+            // Recolectar estado de Mortal Kombat
+            const mortalCombat = await collectMortalCombatState();
 
-                if (response.ok) {
-                    // Redirigir a print-view.html
-                    window.location.href = 'print-view.html';
-                } else {
-                    console.error('Error al guardar los datos en la base de datos');
-                }
-            } catch (error) {
-                console.error('Error al enviar los datos al servidor:', error);
+            // Recolectar longDaysCount y longDaysInform
+            const longDaysCount = calculateLongDaysCountFromAssignments(assignments);
+            const longDaysInform = collectLongDaysInform();
+
+            // Validar que tenemos asignaciones
+            if (!assignments) {
+                console.error('No se pudieron recolectar las asignaciones');
+                return;
             }
-        } else {
-            console.error('No se pudieron recolectar las asignaciones o el usuario no está disponible.');
+
+            console.log('📦 Guardando cronograma:', {
+                weekStart,
+                weekEnd,
+                totalAssignments: Object.values(assignments).flat().length,
+                longDaysTotal: Object.values(longDaysCount).reduce((sum, count) => sum + count, 0),
+                createdBy: currentUserId
+            });
+
+            // Enviar los datos al backend en el NUEVO formato
+            const response = await fetch(`${apiUrl}/schedule/save-schedule`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    weekStart,
+                    weekEnd,
+                    assignments,
+                    mortalCombat,
+                    longDaysCount,
+                    longDaysInform,
+                    createdBy: currentUserId
+                })
+            });
+
+            const result = await response.json();
+
+            if (result.success) {
+                console.log('✅ Cronograma guardado exitosamente:', result.scheduleId);
+                // Redirigir a print-view.html
+                window.location.href = 'print-view.html';
+            } else {
+                console.error('❌ Error al guardar:', result.message);
+                alert(`Error al guardar el cronograma: ${result.message}`);
+            }
+        } catch (error) {
+            console.error('❌ Error al enviar los datos al servidor:', error);
+            alert(`Error al guardar el cronograma: ${error.message}`);
         }
     });
 
@@ -264,5 +285,119 @@ document.addEventListener('DOMContentLoaded', () => {
                 dailyModes
             };
         }
+    }
+
+    // ========== NUEVAS FUNCIONES PARA FORMATO OPTIMIZADO ==========
+
+    /**
+     * Calcula las fechas de inicio y fin de la semana actual
+     * La semana va de sábado a viernes
+     */
+    function calculateWeekDates() {
+        const now = new Date();
+        const dayOfWeek = now.getDay(); // 0=Sunday, 6=Saturday
+
+        // Calcular cuántos días restar para llegar al sábado anterior
+        let daysToSubtract = dayOfWeek === 0 ? 1 : (dayOfWeek + 1);
+        if (dayOfWeek === 6) daysToSubtract = 0; // Si es sábado, es el inicio
+
+        const weekStart = new Date(now);
+        weekStart.setDate(now.getDate() - daysToSubtract);
+        weekStart.setHours(0, 0, 0, 0);
+
+        const weekEnd = new Date(weekStart);
+        weekEnd.setDate(weekStart.getDate() + 6); // 6 días después
+        weekEnd.setHours(23, 59, 59, 999);
+
+        return {
+            weekStart: weekStart.toISOString(),
+            weekEnd: weekEnd.toISOString()
+        };
+    }
+
+    /**
+     * Recolecta asignaciones en el NUEVO formato optimizado
+     * Formato: { workSiteId, userId, regime }
+     * Ahora lee directamente el workSiteId del atributo data-worksite-id
+     * IMPORTANTE: Guarda también selects enabled pero vacíos (con userId: null)
+     */
+    async function collectAssignmentsOptimized() {
+        const assignments = {
+            monday: [],
+            tuesday: [],
+            wednesday: [],
+            thursday: [],
+            friday: []
+        };
+
+        const scheduleBody = document.getElementById('schedule-body');
+        const rows = scheduleBody.getElementsByTagName('tr');
+
+        for (let row of rows) {
+            const workSiteElement = row.querySelector('.work-site');
+            if (workSiteElement) {
+                const selects = row.querySelectorAll('select');
+
+                selects.forEach((select, index) => {
+                    const day = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday'][index];
+
+                    // Saltar selects que están disabled (no forman parte del cronograma activo)
+                    if (select.disabled) {
+                        return;
+                    }
+
+                    const selectedOption = select.options[select.selectedIndex];
+                    const userId = selectedOption.value;
+
+                    // Obtener el workSiteId y regime directamente de los atributos data
+                    const workSiteId = select.getAttribute('data-worksite-id');
+                    const regime = select.getAttribute('data-regime');
+
+                    if (!workSiteId || !regime) {
+                        console.warn(`⚠️ Select sin data-worksite-id o data-regime:`, workSiteElement.textContent);
+                        return;
+                    }
+
+                    // Crear el assignment en formato optimizado
+                    // Si está vacío (userId === '' o 'Select user'), guardamos con userId: null
+                    assignments[day].push({
+                        workSiteId: workSiteId,
+                        userId: userId === '' || selectedOption.text === 'Select user' ? null : userId,
+                        regime: regime
+                    });
+                });
+            }
+        }
+
+        return assignments;
+    }
+
+
+    /**
+     * Calcula longDaysCount desde assignments (formato: { userId: count })
+     */
+    function calculateLongDaysCountFromAssignments(assignments) {
+        const longDaysCount = {};
+
+        ['monday', 'tuesday', 'wednesday', 'thursday', 'friday'].forEach(day => {
+            if (assignments[day] && Array.isArray(assignments[day])) {
+                assignments[day].forEach(assignment => {
+                    if (assignment.regime === 'largo') {
+                        const userId = assignment.userId;
+                        longDaysCount[userId] = (longDaysCount[userId] || 0) + 1;
+                    }
+                });
+            }
+        });
+
+        return longDaysCount;
+    }
+
+    /**
+     * Recolecta el contenido del span long-days-inform
+     */
+    function collectLongDaysInform() {
+        const longDaysSpan = document.getElementById('long-days-inform');
+        return longDaysSpan ? longDaysSpan.textContent.trim() : '';
     }
 });

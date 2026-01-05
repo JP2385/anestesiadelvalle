@@ -317,6 +317,7 @@ exports.getWorkSitesForSchedule = async (req, res) => {
 
                 if (site.scheduleTypes?.matutino?.enabled) {
                     regimes.push({
+                        _id: site._id, // ID del workSite
                         regime: 'matutino',
                         displayName: `${institution.name} ${site.name} Matutino`,
                         abbreviation: site.abbreviation,
@@ -327,6 +328,7 @@ exports.getWorkSitesForSchedule = async (req, res) => {
 
                 if (site.scheduleTypes?.vespertino?.enabled) {
                     regimes.push({
+                        _id: site._id, // ID del workSite
                         regime: 'vespertino',
                         displayName: `${institution.name} ${site.name} Vespertino`,
                         abbreviation: site.abbreviation,
@@ -337,6 +339,7 @@ exports.getWorkSitesForSchedule = async (req, res) => {
 
                 if (site.scheduleTypes?.largo?.enabled) {
                     regimes.push({
+                        _id: site._id, // ID del workSite
                         regime: 'largo',
                         displayName: `${institution.name} ${site.name} Largo`,
                         abbreviation: site.abbreviation,

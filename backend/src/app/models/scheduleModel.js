@@ -1,48 +1,31 @@
 const mongoose = require('mongoose');
 
-// Definimos el esquema para la configuración de los selects
-const selectConfigSchema = new mongoose.Schema({
-    workSite: { type: String, required: true },
-    disabled: { type: Boolean, required: true },
-    className: { type: String, required: true } // Almacenamos la clase del select
-}, { _id: false }); // No necesitamos _id en los subdocumentos
-
-// Definimos el subesquema para los detalles de cada campo de disponibilidad
-const availabilityDetailSchema = new mongoose.Schema({
-    value: { type: mongoose.Schema.Types.Mixed, required: true }, // Aceptar tanto Number como String
-    backgroundColor: { type: String, required: false }, // El color de fondo de la celda
-    tooltip: { type: String, required: false } // El tooltip, puede ser opcional
+// Esquema simplificado para un assignment individual
+const assignmentSchema = new mongoose.Schema({
+    workSiteId: { type: mongoose.Schema.Types.ObjectId, ref: 'WorkSite', required: true },
+    userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: false, default: null }, // Puede ser null para selects enabled vacíos
+    regime: { type: String, enum: ['matutino', 'vespertino', 'largo'], required: true }
 }, { _id: false });
 
-
-// Definimos el esquema para la información de disponibilidad por día
-const availabilitySchema = new mongoose.Schema({
-    sitesEnabled: { type: availabilityDetailSchema, required: true }, // Nro de lugares habilitados
-    available: { type: availabilityDetailSchema, required: true }, // Nro. de Anestesiólogos disponibles
-    assigned: { type: availabilityDetailSchema, required: true }, // Nro. de Anestesiólogos asignados
-    unassigned: { type: availabilityDetailSchema, required: true } // Anestesiólogos no asignados
+// Esquema para los assignments por día
+const dailyAssignmentsSchema = new mongoose.Schema({
+    monday: [assignmentSchema],
+    tuesday: [assignmentSchema],
+    wednesday: [assignmentSchema],
+    thursday: [assignmentSchema],
+    friday: [assignmentSchema]
 }, { _id: false });
 
-// Definimos el esquema de los schedules
+// Definimos el esquema de los schedules (OPTIMIZADO)
 const scheduleSchema = new mongoose.Schema({
-    timestamp: { type: String, required: true },
-    assignments: { type: Object, required: true },
-    dayHeaders: { type: Object, required: true },
-    selectConfig: {
-        monday: [selectConfigSchema],
-        tuesday: [selectConfigSchema],
-        wednesday: [selectConfigSchema],
-        thursday: [selectConfigSchema],
-        friday: [selectConfigSchema]
-    }, // Configuración detallada para cada día de la semana
-    longDaysCount: { type: Object, required: true }, // Recuento de días largos
-    availabilityInform: {
-        monday: { type: availabilitySchema, required: true },
-        tuesday: { type: availabilitySchema, required: true },
-        wednesday: { type: availabilitySchema, required: true },
-        thursday: { type: availabilitySchema, required: true },
-        friday: { type: availabilitySchema, required: true }
-    }, // Información sobre disponibilidad por día
+    // Información de la semana
+    weekStart: { type: Date, required: true }, // Sábado de inicio
+    weekEnd: { type: Date, required: true },   // Viernes de fin
+
+    // Asignaciones (SIMPLIFICADO - solo IDs)
+    assignments: { type: dailyAssignmentsSchema, required: true },
+
+    // Estado de Mortal Kombat (tiene sentido guardarlo)
     mortalCombat: {
         globalMode: { type: Boolean, default: false },
         dailyModes: {
@@ -52,11 +35,32 @@ const scheduleSchema = new mongoose.Schema({
             thursday: { type: Boolean, default: false },
             friday: { type: Boolean, default: false }
         }
-    }, // Estado del modo Mortal Kombat
-    createdAt: { type: Date, default: Date.now, expires: '1y' }, // Campo de expiración
-    printedBy: { type: String, required: true },
-    longDaysInform: { type: String, required: false }
+    },
+
+    // Conteo de días largos por usuario (para reportes históricos)
+    longDaysCount: {
+        type: Map,
+        of: Number,
+        default: {}
+    },
+
+    // Informe textual del esquema de programación
+    longDaysInform: {
+        type: String,
+        required: false
+    },
+
+    // Metadata
+    createdBy: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
+    createdAt: { type: Date, default: Date.now },
+    updatedAt: { type: Date, default: Date.now }
+}, {
+    timestamps: true, // Mongoose maneja createdAt y updatedAt automáticamente
+    expires: '1y' // Expira después de 1 año
 });
+
+// Índice para buscar schedules por semana de manera eficiente
+scheduleSchema.index({ weekStart: 1, weekEnd: 1 });
 
 // Creamos el modelo basado en el esquema
 const Schedule = mongoose.model('Schedule', scheduleSchema);

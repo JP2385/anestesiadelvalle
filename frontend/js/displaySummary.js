@@ -1,3 +1,5 @@
+import { buildWorkSiteName, mapWorkSiteRegimes, getInstitutionOrder } from './workSiteNameUtils.js';
+
 document.addEventListener('DOMContentLoaded', () => {
     const summaryContainer = document.getElementById('summary-container');
     const apiUrl = window.location.hostname === 'localhost' ? 'http://localhost:3000' : 'https://advalle-46fc1873b63d.herokuapp.com';
@@ -6,11 +8,18 @@ document.addEventListener('DOMContentLoaded', () => {
     fetch(`${apiUrl}/schedule/last-schedule`)
         .then(response => response.json())
         .then(data => {
-            const assignments = data.assignments;
-            const dayHeaders = data.dayHeaders;
-            const timestamp = data.timestamp;
-            const selectConfig = data.selectConfig; // Obtener selectConfig
-            const generatedBy = data.printedBy;
+            if (!data.success || !data.schedule) {
+                console.error('No schedule found');
+                summaryContainer.innerHTML = '<p>No hay programación disponible para mostrar.</p>';
+                return;
+            }
+
+            const schedule = data.schedule;
+
+            // Transformar del formato optimizado al formato legacy
+            const { assignments, dayHeaders, selectConfig } = transformOptimizedToLegacy(schedule);
+            const timestamp = schedule.createdAt;
+            const generatedBy = schedule.createdBy?.username || 'Unknown';
 
             // Hacer una solicitud para obtener la disponibilidad
             fetch(`${apiUrl}/availability`)
@@ -25,8 +34,8 @@ document.addEventListener('DOMContentLoaded', () => {
                         friday: dayHeaders.friday.replace(/🔄/g, '').replace(/MK/g, '').trim()
                     };
 
-                    // Generar la tabla de resumen basada en selectConfig
-                    let summaryTable = generateSummaryTable(cleanedDayHeaders, selectConfig.monday);
+                    // Generar la tabla de resumen basada en selectConfig (todos los días)
+                    let summaryTable = generateSummaryTable(cleanedDayHeaders, selectConfig);
 
                     // Poblar la tabla con los assignments, availability y selectConfig
                     populateAssignments(assignments, summaryTable, availability, selectConfig);
@@ -116,8 +125,32 @@ function generateSummaryTable(dayHeaders, selectConfig) {
     });
     thead.appendChild(headerRow);
 
-    selectConfig.forEach(config => {
-        const workSite = config.workSite;
+    // Recolectar TODOS los workSites únicos de TODOS los días
+    const allWorkSites = new Set();
+    ['monday', 'tuesday', 'wednesday', 'thursday', 'friday'].forEach(day => {
+        if (selectConfig[day]) {
+            selectConfig[day].forEach(config => {
+                allWorkSites.add(config.workSite);
+            });
+        }
+    });
+
+    // Convertir a array y ordenar según el orden de instituciones
+    const sortedWorkSites = Array.from(allWorkSites).sort((a, b) => {
+        const orderA = getInstitutionOrder(a);
+        const orderB = getInstitutionOrder(b);
+
+        // Primero ordenar por institución
+        if (orderA !== orderB) {
+            return orderA - orderB;
+        }
+
+        // Si son de la misma institución, ordenar alfabéticamente
+        return a.localeCompare(b, 'es');
+    });
+
+    // Crear filas para cada workSite único (ordenado)
+    sortedWorkSites.forEach(workSite => {
         const row = document.createElement('tr');
         const workSiteCell = document.createElement('td');
         workSiteCell.className = 'work-site';
@@ -160,30 +193,19 @@ function populateAssignments(assignments, table, availability, selectConfig) {
             if (assignment && assignment.user !== 'Select user') {
                 cell.textContent = assignment.user;
 
-                // Obtener la configuración del select correspondiente para aplicar la clase correcta
-                const selectConfigForDay = selectConfig[day];
-                const selectConfigForWorkSite = selectConfigForDay?.find(config => config.workSite === workSite);
-                
-                if (selectConfigForWorkSite && selectConfigForWorkSite.className) {
-                    // Aplicar las clases que tenía el select original
-                    const classes = selectConfigForWorkSite.className.split(' ');
-                    classes.forEach(className => {
-                        if (className.includes('option-')) {
-                            cell.classList.add(className);
-                        }
-                    });
-                } else {
-                    // Fallback: usar el esquema del usuario si no hay selectConfig
-                    const user = availability[day]?.find(u => u._id === assignment.user || u.username === assignment.user);
-                    if (user) {
-                        if (user.workSchedule[day] === 'Mañana') {
-                            cell.classList.add('option-morning');
-                        } else if (user.workSchedule[day] === 'Tarde') {
-                            cell.classList.add('option-afternoon');
-                        } else if (user.workSchedule[day] === 'Variable') {
-                            cell.classList.add('option-long');
-                        }
+                // IMPORTANTE: Aplicar estilo basado en el workSchedule del USUARIO, no en el régimen del workSite
+                const user = availability[day]?.find(u => u._id === assignment.userId || u.username === assignment.username);
+
+                if (user && user.workSchedule) {
+                    if (user.workSchedule[day] === 'Mañana') {
+                        cell.classList.add('option-morning');
+                    } else if (user.workSchedule[day] === 'Tarde') {
+                        cell.classList.add('option-afternoon');
+                    } else if (user.workSchedule[day] === 'Variable') {
+                        cell.classList.add('option-long');
                     }
+                } else {
+                    console.warn(`No se encontró usuario en availability para ${assignment.user} el ${day}`);
                 }
             }
 
@@ -316,4 +338,99 @@ function downloadTableAsImage(container) {
         link.href = canvas.toDataURL('image/png');
         link.click();
     });
+}
+
+/**
+ * Transforma el formato optimizado al formato legacy esperado por el resto del código
+ */
+function transformOptimizedToLegacy(schedule) {
+    const days = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday'];
+
+    // Generar dayHeaders desde weekStart
+    const weekStart = new Date(schedule.weekStart);
+    const dayHeaders = {};
+    days.forEach((day, index) => {
+        const date = new Date(weekStart);
+        date.setDate(date.getDate() + index);
+        const dayNum = String(date.getDate()).padStart(2, '0');
+        const month = String(date.getMonth() + 1).padStart(2, '0');
+        dayHeaders[day] = `${dayNum}/${month}`;
+    });
+
+    // Paso 1: Identificar workSites con múltiples regímenes usando la utilidad compartida
+    const workSiteRegimes = mapWorkSiteRegimes(schedule.assignments);
+
+    // Transformar assignments al formato legacy
+    const assignments = {};
+    const selectConfigMap = new Map();
+
+    days.forEach(day => {
+        assignments[day] = [];
+
+        if (schedule.assignments[day]) {
+            schedule.assignments[day].forEach(assignment => {
+                const workSiteId = assignment.workSiteId;
+                const userId = assignment.userId;
+                const regime = assignment.regime;
+
+                // Construir nombre usando la utilidad compartida
+                const wsId = workSiteId._id.toString();
+                const hasMultipleRegimesForSite = workSiteRegimes.get(wsId)?.size > 1;
+
+                // Nota: hasMultipleSites siempre false aquí porque no tenemos info de cuántos sitios tiene la institución
+                // En el futuro se podría pasar desde el backend
+                const workSiteName = buildWorkSiteName(
+                    workSiteId,
+                    workSiteId.institution,
+                    regime,
+                    true, // Siempre mostrar abreviatura en print view
+                    hasMultipleRegimesForSite
+                );
+
+                // Agregar assignment en formato legacy
+                assignments[day].push({
+                    workSite: workSiteName,
+                    user: userId.username || userId.firstName || 'Unknown',
+                    userId: userId._id,
+                    username: userId.username
+                });
+
+                // Agregar a selectConfig
+                const configKey = `${workSiteName}-${day}`;
+                if (!selectConfigMap.has(configKey)) {
+                    selectConfigMap.set(configKey, {
+                        workSite: workSiteName,
+                        day: day,
+                        className: getClassNameForRegime(regime)
+                    });
+                }
+            });
+        }
+    });
+
+    // Construir selectConfig por día
+    const selectConfig = {};
+    days.forEach(day => {
+        selectConfig[day] = [];
+        selectConfigMap.forEach((config) => {
+            if (config.day === day) {
+                selectConfig[day].push({
+                    workSite: config.workSite,
+                    className: config.className
+                });
+            }
+        });
+    });
+
+    return { assignments, dayHeaders, selectConfig };
+}
+
+/**
+ * Retorna la clase CSS según el régimen
+ */
+function getClassNameForRegime(regime) {
+    if (regime === 'matutino') return 'option-morning';
+    if (regime === 'vespertino') return 'option-afternoon';
+    if (regime === 'largo') return 'option-long';
+    return '';
 }
