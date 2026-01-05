@@ -1,4 +1,5 @@
 import { buildWorkSiteName, mapWorkSiteRegimes, getInstitutionOrder } from './workSiteNameUtils.js';
+import { generateWeekHeaders } from './weekDateFormatter.js';
 
 document.addEventListener('DOMContentLoaded', () => {
     const summaryContainer = document.getElementById('summary-container');
@@ -346,16 +347,8 @@ function downloadTableAsImage(container) {
 function transformOptimizedToLegacy(schedule) {
     const days = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday'];
 
-    // Generar dayHeaders desde weekStart
-    const weekStart = new Date(schedule.weekStart);
-    const dayHeaders = {};
-    days.forEach((day, index) => {
-        const date = new Date(weekStart);
-        date.setDate(date.getDate() + index);
-        const dayNum = String(date.getDate()).padStart(2, '0');
-        const month = String(date.getMonth() + 1).padStart(2, '0');
-        dayHeaders[day] = `${dayNum}/${month}`;
-    });
+    // Generar dayHeaders desde weekStart usando formato corto (Lunes 3)
+    const dayHeaders = generateWeekHeaders(schedule.weekStart, false);
 
     // Paso 1: Identificar workSites con múltiples regímenes usando la utilidad compartida
     const workSiteRegimes = mapWorkSiteRegimes(schedule.assignments);

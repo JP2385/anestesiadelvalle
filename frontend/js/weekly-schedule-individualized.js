@@ -1,3 +1,6 @@
+import { buildWorkSiteName, mapWorkSiteRegimes } from './workSiteNameUtils.js';
+import { generateWeekHeaders } from './weekDateFormatter.js';
+
 document.addEventListener('DOMContentLoaded', () => {
     const apiUrl = window.location.hostname === 'localhost' ? 'http://localhost:3000' : 'https://advalle-46fc1873b63d.herokuapp.com';
     const userAssignmentsContainer = document.getElementById('user-assignments');
@@ -21,20 +24,26 @@ document.addEventListener('DOMContentLoaded', () => {
             // Obtener el último schedule desde MongoDB
             fetch(`${apiUrl}/schedule/last-schedule`)
                 .then(response => response.json())
-                .then(schedule => {
+                .then(data => {
+                    if (!data.success || !data.schedule) {
+                        userAssignmentsContainer.textContent = 'No hay datos de asignaciones disponibles.';
+                        return;
+                    }
+
+                    const schedule = data.schedule;
                     const assignments = schedule.assignments;
-                    const timestamp = schedule.timestamp;
-                    const generatedBy = schedule.printedBy;
-                    let dayHeaders = schedule.dayHeaders;
+                    const timestamp = schedule.createdAt;
+                    const generatedBy = schedule.createdBy?.username || 'Unknown';
 
-                    if (assignments && dayHeaders) {
-                        // Limpiar los encabezados de los días
-                        dayHeaders = cleanDayHeaders(dayHeaders);
+                    if (assignments) {
+                        // Generar dayHeaders desde weekStart con formato largo
+                        const dayHeaders = generateWeekHeaders(schedule.weekStart, true);
 
-                        const userAssignments = transformAssignments(assignments);
+                        // Transformar assignments con nueva estructura
+                        const userAssignments = transformAssignments(assignments, currentUser);
 
-                        if (userAssignments[currentUser]) {
-                            const assignmentList = generateAssignmentList(userAssignments[currentUser], dayHeaders);
+                        if (userAssignments && Object.keys(userAssignments).length > 0) {
+                            const assignmentList = generateAssignmentList(userAssignments, dayHeaders);
                             userAssignmentsContainer.appendChild(assignmentList);
                         } else {
                             userAssignmentsContainer.textContent = 'No tienes asignaciones para esta semana.';
@@ -61,12 +70,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
                         // Añadir el contenedor de la cabecera al final del contenedor principal
                         headerDiv.appendChild(timestampDiv);
-                        userAssignmentsContainer.appendChild(headerDiv); // Ahora se añade debajo de la lista
+                        userAssignmentsContainer.appendChild(headerDiv);
                     } else {
                         userAssignmentsContainer.textContent = 'No hay datos de asignaciones disponibles.';
                     }
                 })
                 .catch(error => {
+                    console.error('Error al obtener el schedule:', error);
                     alert('Hubo un problema al obtener el último schedule: ' + error.message);
                 });
         }
@@ -77,34 +87,43 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 });
 
-function cleanDayHeaders(dayHeaders) {
-    const cleanedDayHeaders = {};
-    Object.keys(dayHeaders).forEach(day => {
-        cleanedDayHeaders[day] = dayHeaders[day].replace(/MK🔄/g, '').trim();
-    });
-    return cleanedDayHeaders;
-}
-
-function transformAssignments(assignments) {
+function transformAssignments(assignments, currentUsername) {
     const userAssignments = {};
+    const days = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday'];
 
-    Object.keys(assignments).forEach(day => {
+    // Mapear regímenes para identificar workSites con múltiples regímenes
+    const workSiteRegimes = mapWorkSiteRegimes(assignments);
+
+    days.forEach(day => {
         if (Array.isArray(assignments[day])) {
             assignments[day].forEach(assignment => {
-                const { user, workSite } = assignment;
+                const workSiteId = assignment.workSiteId;
+                const userId = assignment.userId;
+                const regime = assignment.regime;
 
-                if (!userAssignments[user]) {
-                    userAssignments[user] = {};
+                // Verificar si este assignment pertenece al usuario actual
+                const username = userId?.username || userId?.firstName || '';
+
+                if (username === currentUsername) {
+                    // Construir el nombre del workSite usando la utilidad
+                    const wsId = workSiteId?._id?.toString() || workSiteId?.toString();
+                    const hasMultipleRegimes = workSiteRegimes.get(wsId)?.size > 1;
+
+                    const workSiteName = buildWorkSiteName(
+                        workSiteId,
+                        workSiteId?.institution,
+                        regime,
+                        true, // Siempre mostrar abreviatura
+                        hasMultipleRegimes
+                    );
+
+                    if (!userAssignments[day]) {
+                        userAssignments[day] = [];
+                    }
+
+                    userAssignments[day].push(workSiteName);
                 }
-
-                if (!userAssignments[user][day]) {
-                    userAssignments[user][day] = [];
-                }
-
-                userAssignments[user][day].push(workSite);
             });
-        } else {
-            console.error(`Expected assignments[${day}] to be an array, but got:`, assignments[day]);
         }
     });
 
