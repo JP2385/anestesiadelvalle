@@ -127,7 +127,8 @@ exports.createWorkSite = async (req, res) => {
             },
             specialties: specialties || {
                 isCardio: false,
-                isPediatrics: false
+                isPediatrics: false,
+                isRNM: false
             }
         });
 
