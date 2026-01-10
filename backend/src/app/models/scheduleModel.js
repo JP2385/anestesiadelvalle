@@ -40,7 +40,9 @@ const scheduleSchema = new mongoose.Schema({
     // Conteo de días largos por usuario (para reportes históricos)
     longDaysCount: {
         type: Map,
-        of: Number,
+        of: {
+            count: { type: Number, required: true }
+        },
         default: {}
     },
 
