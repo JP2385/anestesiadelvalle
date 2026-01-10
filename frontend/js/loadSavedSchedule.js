@@ -1,4 +1,39 @@
 /**
+ * Verifica si una fecha pertenece a la semana actual (de sábado a viernes)
+ * @param {string|Date} dateString - Fecha a verificar
+ * @returns {boolean} - true si es de la semana actual, false si no
+ */
+function isCurrentWeek(dateString) {
+    const scheduleDate = new Date(dateString);
+    const today = new Date();
+
+    // Función auxiliar para obtener el sábado del inicio de la semana
+    function getWeekStartSaturday(date) {
+        const d = new Date(date);
+        const dayOfWeek = d.getDay(); // 0 = domingo, 1 = lunes, ..., 6 = sábado
+
+        // Calcular cuántos días restar para llegar al sábado anterior
+        let daysToSubtract;
+        if (dayOfWeek === 6) { // Si es sábado
+            daysToSubtract = 0;
+        } else { // Cualquier otro día
+            daysToSubtract = (dayOfWeek + 1) % 7;
+        }
+
+        d.setDate(d.getDate() - daysToSubtract);
+        d.setHours(0, 0, 0, 0);
+        return d;
+    }
+
+    // Obtener el sábado de inicio de ambas semanas
+    const currentWeekStart = getWeekStartSaturday(today);
+    const scheduleWeekStart = getWeekStartSaturday(scheduleDate);
+
+    // Comparar si ambas fechas pertenecen a la misma semana
+    return currentWeekStart.getTime() === scheduleWeekStart.getTime();
+}
+
+/**
  * Función para cargar el cronograma guardado de la semana actual
  * Compatible con la NUEVA estructura optimizada de Schedule
  * Retorna true si se cargó un cronograma, false si no existe
@@ -21,6 +56,13 @@ export async function loadSavedSchedule(apiUrl, availability) {
         const schedule = result.schedule;
 
         if (!schedule.assignments) {
+            return false;
+        }
+
+        // IMPORTANTE: Verificar que el cronograma sea de la semana actual
+        // Si es de una semana diferente, retornar false para forzar nueva auto-asignación
+        if (!isCurrentWeek(schedule.createdAt)) {
+            console.log('El cronograma encontrado es de una semana diferente, ejecutando nueva auto-asignación...');
             return false;
         }
 

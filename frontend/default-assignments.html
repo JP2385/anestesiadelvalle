@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Configurar Asignaciones por Defecto</title>
+    <link rel="icon" type="image/png" href="images/logo/logo64x64.png">
+    <link rel="stylesheet" href="css/weekly-schedule.css">
+    <link rel="stylesheet" href="css/header.css">
+    <link rel="stylesheet" href="css/spinner.css">
+    <link rel="stylesheet" href="css/media.css">
+    <script defer src="js/bundle.js"></script>
+    <script src="js/spinner.js"></script>
+    <script type="module" defer src="js/default-assignments.js"></script>
+    <script type="module">
+        import { initializePermissions, redirectIfNoRole } from './js/authUtils.js';
+
+        // Proteger esta página - solo admin puede acceder
+        document.addEventListener('DOMContentLoaded', async function() {
+            await initializePermissions();
+            redirectIfNoRole('/index.html', 'admin');
+        });
+    </script>
+</head>
+<body>
+    <div class="spinner" id="spinner"></div>
+    <header>
+        <a href="index.html" class="app-logo-link">
+            <img src="images/logo/logo.png" alt="Logo Anestesiólogos del Valle" class="app-logo">
+        </a>
+        <h1>Anestesiólogos del Valle</h1>
+        <a href="admin.html" class="back-to-main-menu" title="Volver al menú de administración">
+            <img src="images/icons/back-icon.svg" alt="Volver" class="back-icon">
+        </a>
+    </header>
+    <main>
+        <div class="instructions">
+            <h2>Configurar Asignaciones por Defecto</h2>
+            <p>Configure los lugares de trabajo que se asignarán automáticamente a cada usuario durante la auto-asignación semanal.</p>
+            <p style="font-size: 12px; color: #666; margin-top: 10px;">
+                Seleccione un usuario para cada sitio de trabajo y régimen. El sistema alternará automáticamente entre semanas pares e impares.
+            </p>
+
+            <div id="weeks-tabs" style="margin: 20px 0;">
+                <button id="odd-week-tab" class="week-tab active" data-week="odd">Semanas Impares</button>
+                <button id="even-week-tab" class="week-tab" data-week="even">Semanas Pares</button>
+            </div>
+
+            <div style="margin: 20px 0; display: flex; align-items: center; gap: 15px;">
+                <div style="flex: 1;">
+                    <label for="user-filter" style="font-weight: bold; margin-right: 10px;">Resaltar asignaciones de:</label>
+                    <select id="user-filter" style="padding: 8px; min-width: 200px; border: 2px solid #007bff; border-radius: 5px;">
+                        <option value="">-- Seleccione un usuario --</option>
+                    </select>
+                    <button id="clear-filter" class="instructions-button" style="background-color: #6c757d; margin-left: 10px;">
+                        Limpiar Filtro
+                    </button>
+                </div>
+            </div>
+
+            <div style="margin: 20px 0;">
+                <button id="save-assignments" class="instructions-button" style="background-color: #28a745;">
+                    Guardar Todas las Asignaciones
+                </button>
+                <button id="clear-assignments" class="instructions-button" style="background-color: #dc3545; margin-left: 10px;">
+                    Limpiar Todas las Asignaciones
+                </button>
+            </div>
+        </div>
+
+        <!-- Tabla para Semanas Impares -->
+        <div id="odd-week-container" class="week-container" style="display: none;">
+            <h3>Asignaciones - Semanas Impares</h3>
+            <table id="schedule-assistant-odd" class="styled-table">
+                <thead>
+                    <tr>
+                        <th>Sitio de Trabajo</th>
+                        <th id="monday-header-odd">Lunes</th>
+                        <th id="tuesday-header-odd">Martes</th>
+                        <th id="wednesday-header-odd">Miércoles</th>
+                        <th id="thursday-header-odd">Jueves</th>
+                        <th id="friday-header-odd">Viernes</th>
+                    </tr>
+                </thead>
+                <tbody id="schedule-body-odd">
+                    <!-- Las filas se cargarán dinámicamente -->
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Tabla para Semanas Pares -->
+        <div id="even-week-container" class="week-container" style="display: none;">
+            <h3>Asignaciones - Semanas Pares</h3>
+            <table id="schedule-assistant-even" class="styled-table">
+                <thead>
+                    <tr>
+                        <th>Sitio de Trabajo</th>
+                        <th id="monday-header-even">Lunes</th>
+                        <th id="tuesday-header-even">Martes</th>
+                        <th id="wednesday-header-even">Miércoles</th>
+                        <th id="thursday-header-even">Jueves</th>
+                        <th id="friday-header-even">Viernes</th>
+                    </tr>
+                </thead>
+                <tbody id="schedule-body-even">
+                    <!-- Las filas se cargarán dinámicamente -->
+                </tbody>
+            </table>
+        </div>
+    </main>
+
+    <style>
+        .week-tab {
+            padding: 10px 20px;
+            border: none;
+            background-color: #f0f0f0;
+            cursor: pointer;
+            margin-right: 5px;
+            border-radius: 5px 5px 0 0;
+            font-weight: bold;
+        }
+
+        .week-tab.active {
+            background-color: #007bff;
+            color: white;
+        }
+
+        .week-container {
+            margin-top: 20px;
+        }
+
+        .week-container h3 {
+            color: #007bff;
+            margin-bottom: 15px;
+        }
+
+        select.user-assignment-select {
+            width: 100%;
+            padding: 5px;
+            font-size: 13px;
+            border: 1px solid #ccc;
+            border-radius: 3px;
+        }
+
+        select.user-assignment-select:focus {
+            outline: 2px solid #007bff;
+            border-color: #007bff;
+        }
+
+        select.user-assignment-select option[value=""] {
+            color: #999;
+        }
+
+        .styled-table td select {
+            background-color: white;
+        }
+
+        .styled-table td select:disabled {
+            background-color: #f5f5f5;
+            cursor: not-allowed;
+        }
+
+        /* Estilos para resaltar asignaciones del usuario seleccionado */
+        select.user-assignment-select.highlighted {
+            background-color: #cce5ff !important;
+            border: 3px solid #007bff !important;
+            font-weight: bold;
+        }
+
+        select.user-assignment-select.highlighted option:checked {
+            background-color: #007bff;
+            color: white;
+        }
+    </style>
+</body>
+</html>

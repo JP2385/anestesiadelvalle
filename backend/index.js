@@ -19,6 +19,7 @@ const { getUsersAvailability } = require('./src/app/controllers/availabilityCont
 const { getAllVacations } = require('./src/app/controllers/vacationController');
 const coverageRequestRoutes = require('./src/app/routes/coverageRequestRoutes');
 const otherLeaveRoutes = require('./src/app/routes/otherLeaveRoutes');
+const extraAssignmentRoutes = require('./src/app/routes/extraAssignmentRoutes');
 
 const app = express();
 app.use(express.json());
@@ -67,6 +68,8 @@ app.use('/other-leaves', otherLeaveRoutes);
 app.use('/institutions', institutionRoutes);
 
 app.use('/work-sites', workSiteRoutes);
+
+app.use('/extra-assignments', extraAssignmentRoutes);
 
 // Servir archivos estáticos del frontend
 app.use(express.static(path.join(__dirname, '../frontend')));

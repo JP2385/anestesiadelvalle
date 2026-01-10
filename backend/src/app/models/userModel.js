@@ -123,6 +123,56 @@ const userSchema = new Schema({
             default: 'Variable'
         }
     },
+    defaultAssignments: {
+        useAlternatingWeeks: {
+            type: Boolean,
+            default: true
+        },
+        oddWeeks: {
+            monday: [{
+                workSiteId: { type: Schema.Types.ObjectId, ref: 'WorkSite' },
+                regime: { type: String, enum: ['matutino', 'vespertino', 'largo'] }
+            }],
+            tuesday: [{
+                workSiteId: { type: Schema.Types.ObjectId, ref: 'WorkSite' },
+                regime: { type: String, enum: ['matutino', 'vespertino', 'largo'] }
+            }],
+            wednesday: [{
+                workSiteId: { type: Schema.Types.ObjectId, ref: 'WorkSite' },
+                regime: { type: String, enum: ['matutino', 'vespertino', 'largo'] }
+            }],
+            thursday: [{
+                workSiteId: { type: Schema.Types.ObjectId, ref: 'WorkSite' },
+                regime: { type: String, enum: ['matutino', 'vespertino', 'largo'] }
+            }],
+            friday: [{
+                workSiteId: { type: Schema.Types.ObjectId, ref: 'WorkSite' },
+                regime: { type: String, enum: ['matutino', 'vespertino', 'largo'] }
+            }]
+        },
+        evenWeeks: {
+            monday: [{
+                workSiteId: { type: Schema.Types.ObjectId, ref: 'WorkSite' },
+                regime: { type: String, enum: ['matutino', 'vespertino', 'largo'] }
+            }],
+            tuesday: [{
+                workSiteId: { type: Schema.Types.ObjectId, ref: 'WorkSite' },
+                regime: { type: String, enum: ['matutino', 'vespertino', 'largo'] }
+            }],
+            wednesday: [{
+                workSiteId: { type: Schema.Types.ObjectId, ref: 'WorkSite' },
+                regime: { type: String, enum: ['matutino', 'vespertino', 'largo'] }
+            }],
+            thursday: [{
+                workSiteId: { type: Schema.Types.ObjectId, ref: 'WorkSite' },
+                regime: { type: String, enum: ['matutino', 'vespertino', 'largo'] }
+            }],
+            friday: [{
+                workSiteId: { type: Schema.Types.ObjectId, ref: 'WorkSite' },
+                regime: { type: String, enum: ['matutino', 'vespertino', 'largo'] }
+            }]
+        }
+    },
     vacations: [vacationSchema],
     otherLeaves: [otherLeaveSchema]
 });

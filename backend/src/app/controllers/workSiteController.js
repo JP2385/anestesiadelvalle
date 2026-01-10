@@ -323,7 +323,7 @@ exports.getWorkSitesForSchedule = async (req, res) => {
                         displayName: `${institution.name} ${site.name} Matutino`,
                         abbreviation: site.abbreviation,
                         weeklySchedule: site.scheduleTypes.matutino.weeklySchedule,
-                        specialty: site.specialties?.isCardio ? 'cardio' : null
+                        specialties: site.specialties || { isCardio: false, isPediatrics: false, isRNM: false }
                     });
                 }
 
@@ -334,7 +334,7 @@ exports.getWorkSitesForSchedule = async (req, res) => {
                         displayName: `${institution.name} ${site.name} Vespertino`,
                         abbreviation: site.abbreviation,
                         weeklySchedule: site.scheduleTypes.vespertino.weeklySchedule,
-                        specialty: site.specialties?.isCardio ? 'cardio' : null
+                        specialties: site.specialties || { isCardio: false, isPediatrics: false, isRNM: false }
                     });
                 }
 
@@ -345,7 +345,7 @@ exports.getWorkSitesForSchedule = async (req, res) => {
                         displayName: `${institution.name} ${site.name} Largo`,
                         abbreviation: site.abbreviation,
                         weeklySchedule: site.scheduleTypes.largo.weeklySchedule,
-                        specialty: site.specialties?.isCardio ? 'cardio' : null
+                        specialties: site.specialties || { isCardio: false, isPediatrics: false, isRNM: false }
                     });
                 }
 

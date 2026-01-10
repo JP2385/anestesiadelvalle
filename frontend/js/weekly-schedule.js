@@ -1,4 +1,5 @@
 import { fetchAvailability } from './assignUtils.js';
+import { autoAssignDefaultAssignmentsByDay } from './autoAssignHandlersDefaultAssignments.js';
 import { autoAssignCaroSandraGabiByDay } from './autoAssignHandlersCaroSandraGabi.js';
 import { autoAssignPublicHospitalsByDay } from './autoAssignHandlersPublicHospitals.js';
 import { countAssignmentsByDay } from './autoAssignFunctions.js';
@@ -55,7 +56,11 @@ document.addEventListener('DOMContentLoaded', async function() {
             try {
                 showSpinner();
                 const assignedUsers = new Set();
+                // 1. PRIMERO: Asignar usuarios con asignaciones por defecto (máxima prioridad)
+                await autoAssignDefaultAssignmentsByDay(dayIndex, availability, assignedUsers);
+                // 2. LUEGO: Asignaciones hardcodeadas (mantenidas temporalmente)
                 await autoAssignCaroSandraGabiByDay(apiUrl, dayIndex, availability, assignedUsers);
+                // 3. FINALMENTE: Auto-asignación de hospitales públicos
                 await autoAssignPublicHospitalsByDay(apiUrl, dayIndex, availability, assignedUsers);
                 await countAssignmentsByDay(dayIndex);
                 autoAssignReportBgColorsUpdate(dayIndex);
