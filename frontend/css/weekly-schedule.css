@@ -87,10 +87,35 @@ h3 {
     display: flex;
     align-items: center;
     justify-content: center;
+    gap: 5px;
 }
 
 .cell-content select {
-    margin-right: 5px; /* Espacio entre el select y el botón */
+    flex: 1;
+}
+
+.lock-button {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 4px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+    transition: opacity 0.2s;
+}
+
+.lock-button:hover {
+    opacity: 0.7;
+}
+
+.lock-button.locked {
+    color: #d32f2f;
+}
+
+.lock-button.unlocked {
+    color: #388e3c;
 }
 
 .instructions ol {

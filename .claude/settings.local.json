@@ -17,7 +17,8 @@
       "Bash(node scripts/migrateScheduleToNewFormat.js:*)",
       "Bash(move \"c:\\Users\\jpsga\\anestesiadelvalle\\frontend\\js\\weekly-schedule\\mortalCombatManager.js\" \"c:\\Users\\jpsga\\anestesiadelvalle\\frontend\\js\\weekly-schedule\\modules\\mortalCombatManager.js\")",
       "Bash(move:*)",
-      "Bash(move \"c:\\Users\\jpsga\\anestesiadelvalle\\frontend\\js\\weekly-schedule\\selectPopulator.js\" \"c:\\Users\\jpsga\\anestesiadelvalle\\frontend\\js\\weekly-schedule\\modules\\selectPopulator.js\")"
+      "Bash(move \"c:\\Users\\jpsga\\anestesiadelvalle\\frontend\\js\\weekly-schedule\\selectPopulator.js\" \"c:\\Users\\jpsga\\anestesiadelvalle\\frontend\\js\\weekly-schedule\\modules\\selectPopulator.js\")",
+      "Bash(tasklist:*)"
     ],
     "deny": [],
     "ask": []

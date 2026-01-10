@@ -195,7 +195,7 @@ export async function populateSelectOptions(availability) {
                 }
 
                 // Exclusión de "rconsigli" en workSite que incluye "CMAC"
-                if (user.username === 'rconsigli' && workSite.includes('CMAC')) {
+                if (user.username === 'rconsigli' && workSite.includes('CMAC') && dayName !== 'thursday') {
                     return; // Excluir "rconsigli" de "CMAC"
                 }
 

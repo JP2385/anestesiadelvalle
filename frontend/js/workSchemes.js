@@ -13,6 +13,10 @@ export function getWorkSchemes(isOddWeek) {
         'friday-header': 'CMAC Q2 Matutino',
     };
 
+    const rconsigliScheme = {
+        'thursday-header': ['CMAC Q1 Matutino', 'CMAC Q1 Vespertino', 'CMAC Q1 Largo']
+    }
+
     const ggudinoScheme = {
         'monday-header': ['COI Largo', 'COI Matutino', 'COI Vespertino'],
         'tuesday-header': ['COI Largo', 'COI Matutino', 'COI Vespertino'],
@@ -62,5 +66,6 @@ export function getWorkSchemes(isOddWeek) {
         msalvarezzaScheme,
         ecesarScheme,
         jboScheme,
+        rconsigliScheme
     };
 }

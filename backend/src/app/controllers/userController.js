@@ -2,7 +2,7 @@ const User = require('../models/userModel');
 
 exports.getAllUsers = async (req, res) => {
     try {
-        const users = await User.find().select('username email beginningDate phoneNumber doesCardio doesRNM doesShifts worksInPrivateRioNegro worksInPublicRioNegro worksInPrivateNeuquen worksInPublicNeuquen workSchedule vacations otherLeaves worksInCmacOnly');
+        const users = await User.find().select('username email beginningDate phoneNumber doesCardio doesPediatrics doesRNM doesShifts worksInPrivateRioNegro worksInPublicRioNegro worksInPrivateNeuquen worksInPublicNeuquen workSchedule vacations otherLeaves worksInCmacOnly defaultAssignments');
         res.send(users);
     } catch (error) {
         res.status(500).send({ message: error.message });
@@ -34,5 +34,33 @@ exports.updateUser = async (req, res) => {
         res.send(user);
     } catch (error) {
         res.status(400).send({ message: error.message });
+    }
+};
+
+exports.updateDefaultAssignments = async (req, res) => {
+    try {
+        const userId = req.params.userId;
+        const { defaultAssignments } = req.body;
+
+        const user = await User.findByIdAndUpdate(
+            userId,
+            { defaultAssignments },
+            { new: true, runValidators: true }
+        ).select('username defaultAssignments');
+
+        if (!user) {
+            return res.status(404).send({ message: 'User not found' });
+        }
+
+        res.send({
+            success: true,
+            message: 'Default assignments updated successfully',
+            user
+        });
+    } catch (error) {
+        res.status(400).send({
+            success: false,
+            message: error.message
+        });
     }
 };
