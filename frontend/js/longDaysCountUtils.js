@@ -24,7 +24,10 @@ export function generateTableRows(schedules, users) {
     // Step 2: Accumulate the long days count for each user
     schedules.forEach(schedule => {
         users.forEach(user => {
-            const userLongDaysCount = schedule.longDaysCount[user._id] ? schedule.longDaysCount[user._id].count : 0;
+            // Verificar que longDaysCount existe y tiene datos para este usuario
+            const userLongDaysCount = schedule.longDaysCount && schedule.longDaysCount[user._id]
+                ? schedule.longDaysCount[user._id].count
+                : 0;
             // Accumulate the long days count for the user
             longDaysSum[user._id] += userLongDaysCount;
         });
@@ -48,7 +51,10 @@ export function generateTableRows(schedules, users) {
         // For each schedule, insert the long days count for this user
         schedules.forEach(schedule => {
             const td = document.createElement('td');
-            const userLongDaysCount = schedule.longDaysCount[user._id] ? schedule.longDaysCount[user._id].count : 0;
+            // Verificar que longDaysCount existe y tiene datos para este usuario
+            const userLongDaysCount = schedule.longDaysCount && schedule.longDaysCount[user._id]
+                ? schedule.longDaysCount[user._id].count
+                : 0;
             td.textContent = userLongDaysCount;
             tr.appendChild(td);
         });
@@ -62,7 +68,8 @@ export function generateTableRows(schedules, users) {
 
 // Helper function to get week/year from the schedule's timestamp
 export function getWeekYearFromSchedule(schedule) {
-    const timestamp = new Date(schedule.timestamp);
+    // Usar createdAt en lugar de timestamp
+    const timestamp = new Date(schedule.createdAt || schedule.timestamp);
 
     // Obtener el día de la semana (0 = domingo, 6 = sábado)
     let dayOfWeek = timestamp.getDay(); // 0 (domingo) a 6 (sábado)
