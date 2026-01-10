@@ -50,20 +50,22 @@ const saveSchedule = async (req, res) => {
 /**
  * Calcula el conteo de días largos por usuario desde los assignments
  * @param {Object} assignments - Assignments por día
- * @returns {Map} Mapa de userId -> count
+ * @returns {Object} Objeto de userId -> { count: N }
  */
 function calculateLongDaysCount(assignments) {
-    const longDaysCount = new Map();
+    const longDaysCount = {};
 
     // Iterar todos los días
     ['monday', 'tuesday', 'wednesday', 'thursday', 'friday'].forEach(day => {
         if (assignments[day] && Array.isArray(assignments[day])) {
             assignments[day].forEach(assignment => {
                 // Si el régimen es "largo", incrementar el contador
-                if (assignment.regime === 'largo') {
+                if (assignment.regime === 'largo' && assignment.userId) {
                     const userId = assignment.userId.toString();
-                    const currentCount = longDaysCount.get(userId) || 0;
-                    longDaysCount.set(userId, currentCount + 1);
+                    if (!longDaysCount[userId]) {
+                        longDaysCount[userId] = { count: 0 };
+                    }
+                    longDaysCount[userId].count++;
                 }
             });
         }

@@ -374,7 +374,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
     /**
-     * Calcula longDaysCount desde assignments (formato: { userId: count })
+     * Calcula longDaysCount desde assignments (formato: { userId: { count: N } })
      */
     function calculateLongDaysCountFromAssignments(assignments) {
         const longDaysCount = {};
@@ -382,9 +382,12 @@ document.addEventListener('DOMContentLoaded', () => {
         ['monday', 'tuesday', 'wednesday', 'thursday', 'friday'].forEach(day => {
             if (assignments[day] && Array.isArray(assignments[day])) {
                 assignments[day].forEach(assignment => {
-                    if (assignment.regime === 'largo') {
+                    if (assignment.regime === 'largo' && assignment.userId) {
                         const userId = assignment.userId;
-                        longDaysCount[userId] = (longDaysCount[userId] || 0) + 1;
+                        if (!longDaysCount[userId]) {
+                            longDaysCount[userId] = { count: 0 };
+                        }
+                        longDaysCount[userId].count++;
                     }
                 });
             }
