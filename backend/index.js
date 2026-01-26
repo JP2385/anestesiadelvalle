@@ -4,6 +4,7 @@ const express = require('express');
 const mongoose = require('mongoose');
 const config = require('./config');
 const cors = require('cors');
+const helmet = require('helmet');
 const authRoutes = require('./src/app/routes/authRoutes');
 const scheduleRoutes = require('./src/app/routes/scheduleRoutes');
 const shiftScheduleRoutes = require('./src/app/routes/shiftScheduleRoutes'); // Ruta para los horarios específicos de guardias
@@ -23,6 +24,38 @@ const extraAssignmentRoutes = require('./src/app/routes/extraAssignmentRoutes');
 
 const app = express();
 app.use(express.json());
+
+// Trust proxy (Heroku) so req.secure/x-forwarded-proto work correctly
+app.enable('trust proxy');
+
+// Force HTTPS: redirect HTTP requests to HTTPS (works with Heroku's x-forwarded-proto)
+app.use((req, res, next) => {
+    if (req.secure || req.get('x-forwarded-proto') === 'https') return next();
+    return res.redirect(301, 'https://' + req.get('host') + req.originalUrl);
+});
+
+// Security headers via Helmet
+app.use(helmet());
+
+// HSTS: tell browsers to always use HTTPS
+app.use(helmet.hsts({
+    maxAge: 31536000, // 1 year
+    includeSubDomains: true,
+    preload: false
+}));
+
+// Basic Content Security Policy - adjust if you rely on external CDNs
+app.use(helmet.contentSecurityPolicy({
+    useDefaults: true,
+    directives: {
+        "default-src": ["'self'"],
+        "script-src": ["'self'"],
+        "style-src": ["'self'"],
+        "img-src": ["'self'", "data:"],
+        "connect-src": ["'self'"],
+        "frame-src": ["'none'"]
+    }
+}));
 
 const corsOptions = {
     origin: ['http://localhost:3000', 'https://advalle-46fc1873b63d.herokuapp.com'],
