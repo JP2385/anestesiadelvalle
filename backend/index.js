@@ -33,7 +33,7 @@ const corsOptions = {
 app.use(cors(corsOptions));
 
 // Conexión a la base de datos
-mongoose.connect(config.mongoUri, { useNewUrlParser: true, useUnifiedTopology: true })
+mongoose.connect(config.mongoUri)
     .then(() => console.log('Connected to MongoDB'))
     .catch(error => console.error('Error connecting to MongoDB:', error));
 
@@ -70,6 +70,51 @@ app.use('/institutions', institutionRoutes);
 app.use('/work-sites', workSiteRoutes);
 
 app.use('/extra-assignments', extraAssignmentRoutes);
+
+// Manejador de errores para rutas API no encontradas
+app.use('/auth/*', (req, res) => {
+    res.status(404).json({ message: 'Ruta de autenticación no encontrada' });
+});
+
+app.use('/schedule/*', (req, res) => {
+    res.status(404).json({ message: 'Ruta de horarios no encontrada' });
+});
+
+app.use('/shift-schedule/*', (req, res) => {
+    res.status(404).json({ message: 'Ruta de guardias no encontrada' });
+});
+
+app.use('/vacation-swap/*', (req, res) => {
+    res.status(404).json({ message: 'Ruta de intercambio de vacaciones no encontrada' });
+});
+
+app.use('/notifications/*', (req, res) => {
+    res.status(404).json({ message: 'Ruta de notificaciones no encontrada' });
+});
+
+app.use('/holidays/*', (req, res) => {
+    res.status(404).json({ message: 'Ruta de feriados no encontrada' });
+});
+
+app.use('/coverage-requests/*', (req, res) => {
+    res.status(404).json({ message: 'Ruta de solicitudes de cobertura no encontrada' });
+});
+
+app.use('/other-leaves/*', (req, res) => {
+    res.status(404).json({ message: 'Ruta de permisos no encontrada' });
+});
+
+app.use('/institutions/*', (req, res) => {
+    res.status(404).json({ message: 'Ruta de instituciones no encontrada' });
+});
+
+app.use('/work-sites/*', (req, res) => {
+    res.status(404).json({ message: 'Ruta de sitios de trabajo no encontrada' });
+});
+
+app.use('/extra-assignments/*', (req, res) => {
+    res.status(404).json({ message: 'Ruta de asignaciones extra no encontrada' });
+});
 
 // Servir archivos estáticos del frontend
 app.use(express.static(path.join(__dirname, '../frontend')));

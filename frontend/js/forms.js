@@ -23,24 +23,35 @@ if (loginForm) {
                 body: JSON.stringify({ username, password })
             });
 
+            // Verificar el tipo de contenido de la respuesta
+            const contentType = response.headers.get('content-type');
+            
             if (response.ok) {
-                const data = await response.json();
-                // console.log('Login response:', data);
-                
-                if (rememberMe) {
-                    localStorage.setItem('token', data.token); // Solo si selecciona "Recordar"
-                    // console.log('Token saved in localStorage:', data.token);
-                } else {
-                    sessionStorage.setItem('token', data.token); // Solo para la sesión actual
-                    // console.log('Token saved in sessionStorage:', data.token);
-                }
+                if (contentType && contentType.includes('application/json')) {
+                    const data = await response.json();
+                    // console.log('Login response:', data);
+                    
+                    if (rememberMe) {
+                        localStorage.setItem('token', data.token); // Solo si selecciona "Recordar"
+                        // console.log('Token saved in localStorage:', data.token);
+                    } else {
+                        sessionStorage.setItem('token', data.token); // Solo para la sesión actual
+                        // console.log('Token saved in sessionStorage:', data.token);
+                    }
 
-                alert('Inicio de sesión exitoso');
-                window.location.href = 'index.html';
+                    alert('Inicio de sesión exitoso');
+                    window.location.href = 'index.html';
+                } else {
+                    alert('Error: El servidor no respondió correctamente');
+                }
             } else {
-                const errorData = await response.json();
-                console.log('Error response:', errorData);
-                alert(`Error: ${errorData.message}`);
+                if (contentType && contentType.includes('application/json')) {
+                    const errorData = await response.json();
+                    console.log('Error response:', errorData);
+                    alert(`Error: ${errorData.message}`);
+                } else {
+                    alert(`Error: El servidor respondió con estado ${response.status}`);
+                }
             }
         } catch (error) {
             console.log('Fetch error:', error.message);
