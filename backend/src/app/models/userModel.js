@@ -1,0 +1,199 @@
+const mongoose = require('mongoose');
+let bcrypt;
+
+try {
+    bcrypt = require('bcrypt');
+} catch (err) {
+    bcrypt = require('bcryptjs');
+}
+
+const Schema = mongoose.Schema;
+
+const vacationSchema = new Schema({
+    startDate: Date,
+    endDate: Date
+});
+
+const otherLeaveSchema = new Schema({
+    type: {
+        type: String,
+        required: true
+    },
+    startDate: {
+        type: Date,
+        required: true
+    },
+    endDate: {
+        type: Date,
+        required: true
+    }
+});
+
+const userSchema = new Schema({
+    username: {
+        type: String,
+        required: true,
+        unique: true
+    },
+    email: {
+        type: String,
+        required: true,
+        unique: true
+    },
+    password: {
+        type: String,
+        required: true
+    },
+    role: {
+        type: String,
+        enum: ['admin', 'user'],
+        default: 'user'
+    },
+    isVerified: {
+        type: Boolean,
+        default: false
+    },
+    beginningDate: {
+        type: Date,
+    },
+    phoneNumber: {  // Nuevo campo de número de teléfono
+        type: String,
+        required: false  // Cambia a true si deseas que sea obligatorio
+    },
+    doesCardio: {
+        type: Boolean,
+        default: false
+    },
+    doesPediatrics: {
+        type: Boolean,
+        default: false
+    },
+    doesRNM: {
+        type: Boolean,
+        default: false
+    },
+    worksInPublicNeuquen: {  
+        type: Boolean,
+        default: false
+    },
+    worksInPrivateNeuquen: {  
+        type: Boolean,
+        default: false
+    },
+    worksInPublicRioNegro: {  
+        type: Boolean,
+        default: false
+    },
+    worksInPrivateRioNegro: {   
+        type: Boolean,
+        default: false
+    },
+    worksInCmacOnly: {
+        type: Boolean,
+        default: false
+    },
+    doesShifts: {
+        type: Boolean,
+        default: false
+    },
+    workSchedule: {
+        monday: {
+            type: String,
+            enum: ['Mañana', 'Tarde', 'Variable', 'No trabaja'],
+            default: 'Variable'
+        },
+        tuesday: {
+            type: String,
+            enum: ['Mañana', 'Tarde', 'Variable', 'No trabaja'],
+            default: 'Variable'
+        },
+        wednesday: {
+            type: String,
+            enum: ['Mañana', 'Tarde', 'Variable', 'No trabaja'],
+            default: 'Variable'
+        },
+        thursday: {
+            type: String,
+            enum: ['Mañana', 'Tarde', 'Variable', 'No trabaja'],
+            default: 'Variable'
+        },
+        friday: {
+            type: String,
+            enum: ['Mañana', 'Tarde', 'Variable', 'No trabaja'],
+            default: 'Variable'
+        }
+    },
+    defaultAssignments: {
+        useAlternatingWeeks: {
+            type: Boolean,
+            default: true
+        },
+        oddWeeks: {
+            monday: [{
+                workSiteId: { type: Schema.Types.ObjectId, ref: 'WorkSite' },
+                regime: { type: String, enum: ['matutino', 'vespertino', 'largo'] }
+            }],
+            tuesday: [{
+                workSiteId: { type: Schema.Types.ObjectId, ref: 'WorkSite' },
+                regime: { type: String, enum: ['matutino', 'vespertino', 'largo'] }
+            }],
+            wednesday: [{
+                workSiteId: { type: Schema.Types.ObjectId, ref: 'WorkSite' },
+                regime: { type: String, enum: ['matutino', 'vespertino', 'largo'] }
+            }],
+            thursday: [{
+                workSiteId: { type: Schema.Types.ObjectId, ref: 'WorkSite' },
+                regime: { type: String, enum: ['matutino', 'vespertino', 'largo'] }
+            }],
+            friday: [{
+                workSiteId: { type: Schema.Types.ObjectId, ref: 'WorkSite' },
+                regime: { type: String, enum: ['matutino', 'vespertino', 'largo'] }
+            }]
+        },
+        evenWeeks: {
+            monday: [{
+                workSiteId: { type: Schema.Types.ObjectId, ref: 'WorkSite' },
+                regime: { type: String, enum: ['matutino', 'vespertino', 'largo'] }
+            }],
+            tuesday: [{
+                workSiteId: { type: Schema.Types.ObjectId, ref: 'WorkSite' },
+                regime: { type: String, enum: ['matutino', 'vespertino', 'largo'] }
+            }],
+            wednesday: [{
+                workSiteId: { type: Schema.Types.ObjectId, ref: 'WorkSite' },
+                regime: { type: String, enum: ['matutino', 'vespertino', 'largo'] }
+            }],
+            thursday: [{
+                workSiteId: { type: Schema.Types.ObjectId, ref: 'WorkSite' },
+                regime: { type: String, enum: ['matutino', 'vespertino', 'largo'] }
+            }],
+            friday: [{
+                workSiteId: { type: Schema.Types.ObjectId, ref: 'WorkSite' },
+                regime: { type: String, enum: ['matutino', 'vespertino', 'largo'] }
+            }]
+        }
+    },
+    vacations: [vacationSchema],
+    otherLeaves: [otherLeaveSchema]
+});
+
+// Hash the password before saving the user model
+userSchema.pre('save', async function (next) {
+    const user = this;
+    if (!user.isModified('password')) return next();
+    try {
+        const salt = await bcrypt.genSalt(10);
+        const hash = await bcrypt.hash(user.password, salt);
+        user.password = hash;
+        next();
+    } catch (err) {
+        next(err);
+    }
+});
+
+// Method to compare password
+userSchema.methods.comparePassword = function (candidatePassword) {
+    return bcrypt.compare(candidatePassword, this.password);
+};
+
+module.exports = mongoose.model('User', userSchema);

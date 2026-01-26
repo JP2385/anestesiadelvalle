@@ -1,0 +1,50 @@
+/* Estilos para el formulario de filtro */
+#filter-form {
+    display: flex;
+    flex-wrap: wrap; /* Permite que los pares label/input se envuelvan si es necesario */
+    gap: 10px; /* Espacio entre los elementos */
+    margin-bottom: 10px; /* Margen inferior para separar del contenido debajo */
+}
+
+/* Contenedor para cada par de label/input */
+.form-group {
+    display: flex;
+    align-items: center; /* Alinear el label y el input verticalmente */
+    gap: 10px; /* Espacio entre el label y el input */
+    flex: 1 1 20%; /* Los pares ocuparán aproximadamente 45% del ancho cada uno */
+}
+
+/* Estilos para los labels */
+label {
+    min-width: max-content;
+    color: #555;
+    font-weight: bold;
+}
+
+.form-group input, select {
+    padding:2px;
+}
+
+.form-group select {
+    margin-right: 20px;
+}
+
+/* Ajustes para pantallas pequeñas */
+@media (max-width: 480px) {
+    #filter-form {
+        flex-direction: row; /* Cambiar a columna en pantallas pequeñas */
+        align-items: flex-start;
+    }
+
+    .form-group {
+        width: 80%; /* Los pares de label/input ocuparán el ancho completo en pantallas pequeñas */
+        margin-bottom: 5px;
+    }
+
+    input, select {
+        width: 75px; /* Los inputs y selects ocupan el 100% en pantallas pequeñas */
+    }
+    .user, .year {
+        width: auto;
+    }
+}

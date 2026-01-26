@@ -1,0 +1,133 @@
+    <!DOCTYPE html>
+    <html lang="es">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Asistente de programación de guardias</title>
+        <script type="module" src="js/shiftSchedule.js"></script>
+        <script type="module" src="js/printShifts.js"></script>
+        <link rel="stylesheet" href="css/header.css">
+        <link rel="icon" type="image/png" href="images/logo/logo64x64.png">
+        <link rel="stylesheet" href="css/weekly-schedule.css">
+        <link rel="stylesheet" href="css/media.css">
+        <link rel="stylesheet" href="css/shiftSchedule.css">
+        <link rel="stylesheet" href="css/floatingTable.css">
+        <link rel="stylesheet" href="css/vacationInform.css">
+    </head>
+    <header>
+        <a href="index.html" class="app-logo-link">
+            <img src="images/logo/logo.png" alt="Logo Anestesiólogos del Valle" class="app-logo">
+        </a>
+        <h1>Anestesiólogos del Valle</h1>
+        <a href="index.html" class="back-to-main-menu" title="Volver al menú principal">
+            <img src="images/icons/back-icon.svg" alt="Volver" class="back-icon">
+        </a>
+    </header>
+    <body>
+        <div id="floating-table" class="floating-table">
+            <h1>Días largos acumulados</h1>
+            <button id="close-table" class="close-btn">&times;</button>
+            <div class="table-scroll">
+            <table id="shift-counts">
+                <thead>
+                    <tr>
+                        <th>Usuario</th>
+                        <th>Guardias Semana</th>
+                        <th>Guardias Fin de Semana</th>
+                        <th>Plantas Sábado</th>
+                        <th>Acumulado Semana</th>
+                        <th>Acumulado Fin de Semana</th>
+                        <th>Acumulado Sábado</th>
+
+                    </tr>
+                </thead>
+                <tbody id="shift-counts-body">
+                    <!-- Aquí se generarán dinámicamente las filas de conteo por usuario -->
+                </tbody>
+            </table>
+        </div>
+        </div>
+        <div class="instructions">
+            <div>
+                <h3>Pasos para generar la programación</h3>
+                <ol>
+                    <li>1. Seleccione el año y mes para el que desea realizar la asignación (por defecto se muestra año y mes en curso)</li>
+                    <li>2. Verifique las asignaciones de carga pública que se realizan por defecto</li>
+                    <li>3. Cargue las guardias de carga pública</li>
+                    <li>4. Seleccione "ND" - No disponible" en aquellas celdas que desee que no reciban asignación</li>
+                    <li>5. Realice la asignación de fin de semana a ecesar</li>
+                    <li>6. Oprima el botón asignar guardias</li>
+                    <li>7. Oprima el botón imprimir guardias (una vez oprimido podrá elegir si desea enviar mails a las clínicas o no)</li>
+                </ol>
+            </div>
+        </div>
+        <div class="instructions">
+            <div class="row-container">
+                <div class="form-reference-container">
+                    <div>
+                        <div class="header-div">
+                        <h3>Asistente propiamente dicho</h3>
+                        </div>
+                        <div class="header-div">
+                        
+                        <div class="form-group">
+                            <label for="year-select">Año:</label>
+                            <select id="year-select"></select>
+                            
+                            <label for="month-select">Mes:</label>
+                            <select id="month-select">
+                                <option value="0">Enero</option>
+                                <option value="1">Febrero</option>
+                                <option value="2">Marzo</option>
+                                <option value="3">Abril</option>
+                                <option value="4">Mayo</option>
+                                <option value="5">Junio</option>
+                                <option value="6">Julio</option>
+                                <option value="7">Agosto</option>
+                                <option value="8">Septiembre</option>
+                                <option value="9">Octubre</option>
+                                <option value="10">Noviembre</option>
+                                <option value="11">Diciembre</option>
+                            </select>
+
+                        </div>
+                    </div>
+                        <div class="switch-container">
+                            <span class="switch-legend">
+                                Conteo de Guardias por Usuario
+                            </span>
+                            <label class="switch">
+                                <input type="checkbox" id="toggle-table" />
+                                <span class="slider"></span>
+                            </label>
+                        </div>
+                        <div class="button-container">
+                            <button id="assign-shifts">Asignar guardias</button>
+
+                            <button id="print-shifts">Imprimir guardias</button>
+                        </div>
+                    </div>
+                </div>
+                <div>
+                    <div id="shift-references-container">
+                        <table id="shift-references" class="shift-references">
+                            <!-- Esta tabla se llenará dinámicamente con la función generateShiftReferencesTable -->
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <div class="table-wrapper">
+                <table id="shift-schedule" class="shift-table">
+                    <thead>
+                        <tr id="days-header">
+                            <!-- Aquí se generarán dinámicamente los encabezados de los días -->
+                        </tr>
+                    </thead>
+                    <tbody id="users-body">
+                        <!-- Aquí se generarán dinámicamente las filas de los usuarios -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </body>
+    </html>

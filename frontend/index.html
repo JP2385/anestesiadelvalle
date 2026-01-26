@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Anestesiólogos del Valle</title>
+    <link rel="icon" type="image/png" href="images/logo/logo64x64.png">
+    <link rel="stylesheet" href="css/base.css">
+    <link rel="stylesheet" href="css/header.css">
+    <link rel="stylesheet" href="css/nav.css">
+    <link rel="stylesheet" href="css/main.css">
+    <link rel="stylesheet" href="css/media.css">
+    <link rel="stylesheet" href="css/spinner.css">
+    <link rel="manifest" href="json/manifest.json">
+    <meta name="theme-color" content="#0056b3">
+    <script defer src="js/bundle.js"></script>
+    <script src="js/spinner.js" defer></script>
+    <script src="js/openfile.js" defer></script>
+    <script type="module" src="js/meetings.js" defer></script>
+    <script src="js/payments.js" defer></script>
+    <script src="js/main.js" defer></script>
+    <script src="js/facturacion.js" defer></script>
+    <script src="js/menu.js" defer></script>
+    <script src="js/nav.js" defer></script>
+    <script type="module" src="js/weekly-schedule-individualized.js" defer></script>
+    <script type="module" src="js/shiftScheduleIndividualized.js" defer></script>
+    <script src="js/vacationInformIndividualized.js" defer></script>
+    <script src="js/holidayInformIndividualized.js" defer></script>
+    <script src="js/otherLeaveInformIndividualized.js" defer></script>
+    <script type="module" src="js/notifications.js"></script>
+    <script type="module">
+        import { initializePermissions, showIfHasRole } from './js/authUtils.js';
+
+        document.addEventListener('DOMContentLoaded', async function() {
+            await initializePermissions();
+            showIfHasRole('.admin-only', 'admin');
+        });
+    </script>
+<body>
+    <div class="spinner" id="spinner"></div>
+    <header>
+        <a href="index.html" class="app-logo-link">
+            <img src="images/logo/logo.png" alt="Logo Anestesiólogos del Valle" class="app-logo">
+        </a>
+        <h1>Anestesiólogos del Valle</h1>
+        <div class="hamburger-menu" id="hamburger-menu">
+            &#9776;
+        </div>
+        <div class="dropdown-menu" id="dropdown-menu">
+            <a href="profile.html">Mi perfil</a>
+            <a href="admin.html" class="admin-only">Administrador de perfiles</a>
+            <a href="abm-institutions.html" class="admin-only">ABM Instituciones</a>
+            <a href="abm-work-sites.html" class="admin-only">ABM Bocas de Trabajo</a>
+            <a href="default-assignments.html" class="admin-only">Configurar Asignaciones por Defecto</a>
+            <a href="login.html" id="logout">Cerrar sesión</a>
+        </div>
+    </header>
+    <nav>
+        <button onclick="showSection('programacion')">Plantas</button>
+        <button onclick="showSection('guardias')">Guardias</button>
+        <button onclick="showSection('vacaciones')">Vacaciones y otras licencias</button>
+        <button onclick="showSection('findeslargos')">Findes largos</button>
+        <button onclick="showSection('facturacion')">Facturación y Nomenclado</button>
+        <button onclick="showSection('liquidaciones')">Liquidaciones e Ingresos</button>
+        <button onclick="showSection('reuniones')">Reuniones y Estatuto</button>
+        <button onclick="showSection('varios')">Tutoriales y otros</button>
+    </nav>
+    <main>
+    <div id="notification-area"></div>
+        <section id="programacion" class="content-section">
+            <h3>Tus quirófanos asignados para esta semana son:</h3>
+            <div id="user-assignments"></div>
+            <a href="print-view.html"><button>Informe de plantas</button></a>
+            <a href="coverageInform.html"><button>Informe de coberturas</button></a>
+            <a href="weekly-schedule.html"><button>Programación de plantas</button></a>
+            <!-- <a href="extra-assignments.html" class="admin-only"><button>Asignaciones Extras</button></a> -->
+            <a href="workSchemes.html"><button>Distribución de colores</button></a>
+            <a href="solicitudCobertura.html"><button>Solicitud de coberturas</button></a>
+            <!-- <button onclick="openFile('https://docs.google.com/spreadsheets/d/1IIAo4YHyBavQmA7iN3xVwhW9NncDwYU-3PpnL81d4TE/edit?usp=sharing')">Vacaciones y Guardias 2024</button>
+            <button onclick="openFile('https://docs.google.com/spreadsheets/d/1CBU7nXGDil2BPH5Ow2KOA7YgT9-LyGmtJSqBaOOmwng/edit?usp=sharing')">Vacaciones y Guardias 2025</button> -->
+        </section>
+        <section id="guardias" class="content-section">
+            <h3>Tus guardias para este mes son:</h3>
+            <div id="shifts-assignments"></div>
+            <a href="shiftInform.html"><button>Informe de guardias</button></a>
+            <a href="shiftCountInform.html"><button>Informe de acumulado de guardias</button></a>
+            <a href="shiftSchedule.html"><button>Asistente de programación de guardias</button></a>
+        </section>
+        <section id="findeslargos" class="content-section">
+            <h3>Tus fines de semana largos de este año son:</h3>
+            <div id="holiday-assignments"></div>
+            <a href="holidays.html"><button>Carga de feriados</button></a>
+            <a href="holidayInform.html"><button>Informe de findes largos</button></a>
+            <a href="holidayAssistant.html"><button>Asistente de programación de findes largos</button></a>
+        </section>
+        <section id="vacaciones" class="content-section">
+        <h3>Tus próximos períodos de vacaciones son:</h3>
+            <div id="vacation-inform"></div>
+            <div id="other-leaves-inform"></div>
+            <a href="vacationInform.html"><button>Informe de vacaciones</button></a>
+            <a href="vacationSwap.html"><button>Intercambio de vacaciones</button></a>
+            <button onclick="openFile('https://docs.google.com/spreadsheets/d/1IIAo4YHyBavQmA7iN3xVwhW9NncDwYU-3PpnL81d4TE/edit?usp=sharing')">Vacaciones y Guardias 2024</button>
+            <button onclick="openFile('https://docs.google.com/spreadsheets/d/1zW3U43q5KtYLUc8HOO_WDDsHxYs3z_bz/edit?usp=sharing&ouid=116849778907664010256&rtpof=true&sd=true')">Resultado sorteo vacaciones 2025/2026</button>
+        </section>
+        <section id="facturacion" class="content-section" style="display:none;">
+            <!-- <h2>Facturación y Nomenclado</h2> -->
+            <fieldset>
+                <legend>Neuquén</legend>
+                <button onclick="toggleNomencladoresneuquen()">Nomencladores</button>
+                <ul id="nomencladores-list-nqn" class="hidden" style="display:none;">
+                    <li><a href="https://drive.google.com/file/d/1qS6kYSzh839uY0q_K_RFlKwYDSK0c56r/view?usp=drive_link" target="_blank"><img src="images/icons/pdf-icon.png" alt="PDF"> Complejidades</a></li>
+                    <li><a href="https://drive.google.com/file/d/1jSSkiXIWHD5sBDBkCYvH3JTGXuRjQj_O/view?usp=drive_link" target="_blank"><img src="images/icons/pdf-icon.png" alt="PDF"> ISSN</a></li>
+                    <li><a href="https://drive.google.com/file/d/1Xy9CJfhcL-JMroCbAKmp5MPwRVOncJSH/view?usp=drive_link" target="_blank"><img src="images/icons/pdf-icon.png" alt="PDF"> Galeno</a></li>
+                    <li><a href="https://drive.google.com/file/d/1UmgxOdnOn_AXt2gJs76dALfWSRcduDih/view?usp=drive_link" target="_blank"><img src="images/icons/pdf-icon.png" alt="PDF"> OSDE</a></li>
+                    <li><a href="https://drive.google.com/file/d/1XdTVLBVaW1jjOYoqRfB3tI8XUWL78uMA/view?usp=drive_link" target="_blank"><img src="images/icons/pdf-icon.png" alt="PDF"> OSPEPRI/NIVELES</a></li>
+                </ul>
+                <button onclick="openFile('https://drive.google.com/file/d/1CHoY7uylsThHS9jmab-kDymfBwcHS9Qw/view?usp=sharing')">Instructivo ISSN</button>
+                <button onclick="openFile('https://docs.google.com/document/d/1tup_lj98cJVTMsBzhkQG2tzGLM8yhKTWygaHY0T0dyY/edit?usp=sharing')">Instructivo PAMI</button>
+                <button onclick="openFile('https://drive.google.com/file/d/10BlganOlMONrRdXJ7jtgnynfmgX6H44U/view?usp=sharing')">O.S. Vigentes 03/2025</button>
+
+            </fieldset>
+            <fieldset>
+                <legend>Río Negro</legend>
+                <button onclick="toggleNomencladoresrionegro()">Nomencladores</button>
+                <ul id="nomencladores-list-rn" class="hidden" style="display:none;">
+                    <li><a href="https://drive.google.com/file/d/1vb7ZeUgggrDCXRvLdNdf8ewQjCqOSZwt/view?usp=drive_link" target="_blank"><img src="images/icons/pdf-icon.png" alt="PDF"> ARAAR 2015</a></li>
+                    <li><a href="https://drive.google.com/file/d/1lyBxPOq78zfdfgAYqfJLFOhcUQnlCKDe/view?usp=drive_link" target="_blank"><img src="images/icons/pdf-icon.png" alt="PDF"> ARAAR 2018</a></li>
+                    <li><a href="https://drive.google.com/file/d/1ucXPTH36aYWAosTWHWG7kQJhOeuoPabp/view?usp=drive_link" target="_blank"><img src="images/icons/pdf-icon.png" alt="PDF"> ARAAR 2022</a></li>
+                    <li><a href="https://drive.google.com/file/d/1tZwE2drmMs_k7IEQHtT0I5TajGOmCaO9/view?usp=drive_link" target="_blank"><img src="images/icons/pdf-icon.png" alt="PDF"> ISSN</a></li>
+                    <li><a href="https://drive.google.com/file/d/1u3pc0eoJxFGhSv6cmGuTEcdF3g5ek9XV/view?usp=drive_link" target="_blank"><img src="images/icons/pdf-icon.png" alt="PDF"> NIVELES</a></li>
+                    <li><a href="https://drive.google.com/file/d/1t_n0KrS91wWrbuemFCX2v-aw2rxHnDh7/view?usp=drive_link" target="_blank"><img src="images/icons/pdf-icon.png" alt="PDF"> OSDE</a></li>
+                    <li><a href="https://drive.google.com/file/d/1LBt0piXrQkohi2Isvt9Hsq76VKs7v2Pw/view?usp=drive_link" target="_blank"><img src="images/icons/pdf-icon.png" alt="PDF"> OSDIPP</a></li>
+                </ul>
+                <button onclick="openFile('https://docs.google.com/document/d/1Qi-4nLkx5JaC6ENG58FqGUWTfMmmB86n/edit?usp=drive_link&ouid=116849778907664010256&rtpof=true&sd=true')">Nomenclado sugerido</button>
+                <button onclick="openFile('https://docs.google.com/spreadsheets/d/1lfG-mgvubXj-OIEdgatealLe4A6WvcX0/edit?usp=sharing&ouid=116849778907664010256&rtpof=true&sd=true')">URPA BLOQUEO MEDICACION 2025</button>
+                <button onclick="openFile('https://drive.google.com/file/d/18HJxCOJoJg6GQ7KjP9CsBqYrUY3oFEZr/view?usp=sharing')">O.S. Vigentes 03/2025</button>
+            </fieldset>
+        </section>
+        <section id="liquidaciones" class="content-section" style="display:none;">
+            <!-- <h2>Liquidaciones e Ingresos</h2> -->
+            <h3>Las próximas liquidaciones serán:</h3>
+            <ul id="upcoming-payments">
+                <!-- Las fechas serán insertadas dinámicamente -->
+            </ul>
+            <button onclick="openFile('https://docs.google.com/spreadsheets/d/1ze-cw18JtRd6q916kSgckYEMWluteQXwHidFzT0KTF0/edit?usp=sharing')">Resumen de Liquidaciones</button>
+            <button onclick="openFile('https://docs.google.com/spreadsheets/d/1ondWWdxWX3So_pRfAgMhOkel8mMEgsJO4okDtE5TZSY/edit?usp=drive_link')">Resumen de Ingresos</button>
+        </section>
+        <section id="reuniones" class="content-section" style="display:none;">
+            <!-- <h2>Reuniones y Estatuto</h2> -->
+            <h3>Las próximas reuniones serán:</h3>
+            <ul id="meeting-dates"></ul>
+            <button onclick="openFile('https://drive.google.com/drive/folders/1mOhFcf6yHZuIIpDmeWz3afzNZuz-5uje?usp=drive_link')">Resúmenes reuniones</button>
+            <button onclick="openFile('https://drive.google.com/file/d/1XyDopUZhfHXkxZGXJnEa5UdmhqjR7HI1/view?usp=sharing')">Estatuto</button>
+        </section>
+        <section id="varios" class="content-section" style="display:none;">
+            <button onclick="toggleTutoriales()">Tutoriales</button>
+            <ul id="tutoriales-list" class="hidden" style="display:none;">
+                <li><a href="https://drive.google.com/file/d/1RnvQy77VVhoQojQVvyT9Rff27vpwcQ-b/view?usp=drive_link" target="_blank"><img src="images/icons/pdf-icon.png" alt="PDF"> Subir archivos a datatech</a></li>
+                <li><a href="https://drive.google.com/file/d/1vJPaQgBMRb5Nk0XUaxQJhmnOgIrrh0Rq/view?usp=drive_link" target="_blank"><img src="images/icons/pdf-icon.png" alt="PDF"> Pedir hemoderivados</a></li>
+                <li><a href="https://drive.google.com/file/d/1M-TNicf5qQ0nTLHohgykRDlPNIZAlBFt/view?usp=drive_link" target="_blank"><img src="images/icons/pdf-icon.png" alt="PDF"> Calibrar bombas Mindray</a></li>
+                <li><a href="https://drive.google.com/file/d/1aKbTZqYVo3EJNAyURRn9T9g_By7InhR_/view?usp=drive_link" target="_blank"><img src="images/icons/pdf-icon.png" alt="PDF"> Pasos a cumplimentar en caso de incidente</a></li>
+                <li><a href="https://docs.google.com/document/d/1re-LWRocnYjrEJXKYY6eslRvsTkTzvua?rtpof=true&usp=drive_fs" target="_blank"><img src="images/icons/word-icon.png" alt="WORD"> Reporte de Farmacovigilancia</a></li>
+            </ul>
+            <button onclick="openFile('https://docs.google.com/spreadsheets/d/1rHyyYz1Ceotfd47ZuikEYOEjeMizu8Oq/edit?usp=sharing&ouid=116849778907664010256&rtpof=true&sd=true')">Equipamiento propio</button>
+            <button onclick="openFile('https://drive.google.com/file/d/1U38nU0W1rJhKxsI2cYug_5eTxkgmovIf/view?usp=sharing')">Datos S.A.</button>
+            <button onclick="openFile('https://docs.google.com/document/d/1BiGKJPhTOPBPZRofbY1KbjD1MLGZnL-Ekjf_RW1ibQE/edit?usp=drive_link')">Contraseñas</button>
+        </section>
+    </main>
+</body>
+</html>

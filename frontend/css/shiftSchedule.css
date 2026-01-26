@@ -1,0 +1,163 @@
+
+/* Estilos para la tabla */
+.shift-table {
+    width: auto; /* Permite que la tabla ajuste su ancho según el contenido */
+    table-layout: fixed; /* Fuerza un ancho uniforme para cada columna */
+    border-collapse: collapse;
+    min-width: 100%; /* Asegura que la tabla ocupe al menos el ancho del contenedor */
+}
+
+/* Estilos para celdas y encabezados */
+.shift-table th, .shift-table td {
+    padding: 2px;
+    border: 1px solid #ddd;
+    white-space: nowrap;
+    text-align: left;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    min-width: 50px; /* Ancho mínimo de 50px para cada columna */
+}
+
+/* Asegura que los elementos <select> ocupen el 100% del ancho de su celda */
+.shift-table select {
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.shift-table th {
+    text-align: center;
+}
+
+.switch-container {
+    color: #555;
+    font-weight: bold;
+    padding: 2px;
+    margin-top: 20px;
+    margin-bottom: 20px;
+}
+
+.button-container {
+    display: flex;
+    flex-direction: column;
+    gap: 10px; /* Espacio entre los botones */
+
+    align-items: center;
+    justify-content: flex-start; /* Alineación de los botones al inicio (puedes usar center si prefieres) */
+    margin-top: 20px; /* Margen superior para separar de otros elementos */
+}
+
+.button-container button {
+    width: 180px;      
+    padding: 10px 20px; /* Espaciado interno para los botones */
+    font-size: 16px; /* Tamaño de fuente */
+    border: 1px solid #ddd; /* Borde para los botones */
+    border-radius: 5px; /* Bordes redondeados */
+    cursor: pointer;
+    background-color: #0069d9;
+    font-weight: bold;
+    color: #fff;
+}
+
+    th.user {
+        background-color: #0056b3;
+    }
+
+    td.user {
+        background-color: white;
+    }
+    /* Configuración para la columna fija */
+    th.user, td.user {
+        position: sticky;
+        left: -1px;
+        z-index: 10; /* Coloca la columna sobre el contenido desplazable */
+        padding-right: 10px; /* Opcional: ajusta según el diseño */
+    }
+
+    /* Pseudo-elemento para simular el espacio en blanco a la derecha */
+    th.user::after, td.user::after {
+        content: '';
+        position: absolute;
+        top: -4px; /* Expande hacia arriba para cubrir el borde superior */
+        left: -28px; /* Ajusta según el ancho deseado */
+        width: 23px; /* Ancho del "relleno" */
+        height: 100%;
+        background-color: white;
+        border-right: 2px solid white;
+        border-left: 2px solid white; /* Borde derecho blanco para ocultar el borde de la celda siguiente */
+        border-top: 2px solid white; /* Borde superior blanco */
+        border-bottom: 8px solid white; /* Borde inferior blanco */
+        z-index: 9; /* Coloca el pseudo-elemento por detrás del contenido de la celda */
+    }
+
+    .table-wrapper-container {
+        width: 100%;
+    }
+
+    .table-wrapper {
+        position: relative;
+        overflow-x: auto; /* Permite el desplazamiento horizontal */
+    }
+
+    td.weekend {
+        background-color: #e0f7fa; /* Color celeste pastel */
+    }
+
+    td.holiday {
+        background-color: #fff9c4; /* Color dorado pastel */
+    }
+
+    /* Contenedor principal para alinear los dos divs en fila */
+.instructions {
+    display: block;
+    justify-content: space-between; /* Distribuye los elementos a la izquierda y derecha */
+    align-items: flex-start; /* Alinea los elementos verticalmente al inicio */
+    gap: 20px; /* Espacio entre el div izquierdo y el div derecho */
+}
+
+.form-reference-container {
+    display: flex;
+    gap: 20px; /* Ajusta el espacio entre los elementos según prefieras */
+    overflow-x: auto;
+    top: 0; /* Se mantendrá en la parte superior al desplazarse */
+    background-color: white; /* Añade fondo para que no se superponga con otros elementos */
+    z-index: 10; /* Coloca el contenedor por encima de otros elementos */
+    padding: 10px;
+    z-index: 2;
+
+}
+
+.row-container {
+    display: flex;
+    justify-content: space-between
+}
+
+.form-reference-container > div {
+    flex: 1; /* Divide el espacio disponible entre los dos divs */
+}
+
+/* Estilo de la tabla */
+.shift-references {
+    width: 100%;
+    margin-top:0;
+    border-collapse: collapse;
+    table-layout: auto;
+    z-index: 1;
+}
+
+
+.shift-references th, .shift-references td {
+    border: 1px solid #ddd;
+    padding: 4px;
+    font-size: 0.7rem;
+    text-align: left;
+}
+
+td.user.highlight-cell {
+    background-color:  #0069d9 !important;
+    color: white;
+    font-weight: bold;
+}
+
+.user {
+    font-weight: bold; 
+}

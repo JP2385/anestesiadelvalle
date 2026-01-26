@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Asistente de Asignación de Feriados Largos</title>
+    <link rel="stylesheet" href="css/header.css">
+    <link rel="stylesheet" href="css/media.css">
+    <link rel="stylesheet" href="css/admin.css">
+    <link rel="stylesheet" href="css/weekly-schedule.css">
+    <link rel="stylesheet" href="css/spinner.css">
+    <script src="js/holidayAssistant.js"></script>
+</head>
+<body>
+    <header>
+        <a href="index.html" class="app-logo-link">
+            <img src="images/logo/logo.png" alt="Logo Anestesiólogos del Valle" class="app-logo">
+        </a>
+        <h1>Anestesiólogos del Valle</h1>
+        <a href="index.html" class="back-to-main-menu" title="Volver al menú principal">
+            <img src="images/icons/back-icon.svg" alt="Volver" class="back-icon">
+        </a>
+    </header>
+    <main>
+        <div class="instructions">
+            <label for="year-filter">Seleccionar Año:</label>
+            <select id="year-filter"></select>
+        </div>
+        <div class="instructions">
+        <h2>Conteo de Feriados Largos por Usuario</h2>
+        <table id="user-holiday-count-table" class="responsive-table">
+            <thead>
+                <tr>
+                    <th>Usuario</th> <!-- Los años se llenarán dinámicamente -->
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Filas generadas dinámicamente -->
+            </tbody>
+        </table>
+        
+        <h2>Asistente propiamente dicho</h2>
+        <button id="assign-holidays" class="instructions-button">Asignar</button>
+        <button id="clear-assignments" class="instructions-button">Limpiar asignaciones</button>
+        <button id="print-holidays" class="instructions-button">Imprimir</button>
+        <table id="holiday-table" class="responsive-table">
+            <thead>
+                <tr>
+                    <th>Feriado Largo</th>
+                    <th>Fechas</th>
+                    <th>Asignación de Usuarios</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Filas generadas dinámicamente -->
+            </tbody>
+        </table>
+        </div>
+    </main>
+</body>
+</html>

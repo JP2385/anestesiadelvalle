@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Administrar Usuarios - Anestesiólogos del Valle</title>
+    <link rel="icon" type="image/png" href="images/logo/logo64x64.png">
+    <link rel="stylesheet" href="css/base.css">
+    <link rel="stylesheet" href="css/header.css">
+    <link rel="stylesheet" href="css/login.css">
+    <link rel="stylesheet" href="css/media.css">
+    <link rel="stylesheet" href="css/nav.css">
+    <link rel="stylesheet" href="css/main.css">
+    <link rel="stylesheet" href="css/spinner.css">
+    <link rel="stylesheet" href="css/admin.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script> 
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/es.js"></script>
+    <script>
+        flatpickr(".selector", {
+            locale: "es", // Configura el idioma a español
+            dateFormat: "d-m-Y" // Formato de la fecha opcional
+        });
+    </script>
+    <script defer src="js/bundle.js"></script>
+    <script type="module" defer src="js/admin.js"></script>
+    <script defer src="js/spinner.js"></script>
+    <script type="module">
+        import { initializePermissions, redirectIfNoRole } from './js/authUtils.js';
+
+        // Proteger esta página - solo admin puede acceder
+        document.addEventListener('DOMContentLoaded', async function() {
+            await initializePermissions();
+            redirectIfNoRole('/index.html', 'admin');
+        });
+    </script>
+</head>
+<body>
+    <div class="spinner" id="spinner"></div>
+    <header>
+        <a href="index.html" class="app-logo-link">
+            <img src="images/logo/logo.png" alt="Logo Anestesiólogos del Valle" class="app-logo">
+        </a>
+        <h1>Anestesiólogos del Valle</h1>
+        <a href="index.html" class="back-to-main-menu" title="Volver al menú principal">
+            <img src="images/icons/back-icon.svg" alt="Volver" class="back-icon">
+        </a>
+    </header>
+    <main class="form-container">
+        <h2>Administrador de Usuarios</h2>
+        <div class="admin-input-group-user">
+        <select id="user-select"></select>
+        </div>
+        <div class="admin-input-group">
+            <label for="beginningDate">Fecha de Ingreso:</label>
+            <div id="beginningDate">No disponible</div> <!-- Se actualiza dinámicamente -->
+        </div>
+        <div class="admin-input-group">
+            <label for="phoneNumber">Número de Teléfono:</label>
+            <input type="text" id="phoneNumber" name="phoneNumber" placeholder="+1234567890">
+        </div>
+
+        <h3>Gestión de Rol:</h3>
+        <div class="admin-input-group">
+            <label for="userRole">Rol de Usuario:</label>
+            <select id="userRole" name="userRole">
+                <option value="user">Usuario</option>
+                <option value="admin">Administrador</option>
+            </select>
+        </div>
+        <button type="button" id="update-role-btn" class="main-menu-button">Actualizar Rol</button>
+
+        <form id="admin-form">
+            <h3>Actualizar perfil para la asignación de trabajo programado:</h3>
+            
+            <div class="admin-input-group">
+                <label for="doesCardio">Hace Cardio</label>
+                <input type="checkbox" id="doesCardio" name="doesCardio">
+            </div>
+            <div class="admin-input-group">
+                <label for="doesPediatrics">Hace Pediatría</label>
+                <input type="checkbox" id="doesPediatrics" name="doesPediatrics">
+            </div>
+            <div class="admin-input-group">
+                <label for="doesRNM">Hace RNM</label>
+                <input type="checkbox" id="doesRNM" name="doesRNM">
+            </div>
+            <div class="admin-input-group">
+                <label for="worksInPublicNeuquen">Trabaja en público Neuquén</label>
+                <input type="checkbox" id="worksInPublicNeuquen" name="worksInPublicNeuquen">
+            </div>
+            <div class="admin-input-group">
+                <label for="worksInPrivateNeuquen">Trabaja en privado Neuquén</label>
+                <input type="checkbox" id="worksInPrivateNeuquen" name="worksInPrivateNeuquen">
+            </div>
+            <div class="admin-input-group">
+                <label for="worksInPublicRioNegro">Trabaja en público Río Negro</label>
+                <input type="checkbox" id="worksInPublicRioNegro" name="worksInPublicRioNegro">
+            </div>
+            <div class="admin-input-group">
+                <label for="worksInPrivateRioNegro">Trabaja en privado Río Negro</label>
+                <input type="checkbox" id="worksInPrivateRioNegro" name="worksInPrivateRioNegro">
+            </div>
+            <div class="admin-input-group">
+                <label for="worksInCmacOnly">Trabaja sólo en CMAC</label>
+                <input type="checkbox" id="worksInCmacOnly" name="worksInCmacOnly">
+            </div>
+            <div class="admin-input-group">
+            <label for="doesShifts">Hace guardias</label>
+            <input type="checkbox" id="doesShifts" name="doesShifts">
+            </div>
+            <h3>Esquema de trabajo programado:</h3>
+            <div class="admin-input-group">
+                <label for="workSchedule-monday">Horario Lunes</label>
+                <select id="workSchedule-monday" name="workSchedule-monday">
+                    <option value="Mañana">Mañana</option>
+                    <option value="Tarde">Tarde</option>
+                    <option value="Variable">Variable</option>
+                    <option value="No trabaja">No trabaja</option>
+                </select>
+            </div>
+            <div class="admin-input-group">
+                <label for="workSchedule-tuesday">Horario Martes</label>
+                <select id="workSchedule-tuesday" name="workSchedule-tuesday">
+                    <option value="Mañana">Mañana</option>
+                    <option value="Tarde">Tarde</option>
+                    <option value="Variable">Variable</option>
+                    <option value="No trabaja">No trabaja</option>
+                </select>
+            </div>
+            <div class="admin-input-group">
+                <label for="workSchedule-wednesday">Horario Miércoles</label>
+                <select id="workSchedule-wednesday" name="workSchedule-wednesday">
+                    <option value="Mañana">Mañana</option>
+                    <option value="Tarde">Tarde</option>
+                    <option value="Variable">Variable</option>
+                    <option value="No trabaja">No trabaja</option>
+                </select>
+            </div>
+            <div class="admin-input-group">
+                <label for="workSchedule-thursday">Horario Jueves</label>
+                <select id="workSchedule-thursday" name="workSchedule-thursday">
+                    <option value="Mañana">Mañana</option>
+                    <option value="Tarde">Tarde</option>
+                    <option value="Variable">Variable</option>
+                    <option value="No trabaja">No trabaja</option>
+                </select>
+            </div>
+            <div class="admin-input-group">
+                <label for="workSchedule-friday">Horario Viernes</label>
+                <select id="workSchedule-friday" name="workSchedule-friday">
+                    <option value="Mañana">Mañana</option>
+                    <option value="Tarde">Tarde</option>
+                    <option value="Variable">Variable</option>
+                    <option value="No trabaja">No trabaja</option>
+                </select>
+            </div>
+            <h3>Gestor de vacaciones:</h3>
+            <div class="admin-input-group">
+                <label for="vacation-start">Fecha de Inicio</label>
+                <input type="date" id="vacation-start" name="vacation-start" class="vacation-start">
+            </div>
+            <div class="admin-input-group">
+                <label for="vacation-end">Fecha de Fin</label>
+                <input type="date" id="vacation-end" name="vacation-end" class="vacation-end">
+            </div>
+            <button type="button" id="add-vacation" class="main-menu-button">Agregar Vacaciones</button>
+            <ul id="vacation-list"></ul>
+            <h3>Gestor de otras Licencias:</h3>
+            <div class="admin-input-group">
+                <label for="other-leave-start">Fecha de Inicio</label>
+                <input type="date" id="other-leave-start" name="other-leave-start" class="leave-start">
+            </div>
+            <div class="admin-input-group">
+                <label for="other-leave-end">Fecha de Fin</label>
+                <input type="date" id="other-leave-end" name="other-leave-end" class="leave-end">
+            </div>
+            <div class="admin-input-group">
+                <label for="other-leave-type">Concepto</label>
+                <select id="other-leave-type" name="other-leave-type">
+                    <option value="">Seleccione un concepto</option>
+                    <option value="Paternidad">Paternidad</option>
+                    <option value="Maternidad">Maternidad</option>
+                    <option value="Enfermedad">Enfermedad</option>
+                    <option value="Otro">Otro</option>
+                </select>
+            </div>
+            <div class="admin-input-group" id="other-leave-custom-type-group" style="display: none;">
+                <label for="other-leave-custom-type">Especifique</label>
+                <input type="text" id="other-leave-custom-type" name="other-leave-custom-type" placeholder="Ingrese motivo">
+            </div>
+            <button type="button" id="add-other-leave" class="main-menu-button">Agregar Licencia</button>
+            <ul id="other-leaves-list"></ul>
+
+            <button type="submit" class="main-menu-button">Actualizar Usuario</button>
+        </form>
+    </main>
+</body>
+</html>

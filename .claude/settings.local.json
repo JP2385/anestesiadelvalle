@@ -1,0 +1,26 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npm start)",
+      "Bash(npm install:*)",
+      "Bash(netstat:*)",
+      "Bash(findstr:*)",
+      "Bash(taskkill:*)",
+      "Bash(git restore:*)",
+      "Bash(node scripts/migrateWorkSites.js:*)",
+      "Bash(node scripts/fixWorkSiteIndexes.js:*)",
+      "Bash(node scripts/listWorkSites.js:*)",
+      "Bash(awk:*)",
+      "Bash(node scripts/cleanDuplicates.js:*)",
+      "Bash(mongosh:*)",
+      "Bash(node scripts/backupSchedules.js:*)",
+      "Bash(node scripts/migrateScheduleToNewFormat.js:*)",
+      "Bash(move \"c:\\Users\\jpsga\\anestesiadelvalle\\frontend\\js\\weekly-schedule\\mortalCombatManager.js\" \"c:\\Users\\jpsga\\anestesiadelvalle\\frontend\\js\\weekly-schedule\\modules\\mortalCombatManager.js\")",
+      "Bash(move:*)",
+      "Bash(move \"c:\\Users\\jpsga\\anestesiadelvalle\\frontend\\js\\weekly-schedule\\selectPopulator.js\" \"c:\\Users\\jpsga\\anestesiadelvalle\\frontend\\js\\weekly-schedule\\modules\\selectPopulator.js\")",
+      "Bash(tasklist:*)"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}

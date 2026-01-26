@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Asignaciones Extras</title>
+    <link rel="icon" type="image/png" href="images/logo/logo64x64.png">
+    <link rel="stylesheet" href="css/weekly-schedule.css">
+    <link rel="stylesheet" href="css/header.css">
+    <link rel="stylesheet" href="css/spinner.css">
+    <link rel="stylesheet" href="css/tooltip.css">
+    <link rel="stylesheet" href="css/media.css">
+    <link rel="stylesheet" href="css/progressBar.css">
+    <link rel="stylesheet" href="css/floatingTable.css">
+    <script defer src="js/bundle.js"></script>
+    <script src="js/spinner.js"></script>
+    <script type="module" defer src="js/extra-assignments.js"></script>
+</head>
+<body>
+    <div class="spinner" id="spinner"></div>
+    <header>
+        <a href="index.html" class="app-logo-link">
+            <img src="images/logo/logo.png" alt="Logo Anestesiólogos del Valle" class="app-logo">
+        </a>
+        <h1>Anestesiólogos del Valle</h1>
+        <a href="index.html" class="back-to-main-menu" title="Volver al menú principal">
+            <img src="images/icons/back-icon.svg" alt="Volver" class="back-icon">
+        </a>
+    </header>
+    <main>
+        <div class="instructions">
+            <h3>Asignaciones Extras (fuera de asignaciones por defecto)</h3>
+            <ol>
+                <li>1. Las asignaciones por defecto aparecen pre-cargadas en gris.</li>
+                <li>2. Puede agregar asignaciones extras seleccionando usuarios en los selects habilitados.</li>
+                <li>3. Las asignaciones extras se contabilizan de forma independiente.</li>
+                <li>4. Puede generar reportes mensuales de asignaciones extras por usuario.</li>
+                <li>5. Guarde los cambios:<button id="save-extra-assignments" class="instructions-button">Guardar Asignaciones Extras</button></li>
+                <li>6. Genere reporte mensual:<button id="generate-monthly-report" class="instructions-button">Generar Reporte Mensual</button></li>
+            </ol>
+        </div>
+
+        <div class="instructions">
+            <h3>Seleccione la semana</h3>
+            <div style="margin: 10px 0;">
+                <label for="week-selector">Semana de inicio:</label>
+                <input type="date" id="week-selector" />
+                <button id="load-week-button" class="instructions-button">Cargar Semana</button>
+            </div>
+            <div id="week-info" style="margin: 10px 0; font-weight: bold;"></div>
+        </div>
+
+        <div class="schedule-assistant">
+            <div class="header-div">
+                <h3>Asignaciones de la semana</h3>
+            </div>
+            <table id="schedule-assistant">
+                <thead>
+                    <tr>
+                        <th class="work-site">Sitio de Trabajo</th>
+                        <th id="monday-header">Lunes</th>
+                        <th id="tuesday-header">Martes</th>
+                        <th id="wednesday-header">Miércoles</th>
+                        <th id="thursday-header">Jueves</th>
+                        <th id="friday-header">Viernes</th>
+                    </tr>
+                </thead>
+                <tbody id="schedule-body">
+                    <!-- Los sitios de trabajo se cargan dinámicamente -->
+                </tbody>
+            </table>
+        </div>
+    </main>
+</body>
+</html>

@@ -1,0 +1,308 @@
+@media (max-width: 1024px) {
+    table {
+        width: 100%;
+        min-width: 768px;
+        table-layout: auto; /* Cambia a auto para permitir la expansión */
+    }
+
+    /* Sobrescribir estilos específicos para #shift-references */
+    #shift-references {
+        width: auto; /* Restablece el ancho según el contenido */
+        min-width: 100px;
+        table-layout: auto; /* O elige otro valor si prefieres */
+    }
+    
+    th, td {
+        font-size: 0.875rem; /* Reduce el tamaño de la fuente */
+        padding: 2px; /* Reduce el padding */
+    }
+
+    #floating-table th, td {
+        font-size: 0.7rem;
+    }
+    th.work-site {
+        width: auto; /* Permite que la primera columna se ajuste automáticamente */
+    }
+
+    td.work-site {
+        width: auto; /* Permite que la primera columna se ajuste automáticamente */
+    }
+}
+
+@media (max-width: 768px) {
+    header {
+        justify-content: space-between;
+    }
+
+    header img.app-logo {
+        position: relative;
+        height: auto;
+        max-height: 3rem;
+        margin-right: 1rem;
+    }
+
+    .back-icon {
+        width: 30px;
+    }
+    
+    header h1 {
+        font-size: 1.25rem;
+        text-align: center;
+    }
+
+    nav button, .content-section button {
+        flex: 1 1 100%;
+        padding: 0.75rem 1rem;
+        font-size: 0.875rem;
+    }
+
+    main {
+        padding: 1rem;
+    }
+
+    .remember-me input[type="checkbox"] {
+        margin-left: 0px;
+    }
+
+    .table-container {
+        overflow-x: auto; /* Permite el desplazamiento horizontal en pantallas pequeñas */
+        width: 100%;
+    }
+
+    .summary-container {
+        overflow-x: auto;
+    }
+
+    .header-div {
+    position: sticky;
+    left: 0; /* Fija el header-div solo en el desplazamiento horizontal */
+    padding: 5px; /* Aumenta el padding para darle espacio en pantallas pequeñas */
+    background-color: white; /* Fondo sólido para que se vea claro */
+    width: 100%; /* Para que ocupe todo el ancho de la pantalla */
+    }
+
+
+    
+    table {
+        width: 100%;
+        table-layout: fixed; /* Mantiene el ancho fijo de la tabla */
+        min-width: 768px;
+        border-collapse: collapse;
+        margin-top: 10px;
+    }
+
+    #shift-references-container {
+        overflow-x: auto; /* Permite el scroll horizontal */
+        max-width: 100%;
+    }
+    #shift-references {
+        width: auto; /* Restablece el ancho según el contenido */
+        min-width: 100px;
+        table-layout: auto; /* O elige otro valor si prefieres */
+    }
+
+    /* Estilos para las celdas */
+.shift-references th, .shift-references td {
+    border: 1px solid #ddd;
+    padding: 4px;
+    font-size: 0.9rem; /* Ajusta según sea necesario */
+    text-align: left;
+    white-space: nowrap; /* Evita que el contenido se divida en varias líneas */
+}
+
+        .responsive-table {
+            width: 100%; /* Ajusta el ancho de la tabla para que se adapte a la pantalla */
+            table-layout: auto; /* Permite que la tabla se ajuste automáticamente */
+            min-width: auto;
+        }
+
+    /* Configuración para la columna fija */
+    th.work-site, td.work-site {
+        position: sticky;
+        left: 0;
+        z-index: 10; /* Coloca la columna sobre el contenido desplazable */
+        padding-right: 10px; /* Opcional: ajusta según el diseño */
+    }
+
+    /* Pseudo-elemento para simular el espacio en blanco a la derecha */
+    th.work-site::after, td.work-site::after {
+        content: '';
+        position: absolute;
+        top: -4px; /* Expande hacia arriba para cubrir el borde superior */
+        left: -23px; /* Ajusta según el ancho deseado */
+        width: 21px; /* Ancho del "relleno" */
+        height: 100%;
+        background-color: white;
+        border-right: 2px solid white;
+        border-left: 2px solid white; /* Borde derecho blanco para ocultar el borde de la celda siguiente */
+        border-top: 2px solid white; /* Borde superior blanco */
+        border-bottom: 8px solid white; /* Borde inferior blanco */
+        z-index: 9; /* Coloca el pseudo-elemento por detrás del contenido de la celda */
+    }
+
+    #floating-table th, td  {
+        font-size: 0.7rem !important;
+
+    }
+
+    /* Contenedor de la tabla para manejar el desplazamiento */
+    .table-container {
+        overflow-x: auto; /* Permite desplazamiento horizontal */
+        width: 100%; /* Ancho completo para ajustar a la pantalla */
+    }
+
+
+    th, td {
+        font-size: 0.875rem; /* Tamaño de la fuente reducido */
+        padding: 2px; /* Padding reducido */
+        text-align: center;
+    }
+
+    /* Fondo blanco para el resto de las celdas para evitar superposición de texto */
+    tbody td {
+        background-color: white;
+        padding: 2px;
+        border: 1px solid #ddd;
+    }
+    
+    th {
+        background-color: #0056b3;
+        color: white;
+    }
+    
+    th, td {
+        border: 1px solid #ddd;
+    }
+
+    /* Ancho de la columna work-site */
+    th.work-site {
+        width: 16%; /* Define el ancho de la columna work-site como un 20% del total */
+    }
+
+    /* Ancho de las demás columnas <th> */
+    .assignments-inform th:not(.work-site) {
+        width: 12%; /* Define el ancho de cada columna sin work-site como un 80% de work-site */
+    }
+
+    .header-div {
+        contain: layout;
+    }
+    
+
+    td.droppable {
+        background-color: #f0f0f0;
+    }
+
+    .instructions-button {
+        width: 50%; /* Asegura que los botones ocupen todo el ancho en dispositivos pequeños */
+        padding: 0.5rem; /* Ajusta el padding según sea necesario */
+    }
+
+    .download-button {
+        padding: 0.5rem; /* Ajusta el padding según sea necesario */
+    }
+
+    .lock-button {/* Asegura que los botones ocupen todo el ancho en dispositivos pequeños */
+        padding: 0.1rem; /* Ajusta el padding según sea necesario */
+    }
+
+
+    .notification-area button {
+            width: 30%; /* Los botones ocuparán todo el ancho disponible */
+            font-size: 0.9rem; /* Ajustar el tamaño de fuente */
+            padding: 0.8rem 1.5rem; /* Ajustar el padding para mejor visualización */
+            margin: 0.5rem; /* Márgenes ajustados */
+    }
+}
+
+
+@media (max-width: 480px) {
+    header {
+        justify-content: center;
+    }
+
+    header img.app-logo {
+        position: relative;
+        height: auto;
+        max-height: 2.5rem;
+        margin-right: 1rem;
+    }
+
+    header h1 {
+        font-size: 1.25rem;
+        text-align: center;
+    }
+
+    nav {
+        padding: 0.5rem;
+    }
+
+    nav button, .content-section button {
+        flex: 1 1 100%;
+        padding: 0.75rem 1rem;
+        font-size: 0.875rem;
+    }
+
+    main {
+        padding: 0.5rem;
+    }
+
+    .content-section {
+        padding: 0.75rem;
+    }
+
+    .remember-me input[type="checkbox"] {
+        margin-left: 2px;
+    }
+
+    /* Estilos responsivos para las tablas */
+    table {
+        width: 100%;
+        table-layout: auto;
+    }
+
+    th, td {
+        font-size: 0.75rem; /* Reduce aún más el tamaño de la fuente */
+        padding: 1px; /* Reduce el padding */
+    }
+
+    th.work-site {
+        width: 120px; /* Permite que la primera columna se ajuste automáticamente */
+        word-break: break-word;
+    }
+
+    th:not(.work-site) {
+        width: auto; /* Permite que las demás columnas se ajusten automáticamente */
+        word-break: break-word;
+    }
+
+    td.work-site {
+        width: auto; /* Permite que la primera columna se ajuste automáticamente */
+        word-break: break-word;
+    }
+
+    td.droppable {
+        background-color: #f0f0f0;
+        white-space: nowrap; /* Evita el desbordamiento de texto */
+        word-break: break-word;
+        align-items: center;
+    }
+
+    .instructions-button {
+        width: 50%; /* Asegura que los botones ocupen todo el ancho en dispositivos pequeños */
+        padding: 0.5rem; /* Ajusta el padding según sea necesario */
+    }
+
+    .download-button {
+        padding: 0.5rem; /* Ajusta el padding según sea necesario */
+    }
+
+    .notification-area button {
+        width: 100%; /* Asegura que los botones ocupen todo el ancho en dispositivos pequeños */
+        padding: 0.5rem; /* Ajusta el padding según sea necesario */
+    }
+
+    #shift-references-container {
+        display: none; /* Oculta el contenedor de la tabla de referencias */
+    }
+}

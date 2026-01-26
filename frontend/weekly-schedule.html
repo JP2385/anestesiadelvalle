@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="es">    
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Asistente de Programación Semanal</title>
+    <link rel="icon" type="image/png" href="images/logo/logo64x64.png">
+    <link rel="stylesheet" href="css/weekly-schedule.css">
+    <link rel="stylesheet" href="css/header.css">
+    <link rel="stylesheet" href="css/spinner.css">
+    <link rel="stylesheet" href="css/tooltip.css">
+    <link rel="stylesheet" href="css/media.css">
+    <link rel="stylesheet" href="css/progressBar.css">
+    <link rel="stylesheet" href="css/floatingTable.css">
+    <script defer src="js/bundle.js"></script>
+    <script src="js/spinner.js"></script>
+    <script type="module" defer src="js/loadWorkSites.js"></script>
+    <script type="module" defer src="js/weekly-schedule.js"></script>
+    <script type="module" defer src="js/printSchedule.js"></script>
+    <script type="module" defer src="js/warnBeforeUnload.js"></script>
+    <script type="module" defer src="js/longDaysCount.js"></script>
+    <!-- Auto-reload durante desarrollo -->
+    <script>
+        if (window.location.hostname === 'localhost') {
+            let lastModified = {};
+            setInterval(async () => {
+                try {
+                    const files = [
+                        'weekly-schedule.html',
+                        'css/weekly-schedule.css',
+                        'js/loadWorkSites.js'
+                    ];
+                    for (const file of files) {
+                        const response = await fetch(file, { method: 'HEAD' });
+                        const modified = response.headers.get('last-modified');
+                        if (lastModified[file] && lastModified[file] !== modified) {
+                            console.log(`Cambio detectado en ${file}, recargando...`);
+                            window.location.reload();
+                            return;
+                        }
+                        lastModified[file] = modified;
+                    }
+                } catch (e) {
+                    // Silenciar errores de red
+                }
+            }, 1000);
+        }
+    </script>
+</head>
+<body>
+    <div class="spinner" id="spinner"></div>
+    <div id="floating-table" class="floating-table">
+        <h1>Días largos acumulados</h1>
+        <button id="close-table" class="close-btn">&times;</button>
+        <div class="table-scroll">
+        <table id="long-days-count-table">
+            <thead>
+                <tr>
+                    <!-- Las cabeceras se agregarán dinámicamente desde el JS -->
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Aquí se agregarán las filas de datos dinámicamente -->
+            </tbody>
+        </table>
+    </div>
+    </div> 
+    <header>
+        <a href="index.html" class="app-logo-link">
+            <img src="images/logo/logo.png" alt="Logo Anestesiólogos del Valle" class="app-logo">
+        </a>
+        <h1>Anestesiólogos del Valle</h1>
+        <a href="index.html" class="back-to-main-menu" title="Volver al menú principal">
+            <img src="images/icons/back-icon.svg" alt="Volver" class="back-icon">
+        </a>
+    </header>
+    <main>
+        <div class="instructions">
+            <h3>Pasos para generar programación</h3>
+            <ol>
+                <li>1. Haga las modificaciones que necesite a la programación original.</li>
+                <li>2. Si la cantidad de lugares de trabajo excede a la cantidad de anestesiólogos por día:
+                    cambie días vespertinos/matutinos por días largos.</li>
+                <li>3. Si la cantidad de anestesiólogos excede a la cantidad de anestesiólogos por día:
+                    cambie días días largos por días matutinos/vespertinos.</li>
+                <li>4. Puede asignar anestesiólogos para días individuales empleando los botones 🔄 al lado de las fechas.</li> 
+                <li>5. Puede asignar anestesiólogos para toda la semana:<button id="autoAssign-button" class="instructions-button">Asignar anestesiólogos</button></li>
+                <div id="progress-wrapper">
+                    <div id="progress-content">
+                        <div id="progress-bar-container">
+                            <div id="progress-bar"></div>
+                        </div>
+                        <p id="progress-message"></p>
+                    </div>
+                </div>
+                <li>6. Imprima:<button id="print-schedule" class="instructions-button">Imprimir Programación</button></li>
+            </ol>
+        </div>         
+        <div id="availability-container" class="instructions">
+            <div class="header-div">
+            <h3>Informe de asignaciones</h3>
+            </div>
+            <div class="header-div">
+            <div class="switch-container" style="display: flex; align-items: center; justify-content: space-between; width: 100%;">
+                <div style="display: flex; align-items: center;">
+                    <span class="switch-legend">
+                        Acumulado de días largos: 
+                    </span>
+                
+                    <!-- Switch con checkbox -->
+                    <label class="switch">
+                        <input type="checkbox" id="toggle-table" />
+                        <span class="slider"></span>
+                    </label>
+                </div>
+                
+                <!-- Botón Modo Mortal Combat -->
+                <div style="display: flex; flex-direction: column; align-items: center; position: relative; transform: translateX(-50px);">
+                    <button id="mortal-combat-button" title="Activar Modo Mortal Combat" style="background: none; border: none; cursor: pointer; display: flex; align-items: center; padding: 0;">
+                        <img src="images/buttons/mortal_kombat.png" alt="Modo Mortal Combat" style="height: 60px; width: auto; filter: brightness(1.5) saturate(1.5);" />
+                    </button>
+                    <span id="mortal-combat-legend" style="font-size: 12px; color: red; font-weight: bold; position: absolute; top: 65px; white-space: nowrap; display: none;">Modo Mortal Combat ACTIVO</span>
+                </div>
+            </div>
+            <!-- Tabla flotante -->
+
+        </div>
+        <div class="header-div">
+            <span id="long-days-inform"></span>
+        </div> 
+            <table class="assigments-inform">
+                <thead>
+                    <tr>
+                        <th class="work-site"></th>
+                        <th>Lunes</th>
+                        <th>Martes</th>
+                        <th>Miércoles</th>
+                        <th>Jueves</th>
+                        <th>Viernes</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td class="work-site"><span class="inform">Nro de lugares habilitados</span></td>
+                        <td ><div class="tooltip-wrapper"><span id="monday-sites"></span></div></td>
+                        <td><div class="tooltip-wrapper"><span id="tuesday-sites"></span></div></td>
+                        <td><div class="tooltip-wrapper"><span id="wednesday-sites"></span></div></td>
+                        <td><div class="tooltip-wrapper"><span id="thursday-sites"></span></div></td>
+                        <td><div class="tooltip-wrapper"><span id="friday-sites"></span></div></td>
+                    </tr>
+                    <tr>
+                        <td class="work-site"><span class="inform">Nro. de Anestesiólogos disponibles</span></td>
+                        <td><div class="tooltip-wrapper"><span id="monday-available"></span></div></td>
+                        <td><div class="tooltip-wrapper"><span id="tuesday-available"></span></div></td>
+                        <td><div class="tooltip-wrapper"><span id="wednesday-available"></span></div></td>
+                        <td><div class="tooltip-wrapper"><span id="thursday-available"></span></div></td>
+                        <td><div class="tooltip-wrapper"><span id="friday-available"></span></div></td>
+                    </tr>
+                    <tr>
+                        <td class="work-site"><span class="inform">Nro. de Anestesiólogos asignados</span></td>
+                        <td><div class="tooltip-wrapper"><span id="monday-assignments"></span></div></td>
+                        <td><div class="tooltip-wrapper"><span id="tuesday-assignments"></span></div></td>
+                        <td><div class="tooltip-wrapper"><span id="wednesday-assignments"></span></div></td>
+                        <td><div class="tooltip-wrapper"><span id="thursday-assignments"></span></div></td>
+                        <td><div class="tooltip-wrapper"><span id="friday-assignments"></span></div></td>
+                    </tr>
+                    <tr>
+                        <td class="work-site"><span class="inform">Anestesiólogos no asignados</span></td>
+                        <td><div class="tooltip-wrapper"><span id="monday-compare"></span></div></td>
+                        <td><div class="tooltip-wrapper"><span id="tuesday-compare"></span></div></td>
+                        <td><div class="tooltip-wrapper"><span id="wednesday-compare"></span></div></td>
+                        <td><div class="tooltip-wrapper"><span id="thursday-compare"></span></div></td>
+                        <td><div class="tooltip-wrapper"><span id="friday-compare"></span></div></td>
+                    </tr>
+                </tbody>
+            </table>   
+        </div>
+        <div class="schedule-assistant">
+            <div class="header-div">
+        <h3>Asistente propiamente dicho</h3>
+        </div>
+        <table id="schedule-assistant">
+            <thead>
+                <tr>
+                    <th class="work-site">Sitio de Trabajo</th>
+                    <th id="monday-header">Lunes</th>
+                    <th id="tuesday-header">Martes</th>
+                    <th id="wednesday-header">Miércoles</th>
+                    <th id="thursday-header">Jueves</th>
+                    <th id="friday-header">Viernes</th>
+                </tr>
+            </thead>
+            <tbody id="schedule-body">
+                <!-- Los sitios de trabajo se cargan dinámicamente desde la base de datos mediante loadWorkSites.js -->
+            </tbody>
+        </table> 
+        </div>
+    </main>
+</body>
+</html>

@@ -1,0 +1,110 @@
+/* Estilo del switch */
+.switch {
+    position: relative;
+    display: inline-block;
+    width: 50px;
+    height: 24px;
+}
+
+.switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #ccc;
+    transition: 0.4s;
+    border-radius: 34px;
+}
+
+.slider:before {
+    position: absolute;
+    content: "";
+    height: 18px;
+    width: 18px;
+    left: 3px;
+    bottom: 3px;
+    background-color: white;
+    transition: 0.4s;
+    border-radius: 50%;
+}
+
+input:checked + .slider {
+    background-color: #0056b3;
+}
+
+input:checked + .slider:before {
+    transform: translateX(26px);
+}
+
+#floating-table {
+    display: none; /* Solo se muestra cuando se activa */
+    position: fixed; /* Fija la posición en la pantalla */
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 500px;
+    max-width: 90%; /* Ajuste para pantallas pequeñas */
+    background-color: white;
+    border: 1px solid #ccc;
+    padding: 10px;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.3);
+    z-index: 1000; /* Suficientemente alto para que esté frente a otros elementos */
+    font-size: 0.7rem;
+    border-radius: 5px;
+    max-height: 90vh; /* Limita la altura para evitar desbordamiento en la pantalla */
+    overflow-y: auto; /* Permite desplazamiento vertical si el contenido es alto */
+}
+
+.table-scroll {
+    overflow-x: auto; /* Permite desplazamiento horizontal solo para la tabla */
+    max-width: 100%; /* Asegura que la tabla no exceda el ancho del contenedor */
+    margin-top: 10px; /* Espacio entre el encabezado y la tabla */
+}
+
+h1 {
+    font-size: 1.5em;
+    font-weight: bold;
+    text-align: left;
+    margin: 0; /* Elimina márgenes para un ajuste preciso */
+
+}
+/* Estilo para la cruz (botón de cierre) */
+#floating-table .close-btn {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: none;
+    border: none;
+    font-size: 1.5rem; /* Tamaño de la "X" */
+    width: 10px; /* Ancho del botón */
+    height: 10px; /* Alto del botón */
+    line-height: 10px; /* Asegura que el contenido esté centrado verticalmente */
+    text-align: center;
+    cursor: pointer;
+    padding: 0;
+    margin: 0;
+    color:black;
+}
+
+/* Estilo del switch */
+label {
+    margin-right: 10px;
+}
+
+#long-days-count-table td:nth-child(2) {
+    font-weight: bold;
+    
+
+}
+
+#long-days-count-table, #shift-counts {
+    table-layout: auto;
+}

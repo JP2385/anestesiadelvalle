@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ABM Bocas de Trabajo - Anestesiólogos del Valle</title>
+    <link rel="icon" type="image/png" href="images/logo/logo64x64.png">
+    <link rel="stylesheet" href="css/base.css">
+    <link rel="stylesheet" href="css/header.css">
+
+    <link rel="stylesheet" href="css/media.css">
+    <link rel="stylesheet" href="css/nav.css">
+    <link rel="stylesheet" href="css/main.css">
+    <link rel="stylesheet" href="css/spinner.css">
+    <link rel="stylesheet" href="css/admin.css">
+    <link rel="stylesheet" href="css/login.css">
+    <script defer src="js/bundle.js"></script>
+    <script type="module" defer src="js/abm-work-sites.js"></script>
+    <script defer src="js/spinner.js"></script>
+    <script type="module">
+        import { initializePermissions, redirectIfNoRole } from './js/authUtils.js';
+
+        // Proteger esta página - solo admin puede acceder
+        document.addEventListener('DOMContentLoaded', async function() {
+            await initializePermissions();
+            redirectIfNoRole('/index.html', 'admin');
+        });
+    </script>
+</head>
+<body>
+    <div class="spinner" id="spinner"></div>
+    <header>
+        <a href="index.html" class="app-logo-link">
+            <img src="images/logo/logo.png" alt="Logo Anestesiólogos del Valle" class="app-logo">
+        </a>
+        <h1>Anestesiólogos del Valle</h1>
+        <a href="index.html" class="back-to-main-menu" title="Volver al menú principal">
+            <img src="images/icons/back-icon.svg" alt="Volver" class="back-icon">
+        </a>
+    </header>
+    <main class="form-container">
+        <h2>Administración de Bocas de Trabajo</h2>
+
+        <!-- Sección de Alta -->
+        <div class="abm-section">
+            <h3>Crear Nueva Boca de Trabajo</h3>
+            <form id="create-worksite-form">
+                <div class="admin-input-group">
+                    <label for="new-name">Nombre:</label>
+                    <input type="text" id="new-name" name="name" required placeholder="Ej: Quirófano 1">
+                </div>
+
+                <div class="admin-input-group">
+                    <label for="new-abbreviation">Abreviatura:</label>
+                    <input type="text" id="new-abbreviation" name="abbreviation" required maxlength="11" placeholder="Ej: Q1">
+                </div>
+
+                <div class="admin-input-group">
+                    <label for="new-institution">Institución:</label>
+                    <select id="new-institution" name="institution" required>
+                        <option value="">Seleccione una institución</option>
+                        <!-- Se llena dinámicamente -->
+                    </select>
+                </div>
+
+                <h4>Regímenes Horarios y Días Disponibles:</h4>
+
+                <!-- Matutino -->
+                <div style="border: 1px solid #ddd; padding: 15px; margin-bottom: 15px; border-radius: 5px; background-color: #f9f9f9;">
+                    <div class="admin-input-group">
+                        <label for="new-matutino-enabled"><strong>Matutino</strong></label>
+                        <input type="checkbox" id="new-matutino-enabled" checked>
+                    </div>
+                    <div style="margin-left: 20px; display: flex; gap: 15px; flex-wrap: wrap;">
+                        <label><input type="checkbox" id="new-matutino-monday"> Lun</label>
+                        <label><input type="checkbox" id="new-matutino-tuesday"> Mar</label>
+                        <label><input type="checkbox" id="new-matutino-wednesday"> Mié</label>
+                        <label><input type="checkbox" id="new-matutino-thursday"> Jue</label>
+                        <label><input type="checkbox" id="new-matutino-friday"> Vie</label>
+                    </div>
+                </div>
+
+                <!-- Vespertino -->
+                <div style="border: 1px solid #ddd; padding: 15px; margin-bottom: 15px; border-radius: 5px; background-color: #f9f9f9;">
+                    <div class="admin-input-group">
+                        <label for="new-vespertino-enabled"><strong>Vespertino</strong></label>
+                        <input type="checkbox" id="new-vespertino-enabled" checked>
+                    </div>
+                    <div style="margin-left: 20px; display: flex; gap: 15px; flex-wrap: wrap;">
+                        <label><input type="checkbox" id="new-vespertino-monday"> Lun</label>
+                        <label><input type="checkbox" id="new-vespertino-tuesday"> Mar</label>
+                        <label><input type="checkbox" id="new-vespertino-wednesday"> Mié</label>
+                        <label><input type="checkbox" id="new-vespertino-thursday"> Jue</label>
+                        <label><input type="checkbox" id="new-vespertino-friday"> Vie</label>
+                    </div>
+                </div>
+
+                <!-- Largo -->
+                <div style="border: 1px solid #ddd; padding: 15px; margin-bottom: 15px; border-radius: 5px; background-color: #f9f9f9;">
+                    <div class="admin-input-group">
+                        <label for="new-largo-enabled"><strong>Largo</strong></label>
+                        <input type="checkbox" id="new-largo-enabled" checked>
+                    </div>
+                    <div style="margin-left: 20px; display: flex; gap: 15px; flex-wrap: wrap;">
+                        <label><input type="checkbox" id="new-largo-monday"> Lun</label>
+                        <label><input type="checkbox" id="new-largo-tuesday"> Mar</label>
+                        <label><input type="checkbox" id="new-largo-wednesday"> Mié</label>
+                        <label><input type="checkbox" id="new-largo-thursday"> Jue</label>
+                        <label><input type="checkbox" id="new-largo-friday"> Vie</label>
+                    </div>
+                </div>
+
+                <h4>Características Especiales:</h4>
+                <div class="admin-input-group">
+                    <label for="new-cardio">Sitio de Cardio</label>
+                    <input type="checkbox" id="new-cardio" name="cardio">
+                </div>
+                <div class="admin-input-group">
+                    <label for="new-pediatrics">Sitio de Pediatría</label>
+                    <input type="checkbox" id="new-pediatrics" name="pediatrics">
+                </div>
+                <div class="admin-input-group">
+                    <label for="new-RNM">Sitio de RNM</label>
+                    <input type="checkbox" id="new-RNM" name="RNM">
+                </div>
+
+                <button type="submit" class="main-menu-button">Crear Boca de Trabajo</button>
+            </form>
+        </div>
+
+        <!-- Sección de Listado -->
+        <div class="abm-section">
+            <h3>Lista de Bocas de Trabajo</h3>
+            <div class="admin-input-group">
+                <input type="text" id="search-worksite" placeholder="Buscar por nombre o abreviatura...">
+            </div>
+
+            <!-- Filtros -->
+            <div style="display: flex; gap: 10px; margin-bottom: 20px;">
+                <select id="filter-institution" style="flex: 1; padding: 10px; border-radius: 4px; border: 1px solid #ccc;">
+                    <option value="">Todas las instituciones</option>
+                    <!-- Se llena dinámicamente -->
+                </select>
+                <select id="filter-specialty" style="flex: 1; padding: 10px; border-radius: 4px; border: 1px solid #ccc;">
+                    <option value="">Todas las especialidades</option>
+                    <option value="cardio">Cardio</option>
+                    <option value="pediatrics">Pediatría</option>
+                </select>
+            </div>
+
+            <div id="worksites-table-container">
+                <table id="worksites-table">
+                    <thead>
+                        <tr>
+                            <th>Nombre</th>
+                            <th>Abreviatura</th>
+                            <th>Institución</th>
+                            <th>Regímenes y Días</th>
+                            <th>Especialidades</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody id="worksites-table-body">
+                        <!-- Se llena dinámicamente -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Modal para editar boca de trabajo -->
+        <div id="edit-modal" class="modal" style="display: none;">
+            <div class="modal-content">
+                <span class="close">&times;</span>
+                <h3>Editar Boca de Trabajo</h3>
+                <form id="edit-worksite-form">
+                    <input type="hidden" id="edit-worksite-id">
+
+                    <div class="admin-input-group">
+                        <label for="edit-name">Nombre:</label>
+                        <input type="text" id="edit-name" name="name" required>
+                    </div>
+
+                    <div class="admin-input-group">
+                        <label for="edit-abbreviation">Abreviatura:</label>
+                        <input type="text" id="edit-abbreviation" name="abbreviation" required maxlength="11">
+                    </div>
+
+                    <div class="admin-input-group">
+                        <label for="edit-institution">Institución:</label>
+                        <select id="edit-institution" name="institution" required>
+                            <!-- Se llena dinámicamente -->
+                        </select>
+                    </div>
+
+                    <h4>Regímenes Horarios y Días Disponibles:</h4>
+
+                    <!-- Matutino -->
+                    <div style="border: 1px solid #ddd; padding: 15px; margin-bottom: 15px; border-radius: 5px; background-color: #f9f9f9;">
+                        <div class="admin-input-group">
+                            <label for="edit-matutino-enabled"><strong>Matutino</strong></label>
+                            <input type="checkbox" id="edit-matutino-enabled">
+                        </div>
+                        <div style="margin-left: 20px; display: flex; gap: 15px; flex-wrap: wrap;">
+                            <label><input type="checkbox" id="edit-matutino-monday"> Lun</label>
+                            <label><input type="checkbox" id="edit-matutino-tuesday"> Mar</label>
+                            <label><input type="checkbox" id="edit-matutino-wednesday"> Mié</label>
+                            <label><input type="checkbox" id="edit-matutino-thursday"> Jue</label>
+                            <label><input type="checkbox" id="edit-matutino-friday"> Vie</label>
+                        </div>
+                    </div>
+
+                    <!-- Vespertino -->
+                    <div style="border: 1px solid #ddd; padding: 15px; margin-bottom: 15px; border-radius: 5px; background-color: #f9f9f9;">
+                        <div class="admin-input-group">
+                            <label for="edit-vespertino-enabled"><strong>Vespertino</strong></label>
+                            <input type="checkbox" id="edit-vespertino-enabled">
+                        </div>
+                        <div style="margin-left: 20px; display: flex; gap: 15px; flex-wrap: wrap;">
+                            <label><input type="checkbox" id="edit-vespertino-monday"> Lun</label>
+                            <label><input type="checkbox" id="edit-vespertino-tuesday"> Mar</label>
+                            <label><input type="checkbox" id="edit-vespertino-wednesday"> Mié</label>
+                            <label><input type="checkbox" id="edit-vespertino-thursday"> Jue</label>
+                            <label><input type="checkbox" id="edit-vespertino-friday"> Vie</label>
+                        </div>
+                    </div>
+
+                    <!-- Largo -->
+                    <div style="border: 1px solid #ddd; padding: 15px; margin-bottom: 15px; border-radius: 5px; background-color: #f9f9f9;">
+                        <div class="admin-input-group">
+                            <label for="edit-largo-enabled"><strong>Largo</strong></label>
+                            <input type="checkbox" id="edit-largo-enabled">
+                        </div>
+                        <div style="margin-left: 20px; display: flex; gap: 15px; flex-wrap: wrap;">
+                            <label><input type="checkbox" id="edit-largo-monday"> Lun</label>
+                            <label><input type="checkbox" id="edit-largo-tuesday"> Mar</label>
+                            <label><input type="checkbox" id="edit-largo-wednesday"> Mié</label>
+                            <label><input type="checkbox" id="edit-largo-thursday"> Jue</label>
+                            <label><input type="checkbox" id="edit-largo-friday"> Vie</label>
+                        </div>
+                    </div>
+
+                    <h4>Características Especiales:</h4>
+                    <div class="admin-input-group">
+                        <label for="edit-cardio">Sitio de Cardio</label>
+                        <input type="checkbox" id="edit-cardio" name="cardio">
+                    </div>
+                    <div class="admin-input-group">
+                        <label for="edit-pediatrics">Sitio de Pediatría</label>
+                        <input type="checkbox" id="edit-pediatrics" name="pediatrics">
+                    </div>
+                    <div class="admin-input-group">
+                        <label for="edit-RNM">Sitio de RNM</label>
+                        <input type="checkbox" id="edit-RNM" name="RNM">
+                    </div>
+
+                    <button type="submit" class="main-menu-button">Actualizar Boca de Trabajo</button>
+                </form>
+            </div>
+        </div>
+    </main>
+
+    <style>
+        .abm-section {
+            margin-bottom: 40px;
+            padding: 20px;
+            background-color: #f8f9fa;
+            border-radius: 8px;
+        }
+
+        #worksites-table-container {
+            overflow-x: auto;
+            margin-top: 20px;
+        }
+
+        #worksites-table {
+            width: 100%;
+            border-collapse: collapse;
+            background-color: white;
+        }
+
+        #worksites-table th,
+        #worksites-table td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+
+        #worksites-table th {
+            background-color: #007bff;
+            color: white;
+            font-weight: bold;
+        }
+
+        #worksites-table tr:hover {
+            background-color: #f5f5f5;
+        }
+
+        #search-worksite {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+
+        .action-btn {
+            padding: 5px 10px;
+            margin: 0 5px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 12px;
+        }
+
+        .edit-btn {
+            background-color: #28a745;
+            color: white;
+        }
+
+        .delete-btn {
+            background-color: #dc3545;
+            color: white;
+        }
+
+        .action-btn:hover {
+            opacity: 0.8;
+        }
+
+        /* Modal styles */
+        .modal {
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0,0,0,0.4);
+        }
+
+        .modal-content {
+            background-color: #fefefe;
+            margin: 2% auto;
+            padding: 20px;
+            border: 1px solid #888;
+            border-radius: 8px;
+            width: 90%;
+            max-width: 800px;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .close:hover,
+        .close:focus {
+            color: black;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 3px 6px;
+            border-radius: 3px;
+            font-size: 11px;
+            font-weight: bold;
+            margin: 2px;
+        }
+
+        .badge-schedule {
+            background-color: #17a2b8;
+            color: white;
+        }
+
+        .badge-day {
+            background-color: #6c757d;
+            color: white;
+        }
+
+        .badge-specialty {
+            background-color: #ffc107;
+            color: black;
+        }
+    </style>
+</body>
+</html>

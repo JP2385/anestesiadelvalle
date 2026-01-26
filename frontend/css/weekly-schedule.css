@@ -1,0 +1,279 @@
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f5f5f5;
+}
+
+main {
+    padding: 20px;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 10px;
+    table-layout: fixed; /* Hace que las columnas tengan un ancho fijo */
+}
+
+.assigments-table {
+    margin-bottom: 20px; /* Agrega margen inferior para separar de h3.title */
+}
+
+th, td {
+    border: 1px solid #ddd;
+    padding: 3px;
+    text-align: center;
+}
+
+th {
+    background-color: #0056b3;
+    color: white;
+}
+
+th.work-site {
+    width: 250px; /* Ancho fijo para la primera columna */
+}
+
+th:not(.work-site) {
+    width: calc((100% - 250px) / 5); /* Ancho distribuido entre las columnas restantes */
+}
+
+td.droppable {
+    background-color: #f0f0f0;
+}
+
+td.separator-thin {
+    border-top: 1px solid #ddd;
+    background-color: #fff;
+    padding: 0;
+    height: 0;
+}
+
+td.separator-thick {
+    border-top: 2.5px solid #ddd;
+    background-color: #fff;
+    padding: 0;
+    height: 0;
+}
+
+td.separator-institution {
+    border-top: 3px solid #ccc;
+    background-color: #fff;
+    padding: 0;
+    height: 0;
+}
+
+td.work-site {
+    font-weight: 600;
+    width: 250px; /* Ancho fijo para la primera columna */
+}
+
+table.assigments-inform {
+    margin-bottom: 20px; /* Ajusta el valor según tus necesidades */
+}
+
+
+h3 {
+    margin: 0px;
+}
+#schedule-assistant select {
+    width: 70%;
+    padding: 5px;
+    box-sizing: border-box;
+}
+
+.cell-content {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+}
+
+.cell-content select {
+    flex: 1;
+}
+
+.lock-button {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 4px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+    transition: opacity 0.2s;
+}
+
+.lock-button:hover {
+    opacity: 0.7;
+}
+
+.lock-button.locked {
+    color: #d32f2f;
+}
+
+.lock-button.unlocked {
+    color: #388e3c;
+}
+
+.instructions ol {
+    list-style: decimal;
+}
+
+.instructions li {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.instructions-button {
+    width: 30%;
+    padding: 10px;
+    background-color: #0069d9;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.download-button {
+    font-size: 16px;
+    background-color: #0069d9; /* Color de fondo del botón */
+    color: white; /* Color del texto del botón */
+    border: none;
+    padding: 5px 5px; /* Espaciado interno del botón */
+    cursor: pointer;
+    border-radius: 5px; /* Bordes redondeados */
+    transition: background-color 0.3s; /* Transición suave para el cambio de color de fondo */
+    margin: 0.5rem 0;
+}
+
+.download-button:hover {
+    background-color: #0056b3; /* Color de fondo al pasar el ratón por encima */
+}
+
+.instructions-button:hover {
+    background-color: #0056b3;
+}
+
+.lock-button {
+    color: white;
+    border: none;
+    padding: 2px 2px;
+    cursor: pointer;
+    border-radius: 5px;
+}
+
+.lock-button:disabled {
+    background-color: #ccc;
+    cursor: not-allowed;
+}
+
+/* Estilos para la sección de instrucciones */
+.instructions, .schedule-assistant, .summary-container {
+    background-color: white;
+    border: 1px solid #ddd;
+    padding: 20px;
+    margin-bottom: 20px;
+    border-radius: 5px;
+    overflow-x: auto;
+}
+
+.instructions, .schedule-assistant h3 {
+    margin-top: 0;
+}
+
+.instructions ol {
+    padding-left: 20px;
+    margin-bottom: 10px;
+}
+
+.instructions ol li {
+    margin-bottom: 10px;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.schedule-assistant button {
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 1em;
+    margin-left: 5px;
+}
+
+/* Colores para el select */
+select.default {
+    background-color: ' ';
+}
+
+.select-morning {
+    background-color: rgb(144, 202, 238); /* Color azul análogo */
+}
+
+.select-afternoon {
+    background-color: rgb(144, 238, 144); /* Color verde análogo */
+}
+
+.select-long {
+    background-color: rgb(238, 230, 144); /* Color amarillo para largo */
+}
+
+.inform {
+    font-weight:600;
+}
+
+.title {
+    margin-top:30px;
+}
+
+.timestamp {
+    margin: 0;
+}
+
+.timestamp-div {
+    display: inline-block;
+    padding: 10px; /* Ajustar el padding según sea necesario */
+    font-weight: bold ;
+}
+
+.header-div {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    margin-top: 10px;
+    margin-bottom: 10px; /* Añadir margen inferior para separación */
+}
+
+.timestamp {
+    margin: 0;
+}
+
+#image-container img {
+    max-width: 100%; /* Ajusta este valor según sea necesario */
+    height: auto;
+    display: block;
+    margin: 0 auto;
+}
+
+.hidden {
+    display: none;
+}
+
+.option-morning {
+    background-color: rgb(144, 202, 238); /* Color azul análogo */
+}
+
+.option-afternoon {
+    background-color: rgb(144, 238, 144); /* Color verde análogo */
+}
+
+.option-long {
+    background-color: rgb(238, 230, 144); /* Color amarillo para largo */
+}

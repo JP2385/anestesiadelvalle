@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mi Perfil - Anestesiólogos del Valle</title>
+    <link rel="icon" type="image/png" href="images/logo/logo64x64.png">
+    <link rel="stylesheet" href="css/base.css">
+    <link rel="stylesheet" href="css/header.css">
+    <link rel="stylesheet" href="css/login.css"> <!-- Usar login.css para estilos compartidos -->
+    <link rel="stylesheet" href="css/media.css">
+    <link rel="stylesheet" href="css/spinner.css">
+    <script defer src="js/bundle.js"></script>
+    <script src="js/forms.js" defer></script>
+    <script src="js/spinner.js"defer></script>
+</head>
+<body>
+    <div class="spinner" id="spinner"></div>
+    <header>
+        <a href="index.html" class="app-logo-link">
+            <img src="images/logo/logo.png" alt="Logo Anestesiólogos del Valle" class="app-logo">
+        </a>
+        <h1>Anestesiólogos del Valle</h1>
+        <a href="index.html" class="back-to-main-menu" title="Volver al menú principal">
+            <img src="images/icons/back-icon.svg" alt="Volver" class="back-icon">
+        </a>
+    </header>
+    <main class="form-container">
+        <h2>Mi Perfil</h2>
+        <div class="profile-info" id="profile-info">
+            <p><strong>Nombre:</strong> <span id="profile-name"></span></p>
+            <p><strong>Correo Electrónico:</strong> <span id="profile-email"></span></p>
+            <h3>Perfil para la asignación de trabajo programado:</h3>
+            <p><strong>Hace Cardio:</strong> <span id="doesCardio"></span></p>
+            <p><strong>Hace Pediatría:</strong> <span id="doesPediatrics"></span></p>
+            <p><strong>Hace RNM:</strong> <span id="doesRNM"></span></p>
+            <p><strong>Trabaja en público Neuquén:</strong> <span id="worksInPublicNeuquen"></span></p>
+            <p><strong>Trabaja en privado Neuquén:</strong> <span id="worksInPrivateNeuquen"></span></p>
+            <p><strong>Trabaja en público Río Negro:</strong> <span id="worksInPublicRioNegro"></span></p>
+            <p><strong>Trabaja en privado Río Negro:</strong> <span id="worksInPrivateRioNegro"></span></p>
+            <p><strong>Trabaja solo en CMAC:</strong> <span id="worksInCmacOnly"></span></p>
+            <h3>Esquema de trabajo programado:</h3>
+            <p><strong>Horario Lunes:</strong> <span id="workSchedule-monday"></span></p>
+            <p><strong>Horario Martes:</strong> <span id="workSchedule-tuesday"></span></p>
+            <p><strong>Horario Miércoles:</strong> <span id="workSchedule-wednesday"></span></p>
+            <p><strong>Horario Jueves:</strong> <span id="workSchedule-thursday"></span></p>
+            <p><strong>Horario Viernes:</strong> <span id="workSchedule-friday"></span></p>
+            <h3>Vacaciones Programadas:</h3>
+            <ul id="vacation-list"></ul>
+            <h3>Otras Licencias:</h3>
+            <ul id="other-leaves-list"></ul>
+            <button onclick="toggleChangePassword()" class="main-menu-button">Cambiar Contraseña</button>
+        </div>
+        <div class="change-password-form" id="change-password-form" style="display: none;">
+            <h3>Cambiar Contraseña</h3>
+            <div class="input-group">
+                <label for="current-password">Contraseña Actual</label>
+                <div class="password-container">
+                    <input type="password" id="current-password" name="current-password" required>
+                    <span class="toggle-password" onclick="togglePasswordVisibility('current-password')">👁️</span>
+                </div>
+            </div>
+            <div class="input-group">
+                <label for="new-password">Nueva Contraseña</label>
+                <div class="password-container">
+                    <input type="password" id="new-password" name="new-password" required>
+                    <span class="toggle-password" onclick="togglePasswordVisibility('new-password')">👁️</span>
+                </div>
+            </div>
+            <div class="input-group">
+                <label for="confirm-password">Repetir Nueva Contraseña</label>
+                <div class="password-container">
+                    <input type="password" id="confirm-password" name="confirm-password" required>
+                    <span class="toggle-password" onclick="togglePasswordVisibility('confirm-password')">👁️</span>
+                </div>
+            </div>
+            <button onclick="confirmChangePassword()" class="main-menu-button">Confirmar</button>
+        </div>
+        <button onclick="goToMainMenu()" class="main-menu-button">Volver al Menú Principal</button>
+    </main>
+</body>
+</html>
+

@@ -1,0 +1,44 @@
+/* Asegúrate de que el wrapper esté oculto inicialmente */
+#progress-wrapper {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5); /* Fondo semitransparente */
+    z-index: 9999; /* Asegura que esté encima de otros elementos */
+    /* display: flex; */
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+  }
+
+  /* Contenedor de la barra de progreso y el mensaje */
+#progress-content {
+    background-color: white; /* Fondo sólido para el contenido */
+    padding: 20px;
+    border-radius: 10px;
+    text-align: center; /* Centrar el mensaje */
+    width: 40%;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+  }
+  
+  #progress-bar-container {
+    width: 100%;
+    height: 20px;
+    background-color: #f3f3f3;
+    margin-bottom: 10px; /* Espacio entre la barra y el mensaje */
+  }
+  
+  #progress-bar {
+    width: 0%;
+    height: 100%;
+    background-color: #0056b3;
+  }
+  
+  #progress-message {
+    font-weight: bold;
+    color: #333;
+    font-size: 0.85rem;
+  }
