@@ -152,15 +152,41 @@ async function restoreAssignments(assignments, availability) {
                 }
 
                 // Buscar el usuario en availability para obtener sus datos
-                const user = availability[day]?.find(u => u._id === assignment.userId._id);
+                // Primero intentar buscar por _id directo, luego por originalId si el usuario está duplicado
+                let user = availability[day]?.find(u => u._id === assignment.userId._id);
+                
+                if (!user) {
+                    // Si no se encuentra, buscar por originalId (para usuarios duplicados)
+                    user = availability[day]?.find(u => u.originalId === assignment.userId._id);
+                    
+                    // Si hay múltiples coincidencias (mañana y tarde), elegir la correcta según el régimen
+                    if (user) {
+                        const allMatches = availability[day]?.filter(u => u.originalId === assignment.userId._id);
+                        if (allMatches && allMatches.length > 1) {
+                            // Elegir según el régimen
+                            if (regime === 'matutino') {
+                                user = allMatches.find(u => u.shift === 'Mañana') || user;
+                            } else if (regime === 'vespertino' || regime === 'largo') {
+                                user = allMatches.find(u => u.shift === 'Tarde') || user;
+                            }
+                        }
+                    }
+                }
 
                 if (user) {
                     // Crear y agregar la opción al select
                     const option = document.createElement('option');
                     option.value = user._id;
-                    option.textContent = user.firstName && user.lastName
-                        ? `${user.firstName} ${user.lastName}`
-                        : user.username;
+                    
+                    // Usar displayName si existe (para usuarios duplicados), sino usar nombre completo o username
+                    if (user.displayName) {
+                        option.textContent = user.displayName;
+                    } else {
+                        option.textContent = user.firstName && user.lastName
+                            ? `${user.firstName} ${user.lastName}`
+                            : user.username;
+                    }
+                    
                     option.setAttribute('data-username', user.username);
                     option.selected = true;
 
@@ -168,12 +194,15 @@ async function restoreAssignments(assignments, availability) {
                     select.classList.remove('default');
                     select.classList.add('assigned');
 
+                    // Determinar el schedule basándose en el shift del usuario si está duplicado
+                    let scheduleForDay = user.shift ? user.shift : user.workSchedule[day];
+
                     // Aplicar clase de color basada en el horario de trabajo del usuario
-                    if (user.workSchedule[day] === 'Mañana') {
+                    if (scheduleForDay === 'Mañana') {
                         select.classList.add('option-morning');
-                    } else if (user.workSchedule[day] === 'Tarde') {
+                    } else if (scheduleForDay === 'Tarde') {
                         select.classList.add('option-afternoon');
-                    } else if (user.workSchedule[day] === 'Variable') {
+                    } else if (scheduleForDay === 'Variable') {
                         select.classList.add('option-long');
                     }
                 }

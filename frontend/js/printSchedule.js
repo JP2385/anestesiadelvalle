@@ -347,7 +347,12 @@ document.addEventListener('DOMContentLoaded', () => {
                     }
 
                     const selectedOption = select.options[select.selectedIndex];
-                    const userId = selectedOption.value;
+                    let userId = selectedOption.value;
+
+                    // Si el userId contiene _morning_ o _afternoon_, extraer el ID original
+                    if (userId && (userId.includes('_morning_') || userId.includes('_afternoon_'))) {
+                        userId = userId.split('_')[0];
+                    }
 
                     // Obtener el workSiteId y regime directamente de los atributos data
                     const workSiteId = select.getAttribute('data-worksite-id');
@@ -383,7 +388,12 @@ document.addEventListener('DOMContentLoaded', () => {
             if (assignments[day] && Array.isArray(assignments[day])) {
                 assignments[day].forEach(assignment => {
                     if (assignment.regime === 'largo' && assignment.userId) {
-                        const userId = assignment.userId;
+                        let userId = assignment.userId;
+                        // Si el userId contiene _morning_ o _afternoon_, extraer el ID original
+                        if (userId.includes('_morning_') || userId.includes('_afternoon_')) {
+                            userId = userId.split('_')[0];
+                        }
+                        
                         if (!longDaysCount[userId]) {
                             longDaysCount[userId] = { count: 0 };
                         }

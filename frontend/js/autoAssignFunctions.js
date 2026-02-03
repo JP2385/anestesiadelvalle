@@ -117,18 +117,11 @@ export async function displayUnassignedUsers(availability) {
 
         // Filtrar usuarios no asignados
         const unassigned = availableUsers.filter(user => {
-            // Construir el nombre como se muestra en los selects
-            let displayName = '';
-            if (user.firstName && user.lastName) {
-                displayName = `${user.firstName} ${user.lastName}`.trim().toLowerCase();
-            } else if (user.firstName) {
-                displayName = user.firstName.trim().toLowerCase();
-            } else {
-                displayName = (user.username || '').toLowerCase();
-            }
-
-            // Verificar si está asignado comparando con los nombres en los selects
-            return !assignedNames.includes(displayName);
+            // Para usuarios duplicados, usar displayName; para otros, usar username
+            const nameToCompare = (user.displayName || user.username || '').trim().toLowerCase();
+            
+            // Verificar si está asignado
+            return !assignedNames.includes(nameToCompare);
         });
 
         // Actualizar el span correspondiente
@@ -143,15 +136,17 @@ export async function displayUnassignedUsers(availability) {
             if (unassigned.length === 0) {
                 span.textContent = '-';
             } else {
-                // Crear lista de nombres con régimen entre paréntesis
+                // Crear lista de nombres
                 const userList = unassigned.map(user => {
-                    // Usar username directamente
-                    const name = user.username;
-
-                    // Obtener el régimen completo
-                    const regime = user.workSchedule ? user.workSchedule[day] : 'Sin régimen';
-
-                    return `${name} (${regime})`;
+                    // Si el usuario tiene displayName (es duplicado), usarlo directamente
+                    // Si no, mostrar username con su régimen
+                    if (user.displayName) {
+                        return user.displayName;
+                    } else {
+                        const name = user.username;
+                        const regime = user.workSchedule ? user.workSchedule[day] : 'Sin régimen';
+                        return `${name} (${regime})`;
+                    }
                 }).join(', ');
 
                 span.textContent = userList;

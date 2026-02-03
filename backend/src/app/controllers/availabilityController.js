@@ -78,24 +78,44 @@ const getUsersAvailability = async (req, res) => {
                 doesRNM: user.doesRNM
             };
 
-            if (user.workSchedule.monday !== 'No trabaja' && !onVacation(daysOfWeek[0]) && !onLeave(daysOfWeek[0])) {
-                availability.monday.push(userData);
-            }
-            if (user.workSchedule.tuesday !== 'No trabaja' && !onVacation(daysOfWeek[1]) && !onLeave(daysOfWeek[1])) {
-                availability.tuesday.push(userData);
-            }
-            if (user.workSchedule.wednesday !== 'No trabaja' && !onVacation(daysOfWeek[2]) && !onLeave(daysOfWeek[2])) {
-                availability.wednesday.push(userData);
-            }
-            if (user.workSchedule.thursday !== 'No trabaja' && !onVacation(daysOfWeek[3]) && !onLeave(daysOfWeek[3])) {
-                availability.thursday.push(userData);
-            }
-            if (user.workSchedule.friday !== 'No trabaja' && !onVacation(daysOfWeek[4]) && !onLeave(daysOfWeek[4])) {
-                availability.friday.push(userData);
-            }
-            if (user.workSchedule.saturday !== 'No trabaja' && !onVacation(daysOfWeek[5]) && !onLeave(daysOfWeek[5])) {
-                availability.saturday.push(userData);
-            }
+            // Helper function para agregar usuario, duplicando si tiene "Mañana y Tarde"
+            const addUserToDay = (dayKey, dayIndex, schedule) => {
+                if (schedule !== 'No trabaja' && !onVacation(daysOfWeek[dayIndex]) && !onLeave(daysOfWeek[dayIndex])) {
+                    if (schedule === 'Mañana y Tarde') {
+                        // Agregar como usuario de mañana
+                        const morningUser = {
+                            ...userData,
+                            _id: `${user._id}_morning_${dayKey}`, // ID único para turno mañana
+                            workSchedule: { ...user.workSchedule, [dayKey]: 'Mañana' },
+                            shift: 'Mañana',
+                            displayName: `${user.username} (mañana)`,
+                            originalId: user._id
+                        };
+                        availability[dayKey].push(morningUser);
+                        
+                        // Agregar como usuario de tarde
+                        const afternoonUser = {
+                            ...userData,
+                            _id: `${user._id}_afternoon_${dayKey}`, // ID único para turno tarde
+                            workSchedule: { ...user.workSchedule, [dayKey]: 'Tarde' },
+                            shift: 'Tarde',
+                            displayName: `${user.username} (tarde)`,
+                            originalId: user._id
+                        };
+                        availability[dayKey].push(afternoonUser);
+                    } else {
+                        // Usuario normal (sin duplicar)
+                        availability[dayKey].push(userData);
+                    }
+                }
+            };
+
+            addUserToDay('monday', 0, user.workSchedule.monday);
+            addUserToDay('tuesday', 1, user.workSchedule.tuesday);
+            addUserToDay('wednesday', 2, user.workSchedule.wednesday);
+            addUserToDay('thursday', 3, user.workSchedule.thursday);
+            addUserToDay('friday', 4, user.workSchedule.friday);
+            addUserToDay('saturday', 5, user.workSchedule.saturday);
         });
 
         res.status(200).json(availability);

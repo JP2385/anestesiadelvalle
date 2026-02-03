@@ -151,23 +151,50 @@ document.addEventListener('DOMContentLoaded', async function() {
                         const config = selectConfig[day]?.find(c => c.workSite === workSite);
 
                         if (assignment && assignment.user !== 'Select user') {
-                            const option = document.createElement('option');
-                            option.value = assignment.userId;
-                            option.textContent = assignment.user;
-                            option.setAttribute('data-username', assignment.username);
-                            option.selected = true;
-                            select.appendChild(option);
+                            // Buscar el usuario en availability
+                            // Primero intentar por _id directo, luego por originalId para usuarios duplicados
+                            let user = availability[day]?.find(u => u._id === assignment.userId || u.username === assignment.user);
                             
-                            // Aplicar colores basados en el usuario asignado y availability
-                            const user = availability[day]?.find(u => u._id === assignment.userId || u.username === assignment.user);
+                            if (!user) {
+                                // Si no se encuentra, buscar por originalId (para usuarios duplicados)
+                                user = availability[day]?.find(u => u.originalId === assignment.userId);
+                                
+                                // Si hay múltiples coincidencias (mañana y tarde), elegir la correcta según el worksite
+                                if (user) {
+                                    const allMatches = availability[day]?.filter(u => u.originalId === assignment.userId);
+                                    if (allMatches && allMatches.length > 1) {
+                                        // Elegir según el worksite
+                                        if (workSite.includes('Matutino')) {
+                                            user = allMatches.find(u => u.shift === 'Mañana') || user;
+                                        } else if (workSite.includes('Vespertino') || workSite.includes('Largo')) {
+                                            user = allMatches.find(u => u.shift === 'Tarde') || user;
+                                        }
+                                    }
+                                }
+                            }
+                            
                             if (user) {
+                                const option = document.createElement('option');
+                                option.value = user._id;
+                                
+                                // Usar displayName si existe (para usuarios duplicados), sino usar el nombre original
+                                option.textContent = user.displayName || assignment.user;
+                                
+                                option.setAttribute('data-username', assignment.username);
+                                option.selected = true;
+                                select.appendChild(option);
+                            
                                 select.classList.add('assigned');
+                                
+                                // Determinar el schedule basándose en el shift del usuario encontrado
+                                let scheduleForDay = user.shift ? user.shift : user.workSchedule[day];
+                                
                                 // Aplicar clase de color basada en el horario de trabajo del usuario
-                                if (user.workSchedule[day] === 'Mañana') {
+                                if (scheduleForDay === 'Mañana') {
                                     select.classList.add('option-morning');
-                                } else if (user.workSchedule[day] === 'Tarde') {
+                                } else if (scheduleForDay === 'Tarde') {
                                     select.classList.add('option-afternoon');
-                                } else if (user.workSchedule[day] === 'Variable') {
+                                } else if (scheduleForDay === 'Variable') {
                                     select.classList.add('option-long');
                                 }
                             }

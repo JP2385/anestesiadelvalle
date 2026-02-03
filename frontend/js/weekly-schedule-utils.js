@@ -278,10 +278,13 @@ export async function populateSelectOptions(availability) {
                 const isAnyMortalCombat = mortalCombatMode || isDailyMortalCombat;
                 
                 if (!isAnyMortalCombat || isSpecialUser) {
-                    if (workSite.includes('Matutino') && user.workSchedule[dayName] === 'Tarde') return;
-                    if (workSite.includes('Vespertino') && user.workSchedule[dayName] === 'Mañana') return;
-                    if (workSite.includes('Largo') && user.workSchedule[dayName] === 'Mañana') return;
-                    if (workSite.includes('Largo') && user.workSchedule[dayName] === 'Tarde') return;
+                    // Para usuarios duplicados, usar el shift para determinar restricciones
+                    const scheduleForDay = user.shift ? user.shift : user.workSchedule[dayName];
+                    
+                    if (workSite.includes('Matutino') && scheduleForDay === 'Tarde') return;
+                    if (workSite.includes('Vespertino') && scheduleForDay === 'Mañana') return;
+                    if (workSite.includes('Largo') && scheduleForDay === 'Mañana') return;
+                    if (workSite.includes('Largo') && scheduleForDay === 'Tarde') return;
                 }
 
                 if (workSite.includes('CMAC Endoscopia')) {
@@ -306,6 +309,8 @@ export async function populateSelectOptions(availability) {
 
                 const option = document.createElement('option');
                 option.value = user._id || user.username; // Asegurarse de usar user._id si está disponible
+                
+                // Mostrar solo el username, sin el turno
                 option.textContent = user.username;
 
                 // Asignar clases CSS según el horario de trabajo
@@ -314,11 +319,14 @@ export async function populateSelectOptions(availability) {
                     option.classList.add('option-long');
                 } else {
                     // Usuarios especiales o modo normal mantienen sus estilos originales
-                    if (user.workSchedule[dayName] === 'Mañana') {
+                    // Para usuarios duplicados, usar el shift para determinar el estilo
+                    const scheduleForDay = user.shift ? user.shift : user.workSchedule[dayName];
+                    
+                    if (scheduleForDay === 'Mañana') {
                         option.classList.add('option-morning');
-                    } else if (user.workSchedule[dayName] === 'Tarde') {
+                    } else if (scheduleForDay === 'Tarde') {
                         option.classList.add('option-afternoon');
-                    } else if (user.workSchedule[dayName] === 'Variable') {
+                    } else if (scheduleForDay === 'Variable') {
                         option.classList.add('option-long');
                     }
                 }
@@ -445,9 +453,24 @@ export async function handleSelectChange(event, availability) {
     let userAlreadyAssigned = false;
 
     if (selectedUserId !== '') { // Solo verificar si no es la opción por defecto
+        // Obtener el usuario seleccionado para conocer su username base y shift
+        const dayName = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday'][dayIndex];
+        const selectedUser = availability[dayName].find(user => user._id === selectedUserId || user.username === selectedUserId);
+        const baseUsername = selectedUser ? selectedUser.username : null;
+        const selectedShift = selectedUser ? selectedUser.shift : null;
+
         selects.forEach(otherSelect => {
-            if (otherSelect !== select && otherSelect.value === selectedUserId) {
-                userAlreadyAssigned = true;
+            if (otherSelect !== select && otherSelect.value !== '') {
+                // Comparar por userId primero
+                if (otherSelect.value === selectedUserId) {
+                    userAlreadyAssigned = true;
+                } else if (baseUsername && selectedShift) {
+                    // Para usuarios duplicados (mañana/tarde), solo bloquear si es el mismo turno
+                    const otherUser = availability[dayName].find(user => user._id === otherSelect.value || user.username === otherSelect.value);
+                    if (otherUser && otherUser.username === baseUsername && otherUser.shift === selectedShift) {
+                        userAlreadyAssigned = true;
+                    }
+                }
             }
         });
 
@@ -484,11 +507,14 @@ export async function handleSelectChange(event, availability) {
                 select.classList.add('option-long');
             } else {
                 // Usuarios especiales o modo normal mantienen sus estilos originales
-                if (user.workSchedule[dayName] === 'Mañana') {
+                // Para usuarios duplicados, usar el shift para determinar el estilo
+                const scheduleForDay = user.shift ? user.shift : user.workSchedule[dayName];
+                
+                if (scheduleForDay === 'Mañana') {
                     select.classList.add('option-morning');
-                } else if (user.workSchedule[dayName] === 'Tarde') {
+                } else if (scheduleForDay === 'Tarde') {
                     select.classList.add('option-afternoon');
-                } else if (user.workSchedule[dayName] === 'Variable') {
+                } else if (scheduleForDay === 'Variable') {
                     select.classList.add('option-long');
                 }
             }

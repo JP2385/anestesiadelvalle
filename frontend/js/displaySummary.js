@@ -194,15 +194,36 @@ function populateAssignments(assignments, table, availability, selectConfig) {
             if (assignment && assignment.user !== 'Select user') {
                 cell.textContent = assignment.user;
 
-                // IMPORTANTE: Aplicar estilo basado en el workSchedule del USUARIO, no en el régimen del workSite
-                const user = availability[day]?.find(u => u._id === assignment.userId || u.username === assignment.username);
+                // IMPORTANTE: Buscar el usuario correcto considerando usuarios duplicados
+                let user = null;
+                
+                // Primero buscar si hay usuarios duplicados (con originalId)
+                const duplicatedUsers = availability[day]?.filter(u => u.originalId === assignment.userId);
+                
+                if (duplicatedUsers && duplicatedUsers.length > 1) {
+                    // Hay usuarios duplicados (mañana y tarde), elegir según el worksite
+                    if (workSite.includes('Matutino')) {
+                        user = duplicatedUsers.find(u => u.shift === 'Mañana');
+                    } else if (workSite.includes('Vespertino') || workSite.includes('Largo')) {
+                        user = duplicatedUsers.find(u => u.shift === 'Tarde');
+                    }
+                } else if (duplicatedUsers && duplicatedUsers.length === 1) {
+                    // Solo un usuario duplicado encontrado
+                    user = duplicatedUsers[0];
+                } else {
+                    // No es usuario duplicado, buscar normalmente
+                    user = availability[day]?.find(u => u._id === assignment.userId || u.username === assignment.username);
+                }
 
                 if (user && user.workSchedule) {
-                    if (user.workSchedule[day] === 'Mañana') {
+                    // Usar shift si existe (usuario duplicado), sino usar workSchedule normal
+                    let scheduleForDay = user.shift ? user.shift : user.workSchedule[day];
+                    
+                    if (scheduleForDay === 'Mañana') {
                         cell.classList.add('option-morning');
-                    } else if (user.workSchedule[day] === 'Tarde') {
+                    } else if (scheduleForDay === 'Tarde') {
                         cell.classList.add('option-afternoon');
-                    } else if (user.workSchedule[day] === 'Variable') {
+                    } else if (scheduleForDay === 'Variable') {
                         cell.classList.add('option-long');
                     }
                 } else {

@@ -37,6 +37,7 @@ export async function compareAvailabilitiesForEachDay(dayIndex) {
 function extractUsernamesFromAvailability(availability) {
     const usernames = {};
     for (const day in availability) {
+        // Para cada usuario, extraer solo el username base (sin el sufijo de turno)
         usernames[day] = availability[day].map(userObj => userObj.username);
     }
     return usernames;
@@ -48,7 +49,8 @@ function compareUserAvailability(serverData, clientData) {
     for (const day in serverData) {
         if (serverData.hasOwnProperty(day) && clientData.hasOwnProperty(day)) {
             const serverArray = serverData[day];
-            const clientArray = clientData[day];
+            // Extraer el username base de las asignaciones cliente (puede incluir "(mañana)" o "(tarde)")
+            const clientArray = clientData[day].map(user => user.split(' ')[0]);
 
             const onlyInServer = serverArray.filter(user => !clientArray.includes(user));
 
@@ -67,7 +69,8 @@ function compareUserAvailabilityForDay(serverData, clientData, dayIndex) {
 
     if (serverData.hasOwnProperty(day) && clientData.hasOwnProperty(day)) {
         const serverArray = serverData[day];
-        const clientArray = clientData[day];
+        // Extraer el username base de las asignaciones cliente (puede incluir "(mañana)" o "(tarde)")
+        const clientArray = clientData[day].map(user => user.split(' ')[0]);
 
         const onlyInServer = serverArray.filter(user => !clientArray.includes(user));
        
