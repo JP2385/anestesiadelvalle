@@ -1,7 +1,7 @@
 document.addEventListener('DOMContentLoaded', async function () {
     const apiUrl = window.location.hostname === 'localhost'
       ? 'http://localhost:3000'
-      : 'https://adelvalle-88dd0d34d7bd.herokuapp.com/';
+      : 'https://advalle-46fc1873b63d.herokuapp.com/';
   
     const fechaInput = document.getElementById('fechaSolicitud');
     const usuarioSolicitanteInput = document.getElementById('usuarioSolicitante');

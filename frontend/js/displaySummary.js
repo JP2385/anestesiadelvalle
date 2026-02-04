@@ -3,7 +3,7 @@ import { generateWeekHeaders } from './weekDateFormatter.js';
 
 document.addEventListener('DOMContentLoaded', () => {
     const summaryContainer = document.getElementById('summary-container');
-    const apiUrl = window.location.hostname === 'localhost' ? 'http://localhost:3000' : 'https://adelvalle-88dd0d34d7bd.herokuapp.com/';
+    const apiUrl = window.location.hostname === 'localhost' ? 'http://localhost:3000' : 'https://advalle-46fc1873b63d.herokuapp.com/';
 
     // Hacer una solicitud al backend para obtener el último schedule
     fetch(`${apiUrl}/schedule/last-schedule`)
