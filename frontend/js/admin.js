@@ -1,4 +1,5 @@
-import { validateStartDate, validateEndDate } from './vacationSwapUtils.js'; // Asegúrate de importar las funciones correctamente
+import { validateStartDate, validateEndDate } from './vacationSwapUtils.js';
+import toast from './toast.js';
 
 document.addEventListener('DOMContentLoaded', function () {
     const apiUrl = window.location.hostname === 'localhost' ? 'http://localhost:3000' : 'https://adelvalle-88dd0d34d7bd.herokuapp.com';
@@ -49,7 +50,7 @@ document.addEventListener('DOMContentLoaded', function () {
             }
         })
         .catch(error => {
-            alert('Hubo un problema al obtener la lista de usuarios: ' + error.message);
+            toast.error('Hubo un problema al obtener la lista de usuarios: ' + error.message);
         });
 
     // Manejar la selección de usuario
@@ -119,14 +120,14 @@ document.addEventListener('DOMContentLoaded', function () {
             });
 
             if (response.ok) {
-                alert('Usuario actualizado exitosamente.');
-                window.location.reload();
+                toast.success('Usuario actualizado exitosamente.');
+                setTimeout(() => window.location.reload(), 1500);
             } else {
                 const errorData = await response.json();
-                alert(`Error: ${errorData.message}`);
+                toast.error(`Error: ${errorData.message}`);
             }
         } catch (error) {
-            alert('Hubo un problema con la solicitud: ' + error.message);
+            toast.error('Hubo un problema con la solicitud: ' + error.message);
         }
     });
 
@@ -140,7 +141,7 @@ document.addEventListener('DOMContentLoaded', function () {
         validateEndDate(startDateInput, endDateInput, submitButton, handleDateChange);
 
         if (!startDate || !endDate) {
-            alert('Por favor, ingresa ambas fechas de inicio y fin.');
+            toast.warning('Por favor, ingresa ambas fechas de inicio y fin.');
             return;
         }
 
@@ -170,7 +171,7 @@ document.addEventListener('DOMContentLoaded', function () {
         const leaveType = selectedType === 'Otro' ? customType : selectedType;
 
         if (!startDate || !endDate || !leaveType) {
-            alert('Por favor, complete las fechas y seleccione un concepto.');
+            toast.warning('Por favor, complete las fechas y seleccione un concepto.');
             return;
         }
 
@@ -292,10 +293,10 @@ document.addEventListener('DOMContentLoaded', function () {
 
             } else {
                 const errorData = await response.json();
-                alert(`Error: ${errorData.message}`);
+                toast.error(`Error: ${errorData.message}`);
             }
         } catch (error) {
-            alert('Hubo un problema con la solicitud: ' + error.message);
+            toast.error('Hubo un problema con la solicitud: ' + error.message);
         }
     }
 
@@ -305,31 +306,34 @@ document.addEventListener('DOMContentLoaded', function () {
         const newRole = document.getElementById('userRole').value;
 
         if (!userId) {
-            alert('Por favor selecciona un usuario');
+            toast.warning('Por favor selecciona un usuario');
             return;
         }
 
-        if (confirm(`¿Estás seguro de cambiar el rol de este usuario a "${newRole === 'admin' ? 'Administrador' : 'Usuario'}"?`)) {
-            try {
-                const response = await fetch(`${apiUrl}/users/${userId}/role`, {
-                    method: 'PUT',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Authorization': 'Bearer ' + localStorage.getItem('token')
-                    },
-                    body: JSON.stringify({ newRole: newRole })
-                });
+        toast.confirm(
+            `¿Estás seguro de cambiar el rol de este usuario a "${newRole === 'admin' ? 'Administrador' : 'Usuario'}"?`,
+            async () => {
+                try {
+                    const response = await fetch(`${apiUrl}/users/${userId}/role`, {
+                        method: 'PUT',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Authorization': 'Bearer ' + localStorage.getItem('token')
+                        },
+                        body: JSON.stringify({ newRole: newRole })
+                    });
 
-                if (response.ok) {
-                    const result = await response.json();
-                    alert(result.message || 'Rol actualizado correctamente');
-                } else {
-                    const errorData = await response.json();
-                    alert(`Error: ${errorData.message}`);
+                    if (response.ok) {
+                        const result = await response.json();
+                        toast.success(result.message || 'Rol actualizado correctamente');
+                    } else {
+                        const errorData = await response.json();
+                        toast.error(`Error: ${errorData.message}`);
+                    }
+                } catch (error) {
+                    toast.error('Hubo un problema al actualizar el rol: ' + error.message);
                 }
-            } catch (error) {
-                alert('Hubo un problema al actualizar el rol: ' + error.message);
             }
-        }
+        );
     });
 });

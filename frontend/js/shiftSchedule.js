@@ -1,3 +1,4 @@
+import toast from './toast.js';
 import { processAndGenerateTable, fetchUsers, fetchOtherLeaves, assignMonthlyShiftsWithCardio } from './shiftScheduleUtils.js';
 import { countWeekdayShifts, countWeekendShifts, countSaturdayShifts } from './shiftAssignmentsUtils.js';
 import { updateShiftCountsTableWithAccumulated } from './shiftCountTable.js';
@@ -120,7 +121,7 @@ document.addEventListener('DOMContentLoaded', async function () {
             await updateShiftCountsTableWithAccumulated(weekCounts, weekendCounts, saturdayCounts);
 
             // Mostrar alerta al finalizar
-            alert('Guardias asignadas exitosamente.');
+            toast.success('Guardias asignadas exitosamente.');
         });
     });
     

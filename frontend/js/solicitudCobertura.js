@@ -1,3 +1,5 @@
+import toast from './toast.js';
+
 document.addEventListener('DOMContentLoaded', async function () {
     const apiUrl = window.location.hostname === 'localhost'
       ? 'http://localhost:3000'
@@ -33,8 +35,8 @@ document.addEventListener('DOMContentLoaded', async function () {
       const data = await res.json();
   
       if (data.message) {
-        alert(`Error: ${data.message}`);
-        window.location.href = 'login.html';
+        toast.error(`Error: ${data.message}`);
+        setTimeout(() => window.location.href = 'login.html', 1500);
         return;
       }
   
@@ -48,8 +50,8 @@ document.addEventListener('DOMContentLoaded', async function () {
       }
   
     } catch (err) {
-      alert("Error al obtener usuario actual: " + err.message);
-      window.location.href = 'login.html';
+      toast.error("Error al obtener usuario actual: " + err.message);
+      setTimeout(() => window.location.href = 'login.html', 1500);
     }
   
     async function cargarRegimenSolicitante(date) {
@@ -96,7 +98,7 @@ document.addEventListener('DOMContentLoaded', async function () {
           regimenCoberturaInput.value = '';
         }
       } catch (err) {
-        alert("Error al cargar usuarios disponibles: " + err.message);
+        toast.error("Error al cargar usuarios disponibles: " + err.message);
       }
     }
   
@@ -112,7 +114,7 @@ document.addEventListener('DOMContentLoaded', async function () {
 
     const fecha = flatpickr.parseDate(fechaInput.value, "d-m-Y");
     if (!fecha) {
-        alert("Fecha inválida");
+        toast.error("Fecha inválida");
         return;
     }
 
@@ -139,14 +141,14 @@ document.addEventListener('DOMContentLoaded', async function () {
         throw new Error(data.message || 'Error desconocido');
         }
 
-        alert("✅ Solicitud registrada exitosamente.");
+        toast.success("Solicitud registrada exitosamente.");
         form.reset();
         flatpickr("#fechaSolicitud", { defaultDate: new Date() }); // vuelve a poner fecha de hoy
         regimenSolicitanteInput.value = '';
         regimenCoberturaInput.value = '';
 
     } catch (err) {
-        alert("❌ Error al registrar la solicitud: " + err.message);
+        toast.error("Error al registrar la solicitud: " + err.message);
     }
     });
 

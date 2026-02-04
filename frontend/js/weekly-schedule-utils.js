@@ -1,3 +1,4 @@
+import toast from './toast.js';
 import { handleRandomizeButtonClick } from './randomizeButtonHandler.js';
 import { countEnabledSelectsByDay } from './autoAssignFunctions.js';
 import { autoAssignReportBgColorsUpdate } from './autoAssignReportBgColorsUpdate.js';
@@ -350,7 +351,7 @@ export async function populateSelectOptions(availability) {
             select.addEventListener('change', (event) => handleSelectChange(event, availability));
         });
     } catch (error) {
-        alert('Hubo un problema con la solicitud: ' + error.message);
+        toast.error('Hubo un problema con la solicitud: ' + error.message);
     }
 }
 
@@ -475,7 +476,7 @@ export async function handleSelectChange(event, availability) {
         });
 
         if (userAlreadyAssigned) {
-            alert('El usuario que se intenta asignar ya tiene otro lugar asignado en este día.');
+            toast.warning('El usuario que se intenta asignar ya tiene otro lugar asignado en este día.');
             select.value = originalValue; // Restaurar el valor original
             return; // Salir de la función
         }

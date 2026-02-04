@@ -1,4 +1,5 @@
 import { jwtDecode } from 'jwt-decode';
+import toast from './toast.js';
 
 document.addEventListener('DOMContentLoaded', function() {
     const maxIdleTimePC = 3 * 60 * 60 * 1000; // 3 horas para PC
@@ -25,9 +26,9 @@ document.addEventListener('DOMContentLoaded', function() {
             const sessionExpiry = sessionStorage.getItem('sessionExpiry');
             // console.log('Idle time:', idleTime, 'Session expiry:', new Date(parseInt(sessionExpiry)).toUTCString());
             if (idleTime >= maxIdleTime || (sessionExpiry && Date.now() > sessionExpiry)) {
-                alert('Sesión expirada por inactividad.');
+                toast.warning('Sesión expirada por inactividad.');
                 sessionStorage.removeItem('sessionExpiry');
-                window.location.href = 'login.html';
+                setTimeout(() => window.location.href = 'login.html', 1500);
                 return;
             }
         }
@@ -48,19 +49,19 @@ document.addEventListener('DOMContentLoaded', function() {
     // Verificar si el token está presente
     const token = localStorage.getItem('token') || sessionStorage.getItem('token');
     if (!token) {
-        alert('No has iniciado sesión.');
-        window.location.href = 'login.html';
+        toast.warning('No has iniciado sesión.');
+        setTimeout(() => window.location.href = 'login.html', 1500);
     } else if (isTokenExpired(token)) {
-        alert('Tu sesión ha expirado.');
-        window.location.href = 'login.html';
+        toast.warning('Tu sesión ha expirado.');
+        setTimeout(() => window.location.href = 'login.html', 1500);
     } else {
         const sessionExpiry = sessionStorage.getItem('sessionExpiry');
         const currentTime = Date.now();
 
         if (sessionExpiry && currentTime > sessionExpiry) {
-            alert('Sesión expirada por inactividad.');
+            toast.warning('Sesión expirada por inactividad.');
             sessionStorage.removeItem('sessionExpiry');
-            window.location.href = 'login.html';
+            setTimeout(() => window.location.href = 'login.html', 1500);
         } else {
             resetIdleTimer(); // Reiniciar el temporizador si todo está bien
         }

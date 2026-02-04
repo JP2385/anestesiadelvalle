@@ -1,3 +1,5 @@
+import toast from './toast.js';
+
 document.addEventListener('DOMContentLoaded', () => {
     const apiUrl = window.location.hostname === 'localhost' ? 'http://localhost:3000' : 'https://adelvalle-88dd0d34d7bd.herokuapp.com';
     const vacationInformContainer = document.getElementById('vacation-inform');
@@ -13,8 +15,8 @@ document.addEventListener('DOMContentLoaded', () => {
     .then(response => response.json())
     .then(data => {
         if (data.message) {
-            alert(`Error: ${data.message}`);
-            window.location.href = 'login.html';
+            toast.error(`Error: ${data.message}`);
+            setTimeout(() => window.location.href = 'login.html', 1500);
         } else {
             const vacations = data.vacations || [];
 

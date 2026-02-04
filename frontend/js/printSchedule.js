@@ -1,3 +1,5 @@
+import toast from './toast.js';
+
 document.addEventListener('DOMContentLoaded', () => {
     const printButton = document.getElementById('print-schedule');
     const apiUrl = window.location.hostname === 'localhost' ? 'http://localhost:3000' : 'https://adelvalle-88dd0d34d7bd.herokuapp.com';
@@ -24,13 +26,13 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     })
     .catch(error => {
-        alert('Hubo un problema al obtener el perfil: ' + error.message);
-        window.location.href = 'login.html';
+        toast.error('Hubo un problema al obtener el perfil: ' + error.message);
+        setTimeout(() => window.location.href = 'login.html', 1500);
     });
 
     printButton.addEventListener('click', async () => {
         if (!currentUserId) {
-            alert('Error: No se pudo obtener la información del usuario');
+            toast.error('Error: No se pudo obtener la información del usuario');
             return;
         }
 
@@ -87,11 +89,11 @@ document.addEventListener('DOMContentLoaded', () => {
                 window.location.href = 'print-view.html';
             } else {
                 console.error('❌ Error al guardar:', result.message);
-                alert(`Error al guardar el cronograma: ${result.message}`);
+                toast.error(`Error al guardar el cronograma: ${result.message}`);
             }
         } catch (error) {
             console.error('❌ Error al enviar los datos al servidor:', error);
-            alert(`Error al guardar el cronograma: ${error.message}`);
+            toast.error(`Error al guardar el cronograma: ${error.message}`);
         }
     });
 

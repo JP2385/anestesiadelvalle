@@ -1,4 +1,5 @@
 // notificationUtils.js
+import toast from './toast.js';
 
 // Objeto para cachear los usuarios y evitar múltiples solicitudes GET al backend
 const userCache = {};
@@ -40,9 +41,9 @@ async function respondToNotification(apiUrl, notificationId, response, selectedP
         if (res.ok) {
             // Chequea si el mensaje del servidor indica que la notificación sigue pendiente
             if (result.message.includes('pendiente')) {
-                alert(result.message);  // Mostrar el mensaje completo cuando sigue pendiente
+                toast.info(result.message);  // Mostrar el mensaje completo cuando sigue pendiente
             } else {
-                alert(`Solicitud de intercambio ${response}.`);
+                toast.success(`Solicitud de intercambio ${response}.`);
                 // Solo eliminar la notificación del DOM si se acepta o rechaza
                 notificationDiv.remove();
                 if (document.querySelectorAll('.notification').length === 0) {
@@ -50,15 +51,15 @@ async function respondToNotification(apiUrl, notificationId, response, selectedP
                     notificationArea.textContent = '';
                     notificationArea.classList.remove('notification-area');
                 }
-                // Recargar la página después de aceptar el alert
-                window.location.reload();
+                // Recargar la página después de aceptar el toast
+                setTimeout(() => window.location.reload(), 1500);
             }
         } else {
-            alert(`Error: ${result.message}`);
+            toast.error(`Error: ${result.message}`);
         }        
     } catch (error) {
         console.error('Error al responder a la notificación:', error);
-        alert('Hubo un problema al responder a la notificación.');
+        toast.error('Hubo un problema al responder a la notificación.');
     }
 }
 
@@ -75,7 +76,7 @@ async function markNotificationAsNotified(apiUrl, notificationId, notificationDi
         });
 
         if (res.ok) {
-            alert('Notificación marcada como vista.');
+            toast.success('Notificación marcada como vista.');
             notificationDiv.remove();
             if (document.querySelectorAll('.notification').length === 0) {
                 const notificationArea = document.getElementById('notification-area');
@@ -85,7 +86,7 @@ async function markNotificationAsNotified(apiUrl, notificationId, notificationDi
         }
     } catch (error) {
         console.error('Error al marcar notificación como vista:', error);
-        alert('Hubo un problema al marcar la notificación.');
+        toast.error('Hubo un problema al marcar la notificación.');
     }
 }
 
@@ -190,7 +191,7 @@ export async function processPendingNotification(notification, notificationDiv, 
 
         // Verificar si los días hábiles seleccionados son suficientes
         if (selectedBusinessDays < senderBusinessDays) {
-            alert('No puedes tomar menos días hábiles que los que te piden a cambio.');
+            toast.warning('No puedes tomar menos días hábiles que los que te piden a cambio.');
             return;
         }
 

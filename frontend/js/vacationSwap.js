@@ -1,5 +1,6 @@
 import { fetchVacations } from './fetchVacations.js';
 import { validateStartDate, validateEndDate, filterUsersByDate, resetDateInputs, populateUserList, divideIntoWeeks, resetForm } from './vacationSwapUtils.js';
+import toast from './toast.js';
 
 document.addEventListener('DOMContentLoaded', async () => {
     const apiUrl = window.location.hostname === 'localhost' ? 'http://localhost:3000' : 'https://adelvalle-88dd0d34d7bd.herokuapp.com';
@@ -121,7 +122,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         const periodsToGiveCheckboxes = periodsToGiveSelect.querySelectorAll('input[type="checkbox"]:checked');
 
         if (periodsToGiveCheckboxes.length === 0) {
-            alert('Por favor, selecciona al menos un período para ceder.');
+            toast.warning('Por favor, selecciona al menos un período para ceder.');
             return;
         }
 
@@ -149,13 +150,13 @@ document.addEventListener('DOMContentLoaded', async () => {
 
             const result = await response.json();
             if (response.ok) {
-                alert('Solicitud de intercambio enviada exitosamente');
+                toast.success('Solicitud de intercambio enviada exitosamente');
                 resetForm(startDateInput, endDateInput, userList, periodsToGiveSelect, submitButton);  // Limpiar el formulario después del submit
             } else {
-                alert(`Error: ${result.message}`);
+                toast.error(`Error: ${result.message}`);
             }
         } else {
-            alert('Por favor, selecciona un período y períodos equivalentes para ceder.');
+            toast.warning('Por favor, selecciona un período y períodos equivalentes para ceder.');
         }
     });
 });

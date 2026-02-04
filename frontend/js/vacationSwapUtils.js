@@ -1,4 +1,5 @@
 // vacationSwapUtils.js
+import toast from './toast.js';
 
 export function validateStartDate(startDateInput, endDateInput, submitButton, handleDateChange) {
     const startDate = new Date(startDateInput.value + "T00:00:00Z");
@@ -6,7 +7,7 @@ export function validateStartDate(startDateInput, endDateInput, submitButton, ha
 
     // Verificar si la fecha de inicio es sábado (6) en UTC
     if (startDate.getUTCDay() !== 6) {
-        alert('La fecha de inicio debe ser un sábado.');
+        toast.warning('La fecha de inicio debe ser un sábado.');
         startDateInput.value = '';  // Vaciar el campo de fecha de inicio
         submitButton.disabled = true;  // Desactivar el botón de envío
         return;
@@ -15,7 +16,7 @@ export function validateStartDate(startDateInput, endDateInput, submitButton, ha
     // Si ya hay fecha de fin, validar que la fecha de inicio sea anterior y que haya al menos 8 días de diferencia
     if (endDateInput.value) {
         if (startDate >= endDate) {
-            alert('La fecha de inicio debe ser anterior a la fecha de fin.');
+            toast.warning('La fecha de inicio debe ser anterior a la fecha de fin.');
             startDateInput.value = '';  // Vaciar el campo de fecha de inicio
             submitButton.disabled = true;  // Desactivar el botón de envío
             return;
@@ -23,7 +24,7 @@ export function validateStartDate(startDateInput, endDateInput, submitButton, ha
 
         const daysDifference = Math.ceil((endDate - startDate) / (1000 * 60 * 60 * 24));
         if (daysDifference < 8) {
-            alert('Debe haber al menos 8 días entre la fecha de inicio y la de fin.');
+            toast.warning('Debe haber al menos 8 días entre la fecha de inicio y la de fin.');
             startDateInput.value = '';  // Vaciar el campo de fecha de inicio
             submitButton.disabled = true;  // Desactivar el botón de envío
             return;
@@ -39,7 +40,7 @@ export function validateEndDate(startDateInput, endDateInput, submitButton, hand
     const endDate = new Date(endDateInput.value + "T00:00:00Z");
 
     if (endDate.getUTCDay() !== 0) {
-        alert('La fecha de fin debe ser un domingo.');
+        toast.warning('La fecha de fin debe ser un domingo.');
         endDateInput.value = '';  // Vaciar el campo de fecha de fin
         submitButton.disabled = true;  // Desactivar el botón de envío
         return;
@@ -47,7 +48,7 @@ export function validateEndDate(startDateInput, endDateInput, submitButton, hand
 
     const daysDifference = Math.ceil((endDate - startDate) / (1000 * 60 * 60 * 24));
     if (daysDifference < 8) {
-        alert('Debe haber al menos 8 días entre la fecha de inicio y la de fin.');
+        toast.warning('Debe haber al menos 8 días entre la fecha de inicio y la de fin.');
         endDateInput.value = '';  // Vaciar el campo de fecha de fin
         submitButton.disabled = true;
     } else {
@@ -64,7 +65,7 @@ export function filterUsersByDate(users, currentUser, startDate, endDate, resetD
     });
 
     if (userHasPeriod) {
-        alert('Ya posees este período de vacaciones. No puedes solicitarlo.');
+        toast.warning('Ya posees este período de vacaciones. No puedes solicitarlo.');
         resetDateInputs();
         return [];
     }

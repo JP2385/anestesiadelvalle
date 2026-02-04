@@ -1,3 +1,4 @@
+import toast from './toast.js';
 import { countWeekdayShifts, countWeekendShifts, countSaturdayShifts } from './shiftAssignmentsUtils.js';
 import { validateMquirogaLharriague, validateCardioAssignedEachDay, validateFnAndImAssignedEachDay } from './shiftValidationUtils.js';
 
@@ -23,15 +24,15 @@ document.getElementById('print-shifts').addEventListener('click', async () => {
             });
             const data = await response.json();
             if (data.message) {
-                alert(`Error: ${data.message}`);
-                window.location.href = 'login.html';
+                toast.error(`Error: ${data.message}`);
+                setTimeout(() => window.location.href = 'login.html', 1500);
                 return null;
             } else {
                 return data.username;
             }
         } catch (error) {
-            alert('Hubo un problema al obtener el perfil: ' + error.message);
-            window.location.href = 'login.html';
+            toast.error('Hubo un problema al obtener el perfil: ' + error.message);
+            setTimeout(() => window.location.href = 'login.html', 1500);
             return null;
         }
     }
@@ -123,7 +124,7 @@ document.getElementById('print-shifts').addEventListener('click', async () => {
             })
             .then(response => response.json())
             .then(result => {
-                alert(result.message); // Mostrar mensaje de resultado del envío de email
+                toast.success(result.message); // Mostrar mensaje de resultado del envío de email
             })
             .catch(error => {
                 console.error('Error al enviar el correo:', error);

@@ -1,3 +1,4 @@
+import toast from './toast.js';
 import { buildWorkSiteName, mapWorkSiteRegimes } from './workSiteNameUtils.js';
 import { generateWeekHeaders } from './weekDateFormatter.js';
 
@@ -16,8 +17,8 @@ document.addEventListener('DOMContentLoaded', () => {
     .then(response => response.json())
     .then(data => {
         if (data.message) {
-            alert(`Error: ${data.message}`);
-            window.location.href = 'login.html';
+            toast.error(`Error: ${data.message}`);
+            setTimeout(() => window.location.href = 'login.html', 1500);
         } else {
             const currentUser = data.username;
 
@@ -77,7 +78,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 })
                 .catch(error => {
                     console.error('Error al obtener el schedule:', error);
-                    alert('Hubo un problema al obtener el último schedule: ' + error.message);
+                    toast.error('Hubo un problema al obtener el último schedule: ' + error.message);
                 });
         }
     })

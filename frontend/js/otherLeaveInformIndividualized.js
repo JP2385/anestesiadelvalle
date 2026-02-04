@@ -1,3 +1,5 @@
+import toast from './toast.js';
+
 document.addEventListener('DOMContentLoaded', () => {
     const apiUrl = window.location.hostname === 'localhost'
         ? 'http://localhost:3000'
@@ -15,8 +17,8 @@ document.addEventListener('DOMContentLoaded', () => {
     .then(response => response.json())
     .then(data => {
         if (data.message) {
-            alert(`Error: ${data.message}`);
-            window.location.href = 'login.html';
+            toast.error(`Error: ${data.message}`);
+            setTimeout(() => window.location.href = 'login.html', 1500);
         } else {
             const otherLeaves = data.otherLeaves || [];
             leaveInformContainer.innerHTML = ''; // Limpiar siempre antes

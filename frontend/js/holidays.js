@@ -1,4 +1,5 @@
 import { fetchVacations } from './fetchVacations.js'; // ✅ Importa la función para obtener vacaciones
+import toast from './toast.js';
 
 document.addEventListener('DOMContentLoaded', function () {
     const apiUrl = window.location.hostname === 'localhost' ? 'http://localhost:3000' : 'https://adelvalle-88dd0d34d7bd.herokuapp.com';
@@ -23,7 +24,7 @@ document.addEventListener('DOMContentLoaded', function () {
         holidays.forEach(holiday => displayHoliday(holiday));
     })
     .catch(error => {
-        alert('Hubo un problema al obtener la lista de feriados: ' + error.message);
+        toast.error('Hubo un problema al obtener la lista de feriados: ' + error.message);
     });
 
     // Obtener y poblar el select de usuarios
@@ -47,7 +48,7 @@ document.addEventListener('DOMContentLoaded', function () {
         const endDateUTC = new Date(endDateInput.value).toISOString();
 
         if (!holidayName || !startDateUTC || !endDateUTC) {
-            alert('Por favor completa todos los campos.');
+            toast.warning('Por favor completa todos los campos.');
             return;
         }
 
@@ -69,7 +70,7 @@ document.addEventListener('DOMContentLoaded', function () {
             endDateInput.value = '';
         })
         .catch(error => {
-            alert('Hubo un problema al agregar el feriado: ' + error.message);
+            toast.error('Hubo un problema al agregar el feriado: ' + error.message);
         });
     });
 
@@ -209,7 +210,7 @@ document.addEventListener('DOMContentLoaded', function () {
                     .filter(user => usersOnVacation.includes(user._id)) // Filtrar solo los usuarios en vacaciones
                     .map(user => user.username) // Obtener sus usernames
     
-                alert(`No puedes asignar este feriado a los siguientes usuarios porque están de vacaciones: ${usernamesOnVacation.join(', ')}`);
+                toast.warning(`No puedes asignar este feriado a los siguientes usuarios porque están de vacaciones: ${usernamesOnVacation.join(', ')}`);
                 return;
             }
     
@@ -236,10 +237,10 @@ document.addEventListener('DOMContentLoaded', function () {
     
             const data = response.status === 204 ? {} : await response.json();
             console.log('Feriado actualizado correctamente:', data);
-            alert('Feriado actualizado correctamente.');
+            toast.success('Feriado actualizado correctamente.');
         } catch (error) {
             console.error('Hubo un problema al actualizar el feriado:', error);
-            alert('Hubo un problema al actualizar el feriado: ' + error.message);
+            toast.error('Hubo un problema al actualizar el feriado: ' + error.message);
         }
     }
     
@@ -260,12 +261,12 @@ document.addEventListener('DOMContentLoaded', function () {
         })
         .then(data => {
             console.log('Feriado eliminado correctamente:', data); // ✅ Verifica si se eliminó correctamente
-            holidayItem.remove(); // ✅ Eliminar el elemento del DOM antes del alert
-            alert('Feriado eliminado correctamente.');
+            holidayItem.remove(); // ✅ Eliminar el elemento del DOM antes del toast
+            toast.success('Feriado eliminado correctamente.');
         })
         .catch(error => {
             console.error('Hubo un problema al eliminar el feriado:', error);
-            alert('Hubo un problema al eliminar el feriado: ' + error.message);
+            toast.error('Hubo un problema al eliminar el feriado: ' + error.message);
         });
     }
        
