@@ -106,7 +106,7 @@ function formatWorkScheduleForDay(workSchedule, day, username) {
 }
 
 function updateDOMWithDifferences(differences) {
-    const apiUrl = window.location.hostname === 'localhost' ? 'http://localhost:3000' : 'https://advalle-46fc1873b63d.herokuapp.com/';
+    const apiUrl = window.location.hostname === 'localhost' ? 'http://localhost:3000' : 'https://adelvalle-88dd0d34d7bd.herokuapp.com/';
     const days = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday'];
 
     days.forEach(day => {
@@ -152,7 +152,7 @@ function updateDOMWithDifferences(differences) {
 }
 
 function updateDOMWithDifferencesForDay(differences, dayIndex) {
-    const apiUrl = window.location.hostname === 'localhost' ? 'http://localhost:3000' : 'https://advalle-46fc1873b63d.herokuapp.com/';
+    const apiUrl = window.location.hostname === 'localhost' ? 'http://localhost:3000' : 'https://adelvalle-88dd0d34d7bd.herokuapp.com/';
     const day = convertDayIndexToName(dayIndex);
 
     const element = document.getElementById(`${day}-compare`);

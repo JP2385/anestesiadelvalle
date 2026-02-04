@@ -1,5 +1,5 @@
 export async function calculateAccumulatedShiftCounts(selectedYear, selectedMonth) {
-    const apiUrl = window.location.hostname === 'localhost' ? 'http://localhost:3000' : 'https://advalle-46fc1873b63d.herokuapp.com/';
+    const apiUrl = window.location.hostname === 'localhost' ? 'http://localhost:3000' : 'https://adelvalle-88dd0d34d7bd.herokuapp.com/';
     try {
         const response = await fetch(`${apiUrl}/shift-schedule/all-monthly-schedules`, {
             method: 'GET',

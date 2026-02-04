@@ -25,7 +25,7 @@ const app = express();
 app.use(express.json());
 
 const corsOptions = {
-    origin: ['http://localhost:3000', 'https://advalle-46fc1873b63d.herokuapp.com/'],
+    origin: ['http://localhost:3000', 'https://adelvalle-88dd0d34d7bd.herokuapp.com/'],
     optionsSuccessStatus: 200,
     credentials: true
 };
