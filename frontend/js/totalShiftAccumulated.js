@@ -1,7 +1,7 @@
 document.addEventListener('DOMContentLoaded', async () => {
     const apiUrl = window.location.hostname === 'localhost'
         ? 'http://localhost:3000'
-        : 'https://adelvalle-88dd0d34d7bd.herokuapp.com/';
+        : 'https://adelvalle-88dd0d34d7bd.herokuapp.com';
 
     const tableBody = document.getElementById('accumulated-shift-counts-body');
 

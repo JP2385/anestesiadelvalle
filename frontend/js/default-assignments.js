@@ -2,7 +2,7 @@ import { loadWorkSitesTable } from './loadWorkSites.js';
 
 const apiUrl = window.location.hostname === 'localhost'
     ? 'http://localhost:3000'
-    : 'https://adelvalle-88dd0d34d7bd.herokuapp.com/';
+    : 'https://adelvalle-88dd0d34d7bd.herokuapp.com';
 
 let currentWeekType = 'odd'; // 'odd' or 'even'
 let users = [];

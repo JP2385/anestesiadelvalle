@@ -3,7 +3,7 @@ import { updateWeekDates, populateSelectOptions, initializeLockButtons, handleSe
 import { initializeFloatingTable } from './floatingTable.js';
 
 document.addEventListener('DOMContentLoaded', async function() {
-    const apiUrl = window.location.hostname === 'localhost' ? 'http://localhost:3000' : 'https://adelvalle-88dd0d34d7bd.herokuapp.com/';
+    const apiUrl = window.location.hostname === 'localhost' ? 'http://localhost:3000' : 'https://adelvalle-88dd0d34d7bd.herokuapp.com';
 
     let availability;
     try {

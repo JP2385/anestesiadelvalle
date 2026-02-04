@@ -4,7 +4,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const holidayTableBody = document.querySelector("#holiday-table tbody");
     const assignHolidaysButton = document.getElementById("assign-holidays");
     const userHolidayCountTable = document.getElementById("user-holiday-count-table");
-    const apiUrl = window.location.hostname === 'localhost' ? 'http://localhost:3000' : 'https://adelvalle-88dd0d34d7bd.herokuapp.com/';
+    const apiUrl = window.location.hostname === 'localhost' ? 'http://localhost:3000' : 'https://adelvalle-88dd0d34d7bd.herokuapp.com';
     const printHolidaysButton = document.getElementById("print-holidays");
     const clearAssignmentsButton = document.getElementById("clear-assignments");
 
