@@ -106,50 +106,6 @@ if (loginForm) {
         });
     }
 
-    // Profile form submission
-    const changePasswordForm = document.getElementById('change-password-form');
-    if (changePasswordForm) {
-        window.toggleChangePassword = function() {
-            if (changePasswordForm.style.display === 'none' || changePasswordForm.style.display === '') {
-                changePasswordForm.style.display = 'block';
-            } else {
-                changePasswordForm.style.display = 'none';
-            }
-        };
-
-        window.confirmChangePassword = async function() {
-            const currentPassword = document.getElementById('current-password').value;
-            const newPassword = document.getElementById('new-password').value;
-            const confirmPassword = document.getElementById('confirm-password').value;
-
-            if (newPassword !== confirmPassword) {
-                toast.warning('Las nuevas contraseñas no coinciden.');
-                return;
-            }
-
-            try {
-                const response = await fetch(`${apiUrl}/auth/change-password`, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Authorization': 'Bearer ' + (localStorage.getItem('token') || sessionStorage.getItem('token'))
-                    },
-                    body: JSON.stringify({ currentPassword, newPassword })
-                });
-
-                if (response.ok) {
-                    toast.success('Contraseña cambiada exitosamente.');
-                    toggleChangePassword();
-                } else {
-                    const errorData = await response.json();
-                    toast.error(`Error: ${errorData.message}`);
-                }
-            } catch (error) {
-                toast.error('Hubo un problema con la solicitud: ' + error.message);
-            }
-        };
-    }
-
     // Recover password form submission
     const recoverForm = document.getElementById('recover-form');
     if (recoverForm) {
@@ -283,20 +239,86 @@ if (loginForm) {
         });
     }
 
-    // Toggle password visibility
-    window.togglePasswordVisibility = function(inputId) {
-        const passwordInput = document.getElementById(inputId);
-        const passwordIcon = passwordInput.nextElementSibling;
-        if (passwordInput.type === 'password') {
-            passwordInput.type = 'text';
-            passwordIcon.textContent = '👁‍🗨';
-        } else {
-            passwordInput.type = 'password';
-            passwordIcon.textContent = '👁️';
+    // Toggle password visibility with event delegation (safer approach)
+    document.addEventListener('click', function(event) {
+        if (event.target.classList.contains('toggle-password')) {
+            const targetId = event.target.getAttribute('data-target');
+            if (targetId) {
+                const passwordInput = document.getElementById(targetId);
+                if (passwordInput) {
+                    if (passwordInput.type === 'password') {
+                        passwordInput.type = 'text';
+                        event.target.textContent = '👁‍🗨';
+                    } else {
+                        passwordInput.type = 'password';
+                        event.target.textContent = '👁️';
+                    }
+                }
+            }
         }
-    };
+    });
 
-    // Function to go to main menu
+    // Profile page - Toggle change password form
+    const toggleChangePasswordBtn = document.getElementById('toggle-change-password-btn');
+    if (toggleChangePasswordBtn) {
+        toggleChangePasswordBtn.addEventListener('click', function() {
+            const form = document.getElementById('change-password-form');
+            if (form) {
+                if (form.style.display === 'none' || form.style.display === '') {
+                    form.style.display = 'block';
+                } else {
+                    form.style.display = 'none';
+                }
+            }
+        });
+    }
+
+    // Profile page - Confirm change password
+    const confirmChangePasswordBtn = document.getElementById('confirm-change-password-btn');
+    if (confirmChangePasswordBtn) {
+        confirmChangePasswordBtn.addEventListener('click', async function() {
+            const currentPassword = document.getElementById('current-password').value;
+            const newPassword = document.getElementById('new-password').value;
+            const confirmPassword = document.getElementById('confirm-password').value;
+
+            if (newPassword !== confirmPassword) {
+                toast.warning('Las nuevas contraseñas no coinciden.');
+                return;
+            }
+
+            try {
+                const response = await fetch(`${apiUrl}/auth/change-password`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': 'Bearer ' + (localStorage.getItem('token') || sessionStorage.getItem('token'))
+                    },
+                    body: JSON.stringify({ currentPassword, newPassword })
+                });
+
+                if (response.ok) {
+                    toast.success('Contraseña cambiada exitosamente.');
+                    const form = document.getElementById('change-password-form');
+                    if (form) form.style.display = 'none';
+                } else {
+                    const errorData = await response.json();
+                    toast.error(`Error: ${errorData.message}`);
+                }
+            } catch (error) {
+                toast.error('Hubo un problema con la solicitud: ' + error.message);
+            }
+        });
+    }
+
+    // Main menu button
+    const mainMenuBtn = document.getElementById('main-menu-btn');
+    if (mainMenuBtn) {
+        mainMenuBtn.addEventListener('click', function() {
+            window.location.href = 'index.html';
+        });
+    }
+
+    // Legacy support for functions called from other places
     window.goToMainMenu = function() {
         window.location.href = 'index.html';
     };

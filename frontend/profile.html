@@ -50,7 +50,7 @@
             <ul id="vacation-list"></ul>
             <h3>Otras Licencias:</h3>
             <ul id="other-leaves-list"></ul>
-            <button onclick="toggleChangePassword()" class="main-menu-button">Cambiar Contraseña</button>
+            <button id="toggle-change-password-btn" class="main-menu-button">Cambiar Contraseña</button>
         </div>
         <div class="change-password-form" id="change-password-form" style="display: none;">
             <h3>Cambiar Contraseña</h3>
@@ -58,26 +58,26 @@
                 <label for="current-password">Contraseña Actual</label>
                 <div class="password-container">
                     <input type="password" id="current-password" name="current-password" required>
-                    <span class="toggle-password" onclick="togglePasswordVisibility('current-password')">👁️</span>
+                    <span class="toggle-password" data-target="current-password">👁️</span>
                 </div>
             </div>
             <div class="input-group">
                 <label for="new-password">Nueva Contraseña</label>
                 <div class="password-container">
                     <input type="password" id="new-password" name="new-password" required>
-                    <span class="toggle-password" onclick="togglePasswordVisibility('new-password')">👁️</span>
+                    <span class="toggle-password" data-target="new-password">👁️</span>
                 </div>
             </div>
             <div class="input-group">
                 <label for="confirm-password">Repetir Nueva Contraseña</label>
                 <div class="password-container">
                     <input type="password" id="confirm-password" name="confirm-password" required>
-                    <span class="toggle-password" onclick="togglePasswordVisibility('confirm-password')">👁️</span>
+                    <span class="toggle-password" data-target="confirm-password">👁️</span>
                 </div>
             </div>
-            <button onclick="confirmChangePassword()" class="main-menu-button">Confirmar</button>
+            <button id="confirm-change-password-btn" class="main-menu-button">Confirmar</button>
         </div>
-        <button onclick="goToMainMenu()" class="main-menu-button">Volver al Menú Principal</button>
+        <button id="main-menu-btn" class="main-menu-button">Volver al Menú Principal</button>
     </main>
 </body>
 </html>
