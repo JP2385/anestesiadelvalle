@@ -1,4 +1,5 @@
 // Módulo para cargar dinámicamente los sitios de trabajo desde la base de datos
+import toast from './toast.js';
 import { buildWorkSiteName } from './workSiteNameUtils.js';
 
 const apiUrl = window.location.hostname === 'localhost'
@@ -31,7 +32,7 @@ export async function loadWorkSitesTable() {
         return buildScheduleTable(result.data);
     } catch (error) {
         console.error('Error cargando sitios de trabajo:', error);
-        alert('Hubo un problema al cargar los sitios de trabajo: ' + error.message);
+        toast.error('Hubo un problema al cargar los sitios de trabajo: ' + error.message);
         return null;
     }
 }

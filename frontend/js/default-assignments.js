@@ -1,3 +1,4 @@
+import toast from './toast.js';
 import { loadWorkSitesTable } from './loadWorkSites.js';
 
 const apiUrl = window.location.hostname === 'localhost'
@@ -31,7 +32,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     } catch (error) {
         console.error('Error initializing:', error);
-        alert('Error al inicializar la página: ' + error.message);
+        toast.error('Error al inicializar la página: ' + error.message);
     } finally {
         hideSpinner();
     }
@@ -617,7 +618,7 @@ async function saveAllDefaultAssignments() {
         );
 
         if (allSuccess.every(success => success)) {
-            alert('Todas las asignaciones por defecto han sido guardadas exitosamente');
+            toast.success('Todas las asignaciones por defecto han sido guardadas exitosamente');
 
             // Recargar usuarios para actualizar datos locales
             await loadUsers();
@@ -628,21 +629,19 @@ async function saveAllDefaultAssignments() {
 
     } catch (error) {
         console.error('Error saving default assignments:', error);
-        alert('Error al guardar asignaciones: ' + error.message);
+        toast.error('Error al guardar asignaciones: ' + error.message);
     } finally {
         hideSpinner();
     }
 }
 
 function clearAllAssignments() {
-    if (!confirm('¿Estás seguro de que quieres limpiar TODAS las asignaciones por defecto de TODOS los usuarios?')) {
-        return;
-    }
+    toast.confirm('¿Estás seguro de que quieres limpiar TODAS las asignaciones por defecto de TODOS los usuarios?', () => {
+        // Limpiar todos los selects
+        document.querySelectorAll('.user-assignment-select').forEach(select => {
+            select.value = '';
+        });
 
-    // Limpiar todos los selects
-    document.querySelectorAll('.user-assignment-select').forEach(select => {
-        select.value = '';
+        toast.success('Todas las asignaciones han sido limpiadas. Haz clic en "Guardar" para confirmar los cambios.');
     });
-
-    alert('Todas las asignaciones han sido limpiadas. Haz clic en "Guardar" para confirmar los cambios.');
 }

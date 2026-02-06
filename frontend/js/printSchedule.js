@@ -18,8 +18,8 @@ document.addEventListener('DOMContentLoaded', () => {
     .then(response => response.json())
     .then(data => {
         if (data.message) {
-            alert(`Error: ${data.message}`);
-            window.location.href = 'login.html';
+            toast.error(`Error: ${data.message}`);
+            setTimeout(() => window.location.href = 'login.html', 1500);
         } else {
             currentUserId = data._id; // Guardar el ID del usuario
             currentUsername = data.username; // Guardar el nombre de usuario

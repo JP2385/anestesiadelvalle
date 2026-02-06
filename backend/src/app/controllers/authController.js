@@ -90,7 +90,7 @@ exports.recoverPassword = async (req, res) => {
         }
 
         const token = jwt.sign({ userId: user._id }, config.jwtSecret, { expiresIn: '1h' });
-        const link = `https://adelvalle-88dd0d34d7bd.herokuapp.com//reset-password.html?token=${token}`;
+        const link = `https://adelvalle-88dd0d34d7bd.herokuapp.com/reset-password.html?token=${token}`;
 
         // Configura el transporter de nodemailer
         const transporter = nodemailer.createTransport({

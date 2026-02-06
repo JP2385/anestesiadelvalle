@@ -1,3 +1,5 @@
+import toast from './toast.js';
+
 document.addEventListener('DOMContentLoaded', async () => {
   const apiUrl = window.location.hostname === 'localhost'
     ? 'http://localhost:3000'
@@ -101,6 +103,6 @@ regimenReemplazanteSelect.addEventListener('change', renderTable);
     populateYears();
     renderTable();
   } catch (err) {
-    alert("Error al cargar datos: " + err.message);
+    toast.error("Error al cargar datos: " + err.message);
   }
 });

@@ -212,29 +212,27 @@ document.addEventListener('DOMContentLoaded', function () {
         const institution = allInstitutions.find(i => i._id === institutionId);
         if (!institution) return;
 
-        if (!confirm(`¿Estás seguro de eliminar la institución "${institution.name}"? Esta acción no se puede deshacer.`)) {
-            return;
-        }
+        toast.confirm(`¿Estás seguro de eliminar la institución "${institution.name}"? Esta acción no se puede deshacer.`, async () => {
+            try {
+                const response = await fetch(`${apiUrl}/institutions/${institutionId}`, {
+                    method: 'DELETE',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': 'Bearer ' + localStorage.getItem('token')
+                    }
+                });
 
-        try {
-            const response = await fetch(`${apiUrl}/institutions/${institutionId}`, {
-                method: 'DELETE',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': 'Bearer ' + localStorage.getItem('token')
+                const data = await response.json();
+
+                if (response.ok) {
+                    toast.success(data.message || 'Institución eliminada exitosamente');
+                    loadInstitutions();
+                } else {
+                    toast.error(`Error: ${data.message}`);
                 }
-            });
-
-            const data = await response.json();
-
-            if (response.ok) {
-                toast.success(data.message || 'Institución eliminada exitosamente');
-                loadInstitutions();
-            } else {
-                toast.error(`Error: ${data.message}`);
+            } catch (error) {
+                toast.error('Hubo un problema al eliminar la institución: ' + error.message);
             }
-        } catch (error) {
-            toast.error('Hubo un problema al eliminar la institución: ' + error.message);
-        }
+        });
     }
 });

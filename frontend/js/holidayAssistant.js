@@ -1,3 +1,5 @@
+import toast from './toast.js';
+
 document.addEventListener("DOMContentLoaded", () => {
     // 🔹 Variables globales (declaradas una sola vez)
     const yearFilter = document.getElementById("year-filter");
@@ -46,7 +48,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
         } catch (error) {
             console.error("❌ Error al obtener datos iniciales:", error);
-            alert("Hubo un problema al cargar la información.");
+            toast.error("Hubo un problema al cargar la información.");
         }
     }
 
@@ -127,7 +129,7 @@ document.addEventListener("DOMContentLoaded", () => {
             updateUserHolidayCount();
         } catch (error) {
             console.error("❌ Error en loadHolidays:", error);
-            alert("Hubo un problema al obtener los feriados.");
+            toast.error("Hubo un problema al obtener los feriados.");
         }
     }
     
@@ -480,24 +482,22 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
     clearAssignmentsButton.addEventListener("click", () => {
-        const confirmation = confirm("¿Estás seguro de que deseas limpiar todas las asignaciones del año seleccionado?");
+        toast.confirm("¿Estás seguro de que deseas limpiar todas las asignaciones del año seleccionado?", () => {
+            // Limpiar todos los selects de la tabla de feriados
+            const holidayRows = document.querySelectorAll("#holiday-table tbody tr");
 
-        if (!confirmation) return;
-
-        // Limpiar todos los selects de la tabla de feriados
-        const holidayRows = document.querySelectorAll("#holiday-table tbody tr");
-
-        holidayRows.forEach(row => {
-            const selects = row.querySelectorAll("select");
-            selects.forEach(select => {
-                select.value = ""; // Resetear a la opción vacía
+            holidayRows.forEach(row => {
+                const selects = row.querySelectorAll("select");
+                selects.forEach(select => {
+                    select.value = ""; // Resetear a la opción vacía
+                });
             });
+
+            // Actualizar el conteo de feriados para reflejar que no hay asignaciones
+            updateUserHolidayCountFromDOM();
+
+            toast.success("Todas las asignaciones han sido limpiadas.");
         });
-
-        // Actualizar el conteo de feriados para reflejar que no hay asignaciones
-        updateUserHolidayCountFromDOM();
-
-        alert("Todas las asignaciones han sido limpiadas.");
     });
 
     printHolidaysButton.addEventListener("click", async () => {
@@ -505,7 +505,7 @@ document.addEventListener("DOMContentLoaded", () => {
             const holidayRows = document.querySelectorAll("#holiday-table tbody tr");
     
             if (holidayRows.length === 0) {
-                alert("No hay feriados asignados para guardar.");
+                toast.warning("No hay feriados asignados para guardar.");
                 return;
             }
     
@@ -514,7 +514,7 @@ document.addEventListener("DOMContentLoaded", () => {
     
                 if (!holidayId) {
                     console.error("❌ No se encontró el ID del feriado en la tabla.");
-                    alert("⚠️ No se encontró un ID válido para un feriado. Asegúrate de que los datos están bien cargados.");
+                    toast.error("⚠️ No se encontró un ID válido para un feriado. Asegúrate de que los datos están bien cargados.");
                     continue;
                 }
     
@@ -555,12 +555,12 @@ document.addEventListener("DOMContentLoaded", () => {
                 }
             }
     
-            alert("Feriados actualizados exitosamente.");
-            window.location.href = "holidayInform.html";
+            toast.success("Feriados actualizados exitosamente.");
+            setTimeout(() => window.location.href = "holidayInform.html", 1500);
     
         } catch (error) {
             console.error("❌ Error al actualizar feriados:", error);
-            alert(error.message || "Hubo un problema al actualizar los feriados.");
+            toast.error(error.message || "Hubo un problema al actualizar los feriados.");
         }
     });
     

@@ -1,4 +1,5 @@
 // Módulo para gestionar asignaciones extras (fuera de las asignaciones por defecto)
+import toast from './toast.js';
 import { buildWorkSiteName } from './workSiteNameUtils.js';
 import { generateWeekHeaders } from './weekDateFormatter.js';
 
@@ -62,7 +63,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     } catch (error) {
         console.error('Error initializing:', error);
-        alert('Error al inicializar la página: ' + error.message);
+        toast.error('Error al inicializar la página: ' + error.message);
     } finally {
         hideSpinner();
     }
@@ -168,7 +169,7 @@ async function loadWeekData() {
 
     } catch (error) {
         console.error('Error loading week data:', error);
-        alert('Error al cargar datos de la semana: ' + error.message);
+        toast.error('Error al cargar datos de la semana: ' + error.message);
     } finally {
         hideSpinner();
     }
@@ -677,12 +678,12 @@ async function saveExtraAssignments() {
             throw new Error('Error al guardar asignaciones extras');
         }
 
-        alert('Asignaciones extras guardadas exitosamente');
+        toast.success('Asignaciones extras guardadas exitosamente');
         await loadExtraAssignmentsFromBackend();
 
     } catch (error) {
         console.error('Error saving extra assignments:', error);
-        alert('Error al guardar asignaciones: ' + error.message);
+        toast.error('Error al guardar asignaciones: ' + error.message);
     } finally {
         hideSpinner();
     }
@@ -697,7 +698,7 @@ async function generateMonthlyReport() {
         const year = prompt('Ingrese el año (ej: 2025):');
 
         if (!month || !year) {
-            alert('Debe ingresar mes y año');
+            toast.warning('Debe ingresar mes y año');
             return;
         }
 
@@ -719,7 +720,7 @@ async function generateMonthlyReport() {
 
     } catch (error) {
         console.error('Error generating report:', error);
-        alert('Error al generar reporte: ' + error.message);
+        toast.error('Error al generar reporte: ' + error.message);
     } finally {
         hideSpinner();
     }
@@ -730,7 +731,7 @@ function displayMonthlyReport(reportData, period, month, year) {
     const reportWindow = window.open('', '_blank');
 
     if (!reportWindow) {
-        alert('No se pudo abrir la ventana del reporte. Por favor, permita ventanas emergentes para este sitio.');
+        toast.error('No se pudo abrir la ventana del reporte. Por favor, permita ventanas emergentes para este sitio.');
         return;
     }
 

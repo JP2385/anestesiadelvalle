@@ -10,13 +10,32 @@ class ToastManager {
         if (!document.querySelector('.toast-container')) {
             this.container = document.createElement('div');
             this.container.className = 'toast-container';
-            document.body.appendChild(this.container);
+            // Asegurar que el body existe antes de append
+            if (document.body) {
+                document.body.appendChild(this.container);
+            } else {
+                // Si el body no existe aún, esperar a que el DOM esté listo
+                document.addEventListener('DOMContentLoaded', () => {
+                    if (!document.querySelector('.toast-container')) {
+                        document.body.appendChild(this.container);
+                    }
+                });
+            }
         } else {
             this.container = document.querySelector('.toast-container');
         }
     }
 
+    ensureContainer() {
+        // Asegurar que el contenedor existe cada vez que se usa
+        if (!this.container || !document.body.contains(this.container)) {
+            this.init();
+        }
+    }
+
     show(message, type = 'info', duration = 4000) {
+        this.ensureContainer(); // Verificar contenedor antes de usar
+        
         const toast = document.createElement('div');
         toast.className = `toast ${type}`;
 
@@ -74,6 +93,8 @@ class ToastManager {
 
     // Función para reemplazar confirm()
     confirm(message, onConfirm, onCancel) {
+        this.ensureContainer(); // Verificar contenedor antes de usar
+        
         const toast = document.createElement('div');
         toast.className = 'toast toast-confirm';
 

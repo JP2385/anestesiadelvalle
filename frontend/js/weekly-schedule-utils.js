@@ -476,8 +476,13 @@ export async function handleSelectChange(event, availability) {
         });
 
         if (userAlreadyAssigned) {
-            toast.warning('El usuario que se intenta asignar ya tiene otro lugar asignado en este día.');
-            select.value = originalValue; // Restaurar el valor original
+            console.log('⚠️ Usuario ya asignado detectado:', selectedUserId, 'en día:', dayIndex);
+            // Restaurar inmediatamente antes de mostrar toast
+            select.value = originalValue;
+            // Mostrar toast con duración extendida para asegurar visibilidad
+            setTimeout(() => {
+                toast.warning('El usuario que se intenta asignar ya tiene otro lugar asignado en este día.', 5000);
+            }, 10);
             return; // Salir de la función
         }
     }
