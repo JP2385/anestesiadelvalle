@@ -99,27 +99,27 @@ const userSchema = new Schema({
     workSchedule: {
         monday: {
             type: String,
-            enum: ['Mañana', 'Tarde', 'Variable', 'No trabaja'],
+            enum: ['Mañana', 'Tarde', 'Mañana y Tarde', 'Variable', 'No trabaja'],
             default: 'Variable'
         },
         tuesday: {
             type: String,
-            enum: ['Mañana', 'Tarde', 'Variable', 'No trabaja'],
+            enum: ['Mañana', 'Tarde', 'Mañana y Tarde', 'Variable', 'No trabaja'],
             default: 'Variable'
         },
         wednesday: {
             type: String,
-            enum: ['Mañana', 'Tarde', 'Variable', 'No trabaja'],
+            enum: ['Mañana', 'Tarde', 'Mañana y Tarde', 'Variable', 'No trabaja'],
             default: 'Variable'
         },
         thursday: {
             type: String,
-            enum: ['Mañana', 'Tarde', 'Variable', 'No trabaja'],
+            enum: ['Mañana', 'Tarde', 'Mañana y Tarde', 'Variable', 'No trabaja'],
             default: 'Variable'
         },
         friday: {
             type: String,
-            enum: ['Mañana', 'Tarde', 'Variable', 'No trabaja'],
+            enum: ['Mañana', 'Tarde', 'Mañana y Tarde', 'Variable', 'No trabaja'],
             default: 'Variable'
         }
     },
