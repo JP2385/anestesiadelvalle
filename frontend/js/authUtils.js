@@ -6,7 +6,7 @@ import toast from './toast.js';
 
 const apiUrl = window.location.hostname === 'localhost'
     ? 'http://localhost:3000'
-    : 'https://adelvalle-88dd0d34d7bd.herokuapp.com';
+    : 'https://advalle-46fc1873b63d.herokuapp.com';
 
 // Cache de permisos del usuario
 let userPermissions = null;

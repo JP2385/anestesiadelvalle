@@ -5,7 +5,7 @@ import { generateWeekHeaders } from './weekDateFormatter.js';
 
 const apiUrl = window.location.hostname === 'localhost'
     ? 'http://localhost:3000'
-    : 'https://adelvalle-88dd0d34d7bd.herokuapp.com';
+    : 'https://';
 
 let workSitesData = [];
 let users = [];

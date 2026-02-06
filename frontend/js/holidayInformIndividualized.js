@@ -1,7 +1,7 @@
 import toast from './toast.js';
 
 document.addEventListener('DOMContentLoaded', () => {
-    const apiUrl = window.location.hostname === 'localhost' ? 'http://localhost:3000' : 'https://adelvalle-88dd0d34d7bd.herokuapp.com';
+    const apiUrl = window.location.hostname === 'localhost' ? 'http://localhost:3000' : 'https://advalle-46fc1873b63d.herokuapp.com';
     const holidayAssignmentsContainer = document.getElementById('holiday-assignments');
     const token = localStorage.getItem('token') || sessionStorage.getItem('token');
 

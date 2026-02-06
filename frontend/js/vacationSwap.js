@@ -3,7 +3,7 @@ import { validateStartDate, validateEndDate, filterUsersByDate, resetDateInputs,
 import toast from './toast.js';
 
 document.addEventListener('DOMContentLoaded', async () => {
-    const apiUrl = window.location.hostname === 'localhost' ? 'http://localhost:3000' : 'https://adelvalle-88dd0d34d7bd.herokuapp.com';
+    const apiUrl = window.location.hostname === 'localhost' ? 'http://localhost:3000' : 'https://advalle-46fc1873b63d.herokuapp.com';
     const startDateInput = document.getElementById('startDate');
     const endDateInput = document.getElementById('endDate');
     const periodsToGiveSelect = document.getElementById('periodsToGive');

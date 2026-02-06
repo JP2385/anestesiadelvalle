@@ -4,7 +4,7 @@ import { buildWorkSiteName } from './workSiteNameUtils.js';
 
 const apiUrl = window.location.hostname === 'localhost'
     ? 'http://localhost:3000'
-    : 'https://adelvalle-88dd0d34d7bd.herokuapp.com';
+    : 'https://advalle-46fc1873b63d.herokuapp.com';
 
 /**
  * Carga los sitios de trabajo desde la API y construye la tabla dinámicamente
