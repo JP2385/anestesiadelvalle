@@ -1,3 +1,5 @@
+import toast from './toast.js';
+
 document.addEventListener('DOMContentLoaded', function () {
     const apiUrl = window.location.hostname === 'localhost' ? 'http://localhost:3000' : 'https://adelvalle-88dd0d34d7bd.herokuapp.com';
 
@@ -77,7 +79,7 @@ document.addEventListener('DOMContentLoaded', function () {
             const data = await response.json();
 
             if (response.ok) {
-                alert(data.message || 'Boca de trabajo creada exitosamente');
+                toast.success(data.message || 'Boca de trabajo creada exitosamente');
                 createWorkSiteForm.reset();
                 // Restaurar checkboxes de regímenes y días a true por defecto
                 ['matutino', 'vespertino', 'largo'].forEach(regime => {
@@ -88,10 +90,10 @@ document.addEventListener('DOMContentLoaded', function () {
                 });
                 loadWorkSites();
             } else {
-                alert(`Error: ${data.message}`);
+                toast.error(`Error: ${data.message}`);
             }
         } catch (error) {
-            alert('Hubo un problema al crear la boca de trabajo: ' + error.message);
+            toast.error('Hubo un problema al crear la boca de trabajo: ' + error.message);
         }
     });
 
@@ -197,14 +199,14 @@ document.addEventListener('DOMContentLoaded', function () {
             const data = await response.json();
 
             if (response.ok) {
-                alert(data.message || 'Boca de trabajo actualizada exitosamente');
+                toast.success(data.message || 'Boca de trabajo actualizada exitosamente');
                 editModal.style.display = 'none';
                 loadWorkSites();
             } else {
-                alert(`Error: ${data.message}`);
+                toast.error(`Error: ${data.message}`);
             }
         } catch (error) {
-            alert('Hubo un problema al actualizar la boca de trabajo: ' + error.message);
+            toast.error('Hubo un problema al actualizar la boca de trabajo: ' + error.message);
         }
     });
 
@@ -225,10 +227,10 @@ document.addEventListener('DOMContentLoaded', function () {
                 allInstitutions = data.institutions;
                 populateInstitutionSelects();
             } else {
-                alert(`Error al cargar instituciones: ${data.message}`);
+                toast.error(`Error al cargar instituciones: ${data.message}`);
             }
         } catch (error) {
-            alert('Hubo un problema al cargar las instituciones: ' + error.message);
+            toast.error('Hubo un problema al cargar las instituciones: ' + error.message);
         }
     }
 
@@ -281,10 +283,10 @@ document.addEventListener('DOMContentLoaded', function () {
                 allWorkSites = data.workSites;
                 renderWorkSites(allWorkSites);
             } else {
-                alert(`Error: ${data.message}`);
+                toast.error(`Error: ${data.message}`);
             }
         } catch (error) {
-            alert('Hubo un problema al cargar las bocas de trabajo: ' + error.message);
+            toast.error('Hubo un problema al cargar las bocas de trabajo: ' + error.message);
         }
     }
 
@@ -419,29 +421,27 @@ document.addEventListener('DOMContentLoaded', function () {
         const workSite = allWorkSites.find(ws => ws._id === workSiteId);
         if (!workSite) return;
 
-        if (!confirm(`¿Estás seguro de eliminar la boca de trabajo "${workSite.name}"? Esta acción no se puede deshacer.`)) {
-            return;
-        }
+        toast.confirm(`¿Estás seguro de eliminar la boca de trabajo "${workSite.name}"? Esta acción no se puede deshacer.`, async () => {
+            try {
+                const response = await fetch(`${apiUrl}/work-sites/${workSiteId}`, {
+                    method: 'DELETE',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': 'Bearer ' + localStorage.getItem('token')
+                    }
+                });
 
-        try {
-            const response = await fetch(`${apiUrl}/work-sites/${workSiteId}`, {
-                method: 'DELETE',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': 'Bearer ' + localStorage.getItem('token')
+                const data = await response.json();
+
+                if (response.ok) {
+                    toast.success(data.message || 'Boca de trabajo eliminada exitosamente');
+                    loadWorkSites();
+                } else {
+                    toast.error(`Error: ${data.message}`);
                 }
-            });
-
-            const data = await response.json();
-
-            if (response.ok) {
-                alert(data.message || 'Boca de trabajo eliminada exitosamente');
-                loadWorkSites();
-            } else {
-                alert(`Error: ${data.message}`);
+            } catch (error) {
+                toast.error('Hubo un problema al eliminar la boca de trabajo: ' + error.message);
             }
-        } catch (error) {
-            alert('Hubo un problema al eliminar la boca de trabajo: ' + error.message);
-        }
+        });
     }
 });

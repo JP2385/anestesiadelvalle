@@ -2,6 +2,8 @@
  * Utilidades de Autenticación y Autorización para el Frontend
  */
 
+import toast from './toast.js';
+
 const apiUrl = window.location.hostname === 'localhost'
     ? 'http://localhost:3000'
     : 'https://adelvalle-88dd0d34d7bd.herokuapp.com';
@@ -156,8 +158,8 @@ function disableIfNoPermission(selector, resource, action) {
  */
 function redirectIfNoPermission(resource, action, redirectUrl = '/index.html') {
     if (!hasPermission(resource, action)) {
-        alert('No tienes permisos para acceder a esta página.');
-        window.location.href = redirectUrl;
+        toast.error('No tienes permisos para acceder a esta página.');
+        setTimeout(() => window.location.href = redirectUrl, 1500);
     }
 }
 
@@ -168,8 +170,8 @@ function redirectIfNoPermission(resource, action, redirectUrl = '/index.html') {
  */
 function redirectIfNoRole(redirectUrl = '/index.html', ...allowedRoles) {
     if (!hasRole(...allowedRoles)) {
-        alert('No tienes permisos para acceder a esta página.');
-        window.location.href = redirectUrl;
+        toast.error('No tienes permisos para acceder a esta página.');
+        setTimeout(() => window.location.href = redirectUrl, 1500);
     }
 }
 

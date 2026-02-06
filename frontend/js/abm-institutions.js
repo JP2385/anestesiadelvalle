@@ -1,3 +1,5 @@
+import toast from './toast.js';
+
 document.addEventListener('DOMContentLoaded', function () {
     const apiUrl = window.location.hostname === 'localhost' ? 'http://localhost:3000' : 'https://adelvalle-88dd0d34d7bd.herokuapp.com';
 
@@ -40,14 +42,14 @@ document.addEventListener('DOMContentLoaded', function () {
             const data = await response.json();
 
             if (response.ok) {
-                alert(data.message || 'Institución creada exitosamente');
+                toast.success(data.message || 'Institución creada exitosamente');
                 createInstitutionForm.reset();
                 loadInstitutions();
             } else {
-                alert(`Error: ${data.message}`);
+                toast.error(`Error: ${data.message}`);
             }
         } catch (error) {
-            alert('Hubo un problema al crear la institución: ' + error.message);
+            toast.error('Hubo un problema al crear la institución: ' + error.message);
         }
     });
 
@@ -109,14 +111,14 @@ document.addEventListener('DOMContentLoaded', function () {
             const data = await response.json();
 
             if (response.ok) {
-                alert(data.message || 'Institución actualizada exitosamente');
+                toast.success(data.message || 'Institución actualizada exitosamente');
                 editModal.style.display = 'none';
                 loadInstitutions();
             } else {
-                alert(`Error: ${data.message}`);
+                toast.error(`Error: ${data.message}`);
             }
         } catch (error) {
-            alert('Hubo un problema al actualizar la institución: ' + error.message);
+            toast.error('Hubo un problema al actualizar la institución: ' + error.message);
         }
     });
 
@@ -137,10 +139,10 @@ document.addEventListener('DOMContentLoaded', function () {
                 allInstitutions = data.institutions;
                 renderInstitutions(allInstitutions);
             } else {
-                alert(`Error: ${data.message}`);
+                toast.error(`Error: ${data.message}`);
             }
         } catch (error) {
-            alert('Hubo un problema al cargar las instituciones: ' + error.message);
+            toast.error('Hubo un problema al cargar las instituciones: ' + error.message);
         }
     }
 
@@ -226,13 +228,13 @@ document.addEventListener('DOMContentLoaded', function () {
             const data = await response.json();
 
             if (response.ok) {
-                alert(data.message || 'Institución eliminada exitosamente');
+                toast.success(data.message || 'Institución eliminada exitosamente');
                 loadInstitutions();
             } else {
-                alert(`Error: ${data.message}`);
+                toast.error(`Error: ${data.message}`);
             }
         } catch (error) {
-            alert('Hubo un problema al eliminar la institución: ' + error.message);
+            toast.error('Hubo un problema al eliminar la institución: ' + error.message);
         }
     }
 });
