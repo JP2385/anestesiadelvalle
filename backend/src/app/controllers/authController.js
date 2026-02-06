@@ -154,7 +154,7 @@ exports.resetPassword = async (req, res) => {
         }
 
         user.password = newPassword;
-        await user.save();
+        await user.save({ validateBeforeSave: false });
         res.send({ message: 'Password reset successfully' });
     } catch (error) {
         res.status(400).send({ message: error.message });
