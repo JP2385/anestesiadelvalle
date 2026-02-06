@@ -98,6 +98,10 @@ exports.recoverPassword = async (req, res) => {
             auth: {
                 user: config.emailUser,
                 pass: config.emailPass,
+            },
+            secure: true,
+            tls: {
+                rejectUnauthorized: false
             }
         });
 
@@ -134,8 +138,13 @@ exports.recoverPassword = async (req, res) => {
 
         transporter.sendMail(mailOptions, (error, info) => {
             if (error) {
-                return res.status(500).send({ message: 'Error sending email: ' + error.message });
+                console.error('Error sending email:', error);
+                return res.status(500).send({ 
+                    message: 'Error sending email: ' + error.message,
+                    details: error.code || 'Unknown error'
+                });
             }
+            console.log('Email sent successfully:', info.messageId);
             res.send({ message: 'Password recovery email sent' });
         });
 
