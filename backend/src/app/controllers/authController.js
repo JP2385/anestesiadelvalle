@@ -103,10 +103,33 @@ exports.recoverPassword = async (req, res) => {
 
         // Enviar el correo
         const mailOptions = {
-            from: config.emailUser,
+            from: `"Anestesiólogos del Valle" <${config.emailUser}>`,
             to: email,
-            subject: 'Password Recovery',
-            text: `Click the following link to reset your password: ${link}`
+            subject: 'Recuperación de Contraseña - Anestesiólogos del Valle',
+            html: `
+                <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+                    <h2 style="color: #0056b3;">Recuperación de Contraseña</h2>
+                    <p>Hola,</p>
+                    <p>Recibimos una solicitud para restablecer tu contraseña en <strong>Anestesiólogos del Valle</strong>.</p>
+                    <p>Haz clic en el siguiente botón para restablecer tu contraseña:</p>
+                    <p style="text-align: center; margin: 30px 0;">
+                        <a href="${link}" 
+                           style="background-color: #0056b3; color: white; padding: 12px 30px; 
+                                  text-decoration: none; border-radius: 5px; display: inline-block;">
+                            Restablecer Contraseña
+                        </a>
+                    </p>
+                    <p style="color: #666; font-size: 14px;">
+                        Si no solicitaste este cambio, puedes ignorar este correo de forma segura.
+                        El enlace expirará en 1 hora.
+                    </p>
+                    <p style="color: #666; font-size: 12px; margin-top: 30px; border-top: 1px solid #ddd; padding-top: 20px;">
+                        Si el botón no funciona, copia y pega este enlace en tu navegador:<br>
+                        <a href="${link}" style="color: #0056b3; word-break: break-all;">${link}</a>
+                    </p>
+                </div>
+            `,
+            text: `Hola,\n\nRecibimos una solicitud para restablecer tu contraseña en Anestesiólogos del Valle.\n\nHaz clic en el siguiente enlace para restablecer tu contraseña:\n${link}\n\nSi no solicitaste este cambio, puedes ignorar este correo de forma segura. El enlace expirará en 1 hora.\n\nSaludos,\nEquipo de Anestesiólogos del Valle`
         };
 
         transporter.sendMail(mailOptions, (error, info) => {
