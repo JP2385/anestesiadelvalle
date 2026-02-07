@@ -2,7 +2,7 @@ import toast from './toast.js';
 
 document.addEventListener('DOMContentLoaded', () => {
     const printButton = document.getElementById('print-schedule');
-    const apiUrl = window.location.hostname === 'localhost' ? 'http://localhost:3000' : 'https://anestesiadelvalle.ar';
+    const apiUrl = window.location.hostname === 'localhost' ? 'http://localhost:3000' : window.location.origin;
     let currentUserId = '';
     let currentUsername = '';
 

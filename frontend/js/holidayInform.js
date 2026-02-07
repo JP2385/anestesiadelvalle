@@ -10,7 +10,7 @@ document.addEventListener('DOMContentLoaded', async function () {
     async function fetchHolidaysAndUsers() {
         const apiUrl = window.location.hostname === 'localhost' 
             ? 'http://localhost:3000' 
-            : 'https://anestesiadelvalle.ar';
+            : window.location.origin;
     
         try {
             const [usersResponse, holidaysResponse] = await Promise.all([

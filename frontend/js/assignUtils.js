@@ -39,7 +39,7 @@ export function updateSelectBackgroundColors() {
 }
 
 export async function fetchAvailability() {
-    const apiUrl = window.location.hostname === 'localhost' ? 'http://localhost:3000' : 'https://anestesiadelvalle.ar';
+    const apiUrl = window.location.hostname === 'localhost' ? 'http://localhost:3000' : window.location.origin;
     try {
 
         const response = await fetch(`${apiUrl}/auth/availability`, {

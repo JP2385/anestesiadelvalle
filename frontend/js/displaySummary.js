@@ -3,7 +3,7 @@ import { generateWeekHeaders } from './weekDateFormatter.js';
 
 document.addEventListener('DOMContentLoaded', () => {
     const summaryContainer = document.getElementById('summary-container');
-    const apiUrl = window.location.hostname === 'localhost' ? 'http://localhost:3000' : 'https://anestesiadelvalle.ar';
+    const apiUrl = window.location.hostname === 'localhost' ? 'http://localhost:3000' : window.location.origin;
 
     // Hacer una solicitud al backend para obtener el último schedule
     fetch(`${apiUrl}/schedule/last-schedule`)

@@ -2,7 +2,7 @@ import { fetchVacations } from './fetchVacations.js'; // ✅ Importa la función
 import toast from './toast.js';
 
 document.addEventListener('DOMContentLoaded', function () {
-    const apiUrl = window.location.hostname === 'localhost' ? 'http://localhost:3000' : 'https://anestesiadelvalle.ar';
+    const apiUrl = window.location.hostname === 'localhost' ? 'http://localhost:3000' : window.location.origin;
 
     const holidayList = document.getElementById('holiday-list');
     const addHolidayButton = document.getElementById('add-holiday');

@@ -1,7 +1,7 @@
 import toast from './toast.js';
 
 document.addEventListener('DOMContentLoaded', () => {
-    const apiUrl = window.location.hostname === 'localhost' ? 'http://localhost:3000' : 'https://anestesiadelvalle.ar';
+    const apiUrl = window.location.hostname === 'localhost' ? 'http://localhost:3000' : window.location.origin;
     const vacationInformContainer = document.getElementById('vacation-inform');
     const token = localStorage.getItem('token') || sessionStorage.getItem('token');
 

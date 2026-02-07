@@ -12,7 +12,7 @@ import { initializeScheduleTable } from './loadWorkSites.js';
 import { loadSavedSchedule } from './loadSavedSchedule.js';
 
 document.addEventListener('DOMContentLoaded', async function() {
-    const apiUrl = window.location.hostname === 'localhost' ? 'http://localhost:3000' : 'https://anestesiadelvalle.ar';
+    const apiUrl = window.location.hostname === 'localhost' ? 'http://localhost:3000' : window.location.origin;
 
     let availability;
     try {

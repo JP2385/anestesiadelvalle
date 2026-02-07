@@ -5,7 +5,7 @@ import { downloadTableAsImage } from './shiftInformDownloadImage.js';
 let userPhoneNumbers = {};
 
 document.addEventListener('DOMContentLoaded', async () => {
-    const apiUrl = window.location.hostname === 'localhost' ? 'http://localhost:3000' : 'https://anestesiadelvalle.ar';
+    const apiUrl = window.location.hostname === 'localhost' ? 'http://localhost:3000' : window.location.origin;
     const yearSelect = document.getElementById('year-select');
     const monthSelect = document.getElementById('month-select');
     const siteSelect = document.getElementById('site-select');

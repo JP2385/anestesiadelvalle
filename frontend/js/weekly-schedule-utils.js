@@ -644,7 +644,7 @@ export async function toggleMortalCombatMode(availability) {
     
     // Re-aplicar asignaciones automáticas de usuarios especiales
     const assignedUsers = new Set();
-    const apiUrl = window.location.hostname === 'localhost' ? 'http://localhost:3000' : 'https://anestesiadelvalle.ar';
+    const apiUrl = window.location.hostname === 'localhost' ? 'http://localhost:3000' : window.location.origin;
     
     // Asignar para cada día de la semana
     for (let dayIndex = 0; dayIndex < 5; dayIndex++) {

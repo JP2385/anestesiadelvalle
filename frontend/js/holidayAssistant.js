@@ -6,7 +6,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const holidayTableBody = document.querySelector("#holiday-table tbody");
     const assignHolidaysButton = document.getElementById("assign-holidays");
     const userHolidayCountTable = document.getElementById("user-holiday-count-table");
-    const apiUrl = window.location.hostname === 'localhost' ? 'http://localhost:3000' : 'https://anestesiadelvalle.ar';
+    const apiUrl = window.location.hostname === 'localhost' ? 'http://localhost:3000' : window.location.origin;
     const printHolidaysButton = document.getElementById("print-holidays");
     const clearAssignmentsButton = document.getElementById("clear-assignments");
 

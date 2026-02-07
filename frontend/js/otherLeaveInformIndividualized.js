@@ -3,7 +3,7 @@ import toast from './toast.js';
 document.addEventListener('DOMContentLoaded', () => {
     const apiUrl = window.location.hostname === 'localhost'
         ? 'http://localhost:3000'
-        : 'https://anestesiadelvalle.ar';
+        : window.location.origin;
     const leaveInformContainer = document.getElementById('other-leaves-inform');
     const token = localStorage.getItem('token') || sessionStorage.getItem('token');
 

@@ -106,7 +106,7 @@ function formatWorkScheduleForDay(workSchedule, day, username) {
 }
 
 function updateDOMWithDifferences(differences) {
-    const apiUrl = window.location.hostname === 'localhost' ? 'http://localhost:3000' : 'https://anestesiadelvalle.ar';
+    const apiUrl = window.location.hostname === 'localhost' ? 'http://localhost:3000' : window.location.origin;
     const days = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday'];
 
     days.forEach(day => {
@@ -152,7 +152,7 @@ function updateDOMWithDifferences(differences) {
 }
 
 function updateDOMWithDifferencesForDay(differences, dayIndex) {
-    const apiUrl = window.location.hostname === 'localhost' ? 'http://localhost:3000' : 'https://anestesiadelvalle.ar';
+    const apiUrl = window.location.hostname === 'localhost' ? 'http://localhost:3000' : window.location.origin;
     const day = convertDayIndexToName(dayIndex);
 
     const element = document.getElementById(`${day}-compare`);

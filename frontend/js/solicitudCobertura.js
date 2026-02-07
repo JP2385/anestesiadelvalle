@@ -3,7 +3,7 @@ import toast from './toast.js';
 document.addEventListener('DOMContentLoaded', async function () {
     const apiUrl = window.location.hostname === 'localhost'
       ? 'http://localhost:3000'
-      : 'https://anestesiadelvalle.ar';
+      : window.location.origin;
   
     const fechaInput = document.getElementById('fechaSolicitud');
     const usuarioSolicitanteInput = document.getElementById('usuarioSolicitante');

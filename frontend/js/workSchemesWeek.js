@@ -4,7 +4,7 @@ import { fetchUsers } from './shiftScheduleUtils.js';
 // URL de la API: cambiará según el entorno
 const apiUrl = window.location.hostname === 'localhost' 
     ? 'http://localhost:3000' 
-    : 'https://anestesiadelvalle.ar';
+    : window.location.origin;
 
 // Función para agrupar usuarios por esquema y días
 function groupUsersByDay(users) {

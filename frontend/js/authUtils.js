@@ -6,7 +6,7 @@ import toast from './toast.js';
 
 const apiUrl = window.location.hostname === 'localhost'
     ? 'http://localhost:3000'
-    : 'https://anestesiadelvalle.ar';
+    : window.location.origin;
 
 // Cache de permisos del usuario
 let userPermissions = null;

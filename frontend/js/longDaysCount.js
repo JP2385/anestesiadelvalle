@@ -4,7 +4,7 @@ let longDaysSumGlobal = {}; // Variable global para almacenar los días largos a
 
 // DOMContentLoaded event to fetch data and generate the table
 document.addEventListener('DOMContentLoaded', async () => {
-    const apiUrl = window.location.hostname === 'localhost' ? 'http://localhost:3000' : 'https://anestesiadelvalle.ar';
+    const apiUrl = window.location.hostname === 'localhost' ? 'http://localhost:3000' : window.location.origin;
 
     const users = await fetchUsers(apiUrl);
     const schedules = await fetchLastScheduleOfEachWeek(apiUrl);

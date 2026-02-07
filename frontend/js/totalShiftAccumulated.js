@@ -1,7 +1,7 @@
 document.addEventListener('DOMContentLoaded', async () => {
     const apiUrl = window.location.hostname === 'localhost'
         ? 'http://localhost:3000'
-        : 'https://anestesiadelvalle.ar';
+        : window.location.origin;
 
     const tableBody = document.getElementById('accumulated-shift-counts-body');
 

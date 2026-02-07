@@ -3,7 +3,7 @@ import { validateStartDate, validateEndDate, filterUsersByDate, resetDateInputs,
 import toast from './toast.js';
 
 document.addEventListener('DOMContentLoaded', async () => {
-    const apiUrl = window.location.hostname === 'localhost' ? 'http://localhost:3000' : 'https://anestesiadelvalle.ar';
+    const apiUrl = window.location.hostname === 'localhost' ? 'http://localhost:3000' : window.location.origin;
     const startDateInput = document.getElementById('startDate');
     const endDateInput = document.getElementById('endDate');
     const periodsToGiveSelect = document.getElementById('periodsToGive');

@@ -4,7 +4,7 @@ import { buildWorkSiteName } from './workSiteNameUtils.js';
 
 const apiUrl = window.location.hostname === 'localhost'
     ? 'http://localhost:3000'
-    : 'https://anestesiadelvalle.ar';
+    : window.location.origin;
 
 /**
  * Carga los sitios de trabajo desde la API y construye la tabla dinámicamente

@@ -3,7 +3,7 @@ import { countWeekdayShifts, countWeekendShifts, countSaturdayShifts } from './s
 import { validateMquirogaLharriague, validateCardioAssignedEachDay, validateFnAndImAssignedEachDay } from './shiftValidationUtils.js';
 
 document.getElementById('print-shifts').addEventListener('click', async () => {
-    const apiUrl = window.location.hostname === 'localhost' ? 'http://localhost:3000' : 'https://anestesiadelvalle.ar';
+    const apiUrl = window.location.hostname === 'localhost' ? 'http://localhost:3000' : window.location.origin;
 
     const yearSelect = document.getElementById('year-select');
     const monthSelect = document.getElementById('month-select');

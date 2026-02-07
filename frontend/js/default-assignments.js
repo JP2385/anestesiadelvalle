@@ -3,7 +3,7 @@ import { loadWorkSitesTable } from './loadWorkSites.js';
 
 const apiUrl = window.location.hostname === 'localhost'
     ? 'http://localhost:3000'
-    : 'https://anestesiadelvalle.ar';
+    : window.location.origin;
 
 let currentWeekType = 'odd'; // 'odd' or 'even'
 let users = [];

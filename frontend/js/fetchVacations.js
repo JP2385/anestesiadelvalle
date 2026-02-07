@@ -1,6 +1,6 @@
 // archivo: api.js (puedes llamarlo como quieras)
 export async function fetchVacations() {
-    const apiUrl = window.location.hostname === 'localhost' ? 'http://localhost:3000' : 'https://anestesiadelvalle.ar';
+    const apiUrl = window.location.hostname === 'localhost' ? 'http://localhost:3000' : window.location.origin;
     try {
         const response = await fetch(`${apiUrl}/vacations`, {
             method: 'GET',

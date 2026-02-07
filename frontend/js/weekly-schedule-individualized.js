@@ -3,7 +3,7 @@ import { buildWorkSiteName, mapWorkSiteRegimes } from './workSiteNameUtils.js';
 import { generateWeekHeaders } from './weekDateFormatter.js';
 
 document.addEventListener('DOMContentLoaded', () => {
-    const apiUrl = window.location.hostname === 'localhost' ? 'http://localhost:3000' : 'https://anestesiadelvalle.ar';
+    const apiUrl = window.location.hostname === 'localhost' ? 'http://localhost:3000' : window.location.origin;
     const userAssignmentsContainer = document.getElementById('user-assignments');
     const token = localStorage.getItem('token') || sessionStorage.getItem('token');
 
