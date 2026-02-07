@@ -52,18 +52,32 @@ export function formatDateLong(date, dayIndex) {
 
 /**
  * Genera un objeto con los headers de los días para toda la semana
- * @param {Date|string} weekStart - Fecha de inicio de semana (lunes)
+ * @param {Date|string} weekStart - Fecha de inicio de semana (sábado)
  * @param {boolean} longFormat - true para formato largo, false para corto
  * @returns {Object} Objeto con keys monday, tuesday, etc.
  */
 export function generateWeekHeaders(weekStart, longFormat = false) {
     const days = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday'];
     const headers = {};
-    const startDate = new Date(weekStart);
+    
+    // Si weekStart es un string en formato ISO, parsearlo correctamente
+    // para evitar problemas con zonas horarias
+    let startDate;
+    if (typeof weekStart === 'string') {
+        const [year, month, day] = weekStart.split('T')[0].split('-').map(Number);
+        startDate = new Date(year, month - 1, day);
+    } else {
+        startDate = new Date(weekStart);
+    }
+
+    // weekStart es el sábado, pero necesitamos empezar desde el lunes
+    // El lunes es 2 días después del sábado
+    const mondayDate = new Date(startDate);
+    mondayDate.setDate(startDate.getDate() + 2);
 
     days.forEach((day, index) => {
-        const date = new Date(startDate);
-        date.setDate(date.getDate() + index);
+        const date = new Date(mondayDate);
+        date.setDate(mondayDate.getDate() + index);
 
         headers[day] = longFormat
             ? formatDateLong(date, index)
