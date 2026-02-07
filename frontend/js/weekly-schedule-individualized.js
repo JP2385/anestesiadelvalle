@@ -7,6 +7,9 @@ document.addEventListener('DOMContentLoaded', () => {
     const userAssignmentsContainer = document.getElementById('user-assignments');
     const token = localStorage.getItem('token') || sessionStorage.getItem('token');
 
+    // Si no hay token, no hacer nada (sessionManager ya maneja el redirect)
+    if (!token || !userAssignmentsContainer) return;
+
     fetch(`${apiUrl}/auth/profile`, {
         method: 'GET',
         headers: {

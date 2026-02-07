@@ -5,6 +5,9 @@ document.addEventListener('DOMContentLoaded', () => {
     const holidayAssignmentsContainer = document.getElementById('holiday-assignments');
     const token = localStorage.getItem('token') || sessionStorage.getItem('token');
 
+    // Si no hay token, no hacer nada (sessionManager ya maneja el redirect)
+    if (!token) return;
+
     fetch(`${apiUrl}/auth/profile`, {
         method: 'GET',
         headers: {

@@ -12,6 +12,9 @@ document.addEventListener('DOMContentLoaded', () => {
         return;
     }
 
+    // Si no hay token, no hacer nada (sessionManager ya maneja el redirect)
+    if (!token) return;
+
     // Obtener el perfil del usuario actual
     fetch(`${apiUrl}/auth/profile`, {
         method: 'GET',
