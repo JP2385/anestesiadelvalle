@@ -4,7 +4,7 @@ import { buildWorkSiteName } from './workSiteNameUtils.js';
 
 const apiUrl = window.location.hostname === 'localhost'
     ? 'http://localhost:3000'
-    : 'https://advalle-46fc1873b63d.herokuapp.com';
+    : 'https://anestesiadelvalle.ar';
 
 /**
  * Carga los sitios de trabajo desde la API y construye la tabla dinámicamente

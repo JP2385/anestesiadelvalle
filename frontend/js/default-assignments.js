@@ -3,7 +3,7 @@ import { loadWorkSitesTable } from './loadWorkSites.js';
 
 const apiUrl = window.location.hostname === 'localhost'
     ? 'http://localhost:3000'
-    : 'https://advalle-46fc1873b63d.herokuapp.com';
+    : 'https://anestesiadelvalle.ar';
 
 let currentWeekType = 'odd'; // 'odd' or 'even'
 let users = [];

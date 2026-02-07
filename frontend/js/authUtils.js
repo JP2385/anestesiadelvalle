@@ -6,7 +6,7 @@ import toast from './toast.js';
 
 const apiUrl = window.location.hostname === 'localhost'
     ? 'http://localhost:3000'
-    : 'https://advalle-46fc1873b63d.herokuapp.com';
+    : 'https://anestesiadelvalle.ar';
 
 // Cache de permisos del usuario
 let userPermissions = null;

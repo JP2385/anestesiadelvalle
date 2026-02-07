@@ -2,7 +2,7 @@ import { validateStartDate, validateEndDate } from './vacationSwapUtils.js';
 import toast from './toast.js';
 
 document.addEventListener('DOMContentLoaded', function () {
-    const apiUrl = window.location.hostname === 'localhost' ? 'http://localhost:3000' : 'https://advalle-46fc1873b63d.herokuapp.com';
+    const apiUrl = window.location.hostname === 'localhost' ? 'http://localhost:3000' : 'https://anestesiadelvalle.ar';
 
     const userSelect = document.getElementById('user-select');
     const adminForm = document.getElementById('admin-form');

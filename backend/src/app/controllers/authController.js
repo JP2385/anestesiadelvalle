@@ -90,7 +90,7 @@ exports.recoverPassword = async (req, res) => {
         }
 
         const token = jwt.sign({ userId: user._id }, config.jwtSecret, { expiresIn: '1h' });
-        const link = `https://advalle-46fc1873b63d.herokuapp.com/reset-password.html?token=${token}`;
+        const link = `${config.baseUrl}/reset-password.html?token=${token}`;
 
         // Configura el transporter de nodemailer
         const transporter = nodemailer.createTransport({
@@ -100,40 +100,83 @@ exports.recoverPassword = async (req, res) => {
                 pass: config.emailPass,
             },
             secure: true,
+            pool: true,
+            maxConnections: 5,
+            maxMessages: 10,
             tls: {
                 rejectUnauthorized: false
-            }
+            },
+            debug: false
         });
 
         // Enviar el correo
         const mailOptions = {
             from: `"Anestesiólogos del Valle" <${config.emailUser}>`,
+            replyTo: config.emailUser,
             to: email,
             subject: 'Recuperación de Contraseña - Anestesiólogos del Valle',
+            headers: {
+                'X-Entity-Ref-ID': `password-reset-${Date.now()}`,
+                'X-Priority': '1',
+                'Importance': 'high'
+            },
             html: `
-                <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
-                    <h2 style="color: #0056b3;">Recuperación de Contraseña</h2>
-                    <p>Hola,</p>
-                    <p>Recibimos una solicitud para restablecer tu contraseña en <strong>Anestesiólogos del Valle</strong>.</p>
-                    <p>Haz clic en el siguiente botón para restablecer tu contraseña:</p>
-                    <p style="text-align: center; margin: 30px 0;">
-                        <a href="${link}" 
-                           style="background-color: #0056b3; color: white; padding: 12px 30px; 
-                                  text-decoration: none; border-radius: 5px; display: inline-block;">
-                            Restablecer Contraseña
-                        </a>
-                    </p>
-                    <p style="color: #666; font-size: 14px;">
-                        Si no solicitaste este cambio, puedes ignorar este correo de forma segura.
-                        El enlace expirará en 1 hora.
-                    </p>
-                    <p style="color: #666; font-size: 12px; margin-top: 30px; border-top: 1px solid #ddd; padding-top: 20px;">
-                        Si el botón no funciona, copia y pega este enlace en tu navegador:<br>
-                        <a href="${link}" style="color: #0056b3; word-break: break-all;">${link}</a>
-                    </p>
-                </div>
+                <!DOCTYPE html>
+                <html>
+                <head>
+                    <meta charset="utf-8">
+                    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                </head>
+                <body style="margin: 0; padding: 20px; background-color: #f4f4f4;">
+                    <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; background-color: white; padding: 30px; border-radius: 10px;">
+                        <h2 style="color: #0056b3; margin-top: 0;">Recuperación de Contraseña</h2>
+                        <p style="color: #333; line-height: 1.6;">Hola,</p>
+                        <p style="color: #333; line-height: 1.6;">Recibiste este correo porque solicitaste restablecer tu contraseña en <strong>Anestesiólogos del Valle</strong>.</p>
+                        <p style="color: #333; line-height: 1.6;">Para continuar, haz clic en el siguiente botón:</p>
+                        <div style="text-align: center; margin: 35px 0;">
+                            <a href="${link}" 
+                               style="background-color: #0056b3; color: white; padding: 14px 35px; 
+                                      text-decoration: none; border-radius: 5px; display: inline-block; font-weight: bold;">
+                                Restablecer mi Contraseña
+                            </a>
+                        </div>
+                        <div style="background-color: #fff3cd; border-left: 4px solid #ffc107; padding: 15px; margin: 25px 0;">
+                            <p style="color: #856404; margin: 0; font-size: 14px;">
+                                <strong>⚠️ Importante:</strong> Este enlace expirará en 1 hora por tu seguridad.
+                            </p>
+                        </div>
+                        <p style="color: #666; font-size: 14px; line-height: 1.6;">
+                            Si no solicitaste este cambio, ignora este correo y tu contraseña permanecerá sin cambios.
+                        </p>
+                        <hr style="border: none; border-top: 1px solid #ddd; margin: 30px 0;">
+                        <p style="color: #999; font-size: 12px; line-height: 1.6;">
+                            Si el botón no funciona, copia y pega esta URL en tu navegador:<br>
+                            <span style="color: #0056b3; word-break: break-all;">${link}</span>
+                        </p>
+                        <p style="color: #999; font-size: 11px; margin-top: 30px;">
+                            Este correo fue enviado automáticamente desde Anestesiólogos del Valle.<br>
+                            Por favor no respondas a este mensaje.
+                        </p>
+                    </div>
+                </body>
+                </html>
             `,
-            text: `Hola,\n\nRecibimos una solicitud para restablecer tu contraseña en Anestesiólogos del Valle.\n\nHaz clic en el siguiente enlace para restablecer tu contraseña:\n${link}\n\nSi no solicitaste este cambio, puedes ignorar este correo de forma segura. El enlace expirará en 1 hora.\n\nSaludos,\nEquipo de Anestesiólogos del Valle`
+            text: `Recuperación de Contraseña - Anestesiólogos del Valle
+
+Hola,
+
+Recibiste este correo porque solicitaste restablecer tu contraseña en Anestesiólogos del Valle.
+
+Para continuar, copia y pega el siguiente enlace en tu navegador:
+${link}
+
+⚠️ IMPORTANTE: Este enlace expirará en 1 hora por tu seguridad.
+
+Si no solicitaste este cambio, ignora este correo y tu contraseña permanecerá sin cambios.
+
+---
+Este correo fue enviado automáticamente desde Anestesiólogos del Valle.
+Por favor no respondas a este mensaje.`
         };
 
         transporter.sendMail(mailOptions, (error, info) => {

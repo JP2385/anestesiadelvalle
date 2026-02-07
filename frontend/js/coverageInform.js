@@ -3,7 +3,7 @@ import toast from './toast.js';
 document.addEventListener('DOMContentLoaded', async () => {
   const apiUrl = window.location.hostname === 'localhost'
     ? 'http://localhost:3000'
-    : 'https://advalle-46fc1873b63d.herokuapp.com';
+    : 'https://anestesiadelvalle.ar';
 
   const yearSelect = document.getElementById('year');
   const userSelect = document.getElementById('user');

@@ -9,7 +9,7 @@
                 const lastDay = getLastDayOfPreviousMonth(selectedYear, selectedMonth);
                 const previousYearMonth = `${lastDay.split('-')[0]}-${lastDay.split('-')[1]}`; // Formato YYYY-MM
 
-                const apiUrl = window.location.hostname === 'localhost' ? 'http://localhost:3000' : 'https://advalle-46fc1873b63d.herokuapp.com';
+                const apiUrl = window.location.hostname === 'localhost' ? 'http://localhost:3000' : 'https://anestesiadelvalle.ar';
 
                 try {
                     // Cargar el horario del mes completo

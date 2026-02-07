@@ -3,7 +3,7 @@ const http = require('http');
 const https = require('https');
 const path = require('path');
 
-const base = 'https://advalle-46fc1873b63d.herokuapp.com/';
+const base = 'https://anestesiadelvalle.ar/';
 const htmlPath = path.join(__dirname, '..', 'prod_index.html');
 const outDir = process.cwd();
 const patterns = [
