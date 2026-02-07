@@ -77,8 +77,31 @@ function calculateLongDaysCount(assignments) {
 // Función para obtener el último schedule con populate de relaciones (formato optimizado)
 const getLastSchedule = async (req, res) => {
     try {
-        const lastSchedule = await Schedule.findOne()
-            .sort({ createdAt: -1 })
+        // Calcular el weekStart relevante según el día actual
+        const now = new Date();
+        const dayOfWeek = now.getDay(); // 0=Sunday, 6=Saturday
+        
+        // Calcular el sábado de la semana relevante
+        let relevantSaturday = new Date(now);
+        
+        if (dayOfWeek === 0) {
+            // Si es domingo, buscar el sábado anterior (ayer)
+            relevantSaturday.setDate(now.getDate() - 1);
+        } else if (dayOfWeek === 6) {
+            // Si es sábado, buscar schedules desde hoy en adelante
+            // (la semana que empieza, no la que termina)
+            relevantSaturday.setDate(now.getDate());
+        } else {
+            // Si es lunes (1) a viernes (5), buscar el sábado anterior
+            const daysToSubtract = dayOfWeek + 1;
+            relevantSaturday.setDate(now.getDate() - daysToSubtract);
+        }
+        
+        relevantSaturday.setHours(0, 0, 0, 0);
+        
+        // Buscar el schedule más reciente cuyo weekStart sea >= relevantSaturday
+        const lastSchedule = await Schedule.findOne({ weekStart: { $gte: relevantSaturday } })
+            .sort({ weekStart: 1, createdAt: -1 }) // Primero por weekStart ascendente, luego por createdAt descendente
             .populate('createdBy', 'username email firstName lastName')
             .populate('assignments.monday.userId', 'username firstName lastName')
             .populate({
