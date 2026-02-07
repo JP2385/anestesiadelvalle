@@ -1,7 +1,7 @@
 {
     "name": "Anestesiólogos del Valle",
     "short_name": "ADV",
-    "start_url": "../index.html",
+    "start_url": "/index.html",
     "display": "standalone",
     "background_color": "#ffffff",
     "theme_color": "#0056b3",
