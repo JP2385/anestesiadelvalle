@@ -136,7 +136,7 @@ function generateSummaryTable(dayHeaders, selectConfig) {
         }
     });
 
-    // Convertir a array y ordenar según el orden de instituciones
+    // Convertir a array y ordenar según el orden de instituciones y régimen
     const sortedWorkSites = Array.from(allWorkSites).sort((a, b) => {
         const orderA = getInstitutionOrder(a);
         const orderB = getInstitutionOrder(b);
@@ -146,8 +146,28 @@ function generateSummaryTable(dayHeaders, selectConfig) {
             return orderA - orderB;
         }
 
-        // Si son de la misma institución, ordenar alfabéticamente
-        return a.localeCompare(b, 'es');
+        // Extraer el nombre base y el régimen
+        const getRegimeOrder = (workSite) => {
+            if (workSite.endsWith('Matutino')) return 1;
+            if (workSite.endsWith('Vespertino')) return 2;
+            if (workSite.endsWith('Largo')) return 3;
+            return 0; // Sin régimen especificado
+        };
+
+        const getBaseName = (workSite) => {
+            return workSite.replace(/\s+(Matutino|Vespertino|Largo)$/, '');
+        };
+
+        const baseNameA = getBaseName(a);
+        const baseNameB = getBaseName(b);
+
+        // Si el nombre base es diferente, ordenar alfabéticamente por nombre base
+        if (baseNameA !== baseNameB) {
+            return baseNameA.localeCompare(baseNameB, 'es');
+        }
+
+        // Si el nombre base es igual, ordenar por régimen: matutino, vespertino, largo
+        return getRegimeOrder(a) - getRegimeOrder(b);
     });
 
     // Crear filas para cada workSite único (ordenado)
