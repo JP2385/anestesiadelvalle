@@ -407,6 +407,12 @@ function transformOptimizedToLegacy(schedule) {
                 const userId = assignment.userId;
                 const regime = assignment.regime;
 
+                // Validar que userId no sea null
+                if (!userId) {
+                    console.warn(`Assignment without user found for workSiteId ${workSiteId?._id} on ${day}`);
+                    return; // Skip this assignment
+                }
+
                 // Construir nombre usando la utilidad compartida
                 const wsId = workSiteId._id.toString();
                 const hasMultipleRegimesForSite = workSiteRegimes.get(wsId)?.size > 1;
