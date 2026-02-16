@@ -318,10 +318,13 @@ function restoreLongDaysInform(longDaysInform) {
 async function updateAssignmentCounts(availability) {
     try {
         // Importar dinámicamente las funciones de conteo
-        const { countAssignmentsByDay, displayUnassignedUsers } = await import('./autoAssignFunctions.js');
+        const { countAssignmentsByDay, countEnabledSelectsByDay, displayUnassignedUsers } = await import('./autoAssignFunctions.js');
         const { autoAssignReportBgColorsUpdate } = await import('./autoAssignReportBgColorsUpdate.js');
 
-        // Ejecutar el conteo que actualiza los spans en el DOM
+        // Ejecutar el conteo de lugares habilitados (IMPORTANTE: debe ir primero para reflejar los selects deshabilitados)
+        countEnabledSelectsByDay();
+
+        // Ejecutar el conteo de asignaciones que actualiza los spans en el DOM
         await countAssignmentsByDay();
 
         // Mostrar lista de no asignados si tenemos availability
