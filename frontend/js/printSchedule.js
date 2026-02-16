@@ -56,40 +56,56 @@ document.addEventListener('DOMContentLoaded', () => {
                 return;
             }
 
-            console.log('📦 Guardando cronograma:', {
-                weekStart,
-                weekEnd,
-                totalAssignments: Object.values(assignments).flat().length,
-                longDaysTotal: Object.values(longDaysCount).reduce((sum, count) => sum + count, 0),
-                createdBy: currentUserId
-            });
+            // Validar si hay selects habilitados pero vacíos
+            const emptyEnabledSelects = Object.values(assignments).flat()
+                .filter(assignment => assignment.userId === null);
 
-            // Enviar los datos al backend en el NUEVO formato
-            const response = await fetch(`${apiUrl}/schedule/save-schedule`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({
+            // Función para guardar y continuar
+            const saveAndContinue = async () => {
+                console.log('📦 Guardando cronograma:', {
                     weekStart,
                     weekEnd,
-                    assignments,
-                    mortalCombat,
-                    longDaysCount,
-                    longDaysInform,
+                    totalAssignments: Object.values(assignments).flat().length,
+                    longDaysTotal: Object.values(longDaysCount).reduce((sum, count) => sum + count, 0),
                     createdBy: currentUserId
-                })
-            });
+                });
 
-            const result = await response.json();
+                // Enviar los datos al backend en el NUEVO formato
+                const response = await fetch(`${apiUrl}/schedule/save-schedule`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        weekStart,
+                        weekEnd,
+                        assignments,
+                        mortalCombat,
+                        longDaysCount,
+                        longDaysInform,
+                        createdBy: currentUserId
+                    })
+                });
 
-            if (result.success) {
-                console.log('✅ Cronograma guardado exitosamente:', result.scheduleId);
-                // Redirigir a print-view.html
-                window.location.href = 'print-view.html';
+                const result = await response.json();
+
+                if (result.success) {
+                    console.log('✅ Cronograma guardado exitosamente:', result.scheduleId);
+                    // Redirigir a print-view.html
+                    window.location.href = 'print-view.html';
+                } else {
+                    console.error('❌ Error al guardar:', result.message);
+                    toast.error(`Error al guardar el cronograma: ${result.message}`);
+                }
+            };
+
+            // Si hay sitios vacíos, mostrar confirmación
+            if (emptyEnabledSelects.length > 0) {
+                const confirmMessage = `Hay ${emptyEnabledSelects.length} sitio(s) de trabajo sin anestesiólogo asignado. ¿Desea continuar?`;
+                toast.confirm(confirmMessage, saveAndContinue);
             } else {
-                console.error('❌ Error al guardar:', result.message);
-                toast.error(`Error al guardar el cronograma: ${result.message}`);
+                // Si no hay sitios vacíos, continuar directamente
+                await saveAndContinue();
             }
         } catch (error) {
             console.error('❌ Error al enviar los datos al servidor:', error);
