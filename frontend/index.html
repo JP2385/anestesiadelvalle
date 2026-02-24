@@ -14,6 +14,39 @@
     <link rel="stylesheet" href="css/spinner.css">
     <link rel="manifest" href="json/manifest.json">
     <meta name="theme-color" content="#0056b3">
+    <!-- Verificación inmediata de sesión ANTES de cargar cualquier script -->
+    <script>
+        (function() {
+            function isTokenExpired(token) {
+                try {
+                    const payload = JSON.parse(atob(token.split('.')[1]));
+                    const currentTime = Date.now() / 1000;
+                    return payload.exp < currentTime;
+                } catch (error) {
+                    return true;
+                }
+            }
+
+            const token = localStorage.getItem('token') || sessionStorage.getItem('token');
+            
+            if (!token) {
+                // No hay token - sin aviso, solo redirigir
+                localStorage.removeItem('token');
+                sessionStorage.removeItem('token');
+                sessionStorage.removeItem('sessionExpiry');
+                window.location.replace('login.html');
+            } else if (isTokenExpired(token)) {
+                // Token expirado - mostrar aviso
+                localStorage.removeItem('token');
+                sessionStorage.removeItem('token');
+                sessionStorage.removeItem('sessionExpiry');
+                
+                // Guardar mensaje para mostrar en login
+                sessionStorage.setItem('loginMessage', 'Tu sesión ha expirado.');
+                window.location.replace('login.html');
+            }
+        })();
+    </script>
     <script defer src="js/bundle.js"></script>
     <script src="js/spinner.js" defer></script>
     <script src="js/openfile.js" defer></script>

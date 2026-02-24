@@ -3,6 +3,13 @@ import toast from './toast.js';
 document.addEventListener('DOMContentLoaded', function() {
     const apiUrl = window.location.hostname === 'localhost' ? 'http://localhost:3000' : window.location.origin;
 
+    // Verificar si hay un mensaje de sesión expirada
+    const loginMessage = sessionStorage.getItem('loginMessage');
+    if (loginMessage) {
+        toast.warning(loginMessage);
+        sessionStorage.removeItem('loginMessage');
+    }
+
     // Login form submission
     const loginForm = document.getElementById('login-form');
 if (loginForm) {

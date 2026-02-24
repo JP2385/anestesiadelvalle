@@ -46,14 +46,19 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
-    // Verificar si el token está presente
+    // Verificar si el token está presente (el script inline del index ya verificó, esto es redundancia)
     const token = localStorage.getItem('token') || sessionStorage.getItem('token');
     if (!token) {
-        toast.warning('No has iniciado sesión.');
-        setTimeout(() => window.location.href = 'login.html', 1500);
+        // Si no hay token, redirigir sin toast (ya debería haber sido redirigido)
+        window.location.href = 'login.html';
+        return;
     } else if (isTokenExpired(token)) {
-        toast.warning('Tu sesión ha expirado.');
-        setTimeout(() => window.location.href = 'login.html', 1500);
+        // Si el token expiró, limpiar y redirigir sin toast
+        localStorage.removeItem('token');
+        sessionStorage.removeItem('token');
+        sessionStorage.removeItem('sessionExpiry');
+        window.location.href = 'login.html';
+        return;
     } else {
         const sessionExpiry = sessionStorage.getItem('sessionExpiry');
         const currentTime = Date.now();
