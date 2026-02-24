@@ -60,7 +60,7 @@
         padding: 1rem;
     }
 
-    .remember-me input[type="checkbox"] {
+    .keep-session input[type="checkbox"] {
         margin-left: 0px;
     }
 
@@ -251,7 +251,7 @@
         padding: 0.75rem;
     }
 
-    .remember-me input[type="checkbox"] {
+    .keep-session input[type="checkbox"] {
         margin-left: 2px;
     }
 

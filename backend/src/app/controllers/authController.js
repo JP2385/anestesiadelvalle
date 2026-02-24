@@ -36,7 +36,7 @@ exports.login = async (req, res) => {
         if (!user || !(await user.comparePassword(password))) {
             throw new Error('Invalid username or password');
         }
-        const token = jwt.sign({ userId: user._id }, config.jwtSecret, { expiresIn: '6h' });
+        const token = jwt.sign({ userId: user._id }, config.jwtSecret, { expiresIn: '7d' });
         res.send({ token });
     } catch (error) {
         res.status(400).send({ message: error.message });

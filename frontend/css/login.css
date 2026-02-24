@@ -89,44 +89,44 @@
     background-color: #0056b3;
 }
 
-/* Estilos para el checkbox y la etiqueta "Recuérdame" */
-.remember-me {
+/* Estilos para el checkbox "Mantener sesión iniciada" */
+.keep-session {
     display: flex;
     align-items: center;
     margin-bottom: 20px;
     text-align: left;
 }
 
-.remember-me input[type="checkbox"] {
+.keep-session input[type="checkbox"] {
     -webkit-appearance: none;
     -moz-appearance: none;
     appearance: none;
-    /* Estilo personalizado */
     width: 16px;
     height: 16px;
-    background-color: #fff; /* Color de fondo del checkbox */
-    border: 1px solid #ddd;
-    border-radius: 5px; /* Bordes redondeados */
+    background-color: #fff;
+    border: 2px solid #ddd;
+    border-radius: 5px;
     outline: none;
     cursor: pointer;
-    margin-right: 5px;
-    margin-left: -0.5px;
+    margin-right: 8px;
+    flex-shrink: 0;
 }
 
-.remember-me input[type="checkbox"]:checked {
-    background-color: #0069d9; /* Color de fondo cuando está seleccionado */
-    border: 2px solid #0069d9; /* Borde del checkbox cuando está seleccionado */
+.keep-session input[type="checkbox"]:checked {
+    background-color: #0069d9;
+    border: 2px solid #0069d9;
     background-image: url('../images/icons/check.svg');
     background-size: 100% 100%;
     background-position: center;
     background-repeat: no-repeat;
 }
 
-.remember-me label {
+.keep-session label {
     color: #555;
     font-weight: bold;
     display: flex;
     align-items: center;
+    cursor: pointer;
 }
 
 /* Estilos para enlaces */
