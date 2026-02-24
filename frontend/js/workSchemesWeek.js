@@ -20,7 +20,12 @@ function groupUsersByDay(users) {
     filteredUsers.forEach(user => {
         for (let day in user.workSchedule) {
             const schedule = user.workSchedule[day];
-            if (schedules[schedule]) {
+            
+            // Si el usuario trabaja mañana y tarde, agregarlo a ambas categorías
+            if (schedule === 'Mañana y Tarde') {
+                schedules['Mañana'][day].push(user);
+                schedules['Tarde'][day].push(user);
+            } else if (schedules[schedule]) {
                 schedules[schedule][day].push(user); // Guardar el usuario en la franja correspondiente
             }
         }
@@ -58,17 +63,13 @@ function populateTable(users) {
                 if (user) {
                     cell.textContent = user.username;
                     
-                    // Asegurar que la propiedad user.workSchedule[day] sea válida antes de asignar la clase
-                    if (user.workSchedule && user.workSchedule[day]) {
-                        let workScheduleType = user.workSchedule[day];
-
-                        if (workScheduleType === 'Mañana') {
-                            cell.classList.add('option-morning');
-                        } else if (workScheduleType === 'Tarde') {
-                            cell.classList.add('option-afternoon');
-                        } else if (workScheduleType === 'Variable') {
-                            cell.classList.add('option-long');
-                        }
+                    // Aplicar la clase CSS según la categoría de la fila actual (schedule)
+                    if (schedule === 'Mañana') {
+                        cell.classList.add('option-morning');
+                    } else if (schedule === 'Tarde') {
+                        cell.classList.add('option-afternoon');
+                    } else if (schedule === 'Variable') {
+                        cell.classList.add('option-long');
                     }
 
                     // Incrementar el contador del día
@@ -132,9 +133,21 @@ function populateProvinceTable(users) {
                 }
 
                 if (category) {
-                    const key = `${category} ${schedule}`;
-                    if (provinceCounts[key]) {
-                        provinceCounts[key][day]++;
+                    // Si el usuario trabaja mañana y tarde, contarlo en ambas categorías
+                    if (schedule === 'Mañana y Tarde') {
+                        const morningKey = `${category} Mañana`;
+                        const afternoonKey = `${category} Tarde`;
+                        if (provinceCounts[morningKey]) {
+                            provinceCounts[morningKey][day]++;
+                        }
+                        if (provinceCounts[afternoonKey]) {
+                            provinceCounts[afternoonKey][day]++;
+                        }
+                    } else {
+                        const key = `${category} ${schedule}`;
+                        if (provinceCounts[key]) {
+                            provinceCounts[key][day]++;
+                        }
                     }
                 }
             }
