@@ -15,9 +15,10 @@ document.addEventListener('DOMContentLoaded', function() {
     logoutLink.addEventListener('click', (e) => {
         e.preventDefault();
         
-        // Eliminar el token de localStorage y sessionStorage
+        // Limpiar todos los datos de sesión
         localStorage.removeItem('token');
-        sessionStorage.removeItem('token');
+        localStorage.removeItem('keepSession');
+        sessionStorage.removeItem('sessionExpiry');
         
         // Mensaje opcional para confirmar el logout
         toast.success('Cierre de sesión exitoso.');

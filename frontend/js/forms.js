@@ -36,11 +36,9 @@ if (loginForm) {
                 if (contentType && contentType.includes('application/json')) {
                     const data = await response.json();
                     
-                    if (keepSession) {
-                        localStorage.setItem('token', data.token); // Persiste después de cerrar el navegador
-                    } else {
-                        sessionStorage.setItem('token', data.token); // Se elimina al cerrar el navegador
-                    }
+                    // Siempre guardar en localStorage para facilitar acceso
+                    localStorage.setItem('token', data.token);
+                    localStorage.setItem('keepSession', keepSession.toString());
 
                     toast.success('Inicio de sesión exitoso');
                     setTimeout(() => window.location.href = 'index.html', 800);

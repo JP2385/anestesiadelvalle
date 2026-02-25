@@ -9,7 +9,9 @@ document.addEventListener('DOMContentLoaded', function() {
         return /Mobi|Android/i.test(navigator.userAgent);
     }
 
-    const maxIdleTime = isMobileDevice() ? Infinity : maxIdleTimePC;
+    // Solo aplicar timeout si el usuario NO marcó "mantener sesión"
+    const keepSession = localStorage.getItem('keepSession') === 'true';
+    const maxIdleTime = (isMobileDevice() || keepSession) ? Infinity : maxIdleTimePC;
 
     function resetIdleTimer() {
         if (maxIdleTime !== Infinity) {
@@ -27,6 +29,8 @@ document.addEventListener('DOMContentLoaded', function() {
             // console.log('Idle time:', idleTime, 'Session expiry:', new Date(parseInt(sessionExpiry)).toUTCString());
             if (idleTime >= maxIdleTime || (sessionExpiry && Date.now() > sessionExpiry)) {
                 toast.warning('Sesión expirada por inactividad.');
+                localStorage.removeItem('token');
+                localStorage.removeItem('keepSession');
                 sessionStorage.removeItem('sessionExpiry');
                 setTimeout(() => window.location.href = 'login.html', 1500);
                 return;
@@ -46,16 +50,16 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
-    // Verificar si el token está presente (el script inline del index ya verificó, esto es redundancia)
-    const token = localStorage.getItem('token') || sessionStorage.getItem('token');
+    // Verificar si el token está presente
+    const token = localStorage.getItem('token');
     if (!token) {
-        // Si no hay token, redirigir sin toast (ya debería haber sido redirigido)
+        // Si no hay token, redirigir sin toast
         window.location.href = 'login.html';
         return;
     } else if (isTokenExpired(token)) {
         // Si el token expiró, limpiar y redirigir sin toast
         localStorage.removeItem('token');
-        sessionStorage.removeItem('token');
+        localStorage.removeItem('keepSession');
         sessionStorage.removeItem('sessionExpiry');
         window.location.href = 'login.html';
         return;
@@ -65,6 +69,8 @@ document.addEventListener('DOMContentLoaded', function() {
 
         if (sessionExpiry && currentTime > sessionExpiry) {
             toast.warning('Sesión expirada por inactividad.');
+            localStorage.removeItem('token');
+            localStorage.removeItem('keepSession');
             sessionStorage.removeItem('sessionExpiry');
             setTimeout(() => window.location.href = 'login.html', 1500);
         } else {
