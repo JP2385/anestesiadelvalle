@@ -41,7 +41,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
         if (!currentUser) {
             const currentUserResponse = await fetch(`${apiUrl}/auth/profile`, {
-                headers: { 'Authorization': 'Bearer ' + localStorage.getItem('token') }
+                headers: { 'Authorization': 'Bearer ' + (localStorage.getItem('token') || sessionStorage.getItem('token')) }
             });
             currentUser = await currentUserResponse.json();
         }
@@ -57,7 +57,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     async function populatePeriodsToGive() {
         const currentUserResponse = await fetch(`${apiUrl}/auth/profile`, {
-            headers: { 'Authorization': 'Bearer ' + localStorage.getItem('token') }
+            headers: { 'Authorization': 'Bearer ' + (localStorage.getItem('token') || sessionStorage.getItem('token')) }
         });
         currentUser = await currentUserResponse.json();
 

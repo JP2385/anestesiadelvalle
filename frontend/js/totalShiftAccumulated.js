@@ -9,7 +9,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         const response = await fetch(`${apiUrl}/shift-schedule/accumulated-counts`, {
             method: 'GET',
             headers: {
-                'Authorization': 'Bearer ' + localStorage.getItem('token'),
+                'Authorization': 'Bearer ' + (localStorage.getItem('token') || sessionStorage.getItem('token')),
                 'Content-Type': 'application/json'
             }
         });

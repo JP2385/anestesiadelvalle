@@ -17,7 +17,7 @@ document.addEventListener('DOMContentLoaded', function() {
         
         // Limpiar todos los datos de sesión
         localStorage.removeItem('token');
-        localStorage.removeItem('keepSession');
+        sessionStorage.removeItem('token');
         sessionStorage.removeItem('sessionExpiry');
         
         // Mensaje opcional para confirmar el logout

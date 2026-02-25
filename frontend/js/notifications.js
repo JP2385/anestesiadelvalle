@@ -10,7 +10,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         const profileResponse = await fetch(`${apiUrl}/auth/profile`, {
             method: 'GET',
             headers: {
-                'Authorization': 'Bearer ' + localStorage.getItem('token'),
+                'Authorization': 'Bearer ' + (localStorage.getItem('token') || sessionStorage.getItem('token')),
                 'Content-Type': 'application/json'
             }
         });
@@ -28,7 +28,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         const response = await fetch(`${apiUrl}/notifications`, {
             method: 'GET',
             headers: {
-                'Authorization': 'Bearer ' + localStorage.getItem('token'),
+                'Authorization': 'Bearer ' + (localStorage.getItem('token') || sessionStorage.getItem('token')),
                 'Content-Type': 'application/json'
             }
         });

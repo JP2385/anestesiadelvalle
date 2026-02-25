@@ -27,7 +27,7 @@ document.addEventListener('DOMContentLoaded', function () {
         method: 'GET',
         headers: {
             'Content-Type': 'application/json',
-            'Authorization': 'Bearer ' + localStorage.getItem('token')
+            'Authorization': 'Bearer ' + (localStorage.getItem('token') || sessionStorage.getItem('token'))
         }
     })
         .then(response => response.json())
@@ -114,7 +114,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
-                    'Authorization': 'Bearer ' + localStorage.getItem('token')
+                    'Authorization': 'Bearer ' + (localStorage.getItem('token') || sessionStorage.getItem('token'))
                 },
                 body: JSON.stringify(updates)
             });
@@ -219,7 +219,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json',
-                    'Authorization': 'Bearer ' + localStorage.getItem('token')
+                    'Authorization': 'Bearer ' + (localStorage.getItem('token') || sessionStorage.getItem('token'))
                 }
             });
 
@@ -318,7 +318,7 @@ document.addEventListener('DOMContentLoaded', function () {
                         method: 'PUT',
                         headers: {
                             'Content-Type': 'application/json',
-                            'Authorization': 'Bearer ' + localStorage.getItem('token')
+                            'Authorization': 'Bearer ' + (localStorage.getItem('token') || sessionStorage.getItem('token'))
                         },
                         body: JSON.stringify({ newRole: newRole })
                     });

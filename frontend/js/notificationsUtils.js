@@ -13,7 +13,7 @@ async function getUserData(apiUrl, userId) {
     const userResponse = await fetch(`${apiUrl}/auth/user/${userId}`, {
         method: 'GET',
         headers: {
-            'Authorization': 'Bearer ' + localStorage.getItem('token'),
+            'Authorization': 'Bearer ' + (localStorage.getItem('token') || sessionStorage.getItem('token')),
             'Content-Type': 'application/json'
         }
     });
@@ -30,7 +30,7 @@ async function respondToNotification(apiUrl, notificationId, response, selectedP
         const res = await fetch(`${apiUrl}/notifications/respond`, {
             method: 'POST',
             headers: {
-                'Authorization': 'Bearer ' + localStorage.getItem('token'),
+                'Authorization': 'Bearer ' + (localStorage.getItem('token') || sessionStorage.getItem('token')),
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify({ notificationId, response, selectedPeriod })
@@ -69,7 +69,7 @@ async function markNotificationAsNotified(apiUrl, notificationId, notificationDi
         const res = await fetch(`${apiUrl}/notifications/mark-as-notified`, {
             method: 'POST',
             headers: {
-                'Authorization': 'Bearer ' + localStorage.getItem('token'),
+                'Authorization': 'Bearer ' + (localStorage.getItem('token') || sessionStorage.getItem('token')),
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify({ notificationId })

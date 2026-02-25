@@ -36,9 +36,11 @@ if (loginForm) {
                 if (contentType && contentType.includes('application/json')) {
                     const data = await response.json();
                     
-                    // Siempre guardar en localStorage para facilitar acceso
-                    localStorage.setItem('token', data.token);
-                    localStorage.setItem('keepSession', keepSession.toString());
+                    if (keepSession) {
+                        localStorage.setItem('token', data.token);
+                    } else {
+                        sessionStorage.setItem('token', data.token);
+                    }
 
                     toast.success('Inicio de sesión exitoso');
                     setTimeout(() => window.location.href = 'index.html', 800);
