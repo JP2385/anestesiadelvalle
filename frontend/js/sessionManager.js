@@ -2,19 +2,15 @@ import { jwtDecode } from 'jwt-decode';
 import toast from './toast.js';
 
 document.addEventListener('DOMContentLoaded', function() {
-    const maxIdleTimePC = 3 * 60 * 60 * 1000; // 3 horas para PC
+    const maxIdleTimeout = 1 * 60 * 60 * 1000; // 1 hora de inactividad (PC y móvil)
     let idleTime = 0;
-
-    function isMobileDevice() {
-        return /Mobi|Android/i.test(navigator.userAgent);
-    }
 
     // Verificar si el token está en sessionStorage (sin "mantener sesión")
     const token = localStorage.getItem('token') || sessionStorage.getItem('token');
     const isTemporarySession = !localStorage.getItem('token') && sessionStorage.getItem('token');
     
-    // Solo aplicar timeout si es sesión temporal y en PC
-    const maxIdleTime = (isMobileDevice() || !isTemporarySession) ? Infinity : maxIdleTimePC;
+    // Solo aplicar timeout si es sesión temporal (sin "mantener sesión")
+    const maxIdleTime = isTemporarySession ? maxIdleTimeout : Infinity;
 
     function resetIdleTimer() {
         if (maxIdleTime !== Infinity) {
