@@ -7,7 +7,7 @@ export async function fetchHolidays(apiUrl) {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',
-                'Authorization': 'Bearer ' + localStorage.getItem('token')
+                'Authorization': 'Bearer ' + (localStorage.getItem('token') || sessionStorage.getItem('token'))
             }
         });
         holidays = await response.json();

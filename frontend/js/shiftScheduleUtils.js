@@ -19,7 +19,7 @@ export function fetchUsers(apiUrl, callback) {
         method: 'GET',
         headers: {
             'Content-Type': 'application/json',
-            'Authorization': 'Bearer ' + localStorage.getItem('token')
+            'Authorization': 'Bearer ' + (localStorage.getItem('token') || sessionStorage.getItem('token'))
         }
     })
     .then(response => response.json())
@@ -39,7 +39,7 @@ export function fetchOtherLeaves(apiUrl, callback) {
         method: 'GET',
         headers: {
             'Content-Type': 'application/json',
-            'Authorization': 'Bearer ' + localStorage.getItem('token')
+            'Authorization': 'Bearer ' + (localStorage.getItem('token') || sessionStorage.getItem('token'))
         }
     })
     .then(response => response.json())
@@ -559,7 +559,7 @@ function highlightHolidays(apiUrl, year, month) {
         method: 'GET',
         headers: {
             'Content-Type': 'application/json',
-            'Authorization': 'Bearer ' + localStorage.getItem('token')
+            'Authorization': 'Bearer ' + (localStorage.getItem('token') || sessionStorage.getItem('token'))
         }
     })
     .then(response => response.json())
