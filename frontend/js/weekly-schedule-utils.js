@@ -405,34 +405,31 @@ export function initializeLockButtons() {
                 }
             }
         
-            // Obtener el id del select actual
-            const selectId = select.id;
-        
-            // Determinar si es 'short' o 'long'
-            const isShort = selectId.includes('short');
-            const baseId = selectId.replace('-short', '').replace('-long', '');
-        
-            // Desactivar los selects relacionados
-            const relatedIds = isShort 
-                ? document.querySelectorAll(`select[id^="${baseId}"][id$="long"]`)
-                : document.querySelectorAll(`select[id^="${baseId}"][id$="short"]`);
-        
-            relatedIds.forEach(relatedSelect => {
-                relatedSelect.disabled = true;
-                relatedSelect.selectedIndex = 0; // También cambiar el select relacionado a su valor por defecto
-        
-                // Eliminar clases previas y añadir la clase default
-                relatedSelect.classList = ' ';
-                relatedSelect.classList.add('default');
+            // Si el select se habilitó → deshabilitar los complementarios del mismo worksite y día
+            if (!select.disabled) {
+                const worksiteId = select.getAttribute('data-worksite-id');
+                const thisCellIndex = select.closest('td').cellIndex;
+                const regime = select.getAttribute('data-regime');
+                const isShort = regime === 'matutino' || regime === 'vespertino';
 
-                // Llamar a handleSelectChange para reflejar el cambio en los selects relacionados
-                handleSelectChange({ target: relatedSelect });
-        
-                const relatedButton = relatedSelect.closest('td').querySelector('.lock-button');
-                if (relatedButton) {
-                    relatedButton.textContent = '🔓';
-                }
-            });
+                const relatedSelects = Array.from(
+                    document.querySelectorAll(`select[data-worksite-id="${worksiteId}"]`)
+                ).filter(s => {
+                    if (s.closest('td').cellIndex !== thisCellIndex) return false;
+                    const r = s.getAttribute('data-regime');
+                    return isShort ? r === 'largo' : (r === 'matutino' || r === 'vespertino');
+                });
+
+                relatedSelects.forEach(relatedSelect => {
+                    relatedSelect.disabled = true;
+                    relatedSelect.selectedIndex = 0;
+                    relatedSelect.classList = ' ';
+                    relatedSelect.classList.add('default');
+                    handleSelectChange({ target: relatedSelect });
+                    const relatedButton = relatedSelect.closest('td').querySelector('.lock-button');
+                    if (relatedButton) relatedButton.textContent = '🔓';
+                });
+            }
 
             countEnabledSelectsByDay();
 
