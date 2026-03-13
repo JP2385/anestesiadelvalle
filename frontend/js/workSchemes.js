@@ -51,8 +51,10 @@ export function getWorkSchemes(isOddWeek) {
     };
 
     const jboScheme = isOddWeek ? {
+        'monday-header': 'Imágenes Q1 Matutino',
         'friday-header': 'Imágenes Q1 Vespertino',
     } : {
+        'monday-header': 'Imágenes Q2 Matutino',
         'friday-header': 'Imágenes Q2 Vespertino',
     };
 
