@@ -216,8 +216,8 @@ if (dayOfMonth === 1 && lastDayAssignments.length > 0) {
     if (usersToExclude.length > 0) {
         
         // Lógica de asignación regular excluyendo a los usuarios que estuvieron asignados el día anterior
-        let isLharriagueAssignedToday = selects.some(select => select.getAttribute('data-username') === 'lharriague' && select.value !== '');
-        let isMquirogaAssignedToday = selects.some(select => select.getAttribute('data-username') === 'mquiroga' && select.value !== '');
+        let isLharriagueAssignedToday = selects.some(select => select.getAttribute('data-username') === 'lharriague' && select.value !== '' && select.value !== 'ND');
+        let isMquirogaAssignedToday = selects.some(select => select.getAttribute('data-username') === 'mquiroga' && select.value !== '' && select.value !== 'ND');
 
         let assignedFnUser = null;
         let assignedImUser = null;
@@ -280,8 +280,8 @@ if (dayOfWeek === 0) { // 0 representa el domingo
         
         
         // Lógica de asignación regular
-        let isLharriagueAssignedToday = selects.some(select => select.getAttribute('data-username') === 'lharriague' && select.value !== '');
-        let isMquirogaAssignedToday = selects.some(select => select.getAttribute('data-username') === 'mquiroga' && select.value !== '');
+        let isLharriagueAssignedToday = selects.some(select => select.getAttribute('data-username') === 'lharriague' && select.value !== '' && select.value !== 'ND');
+        let isMquirogaAssignedToday = selects.some(select => select.getAttribute('data-username') === 'mquiroga' && select.value !== '' && select.value !== 'ND');
 
         let assignedFnUser = null;
         let assignedImUser = null;
