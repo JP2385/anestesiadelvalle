@@ -16,11 +16,11 @@ document.addEventListener('DOMContentLoaded', async function () {
             const [usersResponse, holidaysResponse] = await Promise.all([
                 fetch(`${apiUrl}/auth/users`, {
                     method: "GET",
-                    headers: { "Content-Type": "application/json", "Authorization": "Bearer " + localStorage.getItem("token") }
+                    headers: { "Content-Type": "application/json", "Authorization": "Bearer " + (localStorage.getItem("token") || sessionStorage.getItem("token")) }
                 }),
                 fetch(`${apiUrl}/holidays`, {
                     method: "GET",
-                    headers: { "Content-Type": "application/json", "Authorization": "Bearer " + localStorage.getItem("token") }
+                    headers: { "Content-Type": "application/json", "Authorization": "Bearer " + (localStorage.getItem("token") || sessionStorage.getItem("token")) }
                 })
             ]);
     
