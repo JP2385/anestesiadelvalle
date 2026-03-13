@@ -30,11 +30,11 @@ document.addEventListener("DOMContentLoaded", () => {
             const [usersResponse, holidaysResponse] = await Promise.all([
                 fetch(`${apiUrl}/auth/users`, {
                     method: "GET",
-                    headers: { "Content-Type": "application/json", "Authorization": "Bearer " + localStorage.getItem("token") }
+                    headers: { "Content-Type": "application/json", "Authorization": "Bearer " + (localStorage.getItem("token") || sessionStorage.getItem("token")) }
                 }),
                 fetch(`${apiUrl}/holidays`, {
                     method: "GET",
-                    headers: { "Content-Type": "application/json", "Authorization": "Bearer " + localStorage.getItem("token") }
+                    headers: { "Content-Type": "application/json", "Authorization": "Bearer " + (localStorage.getItem("token") || sessionStorage.getItem("token")) }
                 })
             ]);
 
@@ -542,7 +542,7 @@ document.addEventListener("DOMContentLoaded", () => {
                     method: "PUT",
                     headers: {
                         "Content-Type": "application/json",
-                        "Authorization": "Bearer " + localStorage.getItem("token")
+                        "Authorization": "Bearer " + (localStorage.getItem("token") || sessionStorage.getItem("token"))
                     },
                     body: JSON.stringify(holidayData)
                 });
