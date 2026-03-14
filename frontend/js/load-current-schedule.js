@@ -11,7 +11,7 @@ document.addEventListener('DOMContentLoaded', async function() {
         availability = await fetchAvailability(apiUrl);
         await updateWeekDates(apiUrl, availability);
         await populateSelectOptions(availability);
-        initializeLockButtons();
+        initializeLockButtons(availability);
         initializeMortalCombatButton(availability);  // Inicializar botón de Mortal Combat
     } finally {
         hideSpinner();

@@ -1,6 +1,6 @@
 import toast from './toast.js';
 import { handleRandomizeButtonClick } from './randomizeButtonHandler.js';
-import { countEnabledSelectsByDay } from './autoAssignFunctions.js';
+import { countEnabledSelectsByDay, displayUnassignedUsers } from './autoAssignFunctions.js';
 import { autoAssignReportBgColorsUpdate } from './autoAssignReportBgColorsUpdate.js';
 import { compareAvailabilitiesForEachDay } from './compareArrays.js';
 import { validateAllDays } from './autoAssignValidation.js';
@@ -355,7 +355,7 @@ export async function populateSelectOptions(availability) {
     }
 }
 
-export function initializeLockButtons() {
+export function initializeLockButtons(availability) {
     const droppableCells = document.querySelectorAll('.droppable');
     droppableCells.forEach(cell => {
         const select = cell.querySelector('select');
@@ -384,7 +384,7 @@ export function initializeLockButtons() {
                 select.classList.add('default'); // Añadir la clase default
 
                 // Llamar a handleSelectChange para reflejar el cambio
-                handleSelectChange({ target: select });
+                handleSelectChange({ target: select }, availability);
             } else {
                 // Si el select se desbloquea, restaurar la clase original
                 if (select.dataset.originalClass) {
@@ -425,7 +425,7 @@ export function initializeLockButtons() {
                     relatedSelect.selectedIndex = 0;
                     relatedSelect.classList = ' ';
                     relatedSelect.classList.add('default');
-                    handleSelectChange({ target: relatedSelect });
+                    handleSelectChange({ target: relatedSelect }, availability);
                     const relatedButton = relatedSelect.closest('td').querySelector('.lock-button');
                     if (relatedButton) relatedButton.textContent = '🔓';
                 });
@@ -525,6 +525,7 @@ export async function handleSelectChange(event, availability) {
     }
 
     await compareAvailabilitiesForEachDay(dayIndex);
+    await displayUnassignedUsers(availability);
     autoAssignReportBgColorsUpdate(dayIndex);
 }
 
