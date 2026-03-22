@@ -16,7 +16,7 @@ document.addEventListener('DOMContentLoaded', function () {
         method: 'GET',
         headers: {
             'Content-Type': 'application/json',
-            'Authorization': 'Bearer ' + localStorage.getItem('token')
+            'Authorization': 'Bearer ' + (localStorage.getItem('token') || sessionStorage.getItem('token'))
         }
     })
     .then(response => response.json())
@@ -58,7 +58,7 @@ document.addEventListener('DOMContentLoaded', function () {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
-                'Authorization': 'Bearer ' + localStorage.getItem('token')
+                'Authorization': 'Bearer ' + (localStorage.getItem('token') || sessionStorage.getItem('token'))
             },
             body: JSON.stringify(newHoliday)
         })
@@ -184,7 +184,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json',
-                    'Authorization': 'Bearer ' + localStorage.getItem('token')
+                    'Authorization': 'Bearer ' + (localStorage.getItem('token') || sessionStorage.getItem('token'))
                 }
             });
     
@@ -219,7 +219,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
-                    'Authorization': 'Bearer ' + localStorage.getItem('token')
+                    'Authorization': 'Bearer ' + (localStorage.getItem('token') || sessionStorage.getItem('token'))
                 },
                 body: JSON.stringify({
                     name: updatedName,
@@ -249,7 +249,7 @@ document.addEventListener('DOMContentLoaded', function () {
             method: 'DELETE',
             headers: {
                 'Content-Type': 'application/json',
-                'Authorization': 'Bearer ' + localStorage.getItem('token')
+                'Authorization': 'Bearer ' + (localStorage.getItem('token') || sessionStorage.getItem('token'))
             }
         })
         .then(response => {
@@ -279,7 +279,7 @@ function fetchUsers(apiUrl, callback) {
         method: 'GET',
         headers: {
             'Content-Type': 'application/json',
-            'Authorization': 'Bearer ' + localStorage.getItem('token')
+            'Authorization': 'Bearer ' + (localStorage.getItem('token') || sessionStorage.getItem('token'))
         }
     })
     .then(response => response.json())
