@@ -101,7 +101,11 @@ function updateSiteCounts(counts) {
  * Compara la disponibilidad con los assignments actuales
  * @param {Object} availability - Objeto con disponibilidad por día {monday: [...], tuesday: [...], ...}
  */
-export async function displayUnassignedUsers(availability) {
+export async function displayUnassignedUsers(availability, debugContext = '') {
+    if (debugContext === 'weekly-auto-assign') {
+        console.log('[DEBUG] displayUnassignedUsers ejecutada desde asignación semanal');
+    }
+
     const days = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday'];
 
     // Obtener los usuarios asignados desde countAssignmentsByDay

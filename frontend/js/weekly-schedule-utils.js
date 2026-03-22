@@ -1,6 +1,6 @@
 import toast from './toast.js';
 import { handleRandomizeButtonClick } from './randomizeButtonHandler.js';
-import { countEnabledSelectsByDay, displayUnassignedUsers } from './autoAssignFunctions.js';
+import { countAssignmentsByDay, countEnabledSelectsByDay, displayUnassignedUsers } from './autoAssignFunctions.js';
 import { autoAssignReportBgColorsUpdate } from './autoAssignReportBgColorsUpdate.js';
 import { compareAvailabilitiesForEachDay } from './compareArrays.js';
 import { validateAllDays } from './autoAssignValidation.js';
@@ -569,11 +569,15 @@ export async function handleAutoAssignForWeek(apiUrl, dayIndices, availability) 
         console.log("Mejor configuración seleccionada: ", bestAssignments);
         applyBestConfiguration(bestAssignments);
 
-        dayIndices.forEach(dayIndex => {
+        // Recalcular reportes después de aplicar la configuración final al DOM.
+        await countAssignmentsByDay();
+        await displayUnassignedUsers(availability, 'weekly-auto-assign');
+
+        await Promise.all(dayIndices.map(async dayIndex => {
             autoAssignReportBgColorsUpdate(dayIndex);
-            compareAvailabilitiesForEachDay(dayIndex);
+            await compareAvailabilitiesForEachDay(dayIndex);
             updateSelectColors(dayIndex, availability);
-        });
+        }));
 
     } finally {
         hideProgressBar();

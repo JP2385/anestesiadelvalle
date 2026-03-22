@@ -119,11 +119,19 @@ function updateDOMWithDifferences(differences) {
                     method: 'GET',
                     headers: {
                         'Content-Type': 'application/json',
-                        'Authorization': 'Bearer ' + localStorage.getItem('token')
+                        'Authorization': 'Bearer ' + (localStorage.getItem('token') || sessionStorage.getItem('token'))
                     }
                 })
-                .then(response => response.json())
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error(`HTTP ${response.status}`);
+                    }
+                    return response.json();
+                })
                 .then(users => {
+                    if (!Array.isArray(users)) {
+                        throw new Error('Users response is not an array');
+                    }
                     let htmlContent = '';
 
                     const userSchedules = users.filter(user => onlyInServer.includes(user.username))
@@ -164,11 +172,19 @@ function updateDOMWithDifferencesForDay(differences, dayIndex) {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json',
-                    'Authorization': 'Bearer ' + localStorage.getItem('token')
+                    'Authorization': 'Bearer ' + (localStorage.getItem('token') || sessionStorage.getItem('token'))
                 }
             })
-            .then(response => response.json())
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}`);
+                }
+                return response.json();
+            })
             .then(users => {
+                if (!Array.isArray(users)) {
+                    throw new Error('Users response is not an array');
+                }
                 let htmlContent = '';
 
                 const userSchedules = users.filter(user => onlyInServer.includes(user.username))

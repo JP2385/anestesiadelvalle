@@ -5,7 +5,7 @@ import { autoAssignMorningsByDay } from './autoAssignHandlersMornings.js';
 import { autoAssignAfternoonsByDay } from './autoAssignHandlersAfternoons.js';
 import { autoAssignLongDaysByDay } from './autoAssignHandlersLongDays.js';
 import { autoAssignRemainingsByDay } from './autoAssignHandlersRemainings.js';
-import { countAssignmentsByDay } from './autoAssignFunctions.js';
+import { countAssignmentsByDay, displayUnassignedUsers } from './autoAssignFunctions.js';
 import { compareAvailabilitiesForEachDay } from './compareArrays.js';
 import { validateAssignmentForDay } from './autoAssignValidation.js';
 import { updateSelectColors } from './updateSelectColors.js';
@@ -60,7 +60,9 @@ export async function handleRandomizeButtonClick(apiUrl, availability, dayIndex)
     const { bestAssignments } = findBestIterationFromMemory(assignments);
     await applyBestAssignmentsToDOM(dayIndex, bestAssignments);
 
-    compareAvailabilitiesForEachDay(dayIndex);
+    await countAssignmentsByDay();
+    await displayUnassignedUsers(availability);
+    await compareAvailabilitiesForEachDay(dayIndex);
     clearLocalStorageForDay(dayIndex); // Limpia el localStorage al final de la ejecución
 
     // Actualizar los colores de los select
