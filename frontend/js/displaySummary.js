@@ -416,6 +416,8 @@ function transformOptimizedToLegacy(schedule) {
                 // Construir nombre usando la utilidad compartida
                 const wsId = workSiteId._id.toString();
                 const hasMultipleRegimesForSite = workSiteRegimes.get(wsId)?.size > 1;
+                // En print view, mostrar siempre "Largo" para evitar ambiguedad en sitios de regimen largo unico.
+                const shouldShowRegimeInName = hasMultipleRegimesForSite || regime === 'largo';
 
                 // Nota: hasMultipleSites siempre false aquí porque no tenemos info de cuántos sitios tiene la institución
                 // En el futuro se podría pasar desde el backend
@@ -424,7 +426,7 @@ function transformOptimizedToLegacy(schedule) {
                     workSiteId.institution,
                     regime,
                     true, // Siempre mostrar abreviatura en print view
-                    hasMultipleRegimesForSite
+                    shouldShowRegimeInName
                 );
 
                 // Agregar assignment en formato legacy

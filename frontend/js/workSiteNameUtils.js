@@ -17,6 +17,14 @@
 export function buildWorkSiteName(workSite, institution, regime, hasMultipleSites = false, hasMultipleRegimes = false) {
     let workSiteName = '';
 
+    const cleanWorkSiteLabel = (value) => {
+        if (!value || typeof value !== 'string') return '';
+        return value
+            .replace(/\bprincipal\b/gi, '')
+            .replace(/\s{2,}/g, ' ')
+            .trim();
+    };
+
     // 1. Agregar nombre de institución
     if (institution && institution.name) {
         workSiteName = institution.name;
@@ -25,9 +33,9 @@ export function buildWorkSiteName(workSite, institution, regime, hasMultipleSite
     // 2. Agregar abreviatura del workSite (solo si tiene múltiples sitios)
     if (hasMultipleSites) {
         if (workSite.abbreviation) {
-            workSiteName += ' ' + workSite.abbreviation;
+            workSiteName += ' ' + cleanWorkSiteLabel(workSite.abbreviation);
         } else if (workSite.name) {
-            workSiteName += ' ' + workSite.name;
+            workSiteName += ' ' + cleanWorkSiteLabel(workSite.name);
         }
     }
 
