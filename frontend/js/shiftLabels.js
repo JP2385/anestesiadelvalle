@@ -5,6 +5,7 @@ export const shiftAssignmentLabels = {
     Im: "Imágenes",
     Cp: "Hospital Cipolletti",
     Al: "Hospital Allen",
+    Cs: "Hospital Cinco Saltos",
     Jb: "Hospital Jacobacci",
     CR: "Hospital Castro Rendon",
     Ce: "Hospital Centenario",

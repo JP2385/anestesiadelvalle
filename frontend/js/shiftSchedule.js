@@ -25,7 +25,7 @@ document.addEventListener('DOMContentLoaded', async function () {
         publicNeuquen: ['HH', 'Ce', 'CM', 'CR','HP'],
         privateNeuquen: ['Im'],
         privateRioNegro: ['Fn'],
-        publicRioNegro: ['Cp', 'Al', 'Jb'],
+        publicRioNegro: ['Cp', 'Al', 'Jb','Cs'],
         saturday: ['P1', 'P2']
     };
 
