@@ -47,7 +47,7 @@ document.addEventListener('DOMContentLoaded', async function() {
         // Calcular el lunes de la semana actual
         let daysToMonday;
         if (dayOfWeek === 0) { // Domingo
-            daysToMonday = -6;
+            daysToMonday = 1; // próximo lunes (igual que updateWeekDates)
         } else if (dayOfWeek === 6) { // Sábado
             daysToMonday = 2;
         } else { // Lunes a viernes
@@ -65,7 +65,10 @@ document.addEventListener('DOMContentLoaded', async function() {
         for (let dayIndex = 0; dayIndex < 5; dayIndex++) {
             const currentDate = new Date(monday);
             currentDate.setDate(monday.getDate() + dayIndex);
-            const dateString = currentDate.toISOString().slice(0, 10);
+            const yyyy = currentDate.getFullYear();
+            const mm = String(currentDate.getMonth() + 1).padStart(2, '0');
+            const dd = String(currentDate.getDate()).padStart(2, '0');
+            const dateString = `${yyyy}-${mm}-${dd}`;
 
             // Verificar si es feriado
             if (isHoliday(dateString)) {
