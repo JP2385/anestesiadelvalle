@@ -89,7 +89,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 const userAssignmentCell = document.createElement("td");
                 const assignedUsers = holiday.users.map(user => user._id);
     
-                for (let i = 0; i < 4; i++) {
+                for (let i = 0; i < 5; i++) {
                     const userSelect = document.createElement("select");
                     userSelect.innerHTML = `<option value="">Seleccionar usuario</option>`;
     
