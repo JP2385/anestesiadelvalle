@@ -266,7 +266,7 @@ if (dayOfWeek === 0) { // 0 representa el domingo
         const username = select.getAttribute('data-username');
         const saturdaySelect = document.querySelector(`.shift-select[data-day="${saturday}"][data-username="${username}"]`);
         
-        if (saturdaySelect && saturdaySelect.value !== '' && !["V", "ND", "P1", "Ce", "HH", "CM", "Cp", "Al", "Jb","HP"].includes(saturdaySelect.value)) {
+        if (saturdaySelect && saturdaySelect.value !== '' && !["V", "ND", "P1", "Ce", "HH", "CM", "Cp", "Al", "Jb","HP","Cs"].includes(saturdaySelect.value)) {
             select.value = saturdaySelect.value;
         } else {
         }
