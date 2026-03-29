@@ -134,7 +134,7 @@ function generateTable(users, yearSelect, monthSelect, dayAbbreviations, guardSi
     });
 
     // Llamar a la función para resaltar feriados y aplicar asignaciones de feriados primero
-    highlightHolidays(apiUrl, year, month).then(() => {
+    highlightHolidays(apiUrl, year, month, !!existingSchedule).then(() => {
         // Aplicar asignaciones por defecto si no hay un horario existente
         if (!existingSchedule) applyDefaultAssignments(usersBody);
         
@@ -551,7 +551,7 @@ function getPreviousDay(currentDay, offset = 1) {
     return date.toISOString().slice(0, 10); // Retornamos en formato YYYY-MM-DD
 }
 
-function highlightHolidays(apiUrl, year, month) {
+function highlightHolidays(apiUrl, year, month, hasExistingSchedule = false) {
     // Limpiar cualquier clase 'holiday' anterior en las celdas del mes
     document.querySelectorAll('.holiday').forEach(cell => cell.classList.remove('holiday'));
 
@@ -591,8 +591,8 @@ function highlightHolidays(apiUrl, year, month) {
                     } else {
                     }
                     
-                    // Aplicar asignaciones de usuarios asignados al feriado
-                    if (holiday.users && holiday.users.length > 0) {
+                    // Aplicar asignaciones de usuarios asignados al feriado (solo si no hay cronograma existente)
+                    if (!hasExistingSchedule && holiday.users && holiday.users.length > 0) {
                         holiday.users.forEach(user => {
                             const username = user.username;
                             const select = document.querySelector(`select[data-day="${dayString}"][data-username="${username}"]`);
