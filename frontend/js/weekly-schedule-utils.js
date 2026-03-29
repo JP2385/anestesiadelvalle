@@ -344,6 +344,12 @@ export async function populateSelectOptions(availability) {
                     select.appendChild(option);
                 }
             });
+
+            // Opción "Otro" para asignar cualquier usuario disponible del día
+            const otroOption = document.createElement('option');
+            otroOption.value = '__otro__';
+            otroOption.textContent = 'Otro';
+            select.appendChild(otroOption);
         });
 
         // Añadir eventos de cambio para los selectores
@@ -441,12 +447,72 @@ export function initializeLockButtons(availability) {
     });
 }
 
+function showOtroSelect(primarySelect, availability, dayIndex) {
+    const cell = primarySelect.closest('td');
+
+    // Eliminar otro-select previo si ya existe
+    const existing = cell.querySelector('.otro-select');
+    if (existing) existing.remove();
+
+    const dayName = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday'][dayIndex];
+    const allUsers = availability[dayName];
+
+    const otroSelect = document.createElement('select');
+    otroSelect.classList.add('otro-select');
+
+    const defaultOption = document.createElement('option');
+    defaultOption.value = '';
+    defaultOption.textContent = 'Seleccionar...';
+    otroSelect.appendChild(defaultOption);
+
+    allUsers.forEach(user => {
+        const option = document.createElement('option');
+        option.value = user._id || user.username;
+        option.textContent = user.username;
+        otroSelect.appendChild(option);
+    });
+
+    otroSelect.addEventListener('change', () => {
+        const selectedValue = otroSelect.value;
+        if (!selectedValue) return;
+
+        // Agregar la opción al select principal si no existe
+        if (!primarySelect.querySelector(`option[value="${selectedValue}"]`)) {
+            const newOption = document.createElement('option');
+            newOption.value = selectedValue;
+            newOption.textContent = otroSelect.options[otroSelect.selectedIndex].textContent;
+            primarySelect.appendChild(newOption);
+        }
+
+        // Restablecer data-original-value para que el chequeo de duplicados funcione correctamente
+        primarySelect.setAttribute('data-original-value', '');
+
+        // Asignar el valor al select principal y disparar el cambio
+        primarySelect.value = selectedValue;
+        otroSelect.remove();
+        primarySelect.dispatchEvent(new Event('change', { bubbles: true }));
+    });
+
+    cell.appendChild(otroSelect);
+}
+
 export async function handleSelectChange(event, availability) {
     const select = event.target;
     const selectedUserId = select.value;
     const originalValue = select.getAttribute('data-original-value');
     const dayIndex = select.closest('td').cellIndex - 1;
-    const selects = document.querySelectorAll(`td:nth-child(${dayIndex + 2}) select`);
+
+    // Manejar selección de "Otro"
+    if (selectedUserId === '__otro__') {
+        showOtroSelect(select, availability, dayIndex);
+        return;
+    }
+
+    // Si el usuario seleccionó una opción real, eliminar cualquier otro-select visible
+    const otroSelectEl = select.closest('td').querySelector('.otro-select');
+    if (otroSelectEl) otroSelectEl.remove();
+
+    const selects = document.querySelectorAll(`td:nth-child(${dayIndex + 2}) select:not(.otro-select)`);
 
     let userAlreadyAssigned = false;
 

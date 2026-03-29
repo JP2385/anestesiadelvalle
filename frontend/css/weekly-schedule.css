@@ -94,6 +94,13 @@ h3 {
     flex: 1;
 }
 
+.otro-select {
+    width: calc(100% - 30px);
+    box-sizing: border-box;
+    margin-top: 4px;
+    padding: 5px;
+}
+
 .lock-button {
     background: none;
     border: none;
