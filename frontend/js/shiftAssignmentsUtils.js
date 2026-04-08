@@ -83,7 +83,8 @@ export function countWeekendShifts() {
                 assignment !== '' &&
                 assignment !== 'ND' &&
                 assignment !== 'V' && // 👈 excluir V
-                assignment !== 'P1'
+                assignment !== 'P1' &&
+                assignment !== 'P2'
             ) {
                 // Contar asignaciones especiales
                 if (assignment === "HH") {
