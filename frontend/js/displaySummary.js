@@ -1,4 +1,4 @@
-import { buildWorkSiteName, mapWorkSiteRegimes, getInstitutionOrder } from './workSiteNameUtils.js';
+import { buildWorkSiteName, getInstitutionOrder } from './workSiteNameUtils.js';
 import { generateWeekHeaders } from './weekDateFormatter.js';
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -391,9 +391,6 @@ function transformOptimizedToLegacy(schedule) {
     // Generar dayHeaders desde weekStart usando formato corto (Lunes 3)
     const dayHeaders = generateWeekHeaders(schedule.weekStart, false);
 
-    // Paso 1: Identificar workSites con múltiples regímenes usando la utilidad compartida
-    const workSiteRegimes = mapWorkSiteRegimes(schedule.assignments);
-
     // Transformar assignments al formato legacy
     const assignments = {};
     const selectConfigMap = new Map();
@@ -414,10 +411,8 @@ function transformOptimizedToLegacy(schedule) {
                 }
 
                 // Construir nombre usando la utilidad compartida
-                const wsId = workSiteId._id.toString();
-                const hasMultipleRegimesForSite = workSiteRegimes.get(wsId)?.size > 1;
-                // En print view, mostrar siempre "Largo" para evitar ambiguedad en sitios de regimen largo unico.
-                const shouldShowRegimeInName = hasMultipleRegimesForSite || regime === 'largo';
+                // Mostrar siempre el régimen en el nombre para evitar ambigüedad.
+                const shouldShowRegimeInName = true;
 
                 // Nota: hasMultipleSites siempre false aquí porque no tenemos info de cuántos sitios tiene la institución
                 // En el futuro se podría pasar desde el backend
