@@ -43,10 +43,15 @@ document.addEventListener('DOMContentLoaded', function () {
                 userSelect.appendChild(option);
             });
 
-            // Seleccionar el primer usuario en la lista y cargar sus datos
-            if (users.length > 0) {
-                userSelect.value = users[0]._id;
-                loadUserData(users[0]._id);
+            // Restaurar el usuario seleccionado antes del reload, o usar el primero
+            const savedUserId = sessionStorage.getItem('admin_selected_user');
+            const targetId = savedUserId && users.find(u => u._id === savedUserId)
+                ? savedUserId
+                : users[0]?._id;
+
+            if (targetId) {
+                userSelect.value = targetId;
+                loadUserData(targetId);
             }
         })
         .catch(error => {
@@ -57,6 +62,7 @@ document.addEventListener('DOMContentLoaded', function () {
     userSelect.addEventListener('change', () => {
         const userId = userSelect.value;
         if (userId) {
+            sessionStorage.setItem('admin_selected_user', userId);
             loadUserData(userId);
         }
     });
@@ -121,6 +127,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
             if (response.ok) {
                 toast.success('Usuario actualizado exitosamente.');
+                sessionStorage.setItem('admin_selected_user', userId);
                 setTimeout(() => window.location.reload(), 1500);
             } else {
                 const errorData = await response.json();
