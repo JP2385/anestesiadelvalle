@@ -18,7 +18,13 @@
       "Bash(move \"c:\\Users\\jpsga\\anestesiadelvalle\\frontend\\js\\weekly-schedule\\mortalCombatManager.js\" \"c:\\Users\\jpsga\\anestesiadelvalle\\frontend\\js\\weekly-schedule\\modules\\mortalCombatManager.js\")",
       "Bash(move:*)",
       "Bash(move \"c:\\Users\\jpsga\\anestesiadelvalle\\frontend\\js\\weekly-schedule\\selectPopulator.js\" \"c:\\Users\\jpsga\\anestesiadelvalle\\frontend\\js\\weekly-schedule\\modules\\selectPopulator.js\")",
-      "Bash(tasklist:*)"
+      "Bash(tasklist:*)",
+      "Bash(xargs grep -l \"requireAdmin\\\\|requireRole\\\\|requirePermission\")",
+      "Bash(grep -r \"admin\\\\|requireAdmin\\\\|role.*admin\" /c/Users/jpsga/anestesiadelvalle/frontend/*.html)",
+      "Bash(grep -r \"authMiddleware\\\\|requireAdmin\\\\|requirePermission\" /c/Users/jpsga/anestesiadelvalle/backend/src/app/routes/*.js)",
+      "Bash(grep -n \"authMiddleware\\\\|requireAdmin\" /c/Users/jpsga/anestesiadelvalle/backend/src/app/routes/*.js)",
+      "Bash(ls c:/Users/jpsga/anestesiadelvalle/frontend/*.html)",
+      "Bash(grep -v \".js:.*//.*admin\")"
     ],
     "deny": [],
     "ask": []

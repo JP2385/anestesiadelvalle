@@ -19,7 +19,7 @@ router.put('/user/:userId', authMiddleware, requireAdmin, updateUser);
 router.put('/user/:userId/default-assignments', authMiddleware, requireAdmin, updateDefaultAssignments);
 
 // Rutas de administración
-router.get('/users', authMiddleware, requireAdmin, getAllUsers);
+router.get('/users', authMiddleware, getAllUsers);
 router.get('/availability', authMiddleware, getUsersAvailability);
 
 // Ruta para obtener las vacaciones de todos los usuarios
