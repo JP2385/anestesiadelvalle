@@ -152,8 +152,8 @@ export function processAndGenerateTable(users, yearSelect, monthSelect, dayAbbre
     const month = parseInt(monthSelect.value) + 1; // Ajuste por mes basado en índice 0
 
 
-    // Excluimos el usuario con username "montes_esposito"
-    const filteredUsers = users.filter(user => user.username !== 'montes_esposito');
+    // Excluimos los usuarios con username "montes_esposito" y "mgioja"
+    const filteredUsers = users.filter(user => user.username !== 'montes_esposito' && user.username !== 'mgioja');
 
     // Ordenamos los usuarios alfabéticamente por nombre de usuario
     filteredUsers.sort((a, b) => a.username.localeCompare(b.username));
