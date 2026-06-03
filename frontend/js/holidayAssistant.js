@@ -12,7 +12,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     let allUsers = []; // Almacena la lista de usuarios en memoria
     let allHolidays = []; // Almacena la lista de feriados en memoria
-    const excludedUsers = ["montes_esposito", "rconsigli", "mgioja", "ggudiño", "lespinosa", "jbo", "ecesar", "bvalenti"];
+    const excludedUsers = ["montes_esposito", "rconsigli", "mgioja", "ggudiño", "lespinosa", "jbo", "rriso"];
 
     // 🔹 Cargar los últimos 5 años y el siguiente en el select
     const currentYear = new Date().getFullYear();

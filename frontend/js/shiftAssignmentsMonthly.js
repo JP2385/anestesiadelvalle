@@ -151,8 +151,8 @@ export function assignSaturdayP1(users, accumulatedCounts) {
 
             // Intentar asignar "P1" al primer usuario disponible de la lista ordenada
             for (const user of sortedUsers) {
-                // excluir al usuario ecesar
-                if (user.username === 'ecesar') {
+                // excluir al usuario rriso
+                if (user.username === 'rriso') {
                 continue;
                 }
                 // excluir al usuario jbo
@@ -238,7 +238,7 @@ export function assignSaturdayP2(users, accumulatedCounts) {
                     })
                     .filter(userObj => {
                         // Excluir usuarios específicos
-                        if (userObj.username === 'ecesar' || userObj.username === 'jbo') {
+                        if (userObj.username === 'rriso' || userObj.username === 'jbo') {
                             return false;
                         }
                         
@@ -344,8 +344,8 @@ function assignShift(selects, assignmentType, isLharriagueAssignedToday, isMquir
         for (const select of shuffledSelects) {
             const username = select.getAttribute('data-username');
             
-            // 🔴 EXCLUIR ecesar de toda asignación automática
-            if (username === 'ecesar') {
+            // 🔴 EXCLUIR rriso de toda asignación automática
+            if (username === 'rriso') {
                 continue;
             }
             // 🔴 EXCLUIR jbo de toda asignación automática

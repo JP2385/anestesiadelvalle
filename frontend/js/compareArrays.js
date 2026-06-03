@@ -88,7 +88,7 @@ function convertDayIndexToName(dayIndex) {
 }
 
 // Usuarios que mantienen sus restricciones incluso en modo Mortal Combat
-const SPECIAL_USERS = ['ecesar', 'jbo', 'montes_esposito'];
+const SPECIAL_USERS = ['rriso', 'jbo', 'montes_esposito'];
 
 function formatWorkScheduleForDay(workSchedule, day, username) {
     const mortalCombatMode = getMortalCombatMode();
