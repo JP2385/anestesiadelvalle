@@ -163,9 +163,9 @@ document.addEventListener('DOMContentLoaded', function () {
             const provinceBadgeClass = institution.province === 'Neuquén' ? 'badge-neuquen' : 'badge-rionegro';
             const sectorBadgeClass = institution.sector === 'Sector Público' ? 'badge-publico' : 'badge-privado';
             const hasShiftsText = institution.hasShifts ? '✓ Sí' : '✗ No';
-            const hasShiftsStyle = institution.hasShifts ? 'color: green; font-weight: bold;' : 'color: #999;';
+            const hasShiftsStyle = institution.hasShifts ? 'color: #1a7a32; font-weight: bold;' : 'color: #999;';
             const isActiveText = institution.isActive ? '✓ Activa' : '✗ Inactiva';
-            const isActiveStyle = institution.isActive ? 'color: green; font-weight: bold;' : 'color: #dc3545; font-weight: bold;';
+            const isActiveStyle = institution.isActive ? 'color: #1a7a32; font-weight: bold;' : 'color: #dc3545; font-weight: bold;';
 
             row.innerHTML = `
                 <td>${institution.name}</td>

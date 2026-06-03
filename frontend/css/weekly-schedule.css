@@ -224,11 +224,11 @@ select.default {
 }
 
 .select-afternoon {
-    background-color: rgb(144, 238, 144); /* Color verde análogo */
+    background-color: rgb(90, 185, 90); /* Color verde análogo */
 }
 
 .select-long {
-    background-color: rgb(238, 230, 144); /* Color amarillo para largo */
+    background-color: rgb(255, 248, 155); /* Color amarillo para largo */
 }
 
 .inform {
@@ -278,9 +278,9 @@ select.default {
 }
 
 .option-afternoon {
-    background-color: rgb(144, 238, 144); /* Color verde análogo */
+    background-color: rgb(90, 185, 90); /* Color verde análogo */
 }
 
 .option-long {
-    background-color: rgb(238, 230, 144); /* Color amarillo para largo */
+    background-color: rgb(255, 248, 155); /* Color amarillo para largo */
 }

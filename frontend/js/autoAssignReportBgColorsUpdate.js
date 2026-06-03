@@ -23,12 +23,12 @@ export function autoAssignReportBgColorsUpdate(dayIndex) {
         siteTd.style.backgroundColor = 'rgb(238, 144, 144)';
         siteTd.querySelector('.tooltip-wrapper').setAttribute('data-tooltip', 'Más sitios de trabajo que anestesiólogos disponibles. Elimine un sitio de trabajo');
     } else if (availableValue > siteValue) {
-        availableTd.style.backgroundColor = 'rgb(238, 230, 144)';
+        availableTd.style.backgroundColor = 'rgb(255, 248, 155)';
         availableTd.querySelector('.tooltip-wrapper').setAttribute('data-tooltip', 'Más anestesiólogos que sitios de trabajo disponibles, desbloquee un sitio de trabajo.');
     }
 
     if (assignmentsValue < availableValue) {
-        assignmentsTd.style.backgroundColor = 'rgb(238, 230, 144)';
+        assignmentsTd.style.backgroundColor = 'rgb(255, 248, 155)';
         assignmentsTd.querySelector('.tooltip-wrapper').setAttribute('data-tooltip', 'Anestesiologos sin asignar, si ya realizó la asignación, modifique la estructura de sus sitios de trabajo e intente una nueva asignación.');
     } else if (assignmentsValue === availableValue) {
         assignmentsTd.style.backgroundColor = ''; // Remove background color if equal

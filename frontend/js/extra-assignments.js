@@ -570,7 +570,7 @@ function handleSelectChange(event) {
     } else if (selectedUser === '') {
         select.style.backgroundColor = defaultUser ? '#e0e0e0' : '';
     } else {
-        select.style.backgroundColor = '#ffffcc'; // Amarillo para extras
+        select.style.backgroundColor = '#ffff99'; // Amarillo para extras
     }
 
     // Actualizar las asignaciones extras en memoria
@@ -766,15 +766,15 @@ function displayMonthlyReport(reportData, period, month, year) {
                     border-left: 4px solid #0056b3;
                 }
                 .summary-box {
-                    background-color: #fff3cd;
-                    border: 2px solid #ffc107;
+                    background-color: #fffbe6;
+                    border: 2px solid #ffd94d;
                     border-radius: 8px;
                     padding: 20px;
                     margin: 20px 0;
                 }
                 .summary-box h3 {
                     margin-top: 0;
-                    color: #856404;
+                    color: #a37a00;
                 }
                 .summary-stats {
                     display: flex;
@@ -804,7 +804,7 @@ function displayMonthlyReport(reportData, period, month, year) {
                 }
                 .stat-percentage {
                     font-size: 14px;
-                    color: #28a745;
+                    color: #1a7a32;
                     margin-top: 5px;
                 }
                 table {
