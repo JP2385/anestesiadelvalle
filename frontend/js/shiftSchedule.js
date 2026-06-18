@@ -23,7 +23,7 @@ document.addEventListener('DOMContentLoaded', async function () {
 
     const guardSites = {
         publicNeuquen: ['HH', 'Ce', 'CM', 'CR','HP'],
-        privateNeuquen: ['Im'],
+        privateNeuquen: ['Im', 'Tr'],
         privateRioNegro: ['Fn'],
         publicRioNegro: ['Cp', 'Al', 'Jb','Cs'],
         saturday: ['P1', 'P2']

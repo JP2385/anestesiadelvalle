@@ -3,6 +3,7 @@
 export const shiftAssignmentLabels = {
     Fn: "Fundación",
     Im: "Imágenes",
+    Tr: "Trinidad Neuquén",
     Cp: "Hospital Cipolletti",
     Al: "Hospital Allen",
     Cs: "Hospital Cinco Saltos",
