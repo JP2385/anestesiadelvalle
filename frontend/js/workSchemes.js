@@ -51,10 +51,10 @@ export function getWorkSchemes(isOddWeek) {
     };
 
     const jboScheme = isOddWeek ? {
-        'monday-header': 'Imágenes Q1 Matutino',
+        'monday-header': ['Imágenes Hemo Matutino', 'Imágenes Hemo Vespertino', 'Imágenes Hemo Largo'],
         'friday-header': 'Imágenes Q1 Vespertino',
     } : {
-        'monday-header': 'Imágenes Q2 Matutino',
+        'monday-header': ['Imágenes Hemo Matutino', 'Imágenes Hemo Vespertino', 'Imágenes Hemo Largo'],
         'friday-header': 'Imágenes Q2 Vespertino',
     };
 
