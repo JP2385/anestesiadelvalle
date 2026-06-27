@@ -1,6 +1,6 @@
 import { autoAssignLongDayWorkersByDay, grupoRioNegro, grupoNeuquen } from './autoAssignDayFunctions.js';
 
-export async function autoAssignLongDaysByDay(apiUrl, dayIndex, availability, assignedUsers) {
+export async function autoAssignLongDaysByDay(apiUrl, dayIndex, availability, assignedUsers, virtualState) {
     const dayNames = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday'];
     const dayName = dayNames[dayIndex];
 
@@ -33,6 +33,6 @@ export async function autoAssignLongDaysByDay(apiUrl, dayIndex, availability, as
         return { workSiteText, select, cellIndex, zona };
     }).filter(r => r.select);
 
-    autoAssignLongDayWorkersByDay(rows, dayColumnIndex, availableUsers, dayName, assignedUsers);
+    autoAssignLongDayWorkersByDay(rows, dayColumnIndex, availableUsers, dayName, assignedUsers, virtualState);
 }
 

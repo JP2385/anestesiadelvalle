@@ -1,4 +1,3 @@
-import { unassignUsersByDay } from './autoAssignDayFunctions.js';
 import { autoAssignCaroSandraGabiByDay } from './autoAssignHandlersCaroSandraGabi.js';
 import { autoAssignPublicHospitalsByDay } from './autoAssignHandlersPublicHospitals.js';
 import { autoAssignMorningsByDay } from './autoAssignHandlersMornings.js';
@@ -9,7 +8,7 @@ import { countAssignmentsByDay, displayUnassignedUsers } from './autoAssignFunct
 import { compareAvailabilitiesForEachDay } from './compareArrays.js';
 import { validateAssignmentForDay } from './autoAssignValidation.js';
 import { updateSelectColors } from './updateSelectColors.js';
-import { countEnabledSelectsByDay } from './autoAssignFunctions.js'
+import { countEnabledSelectsByDay } from './autoAssignFunctions.js';
 
 export async function handleRandomizeButtonClick(apiUrl, availability, dayIndex) {
 
@@ -20,120 +19,59 @@ export async function handleRandomizeButtonClick(apiUrl, availability, dayIndex)
         return;
     }
 
-    const assignments = [];
     const { counts: enabledSelectsCount } = countEnabledSelectsByDay();
     const maxAssignments = enabledSelectsCount[dayIndex];
 
-    let reachedMaxIterations = false;
+    // Obtener los selects del día una sola vez
+    const dayHeaders = ['monday-header', 'tuesday-header', 'wednesday-header', 'thursday-header', 'friday-header'];
+    const dayHeader = document.getElementById(dayHeaders[dayIndex]);
+    const dayColumnIndex = Array.from(dayHeader.parentElement.children).indexOf(dayHeader);
+    const daySelects = Array.from(document.querySelectorAll(`td:nth-child(${dayColumnIndex + 1}) select`));
+
+    let bestVirtualState = null;
+    let bestCount = -1;
 
     for (let i = 1; i <= 100; i++) {
-        unassignUsersByDay(dayIndex);
+        const virtualState = new Map();
+
         const assignedUsers = new Set();
-        await autoAssignCaroSandraGabiByDay(apiUrl, dayIndex, availability, assignedUsers);
-        await autoAssignPublicHospitalsByDay(apiUrl, dayIndex, availability, assignedUsers);
-        await autoAssignMorningsByDay(apiUrl, dayIndex, availability, assignedUsers);
-        await autoAssignAfternoonsByDay(apiUrl, dayIndex, availability, assignedUsers);
-        await autoAssignLongDaysByDay(apiUrl, dayIndex, availability, assignedUsers);
-        await autoAssignRemainingsByDay(apiUrl, dayIndex, availability, assignedUsers);
+        await autoAssignCaroSandraGabiByDay(apiUrl, dayIndex, availability, assignedUsers, virtualState);
+        await autoAssignPublicHospitalsByDay(apiUrl, dayIndex, availability, assignedUsers, virtualState);
+        await autoAssignMorningsByDay(apiUrl, dayIndex, availability, assignedUsers, virtualState);
+        await autoAssignAfternoonsByDay(apiUrl, dayIndex, availability, assignedUsers, virtualState);
+        await autoAssignLongDaysByDay(apiUrl, dayIndex, availability, assignedUsers, virtualState);
+        await autoAssignRemainingsByDay(apiUrl, dayIndex, availability, assignedUsers, virtualState);
 
-        const { counts } = await countAssignmentsByDay();
-        const assignmentCount = Object.values(counts)[dayIndex];
-        assignments.push({ iteration: i, data: collectAssignmentsData(dayIndex), assignmentCount });
+        const assignmentCount = countVirtualAssignments(virtualState, daySelects);
 
-        if (assignmentCount >= maxAssignments) {
-            break;
+        if (assignmentCount > bestCount) {
+            bestCount = assignmentCount;
+            bestVirtualState = new Map(virtualState);
         }
-        if (i === 100) {
-            reachedMaxIterations = true;
-        }
+
+        if (bestCount >= maxAssignments) break;
     }
 
-    if (reachedMaxIterations) {
-        console.log(`Reached max iterations for day index ${dayIndex}.`);
-    }
-
-    const bestAssignment = assignments.reduce((max, assignment) => 
-        assignment.assignmentCount > max.assignmentCount ? assignment : max, 
-        { assignmentCount: -1 }
-    );
-
-    const { bestAssignments } = findBestIterationFromMemory(assignments);
-    await applyBestAssignmentsToDOM(dayIndex, bestAssignments);
+    // Aplicar la mejor configuración al DOM una sola vez
+    applyVirtualStateToDom(bestVirtualState, daySelects);
 
     await countAssignmentsByDay();
     await displayUnassignedUsers(availability);
     await compareAvailabilitiesForEachDay(dayIndex);
-    clearLocalStorageForDay(dayIndex); // Limpia el localStorage al final de la ejecución
-
-    // Actualizar los colores de los select
     updateSelectColors(dayIndex, availability);
-
-    return bestAssignment;
 }
 
-function collectAssignmentsData(dayIndex) {
-    const assignments = [];
-    const scheduleBody = document.getElementById('schedule-body');
-    const rows = scheduleBody.getElementsByTagName('tr');
-
-    for (let row of rows) {
-        const workSiteElement = row.querySelector('.work-site');
-        if (workSiteElement) {
-            const workSite = workSiteElement.textContent.trim();
-            const select = row.querySelectorAll('select')[dayIndex];
-            const selectedUser = select.options[select.selectedIndex].text;
-
-            if (selectedUser !== "") {
-                assignments.push({
-                    workSite: workSite,
-                    user: selectedUser
-                });
-            }
-        }
+function countVirtualAssignments(virtualState, daySelects) {
+    let count = 0;
+    for (const select of daySelects) {
+        if (virtualState.get(select)) count++;
     }
-
-    return assignments;
+    return count;
 }
 
-function findBestIterationFromMemory(assignments) {
-    let maxAssignments = 0;
-    let bestAssignments = [];
-
-    assignments.forEach(({ data, assignmentCount }) => {
-        if (assignmentCount >= maxAssignments) {
-            maxAssignments = assignmentCount;
-            bestAssignments = data;
-        }
-    });
-
-    return { bestAssignments };
-}
-
-function applyBestAssignmentsToDOM(dayIndex, bestAssignments) {
-    const scheduleBody = document.getElementById('schedule-body');
-    const rows = scheduleBody.getElementsByTagName('tr');
-
-    bestAssignments.forEach(assignment => {
-        for (let row of rows) {
-            const workSiteElement = row.querySelector('.work-site');
-            if (workSiteElement && workSiteElement.textContent.trim() === assignment.workSite) {
-                const select = row.querySelectorAll('select')[dayIndex];
-                for (let option of select.options) {
-                    if (option.text === assignment.user) {
-                        select.value = option.value;
-                        break;
-                    }
-                }
-            }
-        }
-    });
-}
-
-function clearLocalStorageForDay(dayIndex) {
-    const dayNames = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday'];
-    const dayName = dayNames[dayIndex];
-    for (let i = 1; i <= 100; i++) {
-        const storageKey = `assignments_${dayName}_iteration_${i}`;
-        localStorage.removeItem(storageKey);
+function applyVirtualStateToDom(virtualState, daySelects) {
+    for (const select of daySelects) {
+        const value = virtualState ? (virtualState.get(select) ?? '') : '';
+        if (select.value !== value) select.value = value;
     }
 }

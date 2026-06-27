@@ -6,7 +6,7 @@ import { compareAvailabilitiesForEachDay } from './compareArrays.js';
 import { validateAllDays } from './autoAssignValidation.js';
 import { handleRandomizeButtonClickForWeek } from './randomizeButtonHandlerForWeek.js';
 import { updateSelectColors } from './updateSelectColors.js';
-import { countLongDays, selectBestConfiguration, applyBestConfiguration, collectAssignments } from './bestConfigurationForWeek.js';
+import { selectBestConfiguration } from './bestConfigurationForWeek.js';
 import { showProgressBar, updateProgressBar, hideProgressBar, updateProgressMessage} from './progressBar.js'
 
 // Variable global para controlar el modo Mortal Combat
@@ -293,18 +293,6 @@ export async function populateSelectOptions(availability) {
                         // Incluir este usuario
                     } else {
                         return;
-                    }
-                }
-
-                // Exclusiones para la usuaria lharriague
-                if (user.username === 'lharriague') {
-                    const exclusionesGenerales = ['Hemo', 'RNM', 'Q3', 'COI'];
-                    const exclusionDiaEspecifico = dayName === 'wednesday' && workSite.includes('4to piso');
-
-                    const tieneExclusionGeneral = exclusionesGenerales.some(palabra => workSite.includes(palabra));
-
-                    if (tieneExclusionGeneral || exclusionDiaEspecifico) {
-                        return; // Excluir lharriague en estos casos
                     }
                 }
 
@@ -606,34 +594,47 @@ export async function handleAutoAssignForWeek(apiUrl, dayIndices, availability) 
         }
 
         const allLongDaysCounts = [];
-        const allAssignments = [];
-
-        // Capturar el DOM una sola vez para reutilizar
-        const scheduleBody = document.getElementById('schedule-body');
-        const preCapturedRows = Array.from(scheduleBody.getElementsByTagName('tr'));
+        // Cada entrada: Map<dayIndex, { virtualState, daySelects }>
+        const allVirtualWeeks = [];
 
         for (let i = 0; i < 200; i++) {
-            const promises = dayIndices.map(dayIndex =>
+            const weekVirtualStates = new Map();
+
+            const results = await Promise.all(dayIndices.map(dayIndex =>
                 handleRandomizeButtonClickForWeek(apiUrl, dayIndex, availability)
-            );
-            await Promise.all(promises);
+                    .then(result => ({ dayIndex, ...result }))
+            ));
 
-            allLongDaysCounts.push(countLongDays());
-            allAssignments.push(collectAssignments(preCapturedRows));
+            for (const { dayIndex, virtualState, daySelects } of results) {
+                weekVirtualStates.set(dayIndex, { virtualState, daySelects });
+            }
 
-            // ✅ Actualizar UI en cada iteración
+            allLongDaysCounts.push(countLongDaysFromVirtualWeek(weekVirtualStates));
+            allVirtualWeeks.push(weekVirtualStates);
+
             updateProgressBar(Math.round(((i + 1) / 200) * 100));
             updateProgressMessage(`Esquema semanal ${i + 1} de 200 completado.`);
 
-            // ✅ Permitir repintado de la interfaz sin demorar perceptiblemente
+            // Permitir repintado de la barra de progreso
             await new Promise(resolve => setTimeout(resolve, 0));
         }
 
-        const bestConfigurationIndex = selectBestConfiguration(allLongDaysCounts, allAssignments);
-        const bestAssignments = allAssignments[bestConfigurationIndex];
+        const allAssignmentsForSelection = allVirtualWeeks.map(weekVirtualStates =>
+            collectAssignmentsFromVirtualWeek(weekVirtualStates, dayIndices)
+        );
 
-        console.log("Mejor configuración seleccionada: ", bestAssignments);
-        applyBestConfiguration(bestAssignments);
+        const bestConfigurationIndex = selectBestConfiguration(allLongDaysCounts, allAssignmentsForSelection);
+        const bestWeek = allVirtualWeeks[bestConfigurationIndex];
+
+        console.log("Mejor configuración seleccionada: índice", bestConfigurationIndex);
+
+        // Aplicar la mejor semana al DOM — UNA SOLA VEZ
+        for (const [dayIndex, { virtualState, daySelects }] of bestWeek) {
+            for (const select of daySelects) {
+                const value = virtualState ? (virtualState.get(select) ?? '') : '';
+                if (select.value !== value) select.value = value;
+            }
+        }
 
         // Recalcular reportes después de aplicar la configuración final al DOM.
         await countAssignmentsByDay();
@@ -648,6 +649,58 @@ export async function handleAutoAssignForWeek(apiUrl, dayIndices, availability) 
     } finally {
         hideProgressBar();
     }
+}
+
+function countLongDaysFromVirtualWeek(weekVirtualStates) {
+    const longDaysCount = {};
+
+    for (const [dayIndex, { virtualState, daySelects }] of weekVirtualStates) {
+        for (const select of daySelects) {
+            const workSiteEl = select.closest('tr')?.querySelector('.work-site');
+            if (!workSiteEl) continue;
+            const workSite = workSiteEl.textContent.trim().toLowerCase();
+            if (!workSite.includes('largo')) continue;
+
+            const userId = virtualState ? (virtualState.get(select) ?? '') : select.value;
+            if (!userId) continue;
+
+            const selectedOption = Array.from(select.options).find(o => o.value === userId);
+            const username = selectedOption?.getAttribute('data-username') || selectedOption?.text || userId;
+
+            if (!longDaysCount[userId]) {
+                longDaysCount[userId] = { username, count: 0 };
+            }
+            longDaysCount[userId].count++;
+        }
+    }
+
+    return longDaysCount;
+}
+
+function collectAssignmentsFromVirtualWeek(weekVirtualStates, dayIndices) {
+    const WEEK_DAYS = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday'];
+    const assignments = {};
+
+    for (const [dayIndex, { virtualState, daySelects }] of weekVirtualStates) {
+        const day = WEEK_DAYS[dayIndex];
+
+        for (const select of daySelects) {
+            const workSiteEl = select.closest('tr')?.querySelector('.work-site');
+            if (!workSiteEl) continue;
+
+            const userId = virtualState ? (virtualState.get(select) ?? '') : select.value;
+            if (!userId) continue;
+
+            const selectedOption = Array.from(select.options).find(o => o.value === userId);
+            const username = selectedOption?.getAttribute('data-username') || selectedOption?.text || userId;
+            const workSite = workSiteEl.textContent.trim();
+
+            if (!assignments[day]) assignments[day] = [];
+            assignments[day].push({ workSite, userId, username });
+        }
+    }
+
+    return assignments;
 }
 
 // Función para guardar las asignaciones actuales de todos los selects

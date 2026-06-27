@@ -1,6 +1,6 @@
 import { autoAssignMorningWorkersByDay, grupoRioNegro, grupoNeuquen } from './autoAssignDayFunctions.js';
 
-export async function autoAssignMorningsByDay(apiUrl, dayIndex, availability, assignedUsers) {
+export async function autoAssignMorningsByDay(apiUrl, dayIndex, availability, assignedUsers, virtualState) {
     const dayNames = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday'];
     const dayName = dayNames[dayIndex];
 
@@ -33,6 +33,6 @@ export async function autoAssignMorningsByDay(apiUrl, dayIndex, availability, as
         return { workSiteText, select, cellIndex, zona };
     }).filter(r => r.select);
 
-    autoAssignMorningWorkersByDay(rows, dayColumnIndex, availableUsers, dayName, assignedUsers);
+    autoAssignMorningWorkersByDay(rows, dayColumnIndex, availableUsers, dayName, assignedUsers, virtualState);
 }
 

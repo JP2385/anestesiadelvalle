@@ -2,7 +2,7 @@ import { getWeekNumber } from './assignUtils.js';
 import { assignSpecificUsersByDay } from './autoAssignDayFunctions.js';
 import { getWorkSchemes } from './workSchemes.js';
 
-export async function autoAssignPublicHospitalsByDay(apiUrl, dayIndex, availability, assignedUsers) {
+export async function autoAssignPublicHospitalsByDay(apiUrl, dayIndex, availability, assignedUsers, virtualState) {
     try {
         const dayKey = Object.keys(availability)[dayIndex];
         const workSiteElements = document.querySelectorAll('.work-site');
@@ -27,26 +27,26 @@ export async function autoAssignPublicHospitalsByDay(apiUrl, dayIndex, availabil
         } = getWorkSchemes(isOddWeek);
 
         if (lburgueño) {
-            assignSpecificUsersByDay(dayIndex, lburgueñoScheme, lburgueño, assignedUsers, workSiteElements);
+            assignSpecificUsersByDay(dayIndex, lburgueñoScheme, lburgueño, assignedUsers, workSiteElements, virtualState);
         }
 
         if (sdegreef) {
-            assignSpecificUsersByDay(dayIndex, sdegreefScheme, sdegreef, assignedUsers, workSiteElements);
+            assignSpecificUsersByDay(dayIndex, sdegreefScheme, sdegreef, assignedUsers, workSiteElements, virtualState);
         }
 
         if (lalvarez) {
-            assignSpecificUsersByDay(dayIndex, lalvarezScheme, lalvarez, assignedUsers, workSiteElements);
+            assignSpecificUsersByDay(dayIndex, lalvarezScheme, lalvarez, assignedUsers, workSiteElements, virtualState);
         }
 
         if (msalvarezza) {
-            assignSpecificUsersByDay(dayIndex, msalvarezzaScheme, msalvarezza, assignedUsers, workSiteElements);
+            assignSpecificUsersByDay(dayIndex, msalvarezzaScheme, msalvarezza, assignedUsers, workSiteElements, virtualState);
         }
 
         if (rriso) {
-            assignSpecificUsersByDay(dayIndex, ecesarScheme, rriso, assignedUsers, workSiteElements);
+            assignSpecificUsersByDay(dayIndex, ecesarScheme, rriso, assignedUsers, workSiteElements, virtualState);
         }
         if (jbo) {
-            assignSpecificUsersByDay(dayIndex, jboScheme, jbo, assignedUsers, workSiteElements);
+            assignSpecificUsersByDay(dayIndex, jboScheme, jbo, assignedUsers, workSiteElements, virtualState);
         }
 
     } catch (error) {

@@ -1,69 +1,54 @@
 // randomizeButtonHandlerForWeek.js
 
-import { unassignUsersByDay } from './autoAssignDayFunctions.js';
 import { autoAssignCaroSandraGabiByDay } from './autoAssignHandlersCaroSandraGabi.js';
 import { autoAssignPublicHospitalsByDay } from './autoAssignHandlersPublicHospitals.js';
 import { autoAssignMorningsByDay } from './autoAssignHandlersMornings.js';
 import { autoAssignAfternoonsByDay } from './autoAssignHandlersAfternoons.js';
 import { autoAssignLongDaysByDay } from './autoAssignHandlersLongDays.js';
 import { autoAssignRemainingsByDay } from './autoAssignHandlersRemainings.js';
-import { countAssignmentsByDay } from './autoAssignFunctions.js';
 import { countEnabledSelectsByDay } from './autoAssignFunctions.js';
 
 export async function handleRandomizeButtonClickForWeek(apiUrl, dayIndex, availability) {
-    const assignments = [];
     const enabledSelectsCount = countEnabledSelectsByDay();
     const maxAssignments = enabledSelectsCount.counts[dayIndex];
 
-    // Capturamos el DOM una vez
-    const scheduleBody = document.getElementById('schedule-body');
-    const allRows = Array.from(scheduleBody.getElementsByTagName('tr'));
+    // Capturar los selects del día una sola vez
+    const dayHeaders = ['monday-header', 'tuesday-header', 'wednesday-header', 'thursday-header', 'friday-header'];
+    const dayHeader = document.getElementById(dayHeaders[dayIndex]);
+    const dayColumnIndex = Array.from(dayHeader.parentElement.children).indexOf(dayHeader);
+    const daySelects = Array.from(document.querySelectorAll(`td:nth-child(${dayColumnIndex + 1}) select`));
 
-    let reachedMaxIterations = false;
+    let bestVirtualState = null;
+    let bestCount = -1;
 
     for (let i = 1; i <= 100; i++) {
-        unassignUsersByDay(dayIndex);
+        const virtualState = new Map();
+
         const assignedUsers = new Set();
+        await autoAssignCaroSandraGabiByDay(apiUrl, dayIndex, availability, assignedUsers, virtualState);
+        await autoAssignPublicHospitalsByDay(apiUrl, dayIndex, availability, assignedUsers, virtualState);
+        await autoAssignMorningsByDay(apiUrl, dayIndex, availability, assignedUsers, virtualState);
+        await autoAssignAfternoonsByDay(apiUrl, dayIndex, availability, assignedUsers, virtualState);
+        await autoAssignLongDaysByDay(apiUrl, dayIndex, availability, assignedUsers, virtualState);
+        await autoAssignRemainingsByDay(apiUrl, dayIndex, availability, assignedUsers, virtualState);
 
-        await autoAssignCaroSandraGabiByDay(apiUrl, dayIndex, availability, assignedUsers);
-        await autoAssignPublicHospitalsByDay(apiUrl, dayIndex, availability, assignedUsers);
-        await autoAssignMorningsByDay(apiUrl, dayIndex, availability, assignedUsers);
-        await autoAssignAfternoonsByDay(apiUrl, dayIndex, availability, assignedUsers);
-        await autoAssignLongDaysByDay(apiUrl, dayIndex, availability, assignedUsers);
-        await autoAssignRemainingsByDay(apiUrl, dayIndex, availability, assignedUsers);
+        const assignmentCount = countVirtualAssignments(virtualState, daySelects);
 
-        const { counts } = await countAssignmentsByDay();
-        const assignmentCount = Object.values(counts)[dayIndex];
+        if (assignmentCount > bestCount) {
+            bestCount = assignmentCount;
+            bestVirtualState = new Map(virtualState);
+        }
 
-        assignments.push({
-            iteration: i + 1,
-            data: collectAssignmentsData(allRows, dayIndex),
-            assignmentCount
-        });
-
-        if (assignmentCount >= maxAssignments) break;
-        if (i === 100) reachedMaxIterations = true;
+        if (bestCount >= maxAssignments) break;
     }
 
-    const bestAssignment = assignments.reduce((max, assignment) =>
-        assignment.assignmentCount > max.assignmentCount ? assignment : max,
-        { assignmentCount: -1 }
-    );
-
-    return bestAssignment;
+    return { virtualState: bestVirtualState, daySelects, assignmentCount: bestCount };
 }
 
-
-function collectAssignmentsData(rows, dayIndex) {
-    return rows.map(row => {
-        const workSiteElement = row.querySelector('.work-site');
-        if (!workSiteElement) return null;
-
-        const workSite = workSiteElement.textContent.trim();
-        const select = row.querySelectorAll('select')[dayIndex];
-        const selectedUser = select?.options[select.selectedIndex]?.text;
-
-        return selectedUser ? { workSite, user: selectedUser } : null;
-    }).filter(Boolean);
+function countVirtualAssignments(virtualState, daySelects) {
+    let count = 0;
+    for (const select of daySelects) {
+        if (virtualState.get(select)) count++;
+    }
+    return count;
 }
-

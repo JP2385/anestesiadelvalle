@@ -2,7 +2,7 @@ import { getWeekNumber} from './assignUtils.js';
 import { assignSpecificUsersByDay } from './autoAssignDayFunctions.js';
 import { getWorkSchemes } from './workSchemes.js';
 
-export async function autoAssignCaroSandraGabiByDay(apiUrl, dayIndex, availability, assignedUsers) {
+export async function autoAssignCaroSandraGabiByDay(apiUrl, dayIndex, availability, assignedUsers, virtualState) {
     try {
         const dayKey = Object.keys(availability)[dayIndex];
         const workSiteElements = document.querySelectorAll('.work-site');
@@ -23,19 +23,19 @@ export async function autoAssignCaroSandraGabiByDay(apiUrl, dayIndex, availabili
         } = getWorkSchemes(isOddWeek);
 
         if (montesEsposito) {
-            assignSpecificUsersByDay(dayIndex, montesEspositoScheme, montesEsposito, assignedUsers, workSiteElements);
+            assignSpecificUsersByDay(dayIndex, montesEspositoScheme, montesEsposito, assignedUsers, workSiteElements, virtualState);
         }
 
         if (ggudino) {
-            assignSpecificUsersByDay(dayIndex, ggudinoScheme, ggudino, assignedUsers, workSiteElements);
+            assignSpecificUsersByDay(dayIndex, ggudinoScheme, ggudino, assignedUsers, workSiteElements, virtualState);
         }
 
         if (nvela) {
-            assignSpecificUsersByDay(dayIndex, nvelaScheme, nvela, assignedUsers, workSiteElements);
+            assignSpecificUsersByDay(dayIndex, nvelaScheme, nvela, assignedUsers, workSiteElements, virtualState);
         }
 
         if (rconsigli) {
-            assignSpecificUsersByDay(dayIndex, rconsigliScheme, rconsigli, assignedUsers, workSiteElements);
+            assignSpecificUsersByDay(dayIndex, rconsigliScheme, rconsigli, assignedUsers, workSiteElements, virtualState);
         }
 
     } catch (error) {

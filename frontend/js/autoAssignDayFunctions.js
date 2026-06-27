@@ -28,8 +28,12 @@ function shuffle(array) {
     return array;
 }
 
-function getValidUsersFactory(shuffledRows, dayColumnIndex, users, assignedUsers) {
+function getValidUsersFactory(shuffledRows, dayColumnIndex, users, assignedUsers, virtualState) {
     const userMap = new Map(users.map(u => [u._id, u]));
+
+    function getSelectValue(select) {
+        return virtualState ? (virtualState.get(select) ?? '') : select.value;
+    }
 
     return function(select, conditionFn) {
         return Array.from(select.options).reduce((acc, option) => {
@@ -42,7 +46,7 @@ function getValidUsersFactory(shuffledRows, dayColumnIndex, users, assignedUsers
                 conditionFn(user) &&
                 !shuffledRows.some(row =>
                     row.select !== select &&
-                    row.select.value === option.value &&
+                    getSelectValue(row.select) === option.value &&
                     row.cellIndex === dayColumnIndex
                 )
             ) {
@@ -55,23 +59,29 @@ function getValidUsersFactory(shuffledRows, dayColumnIndex, users, assignedUsers
 }
 
 
-function assignRandomUser(select, availableUsers, assignedUsers) {
+function assignRandomUser(select, availableUsers, assignedUsers, virtualState) {
     if (availableUsers.length === 0) return;
     const randomUser = availableUsers[Math.floor(Math.random() * availableUsers.length)];
-    select.value = randomUser._id;
+    if (virtualState) {
+        virtualState.set(select, randomUser._id);
+    } else {
+        select.value = randomUser._id;
+    }
     assignedUsers.add(randomUser._id);
 }
 
 // 📌 Funciones de autoasignación
 
-export function autoAssignMorningWorkersByDay(rows, dayColumnIndex, users, dayName, assignedUsers) {
+export function autoAssignMorningWorkersByDay(rows, dayColumnIndex, users, dayName, assignedUsers, virtualState) {
     const shuffledRows = shuffle(rows);
-    const getValidUsers = getValidUsersFactory(shuffledRows, dayColumnIndex, users, assignedUsers);
+    const getValidUsers = getValidUsersFactory(shuffledRows, dayColumnIndex, users, assignedUsers, virtualState);
     const mortalCombatMode = getMortalCombatMode();
+
+    function getVal(select) { return virtualState ? (virtualState.get(select) ?? '') : select.value; }
 
     // Primera etapa: asignar por zona
     shuffledRows.forEach(({ workSiteText, select, zona }) => {
-        if (!select.value && !select.disabled && workSiteText.includes('matutino')) {
+        if (!getVal(select) && !select.disabled && workSiteText.includes('matutino')) {
             let availableUsers = [];
 
             if (zona === 'rioNegro') {
@@ -84,30 +94,32 @@ export function autoAssignMorningWorkersByDay(rows, dayColumnIndex, users, dayNa
                 );
             }
 
-            assignRandomUser(select, availableUsers, assignedUsers);
+            assignRandomUser(select, availableUsers, assignedUsers, virtualState);
         }
     });
 
     // Segunda etapa: cualquier sitio matutino restante
     shuffledRows.forEach(({ workSiteText, select }) => {
-        if (workSiteText.includes('matutino') && !select.value && !select.disabled) {
+        if (workSiteText.includes('matutino') && !getVal(select) && !select.disabled) {
             const availableUsers = getValidUsers(select, user =>
                 getEffectiveWorkSchedule(user, dayName, mortalCombatMode) === 'Mañana'
             );
-            assignRandomUser(select, availableUsers, assignedUsers);
+            assignRandomUser(select, availableUsers, assignedUsers, virtualState);
         }
     });
 }
 
 
-export function autoAssignAfternoonWorkersByDay(rows, dayColumnIndex, users, dayName, assignedUsers) {
+export function autoAssignAfternoonWorkersByDay(rows, dayColumnIndex, users, dayName, assignedUsers, virtualState) {
     const shuffledRows = shuffle(rows);
-    const getValidUsers = getValidUsersFactory(shuffledRows, dayColumnIndex, users, assignedUsers);
+    const getValidUsers = getValidUsersFactory(shuffledRows, dayColumnIndex, users, assignedUsers, virtualState);
     const mortalCombatMode = getMortalCombatMode();
+
+    function getVal(select) { return virtualState ? (virtualState.get(select) ?? '') : select.value; }
 
     // Primera etapa: asignar por zona
     shuffledRows.forEach(({ workSiteText, select, zona }) => {
-        if (!select.value && !select.disabled && workSiteText.includes('vespertino')) {
+        if (!getVal(select) && !select.disabled && workSiteText.includes('vespertino')) {
             let availableUsers = [];
 
             if (zona === 'rioNegro') {
@@ -120,29 +132,31 @@ export function autoAssignAfternoonWorkersByDay(rows, dayColumnIndex, users, day
                 );
             }
 
-            assignRandomUser(select, availableUsers, assignedUsers);
+            assignRandomUser(select, availableUsers, assignedUsers, virtualState);
         }
     });
 
     // Segunda etapa: cualquier sitio vespertino restante
     shuffledRows.forEach(({ workSiteText, select }) => {
-        if (workSiteText.includes('vespertino') && !select.value && !select.disabled) {
+        if (workSiteText.includes('vespertino') && !getVal(select) && !select.disabled) {
             const availableUsers = getValidUsers(select, user =>
                 getEffectiveWorkSchedule(user, dayName, mortalCombatMode) === 'Tarde'
             );
-            assignRandomUser(select, availableUsers, assignedUsers);
+            assignRandomUser(select, availableUsers, assignedUsers, virtualState);
         }
     });
 }
 
-export function autoAssignLongDayWorkersByDay(rows, dayColumnIndex, users, dayName, assignedUsers) {
+export function autoAssignLongDayWorkersByDay(rows, dayColumnIndex, users, dayName, assignedUsers, virtualState) {
     const shuffledRows = shuffle(rows);
-    const getValidUsers = getValidUsersFactory(shuffledRows, dayColumnIndex, users, assignedUsers);
+    const getValidUsers = getValidUsersFactory(shuffledRows, dayColumnIndex, users, assignedUsers, virtualState);
     const mortalCombatMode = getMortalCombatMode();
+
+    function getVal(select) { return virtualState ? (virtualState.get(select) ?? '') : select.value; }
 
     // Primera etapa: asignar por zona
     shuffledRows.forEach(({ workSiteText, select, zona }) => {
-        if (!select.value && !select.disabled && workSiteText.includes('largo')) {
+        if (!getVal(select) && !select.disabled && workSiteText.includes('largo')) {
             let availableUsers = [];
 
             if (zona === 'rioNegro') {
@@ -155,29 +169,31 @@ export function autoAssignLongDayWorkersByDay(rows, dayColumnIndex, users, dayNa
                 );
             }
 
-            assignRandomUser(select, availableUsers, assignedUsers);
+            assignRandomUser(select, availableUsers, assignedUsers, virtualState);
         }
     });
 
     // Segunda etapa: cualquier sitio largo restante
     shuffledRows.forEach(({ workSiteText, select }) => {
-        if (workSiteText.includes('largo') && !select.value && !select.disabled) {
+        if (workSiteText.includes('largo') && !getVal(select) && !select.disabled) {
             const availableUsers = getValidUsers(select, user =>
                 getEffectiveWorkSchedule(user, dayName, mortalCombatMode) === 'Variable'
             );
-            assignRandomUser(select, availableUsers, assignedUsers);
+            assignRandomUser(select, availableUsers, assignedUsers, virtualState);
         }
     });
 }
 
-export function autoAssignRemainingSlotsByDay(rows, dayColumnIndex, users, dayName, assignedUsers) {
+export function autoAssignRemainingSlotsByDay(rows, dayColumnIndex, users, dayName, assignedUsers, virtualState) {
     const shuffledRows = shuffle(rows);
-    const getValidUsers = getValidUsersFactory(shuffledRows, dayColumnIndex, users, assignedUsers);
+    const getValidUsers = getValidUsersFactory(shuffledRows, dayColumnIndex, users, assignedUsers, virtualState);
     const mortalCombatMode = getMortalCombatMode();
+
+    function getVal(select) { return virtualState ? (virtualState.get(select) ?? '') : select.value; }
 
     // Primera etapa: asignar por zona
     shuffledRows.forEach(({ workSiteText, select, zona }) => {
-        if (!select.value && !select.disabled) {
+        if (!getVal(select) && !select.disabled) {
             let availableUsers = [];
 
             if (zona === 'rioNegro') {
@@ -190,23 +206,23 @@ export function autoAssignRemainingSlotsByDay(rows, dayColumnIndex, users, dayNa
                 );
             }
 
-            assignRandomUser(select, availableUsers, assignedUsers);
+            assignRandomUser(select, availableUsers, assignedUsers, virtualState);
         }
     });
 
     // Segunda etapa: cualquier sitio restante
     shuffledRows.forEach(({ workSiteText, select }) => {
-        if (!select.value && !select.disabled) {
+        if (!getVal(select) && !select.disabled) {
             const availableUsers = getValidUsers(select, user =>
                 getEffectiveWorkSchedule(user, dayName, mortalCombatMode) === 'Variable'
             );
-            assignRandomUser(select, availableUsers, assignedUsers);
+            assignRandomUser(select, availableUsers, assignedUsers, virtualState);
         }
     });
 }
 
 
-export function assignSpecificUsersByDay(dayIndex, scheme, user, assignedUsers, workSiteElements) {
+export function assignSpecificUsersByDay(dayIndex, scheme, user, assignedUsers, workSiteElements, virtualState) {
     if (assignedUsers.has(user.username)) return;
 
     const dayHeaders = ['monday-header', 'tuesday-header', 'wednesday-header', 'thursday-header', 'friday-header'];
@@ -219,6 +235,8 @@ export function assignSpecificUsersByDay(dayIndex, scheme, user, assignedUsers, 
     }
 
     const dayColumnIndex = Array.from(dayHeader.parentElement.children).indexOf(dayHeader) + 1;
+
+    function getVal(select) { return virtualState ? (virtualState.get(select) ?? '') : select.value; }
 
     Object.entries(scheme).forEach(([headerId, workSites]) => {
         if (headerId !== dayHeaderId) return;
@@ -236,15 +254,14 @@ export function assignSpecificUsersByDay(dayIndex, scheme, user, assignedUsers, 
             const selectCell = tr.querySelector(`td:nth-child(${dayColumnIndex})`);
             const select = selectCell?.querySelector('select');
 
-            if (select && !select.disabled && !select.value) {
+            if (select && !select.disabled && !getVal(select)) {
                 const option = Array.from(select.options).find(opt => opt.text === user.username);
                 if (option) {
-                    select.value = option.value;
-
-                    // Solo mantener si realmente lo usás visualmente
-                    // select.classList.add('assigned');
-                    // select.classList.remove('default');
-
+                    if (virtualState) {
+                        virtualState.set(select, option.value);
+                    } else {
+                        select.value = option.value;
+                    }
                     assignedUsers.add(user.username);
                     return;
                 }
@@ -256,7 +273,7 @@ export function assignSpecificUsersByDay(dayIndex, scheme, user, assignedUsers, 
 }
 
 
-export function unassignUsersByDay(dayIndex) {
+export function unassignUsersByDay(dayIndex, virtualState) {
     const dayHeaders = ['monday-header', 'tuesday-header', 'wednesday-header', 'thursday-header', 'friday-header'];
     const dayHeaderId = dayHeaders[dayIndex];
 
@@ -274,11 +291,12 @@ export function unassignUsersByDay(dayIndex) {
     const dayColumnIndex = Array.from(dayHeader.parentElement.children).indexOf(dayHeader);
     const selects = document.querySelectorAll(`td:nth-child(${dayColumnIndex + 1}) select`);
 
-    selects.forEach(select => {
-        if (select.value) {
-            select.value = "";
-        }
-    });
-
-    updateSelectBackgroundColors();
+    if (virtualState) {
+        selects.forEach(select => virtualState.delete(select));
+    } else {
+        selects.forEach(select => {
+            if (select.value) select.value = "";
+        });
+        updateSelectBackgroundColors();
+    }
 }

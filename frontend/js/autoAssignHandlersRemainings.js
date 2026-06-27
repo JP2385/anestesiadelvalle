@@ -1,6 +1,6 @@
 import { autoAssignRemainingSlotsByDay, grupoRioNegro, grupoNeuquen } from './autoAssignDayFunctions.js';
 
-export async function autoAssignRemainingsByDay(apiUrl, dayIndex, availability, assignedUsers) {
+export async function autoAssignRemainingsByDay(apiUrl, dayIndex, availability, assignedUsers, virtualState) {
     const dayNames = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday'];
     const dayName = dayNames[dayIndex];
 
@@ -33,6 +33,6 @@ export async function autoAssignRemainingsByDay(apiUrl, dayIndex, availability, 
         return { workSiteText, select, cellIndex, zona };
     }).filter(r => r.select);
 
-    autoAssignRemainingSlotsByDay(rows, dayColumnIndex, availableUsers, dayName, assignedUsers);
+    autoAssignRemainingSlotsByDay(rows, dayColumnIndex, availableUsers, dayName, assignedUsers, virtualState);
 }
 

@@ -121,11 +121,11 @@ export async function displayUnassignedUsers(availability, debugContext = '') {
 
         // Filtrar usuarios no asignados
         const unassigned = availableUsers.filter(user => {
-            // Para usuarios duplicados, usar displayName; para otros, usar username
-            const nameToCompare = (user.displayName || user.username || '').trim().toLowerCase();
-            
-            // Verificar si está asignado
-            return !assignedNames.includes(nameToCompare);
+            const username = (user.username || '').trim().toLowerCase();
+            const displayName = (user.displayName || '').trim().toLowerCase();
+
+            // Un usuario se considera asignado si su username o displayName aparece en la lista
+            return !assignedNames.includes(username) && !assignedNames.includes(displayName);
         });
 
         // Actualizar el span correspondiente
