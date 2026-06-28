@@ -13,14 +13,6 @@ function shuffleArray(array) {
 export function assignIm(rows, selects, isLharriagueAssignedToday, isMquirogaAssignedToday, assignedFnUser, assignedImUser, isWeekend, accumulatedCounts) {
     console.log(`\nIniciando asignación de Im para el día: ${selects[0].getAttribute('data-day')}, es fin de semana: ${isWeekend}`);
 
-    // 🔴 NUEVO: Filtrar usuarios que trabajan en Privado Río Negro (excluidos de Im)
-    const filteredSelects = selects.filter(select => {
-        const worksInPrivateRioNegro = select.getAttribute('data-privaterioneegro') === 'true';
-        return !worksInPrivateRioNegro;
-    });
-
-    console.log(`Usuarios excluidos de Im (worksInPrivateRioNegro=true): ${selects.length - filteredSelects.length}`);
-
     // Obtener conteo de guardias actual para el día, ya sea de fin de semana o de lunes a jueves
     let userShiftCounts = isWeekend ? countWeekendShifts() : countWeekdayShifts();
 
@@ -33,12 +25,11 @@ export function assignIm(rows, selects, isLharriagueAssignedToday, isMquirogaAss
         }
     });
 
-    // Verificar si ya hay un usuario asignado a Im en el día actual (usar filteredSelects)
-    assignedImUser = isAlreadyAssigned(filteredSelects, 'Im');
+    // Verificar si ya hay un usuario asignado a Im en el día actual
+    assignedImUser = isAlreadyAssigned(selects, 'Im');
     if (!assignedImUser) {
-        // Llamar a la función de asignación usando filteredSelects
         assignedImUser = assignShift(
-            filteredSelects,  // 👈 Usar filteredSelects en lugar de selects
+            selects,
             'Im',
             isLharriagueAssignedToday,
             isMquirogaAssignedToday,
