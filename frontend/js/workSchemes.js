@@ -18,11 +18,11 @@ export function getWorkSchemes(isOddWeek) {
     }
 
     const ggudinoScheme = {
-        'monday-header': ['COI Largo', 'COI Matutino', 'COI Vespertino'],
-        'tuesday-header': ['COI Largo', 'COI Matutino', 'COI Vespertino'],
-        'wednesday-header': ['COI Largo', 'COI Matutino', 'COI Vespertino'],
-        'thursday-header': ['COI Largo', 'COI Matutino', 'COI Vespertino'],
-        'friday-header': ['COI Largo', 'COI Matutino', 'COI Vespertino']
+        'monday-header': ['COI RNM Vespertino'],
+        'tuesday-header': ['COI RNM Matutino'],
+        'wednesday-header': ['COI Braqui Largo'],
+        'thursday-header': ['COI RNM Matutino'],
+        'friday-header': ['COI Braqui Largo']
     };
 
     const lburgueñoScheme = {
