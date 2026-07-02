@@ -100,6 +100,15 @@ document.addEventListener('DOMContentLoaded', async function () {
                 }
             });
         });
+
+        usersBody.addEventListener('change', (event) => {
+            if (event.target.tagName === 'SELECT') {
+                const weekCounts = countWeekdayShifts();
+                const weekendCounts = countWeekendShifts();
+                const saturdayCounts = countSaturdayShifts();
+                updateShiftCountsTableWithAccumulated(weekCounts, weekendCounts, saturdayCounts);
+            }
+        });
     }
 
     assignButton.addEventListener('click', async () => {

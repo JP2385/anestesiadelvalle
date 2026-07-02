@@ -1,5 +1,11 @@
 require('dotenv').config({ path: './backend/.env' });
 
+const dns = require('dns');
+if (process.env.NODE_ENV !== 'production') {
+    dns.setServers(['8.8.8.8', '8.8.4.4']);
+}
+dns.setDefaultResultOrder('ipv4first');
+
 const express = require('express');
 const mongoose = require('mongoose');
 const config = require('./config');
