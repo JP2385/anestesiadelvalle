@@ -1,4 +1,4 @@
-import { assignIm, assignFn, assignWeekendIfLtotisAssigned, assignSaturdayP1, assignSaturdayP2} from './shiftAssignmentsMonthly.js';
+import { assignIm, assignFn, assignTr, assignWeekendIfLtotisAssigned, assignSaturdayP1, assignSaturdayP2} from './shiftAssignmentsMonthly.js';
 import { countWeekdayShifts, countWeekendShifts, countSaturdayShifts } from './shiftAssignmentsUtils.js';
 import { calculateAccumulatedShiftCounts} from './shiftCountTable.js';
 import { fetchLastDayAssignments} from './shiftLastDayAssignments.js';
@@ -200,8 +200,8 @@ if (dayOfMonth === 1 && lastDayAssignments.length > 0) {
 
 
             if (lastDayOfWeek === 5 || lastDayOfWeek === 6) {
-                // Si el último día fue viernes o sábado, replicar asignación de Im o Fn
-                if (lastAssignment.assignment === "Im" || lastAssignment.assignment === "Fn") {
+                // Si el último día fue viernes o sábado, replicar asignación de Im, Fn o Tr
+                if (lastAssignment.assignment === "Im" || lastAssignment.assignment === "Fn" || lastAssignment.assignment === "Tr") {
                     select.value = lastAssignment.assignment;
                 }
             } else if (lastDayOfWeek >= 0 && lastDayOfWeek <= 4) {
@@ -251,6 +251,18 @@ if (dayOfMonth === 1 && lastDayAssignments.length > 0) {
             accumulatedCounts,
             lastDayAssignments
         );
+
+        assignTr(
+            rows,
+            selects.filter(select => !usersToExclude.includes(select.getAttribute('data-username'))),
+            isLharriagueAssignedToday,
+            isMquirogaAssignedToday,
+            assignedImUser,
+            assignedFnUser,
+            null,
+            isWeekend,
+            accumulatedCounts
+        );
     }
 
     // Finalizamos este bloque y pasamos al siguiente día
@@ -286,20 +298,24 @@ if (dayOfWeek === 0) { // 0 representa el domingo
         let assignedFnUser = null;
         let assignedImUser = null;
 
-        if (!isWeekend) { 
+        if (!isWeekend) {
             assignedImUser = assignIm(rows, selects, isLharriagueAssignedToday, isMquirogaAssignedToday, assignedFnUser, assignedImUser, isWeekend, accumulatedCounts, lastDayAssignments);
 
             isLharriagueAssignedToday = isLharriagueAssignedToday || (assignedImUser && assignedImUser.getAttribute('data-username') === 'lharriague');
             isMquirogaAssignedToday = isMquirogaAssignedToday || (assignedImUser && assignedImUser.getAttribute('data-username') === 'mquiroga');
 
             assignedFnUser = assignFn(rows, selects, isLharriagueAssignedToday, isMquirogaAssignedToday, assignedImUser, assignedFnUser, isWeekend, accumulatedCounts, lastDayAssignments);
-        } else { 
+
+            assignTr(rows, selects, isLharriagueAssignedToday, isMquirogaAssignedToday, assignedImUser, assignedFnUser, null, isWeekend, accumulatedCounts);
+        } else {
             assignedImUser = assignIm(rows, selects, isLharriagueAssignedToday, isMquirogaAssignedToday, assignedFnUser, assignedImUser, isWeekend, accumulatedCounts, lastDayAssignments);
 
             isLharriagueAssignedToday = isLharriagueAssignedToday || (assignedImUser && assignedImUser.getAttribute('data-username') === 'lharriague');
             isMquirogaAssignedToday = isMquirogaAssignedToday || (assignedImUser && assignedImUser.getAttribute('data-username') === 'mquiroga');
 
             assignedFnUser = assignFn(rows, selects, isLharriagueAssignedToday, isMquirogaAssignedToday, assignedImUser, assignedFnUser, isWeekend, accumulatedCounts, lastDayAssignments);
+
+            const assignedTrUser = assignTr(rows, selects, isLharriagueAssignedToday, isMquirogaAssignedToday, assignedImUser, assignedFnUser, null, isWeekend, accumulatedCounts);
 
             if (assignedFnUser && dayNumber === 5) {
                 const assignedUsername = assignedFnUser.getAttribute('data-username');
@@ -309,6 +325,11 @@ if (dayOfWeek === 0) { // 0 representa el domingo
             if (assignedImUser && dayNumber === 5) {
                 const assignedUsername = assignedImUser.getAttribute('data-username');
                 assignWeekendDays(currentDay, assignedUsername, 'Im');
+            }
+
+            if (assignedTrUser && dayNumber === 5) {
+                const assignedUsername = assignedTrUser.getAttribute('data-username');
+                assignWeekendDays(currentDay, assignedUsername, 'Tr');
             }
         }
     });

@@ -97,6 +97,54 @@ export function assignFn(rows, selects, isLharriagueAssignedToday, isMquirogaAss
 }
 
 
+// Usuarios habilitados para hacer guardia en Tr. Editar esta lista para cambiar la restricción.
+const TR_ALLOWED_USERS = [
+    'nvela',
+    'mschvarztman',
+    'lgarcia',
+    'amacias',
+    'esanmartin',
+    'gcastro',
+    'sdegreef',
+    'jserrano'
+];
+
+export function assignTr(rows, selects, isLharriagueAssignedToday, isMquirogaAssignedToday, assignedImUser, assignedFnUser, assignedTrUser, isWeekend, accumulatedCounts) {
+    console.log(`\nIniciando asignación de Tr para el día: ${selects[0].getAttribute('data-day')}, es fin de semana: ${isWeekend}`);
+
+    let userShiftCounts = isWeekend ? countWeekendShifts() : countWeekdayShifts();
+
+    Object.keys(userShiftCounts).forEach(username => {
+        if (accumulatedCounts[username]) {
+            const accumulated = isWeekend ? accumulatedCounts[username].weekend : accumulatedCounts[username].week;
+            userShiftCounts[username] += accumulated;
+        }
+    });
+
+    assignedTrUser = isAlreadyAssigned(selects, 'Tr');
+    if (!assignedTrUser) {
+        const trSelects = selects.filter(select => TR_ALLOWED_USERS.includes(select.getAttribute('data-username')));
+        assignedTrUser = assignShift(
+            trSelects,
+            'Tr',
+            isLharriagueAssignedToday,
+            isMquirogaAssignedToday,
+            userShiftCounts,
+            false
+        );
+
+        if (assignedTrUser) {
+            console.log(`Tr asignado a ${assignedTrUser.getAttribute('data-username')}`);
+        } else {
+            console.log('No se pudo asignar Tr');
+        }
+    } else {
+        console.log(`Tr ya asignado a ${assignedTrUser.getAttribute('data-username')}`);
+    }
+
+    return assignedTrUser;
+}
+
 export function assignSaturdayP1(users, accumulatedCounts) {
     const rows = document.querySelectorAll('#users-body tr');
     const daysInMonth = document.querySelectorAll('.shift-select[data-day]');
