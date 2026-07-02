@@ -1,6 +1,6 @@
 import toast from './toast.js';
 import { countWeekdayShifts, countWeekendShifts, countSaturdayShifts } from './shiftAssignmentsUtils.js';
-import { validateMquirogaLharriague, validateCardioAssignedEachDay, validateFnAndImAssignedEachDay } from './shiftValidationUtils.js';
+import { validateMquirogaLharriague, validateCardioAssignedEachDay, validateFnAndImAssignedEachDay, validateTrAssignedEachDay } from './shiftValidationUtils.js';
 
 document.getElementById('print-shifts').addEventListener('click', async () => {
     const apiUrl = window.location.hostname === 'localhost' ? 'http://localhost:3000' : window.location.origin;
@@ -67,6 +67,14 @@ document.getElementById('print-shifts').addEventListener('click', async () => {
             return; // Cancelar flujo
         }
     }        
+
+    const daysMissingTr = validateTrAssignedEachDay();
+    if (daysMissingTr.length > 0) {
+        const proceed = confirm(`Los siguientes días no tienen Tr asignado: ${daysMissingTr.join(', ')}. ¿Desea continuar imprimiendo?`);
+        if (!proceed) {
+            return;
+        }
+    }
 
     const daysWithBothAssigned = validateMquirogaLharriague(selectConfig);
     if (daysWithBothAssigned.length > 0) {

@@ -97,3 +97,27 @@ export function validateFnAndImAssignedEachDay() {
 
     return daysMissingAssignments;
 }
+
+// Validar que haya al menos una persona asignada a Tr cada día (excluyendo "V" y "ND")
+export function validateTrAssignedEachDay() {
+    const selects = Array.from(document.querySelectorAll('#shift-schedule select'));
+    const daysMissingTr = [];
+
+    const selectsByDay = {};
+    selects.forEach(select => {
+        const day = select.getAttribute('data-day');
+        if (!selectsByDay[day]) {
+            selectsByDay[day] = [];
+        }
+        selectsByDay[day].push(select);
+    });
+
+    for (const [day, selectsOfDay] of Object.entries(selectsByDay)) {
+        const hasTr = selectsOfDay.some(select => select.value === 'Tr');
+        if (!hasTr) {
+            daysMissingTr.push(day);
+        }
+    }
+
+    return daysMissingTr;
+}

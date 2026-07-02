@@ -338,36 +338,6 @@ export function assignSaturdayP2(users, accumulatedCounts) {
 
 
 
-
-// Función para asignar automáticamente a mmelo los mismos días si ltotis tiene asignaciones de fin de semana, excepto si ltotis tiene asignado P1
-export function assignWeekendIfLtotisAssigned(users) {
-    const daysInMonth = document.querySelectorAll('.shift-select[data-day]');
-
-    // Filtrar selects de viernes, sábado y domingo para el usuario ltotis
-    const weekendSelectsLtotis = Array.from(daysInMonth).filter(select => {
-        const username = select.getAttribute('data-username');
-        const dayNumber = parseInt(select.getAttribute('data-daynumber'), 10); // Número del día (0=Dom, 5=Vie, 6=Sab)
-        const value = select.value;
-
-        // Revisar si es viernes, sábado o domingo, si ltotis tiene asignación válida y no es P1
-        return username === 'ltotis' && (dayNumber === 5 || dayNumber === 6 || dayNumber === 0) &&
-               value !== '' && value !== 'ND' && value !== 'P1' && !select.disabled;
-    });
-
-    // Asignar los mismos días a mmelo si ltotis tiene asignaciones de fin de semana
-    weekendSelectsLtotis.forEach(select => {
-        const day = select.getAttribute('data-day');
-        const assignedValue = select.value;
-
-        // Seleccionar el select de mmelo para el mismo día y asignar el mismo valor
-        const mmeloSelect = document.querySelector(`.shift-select[data-username="mmelo"][data-day="${day}"]`);
-        if (mmeloSelect && mmeloSelect.value === '') { // Solo asignar si está vacío
-            mmeloSelect.value = assignedValue;
-        }
-    });
-}
-
-
 function assignShift(selects, assignmentType, isLharriagueAssignedToday, isMquirogaAssignedToday, userShiftCounts, isCardioCheck, isWeekend) {
     // Hacer shuffle del array de selects para aleatorizar el orden de asignación
     const shuffledSelects = shuffleArray(selects);

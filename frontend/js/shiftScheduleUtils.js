@@ -1,4 +1,4 @@
-import { assignIm, assignFn, assignTr, assignWeekendIfLtotisAssigned, assignSaturdayP1, assignSaturdayP2} from './shiftAssignmentsMonthly.js';
+import { assignIm, assignFn, assignTr, assignSaturdayP1, assignSaturdayP2} from './shiftAssignmentsMonthly.js';
 import { countWeekdayShifts, countWeekendShifts, countSaturdayShifts } from './shiftAssignmentsUtils.js';
 import { calculateAccumulatedShiftCounts} from './shiftCountTable.js';
 import { fetchLastDayAssignments} from './shiftLastDayAssignments.js';
