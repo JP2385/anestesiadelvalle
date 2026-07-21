@@ -1,4 +1,4 @@
-import { processAcceptedNotification, processPendingNotification, processRejectedNotification } from './notificationsUtils.js';
+import { processAcceptedNotification, processPendingNotification, processRejectedNotification, processBirthdayNotification } from './notificationsUtils.js';
 
 document.addEventListener('DOMContentLoaded', async () => {
     const notificationArea = document.getElementById('notification-area');
@@ -44,14 +44,18 @@ document.addEventListener('DOMContentLoaded', async () => {
         // Filtrar notificaciones relevantes para el usuario
         const relevantNotifications = notifications.filter(notification => {
 
-            // Lógica de filtrado
+            // Notificaciones de cumpleaños
+            if (notification.type === 'birthday' && notification.receiver.toString() === userId.toString() && notification.status === 'pending') {
+                return true;
+            }
+            // Lógica de filtrado para intercambio de vacaciones
             if (notification.status === 'accepted' && notification.receiver.toString() === userId.toString() && notification.isConfirmation) {
                 return true;
             }
             if (notification.status === 'rejected' && notification.receiver.toString() === userId.toString() && notification.isConfirmation) {
                 return true;
             }
-            if (notification.status === 'pending' && notification.receiver.toString() === userId.toString()) {
+            if (notification.status === 'pending' && notification.receiver.toString() === userId.toString() && notification.type !== 'birthday') {
                 return true;
             }
             return false;
@@ -65,7 +69,9 @@ document.addEventListener('DOMContentLoaded', async () => {
                 notificationDiv.classList.add('notification');
 
                 // Lógica para procesar diferentes tipos de notificaciones
-                if (notification.status === 'accepted' && notification.isConfirmation && notification.receiver.toString() === userId) {
+                if (notification.type === 'birthday') {
+                    processBirthdayNotification(notification, notificationDiv);
+                } else if (notification.status === 'accepted' && notification.isConfirmation && notification.receiver.toString() === userId) {
                     await processAcceptedNotification(notification, notificationDiv, apiUrl);
                 } else if (notification.status === 'rejected' && notification.isConfirmation && notification.receiver.toString() === userId) {
                     await processRejectedNotification(notification, notificationDiv, apiUrl);

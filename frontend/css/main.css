@@ -99,3 +99,24 @@ main {
     font-weight: bold;
     align-items: left;
 }
+
+.notification--birthday {
+    background-color: #fff8e1;
+    border-left: 5px solid #f9a825;
+    border-radius: 6px;
+    padding: 1rem 1.2rem;
+    margin-bottom: 0.75rem;
+}
+
+.notification--birthday__title {
+    font-size: 1.1rem;
+    font-weight: bold;
+    color: #e65100;
+    margin: 0 0 0.4rem 0;
+}
+
+.notification--birthday__message {
+    font-size: 1rem;
+    color: #333;
+    margin: 0;
+}

@@ -96,7 +96,8 @@ document.addEventListener('DOMContentLoaded', function () {
             worksInPrivateRioNegro: document.getElementById('worksInPrivateRioNegro').checked,
             worksInCmacOnly: document.getElementById('worksInCmacOnly').checked,
             doesShifts: document.getElementById('doesShifts').checked,
-            phoneNumber: document.getElementById('phoneNumber').value, // Nuevo campo agregado
+            phoneNumber: document.getElementById('phoneNumber').value,
+            birthDate: document.getElementById('birthDate').value || null,
             workSchedule: {
                 monday: document.getElementById('workSchedule-monday').value,
                 tuesday: document.getElementById('workSchedule-tuesday').value,
@@ -234,6 +235,15 @@ document.addEventListener('DOMContentLoaded', function () {
                 const user = await response.json();
                 // Cargar el número de teléfono si está disponible
                 document.getElementById('phoneNumber').value = user.phoneNumber || '';
+
+                // Cargar la fecha de nacimiento si está disponible
+                if (user.birthDate) {
+                    const date = new Date(user.birthDate);
+                    const adjusted = new Date(date.getTime() + date.getTimezoneOffset() * 60000);
+                    document.getElementById('birthDate').value = adjusted.toISOString().split('T')[0];
+                } else {
+                    document.getElementById('birthDate').value = '';
+                }
 
                 // Cargar el rol del usuario
                 document.getElementById('userRole').value = user.role || 'user';

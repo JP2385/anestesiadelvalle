@@ -60,6 +60,9 @@ const userSchema = new Schema({
         type: String,
         required: false  // Cambia a true si deseas que sea obligatorio
     },
+    birthDate: {
+        type: Date,
+    },
     doesCardio: {
         type: Boolean,
         default: false

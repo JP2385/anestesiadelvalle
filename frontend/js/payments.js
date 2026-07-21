@@ -26,7 +26,6 @@ document.addEventListener('DOMContentLoaded', async function() {
                 }
             });
             holidays = await response.json();
-            console.log("Feriados cargados para liquidaciones:", holidays);
         } catch (error) {
             console.error('Error al cargar los feriados:', error);
         }

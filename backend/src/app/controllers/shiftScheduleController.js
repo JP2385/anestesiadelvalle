@@ -40,7 +40,6 @@ const saveShiftSchedule = async (req, res) => {
 // Obtener el horario de un mes específico
 const getShiftScheduleByMonth = async (req, res) => {
     const { yearMonth } = req.params;
-    console.log("Received yearMonth parameter:", yearMonth); // Log de verificación
     try {
         const schedule = await ShiftSchedule.findOne({ month: yearMonth });
         if (!schedule) {

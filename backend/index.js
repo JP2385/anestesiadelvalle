@@ -26,6 +26,9 @@ const { getAllVacations } = require('./src/app/controllers/vacationController');
 const coverageRequestRoutes = require('./src/app/routes/coverageRequestRoutes');
 const otherLeaveRoutes = require('./src/app/routes/otherLeaveRoutes');
 const extraAssignmentRoutes = require('./src/app/routes/extraAssignmentRoutes');
+const cron = require('node-cron');
+const User = require('./src/app/models/userModel');
+const Notification = require('./src/app/models/notificationModel');
 
 const app = express();
 app.use(express.json());
@@ -42,6 +45,81 @@ app.use(cors(corsOptions));
 mongoose.connect(config.mongoUri)
     .then(() => console.log('Connected to MongoDB'))
     .catch(error => console.error('Error connecting to MongoDB:', error));
+
+// Cron job para notificaciones de cumpleaños (corre a medianoche hora Argentina)
+function isLeapYear(year) {
+    return (year % 4 === 0 && year % 100 !== 0) || year % 400 === 0;
+}
+function startOfDay(date) {
+    const d = new Date(date);
+    d.setHours(0, 0, 0, 0);
+    return d;
+}
+
+async function runBirthdayNotifications(overrideDate = null) {
+    const now = overrideDate ? new Date(overrideDate) : new Date();
+    const month = now.getMonth() + 1;
+    const day = now.getDate();
+    const isMarch1InNonLeapYear = month === 3 && day === 1 && !isLeapYear(now.getFullYear());
+
+    let query;
+    if (isMarch1InNonLeapYear) {
+        query = {
+            $expr: {
+                $or: [
+                    { $and: [{ $eq: [{ $month: '$birthDate' }, 3] }, { $eq: [{ $dayOfMonth: '$birthDate' }, 1] }] },
+                    { $and: [{ $eq: [{ $month: '$birthDate' }, 2] }, { $eq: [{ $dayOfMonth: '$birthDate' }, 29] }] }
+                ]
+            }
+        };
+    } else {
+        query = {
+            $expr: {
+                $and: [
+                    { $eq: [{ $month: '$birthDate' }, month] },
+                    { $eq: [{ $dayOfMonth: '$birthDate' }, day] }
+                ]
+            }
+        };
+    }
+
+    const birthdayUsers = await User.find({ birthDate: { $exists: true, $ne: null }, ...query });
+    if (birthdayUsers.length === 0) {
+        console.log('No hay cumpleaños hoy.');
+        return [];
+    }
+
+    const allUsers = await User.find({});
+
+    for (const birthdayUser of birthdayUsers) {
+        await Notification.deleteMany({
+            type: 'birthday',
+            sender: birthdayUser._id,
+            createdAt: { $gte: startOfDay(now) }
+        });
+
+        for (const user of allUsers) {
+            const isBirthdayPerson = user._id.toString() === birthdayUser._id.toString();
+            const message = isBirthdayPerson
+                ? 'Muy feliz cumpleaños! Que tengas un hermoso día!'
+                : `Hoy es el cumpleaños de ${birthdayUser.username}! No te olvidés de saludarlo!`;
+
+            const notification = new Notification({
+                type: 'birthday',
+                sender: birthdayUser._id,
+                receiver: user._id,
+                message,
+                status: 'pending'
+            });
+            await notification.save();
+        }
+    }
+
+    console.log(`Notificaciones de cumpleaños generadas para ${birthdayUsers.map(u => u.username).join(', ')}`);
+    return birthdayUsers.map(u => u.username);
+}
+
+cron.schedule('0 0 * * *', () => runBirthdayNotifications().catch(err => console.error('Error en cron de cumpleaños:', err)), { timezone: 'America/Argentina/Buenos_Aires' });
 
 // Definición de rutas
 app.use('/auth', authRoutes);

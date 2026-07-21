@@ -1,0 +1,8 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(xargs grep -l \"PUT.*user\\\\|router\\\\.put\")",
+      "Bash(xargs grep -l \"cron\\\\|schedule\\\\|job\\\\|interval\")"
+    ]
+  }
+}

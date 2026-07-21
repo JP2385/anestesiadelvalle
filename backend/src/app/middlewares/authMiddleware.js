@@ -35,7 +35,6 @@ module.exports = async (req, res, next) => {
                 role: user.role || 'user'  // Incluir el rol (por defecto 'user')
             };
 
-            console.log('Usuario autenticado:', { id: req.user._id, role: req.user.role });
             next();
         } catch (error) {
             console.error('Error obteniendo usuario:', error);

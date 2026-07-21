@@ -24,7 +24,8 @@
       "Bash(grep -r \"authMiddleware\\\\|requireAdmin\\\\|requirePermission\" /c/Users/jpsga/anestesiadelvalle/backend/src/app/routes/*.js)",
       "Bash(grep -n \"authMiddleware\\\\|requireAdmin\" /c/Users/jpsga/anestesiadelvalle/backend/src/app/routes/*.js)",
       "Bash(ls c:/Users/jpsga/anestesiadelvalle/frontend/*.html)",
-      "Bash(grep -v \".js:.*//.*admin\")"
+      "Bash(grep -v \".js:.*//.*admin\")",
+      "Bash(xargs grep -l \"Birthday\\\\|birthday\")"
     ],
     "deny": [],
     "ask": []

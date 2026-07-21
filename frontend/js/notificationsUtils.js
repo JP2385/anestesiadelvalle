@@ -209,6 +209,24 @@ export async function processPendingNotification(notification, notificationDiv, 
     notificationDiv.appendChild(rejectButton);
 }
 
+// Procesar notificaciones de cumpleaños
+export function processBirthdayNotification(notification, notificationDiv) {
+    notificationDiv.classList.add('notification--birthday');
+
+    const isBirthday = notification.sender.toString() === notification.receiver.toString();
+
+    if (isBirthday) {
+        notificationDiv.innerHTML = `
+            <p class="notification--birthday__title">🎂 ${notification.message}</p>
+        `;
+    } else {
+        notificationDiv.innerHTML = `
+            <p class="notification--birthday__title">🎂 Alerta de Cumpleaños</p>
+            <p class="notification--birthday__message">${notification.message}</p>
+        `;
+    }
+}
+
 // Función para contar días hábiles entre dos fechas
 function countBusinessDays(startDate, endDate) {
     let count = 0;

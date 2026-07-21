@@ -206,7 +206,6 @@ async function initializePermissions() {
     try {
         await fetchUserPermissions();
         addRoleBadge();
-        console.log('✓ Sistema de permisos inicializado', { role: userRole });
     } catch (error) {
         console.error('Error inicializando permisos:', error);
     }
