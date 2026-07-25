@@ -58,6 +58,12 @@ function startOfDay(date) {
 
 async function runBirthdayNotifications(overrideDate = null) {
     const now = overrideDate ? new Date(overrideDate) : new Date();
+
+    // Eliminar notificaciones de cumpleaños de días anteriores
+    await Notification.deleteMany({
+        type: 'birthday',
+        createdAt: { $lt: startOfDay(now) }
+    });
     const month = now.getMonth() + 1;
     const day = now.getDate();
     const isMarch1InNonLeapYear = month === 3 && day === 1 && !isLeapYear(now.getFullYear());
