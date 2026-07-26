@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Conformación del Grupo - Anestesiólogos del Valle</title>
+    <link rel="icon" type="image/png" href="images/logo/logo64x64.png">
+    <link rel="stylesheet" href="css/base.css">
+    <link rel="stylesheet" href="css/header.css">
+    <link rel="stylesheet" href="css/login.css">
+    <link rel="stylesheet" href="css/media.css">
+    <link rel="stylesheet" href="css/nav.css">
+    <link rel="stylesheet" href="css/main.css">
+    <link rel="stylesheet" href="css/spinner.css">
+    <link rel="stylesheet" href="css/toast.css">
+    <link rel="stylesheet" href="css/admin.css">
+    <script defer src="js/bundle.js"></script>
+    <script type="module" defer src="js/groupPeriods.js"></script>
+    <script defer src="js/spinner.js"></script>
+    <script type="module">
+        import { initializePermissions, redirectIfNoRole } from './js/authUtils.js';
+
+        document.addEventListener('DOMContentLoaded', async function() {
+            await initializePermissions();
+            redirectIfNoRole('/index.html', 'admin');
+        });
+    </script>
+</head>
+<body>
+    <div class="spinner" id="spinner"></div>
+    <header>
+        <a href="index.html" class="app-logo-link">
+            <img src="images/logo/logo.png" alt="Logo Anestesiólogos del Valle" class="app-logo">
+        </a>
+        <h1>Anestesiólogos del Valle</h1>
+        <a href="index.html" class="back-to-main-menu" title="Volver al menú principal">
+            <img src="images/icons/back-icon.svg" alt="Volver" class="back-icon">
+        </a>
+    </header>
+    <main class="form-container">
+        <h2>Conformación del Grupo</h2>
+
+        <!-- Botón nuevo período + importar/exportar -->
+        <div class="abm-section">
+            <button id="btn-nuevo-periodo" class="main-menu-button">+ Nuevo Período</button>
+            <div class="import-export-bar">
+                <button type="button" id="btn-descargar-plantilla" class="btn-import-export">⬇ Descargar plantilla CSV</button>
+                <label class="btn-import-export btn-import-label" for="input-importar-csv">⬆ Importar CSV</label>
+                <input type="file" id="input-importar-csv" accept=".csv" style="display:none;">
+            </div>
+        </div>
+
+        <!-- Cards de períodos -->
+        <div id="periods-container">
+            <!-- Se llena dinámicamente -->
+        </div>
+
+        <!-- Modal nuevo período -->
+        <div id="new-period-modal" class="modal" style="display: none;">
+            <div class="modal-content">
+                <span class="close" id="close-modal">&times;</span>
+                <h3>Nuevo Período</h3>
+                <form id="new-period-form">
+                    <div class="admin-input-group">
+                        <label for="new-fecha-inicio">Fecha de inicio:</label>
+                        <input type="date" id="new-fecha-inicio" name="fechaInicio" required>
+                    </div>
+                    <div class="admin-input-group">
+                        <label for="new-motivo">Motivo del cambio:</label>
+                        <input type="text" id="new-motivo" name="motivo" required placeholder="Ej: Ingreso de nuevo socio">
+                    </div>
+                    <div class="admin-input-group">
+                        <label>Participaciones por socio:</label>
+                        <div id="participaciones-container">
+                            <!-- Se llena dinámicamente con los usuarios -->
+                        </div>
+                        <div id="total-porcentaje-display" class="total-display total-incompleto">
+                            Total: <span id="total-porcentaje">0</span>% (debe ser 100%)
+                        </div>
+                    </div>
+                    <button type="submit" id="btn-guardar-periodo" class="main-menu-button" disabled>Guardar Período</button>
+                </form>
+            </div>
+        </div>
+    </main>
+
+    <style>
+        .abm-section {
+            margin-bottom: 24px;
+            padding: 16px 20px;
+            background-color: #f8f9fa;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            flex-wrap: wrap;
+        }
+
+        /* Cards de períodos */
+        #periods-container {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            margin-top: 8px;
+        }
+
+        .period-card {
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            overflow: hidden;
+            border: 1px solid #e0e0e0;
+        }
+
+        .period-card.es-actual {
+            border-color: #1a7a32;
+            box-shadow: 0 2px 12px rgba(26,122,50,0.15);
+        }
+
+        .period-card-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 14px 20px;
+            background-color: #f0f4f8;
+            border-bottom: 1px solid #e0e0e0;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .period-card.es-actual .period-card-header {
+            background-color: #e8f5e9;
+            border-bottom-color: #c8e6c9;
+        }
+
+        .period-fechas {
+            font-size: 15px;
+            font-weight: 700;
+            color: #333;
+        }
+
+        .period-motivo {
+            font-size: 13px;
+            color: #666;
+            font-style: italic;
+        }
+
+        .period-header-right {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .badge-actual {
+            background-color: #1a7a32;
+            color: white;
+            font-size: 11px;
+            font-weight: 600;
+            padding: 3px 10px;
+            border-radius: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .period-card-body {
+            padding: 16px 20px;
+        }
+
+        .participaciones-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+            gap: 8px;
+        }
+
+        .participacion-chip {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background-color: #f8f9fa;
+            border: 1px solid #e9ecef;
+            border-radius: 6px;
+            padding: 6px 10px;
+            font-size: 13px;
+        }
+
+        .participacion-chip .nombre {
+            color: #444;
+            font-weight: 500;
+        }
+
+        .participacion-chip .porcentaje {
+            color: #007bff;
+            font-weight: 700;
+            margin-left: 8px;
+            white-space: nowrap;
+        }
+
+        .participacion-chip-total {
+            background-color: #e8f5e9;
+            border-color: #a5d6a7;
+            font-weight: 700;
+            margin-top: 4px;
+            grid-column: 1 / -1;
+        }
+
+        .participacion-chip-total.pct-error {
+            background-color: #ffebee;
+            border-color: #ef9a9a;
+        }
+
+        .participacion-chip-total .porcentaje {
+            color: #2e7d32 !important;
+        }
+
+        .participacion-chip-total.pct-error .porcentaje {
+            color: #c62828 !important;
+        }
+
+        /* Formulario de participaciones en modal */
+        .participaciones-form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+            margin-top: 8px;
+        }
+
+        .participacion-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 8px;
+            background: #f8f9fa;
+            border: 1px solid #e9ecef;
+            border-radius: 6px;
+            padding: 6px 10px;
+        }
+
+        .participacion-row label {
+            font-size: 13px;
+            font-weight: 500;
+            color: #444;
+            flex: 1;
+        }
+
+        .participacion-row input[type="number"] {
+            width: 64px;
+            padding: 4px 6px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 13px;
+            text-align: right;
+        }
+
+        .participacion-row .pct-symbol {
+            font-size: 12px;
+            color: #888;
+        }
+
+        .total-display {
+            margin-top: 12px;
+            padding: 8px 12px;
+            border-radius: 6px;
+            font-weight: bold;
+            font-size: 14px;
+            text-align: center;
+        }
+
+        .total-completo {
+            background-color: #d4edda;
+            color: #155724;
+        }
+
+        .total-incompleto {
+            background-color: #f8d7da;
+            color: #721c24;
+        }
+
+        .import-export-bar {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .btn-import-export {
+            background-color: #e8f0fe;
+            color: #1a56db;
+            border: 1px solid #b4ccfb;
+            border-radius: 6px;
+            padding: 6px 14px;
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            white-space: nowrap;
+        }
+
+        .btn-import-export:hover {
+            background-color: #c9d9fc;
+        }
+
+        .btn-import-label {
+            display: inline-block;
+        }
+
+        .delete-btn {
+            background-color: #dc3545;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            padding: 5px 12px;
+            font-size: 12px;
+            cursor: pointer;
+        }
+
+        .delete-btn:hover {
+            opacity: 0.85;
+        }
+
+        /* Modal styles */
+        .modal {
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0,0,0,0.4);
+        }
+
+        .modal-content {
+            background-color: #fefefe;
+            margin: 3% auto;
+            padding: 24px;
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            width: 90%;
+            max-width: 700px;
+        }
+
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+            line-height: 1;
+        }
+
+        .close:hover { color: #333; }
+    </style>
+</body>
+</html>

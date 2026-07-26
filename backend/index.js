@@ -26,6 +26,8 @@ const { getAllVacations } = require('./src/app/controllers/vacationController');
 const coverageRequestRoutes = require('./src/app/routes/coverageRequestRoutes');
 const otherLeaveRoutes = require('./src/app/routes/otherLeaveRoutes');
 const extraAssignmentRoutes = require('./src/app/routes/extraAssignmentRoutes');
+const groupPeriodRoutes = require('./src/app/routes/groupPeriodRoutes');
+const liquidacionRoutes = require('./src/app/routes/liquidacionRoutes');
 const cron = require('node-cron');
 const User = require('./src/app/models/userModel');
 const Notification = require('./src/app/models/notificationModel');
@@ -161,6 +163,9 @@ app.use('/work-sites', workSiteRoutes);
 
 app.use('/extra-assignments', extraAssignmentRoutes);
 
+app.use('/group-periods', groupPeriodRoutes);
+app.use('/liquidaciones', liquidacionRoutes);
+
 // Manejador de errores para rutas API no encontradas
 app.use('/auth/*', (req, res) => {
     res.status(404).json({ message: 'Ruta de autenticación no encontrada' });
@@ -204,6 +209,10 @@ app.use('/work-sites/*', (req, res) => {
 
 app.use('/extra-assignments/*', (req, res) => {
     res.status(404).json({ message: 'Ruta de asignaciones extra no encontrada' });
+});
+
+app.use('/group-periods/*', (req, res) => {
+    res.status(404).json({ message: 'Ruta de períodos grupales no encontrada' });
 });
 
 // Servir archivos estáticos del frontend

@@ -1,0 +1,4223 @@
+[{
+  "_id": {
+    "$oid": "66849bac60db6c808e86bcf4"
+  },
+  "username": "lespinosa",
+  "email": "luisan1997@gmail.com",
+  "password": "$2b$10$Ji2y.qnMzo7pTyrhgu9.y.u9Y4dwJsbpYOGFjJLJFJ5aMDGSRKYhq",
+  "__v": 0,
+  "doesCardio": false,
+  "doesPediatrics": true,
+  "doesRNM": true,
+  "vacations": [
+    {
+      "startDate": {
+        "$date": "2026-04-25T00:00:00.000Z"
+      },
+      "endDate": {
+        "$date": "2026-05-10T00:00:00.000Z"
+      },
+      "_id": {
+        "$oid": "6a5fc7c6b5645ad5b5a7f95b"
+      }
+    },
+    {
+      "startDate": {
+        "$date": "2026-03-28T00:00:00.000Z"
+      },
+      "endDate": {
+        "$date": "2026-04-12T00:00:00.000Z"
+      },
+      "_id": {
+        "$oid": "6a5fc7c6b5645ad5b5a7f95c"
+      }
+    },
+    {
+      "startDate": {
+        "$date": "2026-03-14T00:00:00.000Z"
+      },
+      "endDate": {
+        "$date": "2026-03-29T00:00:00.000Z"
+      },
+      "_id": {
+        "$oid": "6a5fc7c6b5645ad5b5a7f95d"
+      }
+    },
+    {
+      "startDate": {
+        "$date": "2026-02-28T00:00:00.000Z"
+      },
+      "endDate": {
+        "$date": "2026-03-15T00:00:00.000Z"
+      },
+      "_id": {
+        "$oid": "6a5fc7c6b5645ad5b5a7f95e"
+      }
+    },
+    {
+      "startDate": {
+        "$date": "2026-01-17T00:00:00.000Z"
+      },
+      "endDate": {
+        "$date": "2026-02-01T00:00:00.000Z"
+      },
+      "_id": {
+        "$oid": "6a5fc7c6b5645ad5b5a7f95f"
+      }
+    },
+    {
+      "startDate": {
+        "$date": "2025-10-04T00:00:00.000Z"
+      },
+      "endDate": {
+        "$date": "2025-10-19T00:00:00.000Z"
+      },
+      "_id": {
+        "$oid": "6a5fc7c6b5645ad5b5a7f960"
+      }
+    },
+    {
+      "startDate": {
+        "$date": "2025-07-12T00:00:00.000Z"
+      },
+      "endDate": {
+        "$date": "2025-07-27T00:00:00.000Z"
+      },
+      "_id": {
+        "$oid": "6a5fc7c6b5645ad5b5a7f961"
+      }
+    },
+    {
+      "startDate": {
+        "$date": "2025-03-22T00:00:00.000Z"
+      },
+      "endDate": {
+        "$date": "2025-04-06T00:00:00.000Z"
+      },
+      "_id": {
+        "$oid": "6a5fc7c6b5645ad5b5a7f962"
+      }
+    },
+    {
+      "startDate": {
+        "$date": "2024-12-28T00:00:00.000Z"
+      },
+      "endDate": {
+        "$date": "2025-01-12T00:00:00.000Z"
+      },
+      "_id": {
+        "$oid": "6a5fc7c6b5645ad5b5a7f963"
+      }
+    },
+    {
+      "startDate": {
+        "$date": "2024-11-02T00:00:00.000Z"
+      },
+      "endDate": {
+        "$date": "2024-11-17T00:00:00.000Z"
+      },
+      "_id": {
+        "$oid": "6a5fc7c6b5645ad5b5a7f964"
+      }
+    }
+  ],
+  "workSchedule": {
+    "monday": "Variable",
+    "tuesday": "No trabaja",
+    "wednesday": "Variable",
+    "thursday": "No trabaja",
+    "friday": "Mañana"
+  },
+  "worksInPrivateNeuquen": false,
+  "worksInPrivateRioNegro": true,
+  "worksInPublicNeuquen": true,
+  "worksInPublicRioNegro": false,
+  "worksInCmacOnly": false,
+  "beginningDate": {
+    "$date": "2022-10-01T00:00:00.000Z"
+  },
+  "doesShifts": false,
+  "phoneNumber": "2996373446",
+  "otherLeaves": [
+    {
+      "type": "Fiestas",
+      "startDate": {
+        "$date": "2025-12-27T00:00:00.000Z"
+      },
+      "endDate": {
+        "$date": "2026-01-02T00:00:00.000Z"
+      },
+      "_id": {
+        "$oid": "6a5fc7c6b5645ad5b5a7f965"
+      }
+    }
+  ],
+  "defaultAssignments": {
+    "useAlternatingWeeks": true,
+    "oddWeeks": {
+      "monday": [],
+      "tuesday": [],
+      "wednesday": [],
+      "thursday": [],
+      "friday": []
+    },
+    "evenWeeks": {
+      "monday": [],
+      "tuesday": [],
+      "wednesday": [],
+      "thursday": [],
+      "friday": []
+    }
+  },
+  "birthDate": {
+    "$date": {
+      "$numberLong": "-398044800000"
+    }
+  }
+},
+{
+  "_id": {
+    "$oid": "66849bae60db6c808e86bcf7"
+  },
+  "username": "ggudiño",
+  "email": "gagudino@hotmail.com.ar",
+  "password": "$2b$10$2SiSM0rNlIY/QGLzfBU4q.5XKg3by/n/g0w6Re5mdF8L5qDc3K2me",
+  "__v": 2,
+  "doesCardio": false,
+  "doesPediatrics": true,
+  "doesRNM": true,
+  "vacations": [
+    {
+      "startDate": {
+        "$date": "2027-01-02T00:00:00.000Z"
+      },
+      "endDate": {
+        "$date": "2027-01-17T00:00:00.000Z"
+      },
+      "_id": {
+        "$oid": "6a5fc26cb5645ad5b5a7e530"
+      }
+    },
+    {
+      "startDate": {
+        "$date": "2026-09-26T00:00:00.000Z"
+      },
+      "endDate": {
+        "$date": "2026-10-04T00:00:00.000Z"
+      },
+      "_id": {
+        "$oid": "6a5fc26cb5645ad5b5a7e531"
+      }
+    },
+    {
+      "startDate": {
+        "$date": "2026-08-15T00:00:00.000Z"
+      },
+      "endDate": {
+        "$date": "2026-08-23T00:00:00.000Z"
+      },
+      "_id": {
+        "$oid": "6a5fc26cb5645ad5b5a7e532"
+      }
+    },
+    {
+      "startDate": {
+        "$date": "2026-06-06T00:00:00.000Z"
+      },
+      "endDate": {
+        "$date": "2026-06-21T00:00:00.000Z"
+      },
+      "_id": {
+        "$oid": "6a5fc26cb5645ad5b5a7e533"
+      }
+    },
+    {
+      "startDate": {
+        "$date": "2026-05-23T00:00:00.000Z"
+      },
+      "endDate": {
+        "$date": "2026-06-07T00:00:00.000Z"
+      },
+      "_id": {
+        "$oid": "6a5fc26cb5645ad5b5a7e534"
+      }
+    },
+    {
+      "startDate": {
+        "$date": "2026-01-31T00:00:00.000Z"
+      },
+      "endDate": {
+        "$date": "2026-02-15T00:00:00.000Z"
+      },
+      "_id": {
+        "$oid": "6a5fc26cb5645ad5b5a7e535"
+      }
+    },
+    {
+      "startDate": {
+        "$date": "2025-11-15T00:00:00.000Z"
+      },
+      "endDate": {
+        "$date": "2025-11-30T00:00:00.000Z"
+      },
+      "_id": {
+        "$oid": "6a5fc26cb5645ad5b5a7e536"
+      }
+    },
+    {
+      "startDate": {
+        "$date": "2025-09-06T00:00:00.000Z"
+      },
+      "endDate": {
+        "$date": "2025-09-21T00:00:00.000Z"
+      },
+      "_id": {
+        "$oid": "6a5fc26cb5645ad5b5a7e537"
+      }
+    },
+    {
+      "startDate": {
+        "$date": "2025-05-17T00:00:00.000Z"
+      },
+      "endDate": {
+        "$date": "2025-06-01T00:00:00.000Z"
+      },
+      "_id": {
+        "$oid": "6a5fc26cb5645ad5b5a7e538"
+      }
+    },
+    {
+      "startDate": {
+        "$date": "2025-02-22T00:00:00.000Z"
+      },
+      "endDate": {
+        "$date": "2025-03-09T00:00:00.000Z"
+      },
+      "_id": {
+        "$oid": "6a5fc26cb5645ad5b5a7e539"
+      }
+    },
+    {
+      "startDate": {
+        "$date": "2024-12-14T00:00:00.000Z"
+      },
+      "endDate": {
+        "$date": "2024-12-29T00:00:00.000Z"
+      },
+      "_id": {
+        "$oid": "6a5fc26cb5645ad5b5a7e53a"
+      }
+    }
+  ],
+  "workSchedule": {
+    "monday": "Tarde",
+    "tuesday": "Mañana",
+    "wednesday": "Variable",
+    "thursday": "Mañana",
+    "friday": "Variable"
+  },
+  "worksInPrivateNeuquen": true,
+  "worksInPrivateRioNegro": false,
+  "worksInPublicNeuquen": false,
+  "worksInPublicRioNegro": false,
+  "worksInCmacOnly": false,
+  "isVerified": false,
+  "beginningDate": {
+    "$date": "2016-12-01T00:00:00.000Z"
+  },
+  "doesShifts": false,
+  "phoneNumber": "2994204490",
+  "otherLeaves": [
+    {
+      "type": "Enfermedad fliar",
+      "startDate": {
+        "$date": "2026-04-21T00:00:00.000Z"
+      },
+      "endDate": {
+        "$date": "2026-04-25T00:00:00.000Z"
+      },
+      "_id": {
+        "$oid": "6a5fc26cb5645ad5b5a7e53b"
+      }
+    },
+    {
+      "type": "Fiestas",
+      "startDate": {
+        "$date": "2025-12-23T00:00:00.000Z"
+      },
+      "endDate": {
+        "$date": "2025-12-26T00:00:00.000Z"
+      },
+      "_id": {
+        "$oid": "6a5fc26cb5645ad5b5a7e53c"
+      }
+    }
+  ],
+  "defaultAssignments": {
+    "useAlternatingWeeks": true,
+    "oddWeeks": {
+      "monday": [],
+      "tuesday": [],
+      "wednesday": [],
+      "thursday": [],
+      "friday": []
+    },
+    "evenWeeks": {
+      "monday": [],
+      "tuesday": [],
+      "wednesday": [],
+      "thursday": [],
+      "friday": []
+    }
+  },
+  "role": "user",
+  "birthDate": {
+    "$date": {
+      "$numberLong": "-81734400000"
+    }
+  }
+},
+{
+  "_id": {
+    "$oid": "66849baf60db6c808e86bcfa"
+  },
+  "username": "mmelo",
+  "email": "mauromelo20@hotmail.com",
+  "password": "$2b$10$NBi9apNS4BP49yH.UfOQ/.6Ym2VXB4aq.PIotjQOsgkNuz107r9aW",
+  "__v": 0,
+  "doesCardio": true,
+  "doesPediatrics": true,
+  "doesRNM": true,
+  "vacations": [
+    {
+      "startDate": {
+        "$date": "2027-01-16T00:00:00.000Z"
+      },
+      "endDate": {
+        "$date": "2027-01-31T00:00:00.000Z"
+      },
+      "_id": {
+        "$oid": "6a5fccd7b5645ad5b5a80190"
+      }
+    },
+    {
+      "startDate": {
+        "$date": "2026-10-24T00:00:00.000Z"
+      },
+      "endDate": {
+        "$date": "2026-11-08T00:00:00.000Z"
+      },
+      "_id": {
+        "$oid": "6a5fccd7b5645ad5b5a80191"
+      }
+    },
+    {
+      "startDate": {
+        "$date": "2026-07-04T00:00:00.000Z"
+      },
+      "endDate": {
+        "$date": "2026-07-19T00:00:00.000Z"
+      },
+      "_id": {
+        "$oid": "6a5fccd7b5645ad5b5a80192"
+      }
+    },
+    {
+      "startDate": {
+        "$date": "2026-04-11T00:00:00.000Z"
+      },
+      "endDate": {
+        "$date": "2026-04-26T00:00:00.000Z"
+      },
+      "_id": {
+        "$oid": "6a5fccd7b5645ad5b5a80193"
+      }
+    },
+    {
+      "startDate": {
+        "$date": "2026-01-03T00:00:00.000Z"
+      },
+      "endDate": {
+        "$date": "2026-01-18T00:00:00.000Z"
+      },
+      "_id": {
+        "$oid": "6a5fccd7b5645ad5b5a80194"
+      }
+    },
+    {
+      "startDate": {
+        "$date": "2025-09-20T00:00:00.000Z"
+      },
+      "endDate": {
+        "$date": "2025-10-05T00:00:00.000Z"
+      },
+      "_id": {
+        "$oid": "6a5fccd7b5645ad5b5a80195"
+      }
+    },
+    {
+      "startDate": {
+        "$date": "2025-06-28T00:00:00.000Z"
+      },
+      "endDate": {
+        "$date": "2025-07-13T00:00:00.000Z"
+      },
+      "_id": {
+        "$oid": "6a5fccd7b5645ad5b5a80196"
+      }
+    },
+    {
+      "startDate": {
+        "$date": "2025-04-19T00:00:00.000Z"
+      },
+      "endDate": {
+        "$date": "2025-05-04T00:00:00.000Z"
+      },
+      "_id": {
+        "$oid": "6a5fccd7b5645ad5b5a80197"
+      }
+    },
+    {
+      "startDate": {
+        "$date": "2025-01-11T00:00:00.000Z"
+      },
+      "endDate": {
+        "$date": "2025-01-26T00:00:00.000Z"
+      },
+      "_id": {
+        "$oid": "6a5fccd7b5645ad5b5a80198"
+      }
+    },
+    {
+      "startDate": {
+        "$date": "2024-11-16T00:00:00.000Z"
+      },
+      "endDate": {
+        "$date": "2024-11-24T00:00:00.000Z"
+      },
+      "_id": {
+        "$oid": "6a5fccd7b5645ad5b5a80199"
+      }
+    },
+    {
+      "startDate": {
+        "$date": "2024-09-25T00:00:00.000Z"
+      },
+      "endDate": {
+        "$date": "2024-09-26T00:00:00.000Z"
+      },
+      "_id": {
+        "$oid": "6a5fccd7b5645ad5b5a8019a"
+      }
+    },
+    {
+      "startDate": {
+        "$date": "2024-09-07T00:00:00.000Z"
+      },
+      "endDate": {
+        "$date": "2024-09-22T00:00:00.000Z"
+      },
+      "_id": {
+        "$oid": "6a5fccd7b5645ad5b5a8019b"
+      }
+    }
+  ],
+  "workSchedule": {
+    "monday": "Tarde",
+    "tuesday": "Mañana",
+    "wednesday": "Variable",
+    "thursday": "Mañana",
+    "friday": "Variable"
+  },
+  "worksInPrivateNeuquen": false,
+  "worksInPrivateRioNegro": true,
+  "worksInPublicNeuquen": false,
+  "worksInPublicRioNegro": true,
+  "worksInCmacOnly": false,
+  "beginningDate": {
+    "$date": "2016-12-01T00:00:00.000Z"
+  },
+  "doesShifts": true,
+  "phoneNumber": "2995808480",
+  "otherLeaves": [
+    {
+      "type": "Fiestas",
+      "startDate": {
+        "$date": "2025-12-27T00:00:00.000Z"
+      },
+      "endDate": {
+        "$date": "2026-01-02T00:00:00.000Z"
+      },
+      "_id": {
+        "$oid": "6a5fccd7b5645ad5b5a8019c"
+      }
+    }
+  ],
+  "defaultAssignments": {
+    "useAlternatingWeeks": true,
+    "oddWeeks": {
+      "monday": [],
+      "tuesday": [],
+      "wednesday": [],
+      "thursday": [],
+      "friday": []
+    },
+    "evenWeeks": {
+      "monday": [],
+      "tuesday": [],
+      "wednesday": [],
+      "thursday": [],
+      "friday": []
+    }
+  },
+  "birthDate": {
+    "$date": "1979-06-20T00:00:00.000Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "66849bb060db6c808e86bcfd"
+  },
+  "username": "lalvarez",
+  "email": "lucas.alvarez5002@gmail.com",
+  "password": "$2b$10$6Vj0qtLYxWmrpqdDnDHUcOtgD8keOAnrR2wRr7y0Te81.aNsPGSWK",
+  "__v": 1,
+  "doesCardio": true,
+  "doesPediatrics": true,
+  "doesRNM": true,
+  "vacations": [
+    {
+      "startDate": {
+        "$date": "2027-02-13T00:00:00.000Z"
+      },
+      "endDate": {
+        "$date": "2027-02-28T00:00:00.000Z"
+      },
+      "_id": {
+        "$oid": "6a5fcc12b5645ad5b5a7fec9"
+      }
+    },
+    {
+      "startDate": {
+        "$date": "2026-11-21T00:00:00.000Z"
+      },
+      "endDate": {
+        "$date": "2026-12-06T00:00:00.000Z"
+      },
+      "_id": {
+        "$oid": "6a5fcc12b5645ad5b5a7feca"
+      }
+    },
+    {
+      "startDate": {
+        "$date": "2026-09-12T00:00:00.000Z"
+      },
+      "endDate": {
+        "$date": "2026-09-20T00:00:00.000Z"
+      },
+      "_id": {
+        "$oid": "6a5fcc12b5645ad5b5a7fecb"
+      }
+    },
+    {
+      "startDate": {
+        "$date": "2026-06-20T00:00:00.000Z"
+      },
+      "endDate": {
+        "$date": "2026-07-05T00:00:00.000Z"
+      },
+      "_id": {
+        "$oid": "6a5fcc12b5645ad5b5a7fecc"
+      }
+    },
+    {
+      "startDate": {
+        "$date": "2026-05-30T00:00:00.000Z"
+      },
+      "endDate": {
+        "$date": "2026-06-07T00:00:00.000Z"
+      },
+      "_id": {
+        "$oid": "6a5fcc12b5645ad5b5a7fecd"
+      }
+    },
+    {
+      "startDate": {
+        "$date": "2026-01-31T00:00:00.000Z"
+      },
+      "endDate": {
+        "$date": "2026-02-15T00:00:00.000Z"
+      },
+      "_id": {
+        "$oid": "6a5fcc12b5645ad5b5a7fece"
+      }
+    },
+    {
+      "startDate": {
+        "$date": "2025-11-01T00:00:00.000Z"
+      },
+      "endDate": {
+        "$date": "2025-11-16T00:00:00.000Z"
+      },
+      "_id": {
+        "$oid": "6a5fcc12b5645ad5b5a7fecf"
+      }
+    },
+    {
+      "startDate": {
+        "$date": "2025-08-18T00:00:00.000Z"
+      },
+      "endDate": {
+        "$date": "2025-08-24T00:00:00.000Z"
+      },
+      "_id": {
+        "$oid": "6a5fcc12b5645ad5b5a7fed0"
+      }
+    },
+    {
+      "startDate": {
+        "$date": "2025-08-09T00:00:00.000Z"
+      },
+      "endDate": {
+        "$date": "2025-08-14T00:00:00.000Z"
+      },
+      "_id": {
+        "$oid": "6a5fcc12b5645ad5b5a7fed1"
+      }
+    },
+    {
+      "startDate": {
+        "$date": "2025-05-17T00:00:00.000Z"
+      },
+      "endDate": {
+        "$date": "2025-06-01T00:00:00.000Z"
+      },
+      "_id": {
+        "$oid": "6a5fcc12b5645ad5b5a7fed2"
+      }
+    },
+    {
+      "startDate": {
+        "$date": "2025-02-22T00:00:00.000Z"
+      },
+      "endDate": {
+        "$date": "2025-03-09T00:00:00.000Z"
+      },
+      "_id": {
+        "$oid": "6a5fcc12b5645ad5b5a7fed3"
+      }
+    },
+    {
+      "startDate": {
+        "$date": "2024-10-05T00:00:00.000Z"
+      },
+      "endDate": {
+        "$date": "2024-10-20T00:00:00.000Z"
+      },
+      "_id": {
+        "$oid": "6a5fcc12b5645ad5b5a7fed4"
+      }
+    }
+  ],
+  "workSchedule": {
+    "monday": "Tarde",
+    "tuesday": "Variable",
+    "wednesday": "Mañana",
+    "thursday": "Mañana",
+    "friday": "Variable"
+  },
+  "worksInPrivateNeuquen": false,
+  "worksInPrivateRioNegro": true,
+  "worksInPublicNeuquen": false,
+  "worksInPublicRioNegro": true,
+  "worksInCmacOnly": false,
+  "isVerified": false,
+  "beginningDate": "2022-03-01T00:00:00.000+00:00",
+  "doesShifts": true,
+  "phoneNumber": "2994642120",
+  "otherLeaves": [
+    {
+      "type": "Fiestas",
+      "startDate": {
+        "$date": "2025-12-20T00:00:00.000Z"
+      },
+      "endDate": {
+        "$date": "2025-12-26T00:00:00.000Z"
+      },
+      "_id": {
+        "$oid": "6a5fcc12b5645ad5b5a7fed5"
+      }
+    }
+  ],
+  "defaultAssignments": {
+    "useAlternatingWeeks": true,
+    "oddWeeks": {
+      "monday": [
+        {
+          "workSiteId": {
+            "$oid": "69596a25b2b3c69cdd69958d"
+          },
+          "regime": "vespertino",
+          "_id": {
+            "$oid": "697f48b5f8f250cefa0445fc"
+          }
+        }
+      ],
+      "tuesday": [],
+      "wednesday": [],
+      "thursday": [],
+      "friday": []
+    },
+    "evenWeeks": {
+      "monday": [],
+      "tuesday": [],
+      "wednesday": [],
+      "thursday": [],
+      "friday": []
+    }
+  },
+  "role": "user",
+  "birthDate": {
+    "$date": "1992-05-20T00:00:00.000Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "66849bb560db6c808e86bd00"
+  },
+  "username": "lgarcia",
+  "email": "leandrogn1307@gmail.com",
+  "password": "$2b$10$S.7LLkMICBMt077v1o2qUuNOt9za0HzCcBnZ.B9txZ4L4F9uqw4Y2",
+  "__v": 2,
+  "doesCardio": true,
+  "doesPediatrics": true,
+  "doesRNM": true,
+  "vacations": [
+    {
+      "startDate": {
+        "$date": "2027-01-30T00:00:00.000Z"
+      },
+      "endDate": {
+        "$date": "2027-02-14T00:00:00.000Z"
+      },
+      "_id": {
+        "$oid": "6a5fc2cab5645ad5b5a7eb88"
+      }
+    },
+    {
+      "startDate": {
+        "$date": "2026-11-07T00:00:00.000Z"
+      },
+      "endDate": {
+        "$date": "2026-11-22T00:00:00.000Z"
+      },
+      "_id": {
+        "$oid": "6a5fc2cab5645ad5b5a7eb89"
+      }
+    },
+    {
+      "startDate": {
+        "$date": "2026-08-15T00:00:00.000Z"
+      },
+      "endDate": {
+        "$date": "2026-08-30T00:00:00.000Z"
+      },
+      "_id": {
+        "$oid": "6a5fc2cab5645ad5b5a7eb8a"
+      }
+    },
+    {
+      "startDate": {
+        "$date": "2026-04-25T00:00:00.000Z"
+      },
+      "endDate": {
+        "$date": "2026-05-10T00:00:00.000Z"
+      },
+      "_id": {
+        "$oid": "6a5fc2cab5645ad5b5a7eb8b"
+      }
+    },
+    {
+      "startDate": {
+        "$date": "2026-01-17T00:00:00.000Z"
+      },
+      "endDate": {
+        "$date": "2026-02-01T00:00:00.000Z"
+      },
+      "_id": {
+        "$oid": "6a5fc2cab5645ad5b5a7eb8c"
+      }
+    },
+    {
+      "startDate": {
+        "$date": "2025-11-29T00:00:00.000Z"
+      },
+      "endDate": {
+        "$date": "2025-12-07T00:00:00.000Z"
+      },
+      "_id": {
+        "$oid": "6a5fc2cab5645ad5b5a7eb8d"
+      }
+    },
+    {
+      "startDate": {
+        "$date": "2025-10-25T00:00:00.000Z"
+      },
+      "endDate": {
+        "$date": "2025-11-02T00:00:00.000Z"
+      },
+      "_id": {
+        "$oid": "6a5fc2cab5645ad5b5a7eb8e"
+      }
+    },
+    {
+      "startDate": {
+        "$date": "2025-07-19T00:00:00.000Z"
+      },
+      "endDate": {
+        "$date": "2025-08-03T00:00:00.000Z"
+      },
+      "_id": {
+        "$oid": "6a5fc2cab5645ad5b5a7eb8f"
+      }
+    },
+    {
+      "startDate": {
+        "$date": "2025-03-22T00:00:00.000Z"
+      },
+      "endDate": {
+        "$date": "2025-04-06T00:00:00.000Z"
+      },
+      "_id": {
+        "$oid": "6a5fc2cab5645ad5b5a7eb90"
+      }
+    },
+    {
+      "startDate": {
+        "$date": "2025-02-08T00:00:00.000Z"
+      },
+      "endDate": {
+        "$date": "2025-02-23T00:00:00.000Z"
+      },
+      "_id": {
+        "$oid": "6a5fc2cab5645ad5b5a7eb91"
+      }
+    },
+    {
+      "startDate": {
+        "$date": "2024-11-02T00:00:00.000Z"
+      },
+      "endDate": {
+        "$date": "2024-11-17T00:00:00.000Z"
+      },
+      "_id": {
+        "$oid": "6a5fc2cab5645ad5b5a7eb92"
+      }
+    }
+  ],
+  "workSchedule": {
+    "monday": "Variable",
+    "tuesday": "Tarde",
+    "wednesday": "Mañana",
+    "thursday": "Mañana",
+    "friday": "Variable"
+  },
+  "worksInPrivateNeuquen": true,
+  "worksInPrivateRioNegro": false,
+  "worksInPublicNeuquen": true,
+  "worksInPublicRioNegro": false,
+  "isVerified": false,
+  "worksInCmacOnly": false,
+  "beginningDate": {
+    "$date": "2019-08-01T00:00:00.000Z"
+  },
+  "doesShifts": true,
+  "phoneNumber": "2996303849",
+  "otherLeaves": [
+    {
+      "type": "Paternidad",
+      "startDate": {
+        "$date": "2026-02-02T00:00:00.000Z"
+      },
+      "endDate": {
+        "$date": "2026-02-15T00:00:00.000Z"
+      },
+      "_id": {
+        "$oid": "6a5fc2cab5645ad5b5a7eb93"
+      }
+    },
+    {
+      "type": "Fiestas",
+      "startDate": {
+        "$date": "2025-12-20T00:00:00.000Z"
+      },
+      "endDate": {
+        "$date": "2025-12-26T00:00:00.000Z"
+      },
+      "_id": {
+        "$oid": "6a5fc2cab5645ad5b5a7eb94"
+      }
+    }
+  ],
+  "defaultAssignments": {
+    "useAlternatingWeeks": true,
+    "oddWeeks": {
+      "monday": [],
+      "tuesday": [],
+      "wednesday": [],
+      "thursday": [],
+      "friday": []
+    },
+    "evenWeeks": {
+      "monday": [],
+      "tuesday": [],
+      "wednesday": [],
+      "thursday": [],
+      "friday": []
+    }
+  },
+  "role": "user",
+  "birthDate": {
+    "$date": "1986-07-13T00:00:00.000Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "66849bb760db6c808e86bd03"
+  },
+  "username": "amacias",
+  "email": "alanlmacias@gmail.com",
+  "password": "$2b$10$PUjedHAXkHKhVCnG7J77gOLuuVcjMxOaF4xkkr97smtHJqE6/UxMa",
+  "__v": 1,
+  "doesCardio": true,
+  "doesPediatrics": true,
+  "doesRNM": true,
+  "vacations": [
+    {
+      "startDate": {
+        "$date": "2027-02-13T00:00:00.000Z"
+      },
+      "endDate": {
+        "$date": "2027-02-28T00:00:00.000Z"
+      },
+      "_id": {
+        "$oid": "6a5fc24ab5645ad5b5a7e3d5"
+      }
+    },
+    {
+      "startDate": {
+        "$date": "2026-12-05T00:00:00.000Z"
+      },
+      "endDate": {
+        "$date": "2026-12-20T00:00:00.000Z"
+      },
+      "_id": {
+        "$oid": "6a5fc24ab5645ad5b5a7e3d6"
+      }
+    },
+    {
+      "startDate": {
+        "$date": "2026-08-29T00:00:00.000Z"
+      },
+      "endDate": {
+        "$date": "2026-09-13T00:00:00.000Z"
+      },
+      "_id": {
+        "$oid": "6a5fc24ab5645ad5b5a7e3d7"
+      }
+    },
+    {
+      "startDate": {
+        "$date": "2026-07-11T00:00:00.000Z"
+      },
+      "endDate": {
+        "$date": "2026-07-19T00:00:00.000Z"
+      },
+      "_id": {
+        "$oid": "6a5fc24ab5645ad5b5a7e3d8"
+      }
+    },
+    {
+      "startDate": {
+        "$date": "2026-06-06T00:00:00.000Z"
+      },
+      "endDate": {
+        "$date": "2026-06-21T00:00:00.000Z"
+      },
+      "_id": {
+        "$oid": "6a5fc24ab5645ad5b5a7e3d9"
+      }
+    },
+    {
+      "startDate": {
+        "$date": "2026-01-31T00:00:00.000Z"
+      },
+      "endDate": {
+        "$date": "2026-02-15T00:00:00.000Z"
+      },
+      "_id": {
+        "$oid": "6a5fc24ab5645ad5b5a7e3da"
+      }
+    },
+    {
+      "startDate": {
+        "$date": "2025-12-06T00:00:00.000Z"
+      },
+      "endDate": {
+        "$date": "2025-12-14T00:00:00.000Z"
+      },
+      "_id": {
+        "$oid": "6a5fc24ab5645ad5b5a7e3db"
+      }
+    },
+    {
+      "startDate": {
+        "$date": "2025-10-18T00:00:00.000Z"
+      },
+      "endDate": {
+        "$date": "2025-10-26T00:00:00.000Z"
+      },
+      "_id": {
+        "$oid": "6a5fc24ab5645ad5b5a7e3dc"
+      }
+    },
+    {
+      "startDate": {
+        "$date": "2025-08-30T00:00:00.000Z"
+      },
+      "endDate": {
+        "$date": "2025-09-07T00:00:00.000Z"
+      },
+      "_id": {
+        "$oid": "6a5fc24ab5645ad5b5a7e3dd"
+      }
+    },
+    {
+      "startDate": {
+        "$date": "2025-07-05T00:00:00.000Z"
+      },
+      "endDate": {
+        "$date": "2025-07-13T00:00:00.000Z"
+      },
+      "_id": {
+        "$oid": "6a5fc24ab5645ad5b5a7e3de"
+      }
+    },
+    {
+      "startDate": {
+        "$date": "2025-05-03T00:00:00.000Z"
+      },
+      "endDate": {
+        "$date": "2025-05-18T00:00:00.000Z"
+      },
+      "_id": {
+        "$oid": "6a5fc24ab5645ad5b5a7e3df"
+      }
+    },
+    {
+      "startDate": {
+        "$date": "2025-02-08T00:00:00.000Z"
+      },
+      "endDate": {
+        "$date": "2025-02-23T00:00:00.000Z"
+      },
+      "_id": {
+        "$oid": "6a5fc24ab5645ad5b5a7e3e0"
+      }
+    },
+    {
+      "startDate": {
+        "$date": "2024-11-30T00:00:00.000Z"
+      },
+      "endDate": {
+        "$date": "2024-12-15T00:00:00.000Z"
+      },
+      "_id": {
+        "$oid": "6a5fc24ab5645ad5b5a7e3e1"
+      }
+    },
+    {
+      "startDate": {
+        "$date": "2024-08-31T00:00:00.000Z"
+      },
+      "endDate": {
+        "$date": "2024-09-08T00:00:00.000Z"
+      },
+      "_id": {
+        "$oid": "6a5fc24ab5645ad5b5a7e3e2"
+      }
+    }
+  ],
+  "workSchedule": {
+    "monday": "Mañana",
+    "tuesday": "Variable",
+    "wednesday": "Tarde",
+    "thursday": "Mañana",
+    "friday": "Variable"
+  },
+  "worksInPrivateNeuquen": true,
+  "worksInPrivateRioNegro": false,
+  "worksInPublicNeuquen": true,
+  "worksInPublicRioNegro": false,
+  "worksInCmacOnly": false,
+  "beginningDate": {
+    "$date": "2021-02-01T00:00:00.000Z"
+  },
+  "doesShifts": true,
+  "phoneNumber": "1166809304",
+  "isVerified": false,
+  "otherLeaves": [
+    {
+      "type": "Enfermedad",
+      "startDate": {
+        "$date": "2026-07-19T00:00:00.000Z"
+      },
+      "endDate": {
+        "$date": "2026-07-26T00:00:00.000Z"
+      },
+      "_id": {
+        "$oid": "6a5fc24ab5645ad5b5a7e3e3"
+      }
+    },
+    {
+      "type": "Fiestas",
+      "startDate": {
+        "$date": "2025-12-20T00:00:00.000Z"
+      },
+      "endDate": {
+        "$date": "2025-12-26T00:00:00.000Z"
+      },
+      "_id": {
+        "$oid": "6a5fc24ab5645ad5b5a7e3e4"
+      }
+    }
+  ],
+  "role": "user",
+  "defaultAssignments": {
+    "useAlternatingWeeks": true,
+    "oddWeeks": {
+      "monday": [],
+      "tuesday": [],
+      "wednesday": [],
+      "thursday": [],
+      "friday": []
+    },
+    "evenWeeks": {
+      "monday": [],
+      "tuesday": [],
+      "wednesday": [],
+      "thursday": [],
+      "friday": []
+    }
+  },
+  "birthDate": {
+    "$date": "1986-07-18T00:00:00.000Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "66849c9560db6c808e86bd0e"
+  },
+  "username": "ngogorza",
+  "email": "nicogogorza@hotmail.com",
+  "password": "$2b$10$.VR9clo0OOaaR/TYERe7AOBYkyZhz59n1wtzqP4hbl4guRTo7kM/q",
+  "__v": 1,
+  "doesCardio": true,
+  "doesPediatrics": true,
+  "doesRNM": true,
+  "vacations": [
+    {
+      "startDate": {
+        "$date": "2027-01-02T00:00:00.000Z"
+      },
+      "endDate": {
+        "$date": "2027-01-17T00:00:00.000Z"
+      },
+      "_id": {
+        "$oid": "6a5fc2beb5645ad5b5a7ea43"
+      }
+    },
+    {
+      "startDate": {
+        "$date": "2026-09-12T00:00:00.000Z"
+      },
+      "endDate": {
+        "$date": "2026-09-27T00:00:00.000Z"
+      },
+      "_id": {
+        "$oid": "6a5fc2beb5645ad5b5a7ea44"
+      }
+    },
+    {
+      "startDate": {
+        "$date": "2026-05-23T00:00:00.000Z"
+      },
+      "endDate": {
+        "$date": "2026-06-07T00:00:00.000Z"
+      },
+      "_id": {
+        "$oid": "6a5fc2beb5645ad5b5a7ea45"
+      }
+    },
+    {
+      "startDate": {
+        "$date": "2026-05-09T00:00:00.000Z"
+      },
+      "endDate": {
+        "$date": "2026-05-24T00:00:00.000Z"
+      },
+      "_id": {
+        "$oid": "6a5fc2beb5645ad5b5a7ea46"
+      }
+    },
+    {
+      "startDate": {
+        "$date": "2025-12-06T00:00:00.000Z"
+      },
+      "endDate": {
+        "$date": "2025-12-14T00:00:00.000Z"
+      },
+      "_id": {
+        "$oid": "6a5fc2beb5645ad5b5a7ea47"
+      }
+    },
+    {
+      "startDate": {
+        "$date": "2025-11-29T00:00:00.000Z"
+      },
+      "endDate": {
+        "$date": "2025-12-07T00:00:00.000Z"
+      },
+      "_id": {
+        "$oid": "6a5fc2beb5645ad5b5a7ea48"
+      }
+    },
+    {
+      "startDate": {
+        "$date": "2025-09-06T00:00:00.000Z"
+      },
+      "endDate": {
+        "$date": "2025-09-21T00:00:00.000Z"
+      },
+      "_id": {
+        "$oid": "6a5fc2beb5645ad5b5a7ea49"
+      }
+    },
+    {
+      "startDate": {
+        "$date": "2025-08-09T00:00:00.000Z"
+      },
+      "endDate": {
+        "$date": "2025-08-24T00:00:00.000Z"
+      },
+      "_id": {
+        "$oid": "6a5fc2beb5645ad5b5a7ea4a"
+      }
+    },
+    {
+      "startDate": {
+        "$date": "2025-03-22T00:00:00.000Z"
+      },
+      "endDate": {
+        "$date": "2025-04-06T00:00:00.000Z"
+      },
+      "_id": {
+        "$oid": "6a5fc2beb5645ad5b5a7ea4b"
+      }
+    },
+    {
+      "startDate": {
+        "$date": "2025-01-25T00:00:00.000Z"
+      },
+      "endDate": {
+        "$date": "2025-02-09T00:00:00.000Z"
+      },
+      "_id": {
+        "$oid": "6a5fc2beb5645ad5b5a7ea4c"
+      }
+    },
+    {
+      "startDate": {
+        "$date": "2024-11-30T00:00:00.000Z"
+      },
+      "endDate": {
+        "$date": "2024-12-15T00:00:00.000Z"
+      },
+      "_id": {
+        "$oid": "6a5fc2beb5645ad5b5a7ea4d"
+      }
+    },
+    {
+      "startDate": {
+        "$date": "2024-07-13T00:00:00.000Z"
+      },
+      "endDate": {
+        "$date": "2024-08-04T00:00:00.000Z"
+      },
+      "_id": {
+        "$oid": "6a5fc2beb5645ad5b5a7ea4e"
+      }
+    }
+  ],
+  "workSchedule": {
+    "monday": "Mañana",
+    "tuesday": "Tarde",
+    "wednesday": "Mañana",
+    "thursday": "Variable",
+    "friday": "Variable"
+  },
+  "worksInPrivateNeuquen": false,
+  "worksInPrivateRioNegro": true,
+  "worksInPublicNeuquen": false,
+  "worksInPublicRioNegro": true,
+  "worksInCmacOnly": false,
+  "isVerified": false,
+  "beginningDate": {
+    "$date": "2018-01-01T00:00:00.000Z"
+  },
+  "doesShifts": true,
+  "phoneNumber": "2984538704",
+  "otherLeaves": [
+    {
+      "type": "Fiestas",
+      "startDate": {
+        "$date": "2025-12-20T00:00:00.000Z"
+      },
+      "endDate": {
+        "$date": "2025-12-26T00:00:00.000Z"
+      },
+      "_id": {
+        "$oid": "6a5fc2beb5645ad5b5a7ea4f"
+      }
+    }
+  ],
+  "defaultAssignments": {
+    "useAlternatingWeeks": true,
+    "oddWeeks": {
+      "monday": [],
+      "tuesday": [],
+      "wednesday": [],
+      "thursday": [],
+      "friday": []
+    },
+    "evenWeeks": {
+      "monday": [],
+      "tuesday": [],
+      "wednesday": [],
+      "thursday": [],
+      "friday": []
+    }
+  },
+  "birthDate": {
+    "$date": "1985-04-15T00:00:00.000Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "6684ada960db6c808e86bd17"
+  },
+  "username": "esanmartin",
+  "email": "ezequiel.smc@gmail.com",
+  "password": "$2b$10$t6xpvAqS7/nfZ55KbNpL/OlOnNp7CFNLgKUTsTYZVEaXdhUtPbPSG",
+  "__v": 0,
+  "doesCardio": true,
+  "doesPediatrics": true,
+  "doesRNM": true,
+  "vacations": [
+    {
+      "startDate": {
+        "$date": "2027-01-02T00:00:00.000Z"
+      },
+      "endDate": {
+        "$date": "2027-01-17T00:00:00.000Z"
+      },
+      "_id": {
+        "$oid": "6a5fc667b5645ad5b5a7f6d7"
+      }
+    },
+    {
+      "startDate": {
+        "$date": "2026-09-12T00:00:00.000Z"
+      },
+      "endDate": {
+        "$date": "2026-09-27T00:00:00.000Z"
+      },
+      "_id": {
+        "$oid": "6a5fc667b5645ad5b5a7f6d8"
+      }
+    },
+    {
+      "startDate": {
+        "$date": "2026-06-20T00:00:00.000Z"
+      },
+      "endDate": {
+        "$date": "2026-07-05T00:00:00.000Z"
+      },
+      "_id": {
+        "$oid": "6a5fc667b5645ad5b5a7f6d9"
+      }
+    },
+    {
+      "startDate": {
+        "$date": "2026-03-28T00:00:00.000Z"
+      },
+      "endDate": {
+        "$date": "2026-04-12T00:00:00.000Z"
+      },
+      "_id": {
+        "$oid": "6a5fc667b5645ad5b5a7f6da"
+      }
+    },
+    {
+      "startDate": {
+        "$date": "2026-02-14T00:00:00.000Z"
+      },
+      "endDate": {
+        "$date": "2026-03-01T00:00:00.000Z"
+      },
+      "_id": {
+        "$oid": "6a5fc667b5645ad5b5a7f6db"
+      }
+    },
+    {
+      "startDate": {
+        "$date": "2025-11-29T00:00:00.000Z"
+      },
+      "endDate": {
+        "$date": "2025-12-14T00:00:00.000Z"
+      },
+      "_id": {
+        "$oid": "6a5fc667b5645ad5b5a7f6dc"
+      }
+    },
+    {
+      "startDate": {
+        "$date": "2025-08-09T00:00:00.000Z"
+      },
+      "endDate": {
+        "$date": "2025-08-24T00:00:00.000Z"
+      },
+      "_id": {
+        "$oid": "6a5fc667b5645ad5b5a7f6dd"
+      }
+    },
+    {
+      "startDate": {
+        "$date": "2025-05-31T00:00:00.000Z"
+      },
+      "endDate": {
+        "$date": "2025-06-15T00:00:00.000Z"
+      },
+      "_id": {
+        "$oid": "6a5fc667b5645ad5b5a7f6de"
+      }
+    },
+    {
+      "startDate": {
+        "$date": "2025-01-11T00:00:00.000Z"
+      },
+      "endDate": {
+        "$date": "2025-01-26T00:00:00.000Z"
+      },
+      "_id": {
+        "$oid": "6a5fc667b5645ad5b5a7f6df"
+      }
+    },
+    {
+      "startDate": {
+        "$date": "2024-10-05T00:00:00.000Z"
+      },
+      "endDate": {
+        "$date": "2024-10-20T00:00:00.000Z"
+      },
+      "_id": {
+        "$oid": "6a5fc667b5645ad5b5a7f6e0"
+      }
+    }
+  ],
+  "workSchedule": {
+    "monday": "Tarde",
+    "tuesday": "Variable",
+    "wednesday": "Mañana",
+    "thursday": "Variable",
+    "friday": "No trabaja"
+  },
+  "worksInPrivateNeuquen": true,
+  "worksInPrivateRioNegro": false,
+  "worksInPublicNeuquen": true,
+  "worksInPublicRioNegro": false,
+  "beginningDate": {
+    "$date": "2021-02-01T00:00:00.000Z"
+  },
+  "worksInCmacOnly": false,
+  "doesShifts": true,
+  "phoneNumber": "2216787318",
+  "otherLeaves": [
+    {
+      "type": "Fiestas",
+      "startDate": {
+        "$date": "2025-12-27T00:00:00.000Z"
+      },
+      "endDate": {
+        "$date": "2026-01-02T00:00:00.000Z"
+      },
+      "_id": {
+        "$oid": "6a5fc667b5645ad5b5a7f6e1"
+      }
+    }
+  ],
+  "defaultAssignments": {
+    "useAlternatingWeeks": true,
+    "oddWeeks": {
+      "monday": [],
+      "tuesday": [],
+      "wednesday": [],
+      "thursday": [],
+      "friday": []
+    },
+    "evenWeeks": {
+      "monday": [],
+      "tuesday": [],
+      "wednesday": [],
+      "thursday": [],
+      "friday": []
+    }
+  },
+  "birthDate": {
+    "$date": "1986-06-07T00:00:00.000Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "6684ae0760db6c808e86bd1a"
+  },
+  "username": "mgioja",
+  "email": "magioja@hotmail.com",
+  "password": "$2b$10$QHL0gfzQUdsKJkfiLFU6GunR0uhbTO8CkA5mEuy7sylX4GVlS4TNW",
+  "__v": 0,
+  "doesCardio": false,
+  "doesPediatrics": false,
+  "doesRNM": false,
+  "vacations": [
+    {
+      "startDate": {
+        "$date": "2027-02-13T00:00:00.000Z"
+      },
+      "endDate": {
+        "$date": "2027-02-28T00:00:00.000Z"
+      },
+      "_id": {
+        "$oid": "6a5fc5beb5645ad5b5a7f096"
+      }
+    },
+    {
+      "startDate": {
+        "$date": "2026-12-05T00:00:00.000Z"
+      },
+      "endDate": {
+        "$date": "2026-12-20T00:00:00.000Z"
+      },
+      "_id": {
+        "$oid": "6a5fc5beb5645ad5b5a7f097"
+      }
+    },
+    {
+      "startDate": {
+        "$date": "2026-07-18T00:00:00.000Z"
+      },
+      "endDate": {
+        "$date": "2026-08-02T00:00:00.000Z"
+      },
+      "_id": {
+        "$oid": "6a5fc5beb5645ad5b5a7f098"
+      }
+    },
+    {
+      "startDate": {
+        "$date": "2026-03-14T00:00:00.000Z"
+      },
+      "endDate": {
+        "$date": "2026-03-29T00:00:00.000Z"
+      },
+      "_id": {
+        "$oid": "6a5fc5beb5645ad5b5a7f099"
+      }
+    },
+    {
+      "startDate": {
+        "$date": "2026-01-31T00:00:00.000Z"
+      },
+      "endDate": {
+        "$date": "2026-02-15T00:00:00.000Z"
+      },
+      "_id": {
+        "$oid": "6a5fc5beb5645ad5b5a7f09a"
+      }
+    },
+    {
+      "startDate": {
+        "$date": "2025-10-18T00:00:00.000Z"
+      },
+      "endDate": {
+        "$date": "2025-11-02T00:00:00.000Z"
+      },
+      "_id": {
+        "$oid": "6a5fc5beb5645ad5b5a7f09b"
+      }
+    },
+    {
+      "startDate": {
+        "$date": "2025-08-23T00:00:00.000Z"
+      },
+      "endDate": {
+        "$date": "2025-09-07T00:00:00.000Z"
+      },
+      "_id": {
+        "$oid": "6a5fc5beb5645ad5b5a7f09c"
+      }
+    },
+    {
+      "startDate": {
+        "$date": "2025-04-05T00:00:00.000Z"
+      },
+      "endDate": {
+        "$date": "2025-04-20T00:00:00.000Z"
+      },
+      "_id": {
+        "$oid": "6a5fc5beb5645ad5b5a7f09d"
+      }
+    },
+    {
+      "startDate": {
+        "$date": "2025-02-08T00:00:00.000Z"
+      },
+      "endDate": {
+        "$date": "2025-02-23T00:00:00.000Z"
+      },
+      "_id": {
+        "$oid": "6a5fc5beb5645ad5b5a7f09e"
+      }
+    },
+    {
+      "startDate": {
+        "$date": "2024-11-16T00:00:00.000Z"
+      },
+      "endDate": {
+        "$date": "2024-12-01T00:00:00.000Z"
+      },
+      "_id": {
+        "$oid": "6a5fc5beb5645ad5b5a7f09f"
+      }
+    }
+  ],
+  "workSchedule": {
+    "monday": "Mañana",
+    "tuesday": "No trabaja",
+    "wednesday": "Variable",
+    "thursday": "Variable",
+    "friday": "No trabaja"
+  },
+  "worksInPrivateNeuquen": true,
+  "worksInPrivateRioNegro": true,
+  "worksInPublicNeuquen": false,
+  "worksInPublicRioNegro": false,
+  "worksInCmacOnly": false,
+  "isVerified": false,
+  "beginningDate": {
+    "$date": "2016-12-01T00:00:00.000Z"
+  },
+  "doesShifts": false,
+  "phoneNumber": "2994200545",
+  "otherLeaves": [],
+  "defaultAssignments": {
+    "useAlternatingWeeks": true,
+    "oddWeeks": {
+      "monday": [],
+      "tuesday": [],
+      "wednesday": [],
+      "thursday": [],
+      "friday": []
+    },
+    "evenWeeks": {
+      "monday": [],
+      "tuesday": [],
+      "wednesday": [],
+      "thursday": [],
+      "friday": []
+    }
+  },
+  "role": "user",
+  "birthDate": {
+    "$date": {
+      "$numberLong": "-487296000000"
+    }
+  }
+},
+{
+  "_id": {
+    "$oid": "668b11a8973c8df73d04140c"
+  },
+  "username": "ltotis",
+  "email": "lu.totis@hotmail.com",
+  "password": "$2b$10$mrsmQ/equQmY9GC1p0U24.LAsY5jVIZsXvoxiArlgFRgvfiiAQQ2m",
+  "__v": 1,
+  "doesCardio": false,
+  "doesPediatrics": true,
+  "doesRNM": true,
+  "vacations": [
+    {
+      "startDate": {
+        "$date": "2027-01-16T00:00:00.000Z"
+      },
+      "endDate": {
+        "$date": "2027-01-31T00:00:00.000Z"
+      },
+      "_id": {
+        "$oid": "6a5fc4f2b5645ad5b5a7ee10"
+      }
+    },
+    {
+      "startDate": {
+        "$date": "2026-10-24T00:00:00.000Z"
+      },
+      "endDate": {
+        "$date": "2026-11-08T00:00:00.000Z"
+      },
+      "_id": {
+        "$oid": "6a5fc4f2b5645ad5b5a7ee11"
+      }
+    },
+    {
+      "startDate": {
+        "$date": "2026-07-04T00:00:00.000Z"
+      },
+      "endDate": {
+        "$date": "2026-07-19T00:00:00.000Z"
+      },
+      "_id": {
+        "$oid": "6a5fc4f2b5645ad5b5a7ee12"
+      }
+    },
+    {
+      "startDate": {
+        "$date": "2026-04-11T00:00:00.000Z"
+      },
+      "endDate": {
+        "$date": "2026-04-26T00:00:00.000Z"
+      },
+      "_id": {
+        "$oid": "6a5fc4f2b5645ad5b5a7ee13"
+      }
+    },
+    {
+      "startDate": {
+        "$date": "2026-01-03T00:00:00.000Z"
+      },
+      "endDate": {
+        "$date": "2026-01-18T00:00:00.000Z"
+      },
+      "_id": {
+        "$oid": "6a5fc4f2b5645ad5b5a7ee14"
+      }
+    },
+    {
+      "startDate": {
+        "$date": "2025-09-20T00:00:00.000Z"
+      },
+      "endDate": {
+        "$date": "2025-10-05T00:00:00.000Z"
+      },
+      "_id": {
+        "$oid": "6a5fc4f2b5645ad5b5a7ee15"
+      }
+    },
+    {
+      "startDate": {
+        "$date": "2025-06-28T00:00:00.000Z"
+      },
+      "endDate": {
+        "$date": "2025-07-13T00:00:00.000Z"
+      },
+      "_id": {
+        "$oid": "6a5fc4f2b5645ad5b5a7ee16"
+      }
+    },
+    {
+      "startDate": {
+        "$date": "2025-04-19T00:00:00.000Z"
+      },
+      "endDate": {
+        "$date": "2025-05-04T00:00:00.000Z"
+      },
+      "_id": {
+        "$oid": "6a5fc4f2b5645ad5b5a7ee17"
+      }
+    },
+    {
+      "startDate": {
+        "$date": "2025-01-11T00:00:00.000Z"
+      },
+      "endDate": {
+        "$date": "2025-01-26T00:00:00.000Z"
+      },
+      "_id": {
+        "$oid": "6a5fc4f2b5645ad5b5a7ee18"
+      }
+    },
+    {
+      "startDate": {
+        "$date": "2024-09-07T00:00:00.000Z"
+      },
+      "endDate": {
+        "$date": "2024-09-22T00:00:00.000Z"
+      },
+      "_id": {
+        "$oid": "6a5fc4f2b5645ad5b5a7ee19"
+      }
+    }
+  ],
+  "workSchedule": {
+    "monday": "Variable",
+    "tuesday": "Variable",
+    "wednesday": "Mañana",
+    "thursday": "Mañana",
+    "friday": "Mañana"
+  },
+  "worksInPrivateNeuquen": false,
+  "worksInPrivateRioNegro": true,
+  "worksInPublicNeuquen": false,
+  "worksInPublicRioNegro": true,
+  "worksInCmacOnly": false,
+  "beginningDate": {
+    "$date": "2022-10-01T00:00:00.000Z"
+  },
+  "doesShifts": true,
+  "phoneNumber": "1156670094",
+  "isVerified": false,
+  "otherLeaves": [
+    {
+      "type": "Fiestas",
+      "startDate": {
+        "$date": "2025-12-27T00:00:00.000Z"
+      },
+      "endDate": {
+        "$date": "2026-01-02T00:00:00.000Z"
+      },
+      "_id": {
+        "$oid": "6a5fc4f2b5645ad5b5a7ee1a"
+      }
+    }
+  ],
+  "defaultAssignments": {
+    "useAlternatingWeeks": true,
+    "oddWeeks": {
+      "monday": [],
+      "tuesday": [],
+      "wednesday": [],
+      "thursday": [],
+      "friday": []
+    },
+    "evenWeeks": {
+      "monday": [],
+      "tuesday": [],
+      "wednesday": [],
+      "thursday": [],
+      "friday": []
+    }
+  },
+  "birthDate": {
+    "$date": "1990-09-30T00:00:00.000Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "66950ebf4a8cfe8db884a8a6"
+  },
+  "username": "rconsigli",
+  "email": "rconsigli@gmail.com",
+  "password": "$2b$10$rGyNIDatYHg5Pqwl1K1LEec1cXvJaxnrBfVScGcajnCDiIaSJtg1G",
+  "__v": 3,
+  "doesCardio": true,
+  "doesPediatrics": false,
+  "doesRNM": false,
+  "vacations": [
+    {
+      "startDate": {
+        "$date": "2027-02-13T00:00:00.000Z"
+      },
+      "endDate": {
+        "$date": "2027-02-28T00:00:00.000Z"
+      },
+      "_id": {
+        "$oid": "6a5fc296b5645ad5b5a7e7bd"
+      }
+    },
+    {
+      "startDate": {
+        "$date": "2026-11-21T00:00:00.000Z"
+      },
+      "endDate": {
+        "$date": "2026-12-06T00:00:00.000Z"
+      },
+      "_id": {
+        "$oid": "6a5fc296b5645ad5b5a7e7be"
+      }
+    },
+    {
+      "startDate": {
+        "$date": "2026-08-15T00:00:00.000Z"
+      },
+      "endDate": {
+        "$date": "2026-08-30T00:00:00.000Z"
+      },
+      "_id": {
+        "$oid": "6a5fc296b5645ad5b5a7e7bf"
+      }
+    },
+    {
+      "startDate": {
+        "$date": "2026-08-01T00:00:00.000Z"
+      },
+      "endDate": {
+        "$date": "2026-08-16T00:00:00.000Z"
+      },
+      "_id": {
+        "$oid": "6a5fc296b5645ad5b5a7e7c0"
+      }
+    },
+    {
+      "startDate": {
+        "$date": "2026-01-31T00:00:00.000Z"
+      },
+      "endDate": {
+        "$date": "2026-02-15T00:00:00.000Z"
+      },
+      "_id": {
+        "$oid": "6a5fc296b5645ad5b5a7e7c1"
+      }
+    },
+    {
+      "startDate": {
+        "$date": "2025-12-13T00:00:00.000Z"
+      },
+      "endDate": {
+        "$date": "2025-12-21T00:00:00.000Z"
+      },
+      "_id": {
+        "$oid": "6a5fc296b5645ad5b5a7e7c2"
+      }
+    },
+    {
+      "startDate": {
+        "$date": "2025-12-06T00:00:00.000Z"
+      },
+      "endDate": {
+        "$date": "2025-12-14T00:00:00.000Z"
+      },
+      "_id": {
+        "$oid": "6a5fc296b5645ad5b5a7e7c3"
+      }
+    },
+    {
+      "startDate": {
+        "$date": "2025-07-26T00:00:00.000Z"
+      },
+      "endDate": {
+        "$date": "2025-08-10T00:00:00.000Z"
+      },
+      "_id": {
+        "$oid": "6a5fc296b5645ad5b5a7e7c4"
+      }
+    },
+    {
+      "startDate": {
+        "$date": "2025-05-03T00:00:00.000Z"
+      },
+      "endDate": {
+        "$date": "2025-05-18T00:00:00.000Z"
+      },
+      "_id": {
+        "$oid": "6a5fc296b5645ad5b5a7e7c5"
+      }
+    },
+    {
+      "startDate": {
+        "$date": "2024-12-28T00:00:00.000Z"
+      },
+      "endDate": {
+        "$date": "2025-01-12T00:00:00.000Z"
+      },
+      "_id": {
+        "$oid": "6a5fc296b5645ad5b5a7e7c6"
+      }
+    },
+    {
+      "startDate": {
+        "$date": "2024-11-23T00:00:00.000Z"
+      },
+      "endDate": {
+        "$date": "2024-12-01T00:00:00.000Z"
+      },
+      "_id": {
+        "$oid": "6a5fc296b5645ad5b5a7e7c7"
+      }
+    },
+    {
+      "startDate": {
+        "$date": "2024-07-13T00:00:00.000Z"
+      },
+      "endDate": {
+        "$date": "2024-08-04T00:00:00.000Z"
+      },
+      "_id": {
+        "$oid": "6a5fc296b5645ad5b5a7e7c8"
+      }
+    }
+  ],
+  "workSchedule": {
+    "monday": "Tarde",
+    "tuesday": "Mañana",
+    "wednesday": "Variable",
+    "thursday": "Variable",
+    "friday": "Mañana"
+  },
+  "worksInPrivateNeuquen": true,
+  "worksInPrivateRioNegro": true,
+  "worksInPublicNeuquen": false,
+  "worksInPublicRioNegro": false,
+  "worksInCmacOnly": false,
+  "beginningDate": {
+    "$date": "2016-12-01T00:00:00.000Z"
+  },
+  "isVerified": false,
+  "doesShifts": false,
+  "phoneNumber": "2994200647",
+  "otherLeaves": [
+    {
+      "type": "Fiestas",
+      "startDate": {
+        "$date": "2025-12-20T00:00:00.000Z"
+      },
+      "endDate": {
+        "$date": "2025-12-26T00:00:00.000Z"
+      },
+      "_id": {
+        "$oid": "6a5fc296b5645ad5b5a7e7c9"
+      }
+    }
+  ],
+  "defaultAssignments": {
+    "useAlternatingWeeks": true,
+    "oddWeeks": {
+      "monday": [],
+      "tuesday": [],
+      "wednesday": [],
+      "thursday": [],
+      "friday": []
+    },
+    "evenWeeks": {
+      "monday": [],
+      "tuesday": [],
+      "wednesday": [],
+      "thursday": [],
+      "friday": []
+    }
+  },
+  "role": "user",
+  "birthDate": {
+    "$date": {
+      "$numberLong": "-232156800000"
+    }
+  }
+},
+{
+  "_id": {
+    "$oid": "669513184a8cfe8db884a8ae"
+  },
+  "username": "sdegreef",
+  "email": "silvestredegreef@gmail.com",
+  "password": "$2b$10$dr75/sA1Vn9pJWpzTH7HbuA/mJlknzPVM5Psjh6zE3mIQgpMb7cri",
+  "__v": 2,
+  "doesCardio": false,
+  "doesPediatrics": true,
+  "doesRNM": true,
+  "vacations": [
+    {
+      "startDate": {
+        "$date": "2027-01-02T00:00:00.000Z"
+      },
+      "endDate": {
+        "$date": "2027-01-17T00:00:00.000Z"
+      },
+      "_id": {
+        "$oid": "6a5fc5efb5645ad5b5a7f30e"
+      }
+    },
+    {
+      "startDate": {
+        "$date": "2026-10-10T00:00:00.000Z"
+      },
+      "endDate": {
+        "$date": "2026-10-25T00:00:00.000Z"
+      },
+      "_id": {
+        "$oid": "6a5fc5efb5645ad5b5a7f30f"
+      }
+    },
+    {
+      "startDate": {
+        "$date": "2026-07-04T00:00:00.000Z"
+      },
+      "endDate": {
+        "$date": "2026-07-19T00:00:00.000Z"
+      },
+      "_id": {
+        "$oid": "6a5fc5efb5645ad5b5a7f310"
+      }
+    },
+    {
+      "startDate": {
+        "$date": "2026-04-11T00:00:00.000Z"
+      },
+      "endDate": {
+        "$date": "2026-04-26T00:00:00.000Z"
+      },
+      "_id": {
+        "$oid": "6a5fc5efb5645ad5b5a7f311"
+      }
+    },
+    {
+      "startDate": {
+        "$date": "2026-01-03T00:00:00.000Z"
+      },
+      "endDate": {
+        "$date": "2026-01-18T00:00:00.000Z"
+      },
+      "_id": {
+        "$oid": "6a5fc5efb5645ad5b5a7f312"
+      }
+    },
+    {
+      "startDate": {
+        "$date": "2025-09-06T00:00:00.000Z"
+      },
+      "endDate": {
+        "$date": "2025-09-21T00:00:00.000Z"
+      },
+      "_id": {
+        "$oid": "6a5fc5efb5645ad5b5a7f313"
+      }
+    },
+    {
+      "startDate": {
+        "$date": "2025-06-14T00:00:00.000Z"
+      },
+      "endDate": {
+        "$date": "2025-06-29T00:00:00.000Z"
+      },
+      "_id": {
+        "$oid": "6a5fc5efb5645ad5b5a7f314"
+      }
+    },
+    {
+      "startDate": {
+        "$date": "2025-03-08T00:00:00.000Z"
+      },
+      "endDate": {
+        "$date": "2025-03-23T00:00:00.000Z"
+      },
+      "_id": {
+        "$oid": "6a5fc5efb5645ad5b5a7f315"
+      }
+    },
+    {
+      "startDate": {
+        "$date": "2024-12-28T00:00:00.000Z"
+      },
+      "endDate": {
+        "$date": "2025-01-12T00:00:00.000Z"
+      },
+      "_id": {
+        "$oid": "6a5fc5efb5645ad5b5a7f316"
+      }
+    },
+    {
+      "startDate": {
+        "$date": "2024-10-19T00:00:00.000Z"
+      },
+      "endDate": {
+        "$date": "2024-11-03T00:00:00.000Z"
+      },
+      "_id": {
+        "$oid": "6a5fc5efb5645ad5b5a7f317"
+      }
+    },
+    {
+      "startDate": {
+        "$date": "2024-08-24T00:00:00.000Z"
+      },
+      "endDate": {
+        "$date": "2024-09-08T00:00:00.000Z"
+      },
+      "_id": {
+        "$oid": "6a5fc5efb5645ad5b5a7f318"
+      }
+    }
+  ],
+  "workSchedule": {
+    "monday": "No trabaja",
+    "tuesday": "Mañana",
+    "wednesday": "Variable",
+    "thursday": "Tarde",
+    "friday": "Variable"
+  },
+  "worksInPrivateNeuquen": true,
+  "worksInPrivateRioNegro": false,
+  "worksInPublicNeuquen": true,
+  "worksInPublicRioNegro": false,
+  "isVerified": false,
+  "worksInCmacOnly": false,
+  "beginningDate": {
+    "$date": "2023-08-14T00:00:00.000Z"
+  },
+  "doesShifts": true,
+  "phoneNumber": "3415819005",
+  "otherLeaves": [
+    {
+      "type": "Fiestas",
+      "startDate": {
+        "$date": "2025-12-27T00:00:00.000Z"
+      },
+      "endDate": {
+        "$date": "2026-01-02T00:00:00.000Z"
+      },
+      "_id": {
+        "$oid": "6a5fc5efb5645ad5b5a7f319"
+      }
+    }
+  ],
+  "defaultAssignments": {
+    "useAlternatingWeeks": true,
+    "oddWeeks": {
+      "monday": [],
+      "tuesday": [],
+      "wednesday": [],
+      "thursday": [],
+      "friday": []
+    },
+    "evenWeeks": {
+      "monday": [],
+      "tuesday": [],
+      "wednesday": [],
+      "thursday": [],
+      "friday": []
+    }
+  },
+  "birthDate": {
+    "$date": "1987-07-14T00:00:00.000Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "669513984a8cfe8db884a8b4"
+  },
+  "username": "mschvartzman",
+  "email": "matianestesia@gmail.com",
+  "password": "$2b$10$zvfEePVuQ6Jtfoyh5bbrGO291oS6mApA4JoxWfUeK9viAGlHyaxte",
+  "__v": 4,
+  "doesCardio": true,
+  "doesPediatrics": true,
+  "doesRNM": true,
+  "vacations": [
+    {
+      "startDate": {
+        "$date": "2027-01-30T00:00:00.000Z"
+      },
+      "endDate": {
+        "$date": "2027-02-14T00:00:00.000Z"
+      },
+      "_id": {
+        "$oid": "6a5fc3a6b5645ad5b5a7eccd"
+      }
+    },
+    {
+      "startDate": {
+        "$date": "2026-11-21T00:00:00.000Z"
+      },
+      "endDate": {
+        "$date": "2026-12-06T00:00:00.000Z"
+      },
+      "_id": {
+        "$oid": "6a5fc3a6b5645ad5b5a7ecce"
+      }
+    },
+    {
+      "startDate": {
+        "$date": "2026-10-03T00:00:00.000Z"
+      },
+      "endDate": {
+        "$date": "2026-10-11T00:00:00.000Z"
+      },
+      "_id": {
+        "$oid": "6a5fc3a6b5645ad5b5a7eccf"
+      }
+    },
+    {
+      "startDate": {
+        "$date": "2026-08-29T00:00:00.000Z"
+      },
+      "endDate": {
+        "$date": "2026-09-13T00:00:00.000Z"
+      },
+      "_id": {
+        "$oid": "6a5fc3a6b5645ad5b5a7ecd0"
+      }
+    },
+    {
+      "startDate": {
+        "$date": "2026-08-22T00:00:00.000Z"
+      },
+      "endDate": {
+        "$date": "2026-08-30T00:00:00.000Z"
+      },
+      "_id": {
+        "$oid": "6a5fc3a6b5645ad5b5a7ecd1"
+      }
+    },
+    {
+      "startDate": {
+        "$date": "2026-01-17T00:00:00.000Z"
+      },
+      "endDate": {
+        "$date": "2026-02-01T00:00:00.000Z"
+      },
+      "_id": {
+        "$oid": "6a5fc3a6b5645ad5b5a7ecd2"
+      }
+    },
+    {
+      "startDate": {
+        "$date": "2025-10-04T00:00:00.000Z"
+      },
+      "endDate": {
+        "$date": "2025-10-19T00:00:00.000Z"
+      },
+      "_id": {
+        "$oid": "6a5fc3a6b5645ad5b5a7ecd3"
+      }
+    },
+    {
+      "startDate": {
+        "$date": "2025-08-23T00:00:00.000Z"
+      },
+      "endDate": {
+        "$date": "2025-09-07T00:00:00.000Z"
+      },
+      "_id": {
+        "$oid": "6a5fc3a6b5645ad5b5a7ecd4"
+      }
+    },
+    {
+      "startDate": {
+        "$date": "2025-05-31T00:00:00.000Z"
+      },
+      "endDate": {
+        "$date": "2025-06-15T00:00:00.000Z"
+      },
+      "_id": {
+        "$oid": "6a5fc3a6b5645ad5b5a7ecd5"
+      }
+    },
+    {
+      "startDate": {
+        "$date": "2025-02-22T00:00:00.000Z"
+      },
+      "endDate": {
+        "$date": "2025-03-09T00:00:00.000Z"
+      },
+      "_id": {
+        "$oid": "6a5fc3a6b5645ad5b5a7ecd6"
+      }
+    },
+    {
+      "startDate": {
+        "$date": "2024-09-21T00:00:00.000Z"
+      },
+      "endDate": {
+        "$date": "2024-10-06T00:00:00.000Z"
+      },
+      "_id": {
+        "$oid": "6a5fc3a6b5645ad5b5a7ecd7"
+      }
+    },
+    {
+      "startDate": {
+        "$date": "2024-08-31T00:00:00.000Z"
+      },
+      "endDate": {
+        "$date": "2024-09-08T00:00:00.000Z"
+      },
+      "_id": {
+        "$oid": "6a5fc3a6b5645ad5b5a7ecd8"
+      }
+    }
+  ],
+  "workSchedule": {
+    "monday": "Mañana",
+    "tuesday": "Tarde",
+    "wednesday": "Mañana",
+    "thursday": "Variable",
+    "friday": "Variable"
+  },
+  "worksInPrivateNeuquen": true,
+  "worksInPrivateRioNegro": true,
+  "worksInPublicNeuquen": true,
+  "worksInPublicRioNegro": false,
+  "worksInCmacOnly": false,
+  "beginningDate": {
+    "$date": "2022-01-01T00:00:00.000Z"
+  },
+  "doesShifts": true,
+  "phoneNumber": "2994720033",
+  "otherLeaves": [
+    {
+      "type": "Fiestas",
+      "startDate": {
+        "$date": "2025-12-27T00:00:00.000Z"
+      },
+      "endDate": {
+        "$date": "2026-01-02T00:00:00.000Z"
+      },
+      "_id": {
+        "$oid": "6a5fc3a6b5645ad5b5a7ecd9"
+      }
+    }
+  ],
+  "defaultAssignments": {
+    "useAlternatingWeeks": true,
+    "oddWeeks": {
+      "monday": [],
+      "tuesday": [],
+      "wednesday": [],
+      "thursday": [],
+      "friday": []
+    },
+    "evenWeeks": {
+      "monday": [],
+      "tuesday": [],
+      "wednesday": [],
+      "thursday": [],
+      "friday": []
+    }
+  },
+  "isVerified": false,
+  "role": "user",
+  "birthDate": {
+    "$date": "1980-09-24T00:00:00.000Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "669516a54a8cfe8db884a8c0"
+  },
+  "username": "lharriague",
+  "email": "luharriagueborsarelli@gmail.com",
+  "password": "$2b$10$24LtFFViY8aTbq6K7XmzueXrWqnJjM2NdDFWGe363p9HcTEDApEHG",
+  "__v": 0,
+  "doesCardio": false,
+  "doesPediatrics": true,
+  "doesRNM": true,
+  "vacations": [
+    {
+      "startDate": {
+        "$date": "2027-01-16T00:00:00.000Z"
+      },
+      "endDate": {
+        "$date": "2027-01-31T00:00:00.000Z"
+      },
+      "_id": {
+        "$oid": "6a5fc2a8b5645ad5b5a7e901"
+      }
+    },
+    {
+      "startDate": {
+        "$date": "2026-09-26T00:00:00.000Z"
+      },
+      "endDate": {
+        "$date": "2026-10-11T00:00:00.000Z"
+      },
+      "_id": {
+        "$oid": "6a5fc2a8b5645ad5b5a7e902"
+      }
+    },
+    {
+      "startDate": {
+        "$date": "2026-08-01T00:00:00.000Z"
+      },
+      "endDate": {
+        "$date": "2026-08-16T00:00:00.000Z"
+      },
+      "_id": {
+        "$oid": "6a5fc2a8b5645ad5b5a7e903"
+      }
+    },
+    {
+      "startDate": {
+        "$date": "2026-05-09T00:00:00.000Z"
+      },
+      "endDate": {
+        "$date": "2026-05-24T00:00:00.000Z"
+      },
+      "_id": {
+        "$oid": "6a5fc2a8b5645ad5b5a7e904"
+      }
+    },
+    {
+      "startDate": {
+        "$date": "2026-01-03T00:00:00.000Z"
+      },
+      "endDate": {
+        "$date": "2026-01-18T00:00:00.000Z"
+      },
+      "_id": {
+        "$oid": "6a5fc2a8b5645ad5b5a7e905"
+      }
+    },
+    {
+      "startDate": {
+        "$date": "2025-11-01T00:00:00.000Z"
+      },
+      "endDate": {
+        "$date": "2025-11-16T00:00:00.000Z"
+      },
+      "_id": {
+        "$oid": "6a5fc2a8b5645ad5b5a7e906"
+      }
+    },
+    {
+      "startDate": {
+        "$date": "2025-06-14T00:00:00.000Z"
+      },
+      "endDate": {
+        "$date": "2025-06-29T00:00:00.000Z"
+      },
+      "_id": {
+        "$oid": "6a5fc2a8b5645ad5b5a7e907"
+      }
+    },
+    {
+      "startDate": {
+        "$date": "2025-04-05T00:00:00.000Z"
+      },
+      "endDate": {
+        "$date": "2025-04-20T00:00:00.000Z"
+      },
+      "_id": {
+        "$oid": "6a5fc2a8b5645ad5b5a7e908"
+      }
+    },
+    {
+      "startDate": {
+        "$date": "2025-01-25T00:00:00.000Z"
+      },
+      "endDate": {
+        "$date": "2025-02-09T00:00:00.000Z"
+      },
+      "_id": {
+        "$oid": "6a5fc2a8b5645ad5b5a7e909"
+      }
+    },
+    {
+      "startDate": {
+        "$date": "2024-09-21T00:00:00.000Z"
+      },
+      "endDate": {
+        "$date": "2024-09-29T00:00:00.000Z"
+      },
+      "_id": {
+        "$oid": "6a5fc2a8b5645ad5b5a7e90a"
+      }
+    },
+    {
+      "startDate": {
+        "$date": "2024-08-03T00:00:00.000Z"
+      },
+      "endDate": {
+        "$date": "2024-08-25T00:00:00.000Z"
+      },
+      "_id": {
+        "$oid": "6a5fc2a8b5645ad5b5a7e90b"
+      }
+    }
+  ],
+  "workSchedule": {
+    "monday": "No trabaja",
+    "tuesday": "Variable",
+    "wednesday": "No trabaja",
+    "thursday": "Tarde",
+    "friday": "Variable"
+  },
+  "worksInPrivateNeuquen": true,
+  "worksInPrivateRioNegro": true,
+  "worksInPublicNeuquen": true,
+  "worksInPublicRioNegro": false,
+  "worksInCmacOnly": false,
+  "beginningDate": {
+    "$date": "2017-09-01T00:00:00.000Z"
+  },
+  "isVerified": false,
+  "doesShifts": true,
+  "phoneNumber": "3516769746",
+  "otherLeaves": [
+    {
+      "type": "Maternidad",
+      "startDate": {
+        "$date": "2025-12-06T00:00:00.000Z"
+      },
+      "endDate": {
+        "$date": "2026-05-05T00:00:00.000Z"
+      },
+      "_id": {
+        "$oid": "6a5fc2a8b5645ad5b5a7e90c"
+      }
+    }
+  ],
+  "defaultAssignments": {
+    "useAlternatingWeeks": true,
+    "oddWeeks": {
+      "monday": [],
+      "tuesday": [],
+      "wednesday": [],
+      "thursday": [],
+      "friday": []
+    },
+    "evenWeeks": {
+      "monday": [],
+      "tuesday": [],
+      "wednesday": [],
+      "thursday": [],
+      "friday": []
+    }
+  },
+  "birthDate": {
+    "$date": "1987-03-23T00:00:00.000Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "6696fdef2fd47c764200f7e2"
+  },
+  "username": "jserrano",
+  "email": "jpserranogamarra@gmail.com",
+  "password": "$2b$10$PsqUzzcCU2QW1i26a/G1QeK5WmEJSaOoWhMsvokxOj/NkGaBWMs0S",
+  "isVerified": false,
+  "doesCardio": true,
+  "doesPediatrics": true,
+  "doesRNM": false,
+  "workSchedule": {
+    "monday": "Variable",
+    "tuesday": "Variable",
+    "wednesday": "No trabaja",
+    "thursday": "Mañana y Tarde",
+    "friday": "No trabaja"
+  },
+  "vacations": [
+    {
+      "startDate": {
+        "$date": "2026-12-05T00:00:00.000Z"
+      },
+      "endDate": {
+        "$date": "2026-12-20T00:00:00.000Z"
+      },
+      "_id": {
+        "$oid": "6a5fd0c70fcb819abe9dd9f0"
+      }
+    },
+    {
+      "startDate": {
+        "$date": "2026-09-19T00:00:00.000Z"
+      },
+      "endDate": {
+        "$date": "2026-09-27T00:00:00.000Z"
+      },
+      "_id": {
+        "$oid": "6a5fd0c70fcb819abe9dd9f1"
+      }
+    },
+    {
+      "startDate": {
+        "$date": "2026-07-04T00:00:00.000Z"
+      },
+      "endDate": {
+        "$date": "2026-07-19T00:00:00.000Z"
+      },
+      "_id": {
+        "$oid": "6a5fd0c70fcb819abe9dd9f2"
+      }
+    },
+    {
+      "startDate": {
+        "$date": "2026-06-06T00:00:00.000Z"
+      },
+      "endDate": {
+        "$date": "2026-06-21T00:00:00.000Z"
+      },
+      "_id": {
+        "$oid": "6a5fd0c70fcb819abe9dd9f3"
+      }
+    },
+    {
+      "startDate": {
+        "$date": "2026-05-23T00:00:00.000Z"
+      },
+      "endDate": {
+        "$date": "2026-05-31T00:00:00.000Z"
+      },
+      "_id": {
+        "$oid": "6a5fd0c70fcb819abe9dd9f4"
+      }
+    },
+    {
+      "startDate": {
+        "$date": "2026-02-14T00:00:00.000Z"
+      },
+      "endDate": {
+        "$date": "2026-03-01T00:00:00.000Z"
+      },
+      "_id": {
+        "$oid": "6a5fd0c70fcb819abe9dd9f5"
+      }
+    },
+    {
+      "startDate": {
+        "$date": "2025-12-06T00:00:00.000Z"
+      },
+      "endDate": {
+        "$date": "2025-12-21T00:00:00.000Z"
+      },
+      "_id": {
+        "$oid": "6a5fd0c70fcb819abe9dd9f6"
+      }
+    },
+    {
+      "startDate": {
+        "$date": "2025-07-05T00:00:00.000Z"
+      },
+      "endDate": {
+        "$date": "2025-07-20T00:00:00.000Z"
+      },
+      "_id": {
+        "$oid": "6a5fd0c70fcb819abe9dd9f7"
+      }
+    },
+    {
+      "startDate": {
+        "$date": "2025-05-17T00:00:00.000Z"
+      },
+      "endDate": {
+        "$date": "2025-06-01T00:00:00.000Z"
+      },
+      "_id": {
+        "$oid": "6a5fd0c70fcb819abe9dd9f8"
+      }
+    },
+    {
+      "startDate": {
+        "$date": "2025-01-11T00:00:00.000Z"
+      },
+      "endDate": {
+        "$date": "2025-01-26T00:00:00.000Z"
+      },
+      "_id": {
+        "$oid": "6a5fd0c70fcb819abe9dd9f9"
+      }
+    },
+    {
+      "startDate": {
+        "$date": "2024-09-28T00:00:00.000Z"
+      },
+      "endDate": {
+        "$date": "2024-10-06T00:00:00.000Z"
+      },
+      "_id": {
+        "$oid": "6a5fd0c70fcb819abe9dd9fa"
+      }
+    },
+    {
+      "startDate": {
+        "$date": "2024-08-24T00:00:00.000Z"
+      },
+      "endDate": {
+        "$date": "2024-09-01T00:00:00.000Z"
+      },
+      "_id": {
+        "$oid": "6a5fd0c70fcb819abe9dd9fb"
+      }
+    }
+  ],
+  "__v": 136,
+  "worksInPrivateNeuquen": true,
+  "worksInPrivateRioNegro": true,
+  "worksInPublicNeuquen": true,
+  "worksInPublicRioNegro": true,
+  "worksInCmacOnly": false,
+  "beginningDate": {
+    "$date": "2016-12-01T00:00:00.000Z"
+  },
+  "doesShifts": true,
+  "phoneNumber": "2995303855",
+  "otherLeaves": [
+    {
+      "type": "Fiestas",
+      "startDate": {
+        "$date": "2025-12-20T00:00:00.000Z"
+      },
+      "endDate": {
+        "$date": "2025-12-26T00:00:00.000Z"
+      },
+      "_id": {
+        "$oid": "6a5fd0c70fcb819abe9dd9fc"
+      }
+    }
+  ],
+  "role:": "admin",
+  "role": "admin",
+  "defaultAssignments": {
+    "useAlternatingWeeks": true,
+    "oddWeeks": {
+      "monday": [
+        {
+          "workSiteId": {
+            "$oid": "69596a25b2b3c69cdd69958d"
+          },
+          "regime": "matutino",
+          "_id": {
+            "$oid": "697f48b5f8f250cefa0445fa"
+          }
+        }
+      ],
+      "tuesday": [],
+      "wednesday": [],
+      "thursday": [],
+      "friday": []
+    },
+    "evenWeeks": {
+      "monday": [],
+      "tuesday": [],
+      "wednesday": [],
+      "thursday": [],
+      "friday": []
+    }
+  },
+  "birthDate": {
+    "$date": "1985-03-02T00:00:00.000Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "6697c90258bf15a5304e9721"
+  },
+  "username": "ngrande",
+  "email": "nadiagrande.6@gmail.com",
+  "password": "$2b$10$cdEaEqSPnQhrXvX1MSOhaOahhfISxiri7tdO.2miR9D/wMYqKEwMW",
+  "isVerified": false,
+  "doesCardio": true,
+  "doesPediatrics": true,
+  "doesRNM": true,
+  "worksInPublicNeuquen": false,
+  "worksInPrivateNeuquen": false,
+  "worksInPublicRioNegro": true,
+  "worksInPrivateRioNegro": true,
+  "workSchedule": {
+    "monday": "Mañana",
+    "tuesday": "Variable",
+    "wednesday": "Tarde",
+    "thursday": "Variable",
+    "friday": "Mañana"
+  },
+  "vacations": [
+    {
+      "startDate": {
+        "$date": "2027-01-30T00:00:00.000Z"
+      },
+      "endDate": {
+        "$date": "2027-02-14T00:00:00.000Z"
+      },
+      "_id": {
+        "$oid": "6a5fc5feb5645ad5b5a7f44f"
+      }
+    },
+    {
+      "startDate": {
+        "$date": "2026-11-07T00:00:00.000Z"
+      },
+      "endDate": {
+        "$date": "2026-11-22T00:00:00.000Z"
+      },
+      "_id": {
+        "$oid": "6a5fc5feb5645ad5b5a7f450"
+      }
+    },
+    {
+      "startDate": {
+        "$date": "2026-08-29T00:00:00.000Z"
+      },
+      "endDate": {
+        "$date": "2026-09-13T00:00:00.000Z"
+      },
+      "_id": {
+        "$oid": "6a5fc5feb5645ad5b5a7f451"
+      }
+    },
+    {
+      "startDate": {
+        "$date": "2026-04-25T00:00:00.000Z"
+      },
+      "endDate": {
+        "$date": "2026-05-10T00:00:00.000Z"
+      },
+      "_id": {
+        "$oid": "6a5fc5feb5645ad5b5a7f452"
+      }
+    },
+    {
+      "startDate": {
+        "$date": "2026-01-17T00:00:00.000Z"
+      },
+      "endDate": {
+        "$date": "2026-02-01T00:00:00.000Z"
+      },
+      "_id": {
+        "$oid": "6a5fc5feb5645ad5b5a7f453"
+      }
+    },
+    {
+      "startDate": {
+        "$date": "2025-10-18T00:00:00.000Z"
+      },
+      "endDate": {
+        "$date": "2025-11-02T00:00:00.000Z"
+      },
+      "_id": {
+        "$oid": "6a5fc5feb5645ad5b5a7f454"
+      }
+    },
+    {
+      "startDate": {
+        "$date": "2025-07-12T00:00:00.000Z"
+      },
+      "endDate": {
+        "$date": "2025-07-27T00:00:00.000Z"
+      },
+      "_id": {
+        "$oid": "6a5fc5feb5645ad5b5a7f455"
+      }
+    },
+    {
+      "startDate": {
+        "$date": "2025-05-03T00:00:00.000Z"
+      },
+      "endDate": {
+        "$date": "2025-05-18T00:00:00.000Z"
+      },
+      "_id": {
+        "$oid": "6a5fc5feb5645ad5b5a7f456"
+      }
+    },
+    {
+      "startDate": {
+        "$date": "2025-02-08T00:00:00.000Z"
+      },
+      "endDate": {
+        "$date": "2025-02-23T00:00:00.000Z"
+      },
+      "_id": {
+        "$oid": "6a5fc5feb5645ad5b5a7f457"
+      }
+    },
+    {
+      "startDate": {
+        "$date": "2024-12-14T00:00:00.000Z"
+      },
+      "endDate": {
+        "$date": "2024-12-29T00:00:00.000Z"
+      },
+      "_id": {
+        "$oid": "6a5fc5feb5645ad5b5a7f458"
+      }
+    }
+  ],
+  "__v": 0,
+  "worksInCmacOnly": false,
+  "beginningDate": {
+    "$date": "2016-12-01T00:00:00.000Z"
+  },
+  "doesShifts": true,
+  "phoneNumber": "2994706570",
+  "otherLeaves": [
+    {
+      "type": "Enfermedad",
+      "startDate": {
+        "$date": "2026-04-06T00:00:00.000Z"
+      },
+      "endDate": {
+        "$date": "2026-08-05T00:00:00.000Z"
+      },
+      "_id": {
+        "$oid": "6a5fc5feb5645ad5b5a7f459"
+      }
+    },
+    {
+      "type": "Fiestas",
+      "startDate": {
+        "$date": "2025-12-27T00:00:00.000Z"
+      },
+      "endDate": {
+        "$date": "2026-01-02T00:00:00.000Z"
+      },
+      "_id": {
+        "$oid": "6a5fc5feb5645ad5b5a7f45a"
+      }
+    }
+  ],
+  "defaultAssignments": {
+    "useAlternatingWeeks": true,
+    "oddWeeks": {
+      "monday": [],
+      "tuesday": [],
+      "wednesday": [],
+      "thursday": [],
+      "friday": []
+    },
+    "evenWeeks": {
+      "monday": [],
+      "tuesday": [],
+      "wednesday": [],
+      "thursday": [],
+      "friday": []
+    }
+  },
+  "role": "admin",
+  "birthDate": {
+    "$date": "1985-06-06T00:00:00.000Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "6697c9e658bf15a5304e973c"
+  },
+  "username": "mquiroga",
+  "email": "qgonella@gmail.com",
+  "password": "$2b$10$0DkyRL7yuzKpUwT67Yk.WOiP3B5.AaNYXDIKqVDA0H1hAhY3RUfs2",
+  "isVerified": false,
+  "doesCardio": true,
+  "doesPediatrics": false,
+  "doesRNM": true,
+  "worksInPublicNeuquen": false,
+  "worksInPrivateNeuquen": false,
+  "worksInPublicRioNegro": false,
+  "worksInPrivateRioNegro": true,
+  "workSchedule": {
+    "monday": "Variable",
+    "tuesday": "Tarde",
+    "wednesday": "Tarde",
+    "thursday": "Variable",
+    "friday": "No trabaja"
+  },
+  "vacations": [
+    {
+      "startDate": {
+        "$date": "2027-01-16T00:00:00.000Z"
+      },
+      "endDate": {
+        "$date": "2027-01-31T00:00:00.000Z"
+      },
+      "_id": {
+        "$oid": "6a5fc89fb5645ad5b5a7fbec"
+      }
+    },
+    {
+      "startDate": {
+        "$date": "2026-09-26T00:00:00.000Z"
+      },
+      "endDate": {
+        "$date": "2026-10-11T00:00:00.000Z"
+      },
+      "_id": {
+        "$oid": "6a5fc89fb5645ad5b5a7fbed"
+      }
+    },
+    {
+      "startDate": {
+        "$date": "2026-08-01T00:00:00.000Z"
+      },
+      "endDate": {
+        "$date": "2026-08-16T00:00:00.000Z"
+      },
+      "_id": {
+        "$oid": "6a5fc89fb5645ad5b5a7fbee"
+      }
+    },
+    {
+      "startDate": {
+        "$date": "2026-05-09T00:00:00.000Z"
+      },
+      "endDate": {
+        "$date": "2026-05-24T00:00:00.000Z"
+      },
+      "_id": {
+        "$oid": "6a5fc89fb5645ad5b5a7fbef"
+      }
+    },
+    {
+      "startDate": {
+        "$date": "2025-12-06T00:00:00.000Z"
+      },
+      "endDate": {
+        "$date": "2025-12-21T00:00:00.000Z"
+      },
+      "_id": {
+        "$oid": "6a5fc89fb5645ad5b5a7fbf0"
+      }
+    },
+    {
+      "startDate": {
+        "$date": "2025-11-01T00:00:00.000Z"
+      },
+      "endDate": {
+        "$date": "2025-11-16T00:00:00.000Z"
+      },
+      "_id": {
+        "$oid": "6a5fc89fb5645ad5b5a7fbf1"
+      }
+    },
+    {
+      "startDate": {
+        "$date": "2025-06-14T00:00:00.000Z"
+      },
+      "endDate": {
+        "$date": "2025-06-29T00:00:00.000Z"
+      },
+      "_id": {
+        "$oid": "6a5fc89fb5645ad5b5a7fbf2"
+      }
+    },
+    {
+      "startDate": {
+        "$date": "2025-04-05T00:00:00.000Z"
+      },
+      "endDate": {
+        "$date": "2025-04-20T00:00:00.000Z"
+      },
+      "_id": {
+        "$oid": "6a5fc89fb5645ad5b5a7fbf3"
+      }
+    },
+    {
+      "startDate": {
+        "$date": "2025-01-25T00:00:00.000Z"
+      },
+      "endDate": {
+        "$date": "2025-02-09T00:00:00.000Z"
+      },
+      "_id": {
+        "$oid": "6a5fc89fb5645ad5b5a7fbf4"
+      }
+    },
+    {
+      "startDate": {
+        "$date": "2024-09-21T00:00:00.000Z"
+      },
+      "endDate": {
+        "$date": "2024-09-29T00:00:00.000Z"
+      },
+      "_id": {
+        "$oid": "6a5fc89fb5645ad5b5a7fbf5"
+      }
+    },
+    {
+      "startDate": {
+        "$date": "2024-08-03T00:00:00.000Z"
+      },
+      "endDate": {
+        "$date": "2024-08-25T00:00:00.000Z"
+      },
+      "_id": {
+        "$oid": "6a5fc89fb5645ad5b5a7fbf6"
+      }
+    }
+  ],
+  "__v": 2,
+  "worksInCmacOnly": false,
+  "beginningDate": {
+    "$date": "2017-09-01T00:00:00.000Z"
+  },
+  "doesShifts": true,
+  "phoneNumber": "2645117058",
+  "otherLeaves": [
+    {
+      "type": "Paternidad",
+      "startDate": {
+        "$date": "2026-01-12T00:00:00.000Z"
+      },
+      "endDate": {
+        "$date": "2026-01-25T00:00:00.000Z"
+      },
+      "_id": {
+        "$oid": "6a5fc89fb5645ad5b5a7fbf7"
+      }
+    },
+    {
+      "type": "Fiestas",
+      "startDate": {
+        "$date": "2025-12-27T00:00:00.000Z"
+      },
+      "endDate": {
+        "$date": "2026-01-02T00:00:00.000Z"
+      },
+      "_id": {
+        "$oid": "6a5fc89fb5645ad5b5a7fbf8"
+      }
+    }
+  ],
+  "defaultAssignments": {
+    "useAlternatingWeeks": true,
+    "oddWeeks": {
+      "monday": [
+        {
+          "workSiteId": {
+            "$oid": "695a44a65548916b7752d8ab"
+          },
+          "regime": "matutino",
+          "_id": {
+            "$oid": "697f48b5f8f250cefa044610"
+          }
+        }
+      ],
+      "tuesday": [
+        {
+          "workSiteId": {
+            "$oid": "695a44a65548916b7752d8ab"
+          },
+          "regime": "vespertino",
+          "_id": {
+            "$oid": "697f48b5f8f250cefa04460f"
+          }
+        }
+      ],
+      "wednesday": [],
+      "thursday": [
+        {
+          "workSiteId": {
+            "$oid": "695a44a65548916b7752d8ab"
+          },
+          "regime": "matutino",
+          "_id": {
+            "$oid": "697f48b5f8f250cefa04460e"
+          }
+        }
+      ],
+      "friday": []
+    },
+    "evenWeeks": {
+      "monday": [],
+      "tuesday": [],
+      "wednesday": [],
+      "thursday": [],
+      "friday": []
+    }
+  },
+  "birthDate": {
+    "$date": "1986-06-17T00:00:00.000Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "6697ca5a58bf15a5304e9745"
+  },
+  "username": "lburgueño",
+  "email": "lucasburibar@gmail.com",
+  "password": "$2b$10$aSUWfs56hVVL6ovcF9ugwupB19VVbkCP5FL.MjPLZ5gFGOkrvI4Oq",
+  "isVerified": false,
+  "doesCardio": true,
+  "doesPediatrics": true,
+  "doesRNM": true,
+  "worksInPublicNeuquen": false,
+  "worksInPrivateNeuquen": false,
+  "worksInPublicRioNegro": true,
+  "worksInPrivateRioNegro": true,
+  "workSchedule": {
+    "monday": "Mañana",
+    "tuesday": "Variable",
+    "wednesday": "Variable",
+    "thursday": "Tarde",
+    "friday": "Mañana"
+  },
+  "vacations": [
+    {
+      "startDate": {
+        "$date": "2027-01-30T00:00:00.000Z"
+      },
+      "endDate": {
+        "$date": "2027-02-14T00:00:00.000Z"
+      },
+      "_id": {
+        "$oid": "6a5fcc25b5645ad5b5a8000e"
+      }
+    },
+    {
+      "startDate": {
+        "$date": "2027-01-02T00:00:00.000Z"
+      },
+      "endDate": {
+        "$date": "2027-01-17T00:00:00.000Z"
+      },
+      "_id": {
+        "$oid": "6a5fcc25b5645ad5b5a8000f"
+      }
+    },
+    {
+      "startDate": {
+        "$date": "2026-10-10T00:00:00.000Z"
+      },
+      "endDate": {
+        "$date": "2026-10-25T00:00:00.000Z"
+      },
+      "_id": {
+        "$oid": "6a5fcc25b5645ad5b5a80010"
+      }
+    },
+    {
+      "startDate": {
+        "$date": "2026-07-18T00:00:00.000Z"
+      },
+      "endDate": {
+        "$date": "2026-08-02T00:00:00.000Z"
+      },
+      "_id": {
+        "$oid": "6a5fcc25b5645ad5b5a80011"
+      }
+    },
+    {
+      "startDate": {
+        "$date": "2026-02-14T00:00:00.000Z"
+      },
+      "endDate": {
+        "$date": "2026-03-01T00:00:00.000Z"
+      },
+      "_id": {
+        "$oid": "6a5fcc25b5645ad5b5a80012"
+      }
+    },
+    {
+      "startDate": {
+        "$date": "2025-11-15T00:00:00.000Z"
+      },
+      "endDate": {
+        "$date": "2025-11-30T00:00:00.000Z"
+      },
+      "_id": {
+        "$oid": "6a5fcc25b5645ad5b5a80013"
+      }
+    },
+    {
+      "startDate": {
+        "$date": "2025-07-26T00:00:00.000Z"
+      },
+      "endDate": {
+        "$date": "2025-08-10T00:00:00.000Z"
+      },
+      "_id": {
+        "$oid": "6a5fcc25b5645ad5b5a80014"
+      }
+    },
+    {
+      "startDate": {
+        "$date": "2025-05-31T00:00:00.000Z"
+      },
+      "endDate": {
+        "$date": "2025-06-15T00:00:00.000Z"
+      },
+      "_id": {
+        "$oid": "6a5fcc25b5645ad5b5a80015"
+      }
+    },
+    {
+      "startDate": {
+        "$date": "2024-12-28T00:00:00.000Z"
+      },
+      "endDate": {
+        "$date": "2025-01-12T00:00:00.000Z"
+      },
+      "_id": {
+        "$oid": "6a5fcc25b5645ad5b5a80016"
+      }
+    },
+    {
+      "startDate": {
+        "$date": "2024-10-19T00:00:00.000Z"
+      },
+      "endDate": {
+        "$date": "2024-11-03T00:00:00.000Z"
+      },
+      "_id": {
+        "$oid": "6a5fcc25b5645ad5b5a80017"
+      }
+    }
+  ],
+  "__v": 2,
+  "worksInCmacOnly": false,
+  "beginningDate": {
+    "$date": "2021-10-01T00:00:00.000Z"
+  },
+  "doesShifts": true,
+  "phoneNumber": "1165307975",
+  "otherLeaves": [
+    {
+      "type": "Fiestas",
+      "startDate": {
+        "$date": "2025-12-20T00:00:00.000Z"
+      },
+      "endDate": {
+        "$date": "2025-12-26T00:00:00.000Z"
+      },
+      "_id": {
+        "$oid": "6a5fcc25b5645ad5b5a80018"
+      }
+    }
+  ],
+  "role": "admin",
+  "defaultAssignments": {
+    "useAlternatingWeeks": true,
+    "oddWeeks": {
+      "monday": [],
+      "tuesday": [],
+      "wednesday": [],
+      "thursday": [],
+      "friday": []
+    },
+    "evenWeeks": {
+      "monday": [],
+      "tuesday": [],
+      "wednesday": [],
+      "thursday": [],
+      "friday": []
+    }
+  },
+  "birthDate": {
+    "$date": "1985-10-19T00:00:00.000Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "6697fe9ca48c6576fbe7e16b"
+  },
+  "username": "montes_esposito",
+  "email": "anestesiafunda@gmail.com",
+  "password": "$2b$10$UvyyafXsf8Qm3gyk71TEdOQb/x9ac9PtufzvT.9./bhXqhIoxGWzW",
+  "isVerified": false,
+  "doesCardio": false,
+  "doesPediatrics": false,
+  "doesRNM": false,
+  "worksInPublicNeuquen": false,
+  "worksInPrivateNeuquen": false,
+  "worksInPublicRioNegro": false,
+  "worksInPrivateRioNegro": true,
+  "workSchedule": {
+    "monday": "Variable",
+    "tuesday": "Variable",
+    "wednesday": "Variable",
+    "thursday": "Variable",
+    "friday": "Variable"
+  },
+  "vacations": [],
+  "__v": 129,
+  "worksInCmacOnly": true,
+  "doesShifts": false,
+  "phoneNumber": "",
+  "otherLeaves": [
+    {
+      "type": "Sin especificar",
+      "startDate": {
+        "$date": "2026-04-24T00:00:00.000Z"
+      },
+      "endDate": {
+        "$date": "2026-04-24T00:00:00.000Z"
+      },
+      "_id": {
+        "$oid": "69e230f93022a174a5f5a244"
+      }
+    }
+  ],
+  "defaultAssignments": {
+    "useAlternatingWeeks": true,
+    "oddWeeks": {
+      "monday": [],
+      "tuesday": [],
+      "wednesday": [],
+      "thursday": [],
+      "friday": []
+    },
+    "evenWeeks": {
+      "monday": [],
+      "tuesday": [],
+      "wednesday": [],
+      "thursday": [],
+      "friday": []
+    }
+  }
+},
+{
+  "_id": {
+    "$oid": "66994183b848b9656f243e3d"
+  },
+  "username": "gcastro",
+  "email": "gonzaloacastro.gc@gmail.com",
+  "password": "$2b$10$1gk8mlcu5b.gBTRMTD9V9.9J/bO1tO7OwHfAOCsx7OSZUTz6eKGfq",
+  "isVerified": false,
+  "doesCardio": false,
+  "doesPediatrics": true,
+  "doesRNM": true,
+  "worksInPublicNeuquen": true,
+  "worksInPrivateNeuquen": true,
+  "worksInPublicRioNegro": false,
+  "worksInPrivateRioNegro": false,
+  "worksInCmacOnly": false,
+  "workSchedule": {
+    "monday": "Variable",
+    "tuesday": "Variable",
+    "wednesday": "Tarde",
+    "thursday": "No trabaja",
+    "friday": "Mañana"
+  },
+  "vacations": [
+    {
+      "startDate": {
+        "$date": "2027-01-16T00:00:00.000Z"
+      },
+      "endDate": {
+        "$date": "2027-01-31T00:00:00.000Z"
+      },
+      "_id": {
+        "$oid": "6a5fcdecb5645ad5b5a802d1"
+      }
+    },
+    {
+      "startDate": {
+        "$date": "2026-10-24T00:00:00.000Z"
+      },
+      "endDate": {
+        "$date": "2026-11-08T00:00:00.000Z"
+      },
+      "_id": {
+        "$oid": "6a5fcdecb5645ad5b5a802d2"
+      }
+    },
+    {
+      "startDate": {
+        "$date": "2026-07-18T00:00:00.000Z"
+      },
+      "endDate": {
+        "$date": "2026-08-02T00:00:00.000Z"
+      },
+      "_id": {
+        "$oid": "6a5fcdecb5645ad5b5a802d3"
+      }
+    },
+    {
+      "startDate": {
+        "$date": "2026-02-28T00:00:00.000Z"
+      },
+      "endDate": {
+        "$date": "2026-03-15T00:00:00.000Z"
+      },
+      "_id": {
+        "$oid": "6a5fcdecb5645ad5b5a802d4"
+      }
+    },
+    {
+      "startDate": {
+        "$date": "2026-01-03T00:00:00.000Z"
+      },
+      "endDate": {
+        "$date": "2026-01-18T00:00:00.000Z"
+      },
+      "_id": {
+        "$oid": "6a5fcdecb5645ad5b5a802d5"
+      }
+    },
+    {
+      "startDate": {
+        "$date": "2025-10-04T00:00:00.000Z"
+      },
+      "endDate": {
+        "$date": "2025-10-19T00:00:00.000Z"
+      },
+      "_id": {
+        "$oid": "6a5fcdecb5645ad5b5a802d6"
+      }
+    },
+    {
+      "startDate": {
+        "$date": "2025-07-05T00:00:00.000Z"
+      },
+      "endDate": {
+        "$date": "2025-07-20T00:00:00.000Z"
+      },
+      "_id": {
+        "$oid": "6a5fcdecb5645ad5b5a802d7"
+      }
+    },
+    {
+      "startDate": {
+        "$date": "2025-03-08T00:00:00.000Z"
+      },
+      "endDate": {
+        "$date": "2025-03-23T00:00:00.000Z"
+      },
+      "_id": {
+        "$oid": "6a5fcdecb5645ad5b5a802d8"
+      }
+    }
+  ],
+  "__v": 0,
+  "beginningDate": {
+    "$date": "2024-07-15T00:00:00.000Z"
+  },
+  "doesShifts": true,
+  "phoneNumber": "2994730526",
+  "otherLeaves": [
+    {
+      "type": "Fiestas",
+      "startDate": {
+        "$date": "2025-12-27T00:00:00.000Z"
+      },
+      "endDate": {
+        "$date": "2026-01-02T00:00:00.000Z"
+      },
+      "_id": {
+        "$oid": "6a5fcdecb5645ad5b5a802d9"
+      }
+    }
+  ],
+  "defaultAssignments": {
+    "useAlternatingWeeks": true,
+    "oddWeeks": {
+      "monday": [],
+      "tuesday": [],
+      "wednesday": [],
+      "thursday": [],
+      "friday": []
+    },
+    "evenWeeks": {
+      "monday": [],
+      "tuesday": [],
+      "wednesday": [],
+      "thursday": [],
+      "friday": []
+    }
+  },
+  "role": "admin",
+  "birthDate": {
+    "$date": "1983-12-21T00:00:00.000Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "66e483fafbc3c272d61e39ab"
+  },
+  "username": "nvela",
+  "email": "ngvela.05@gmail.com",
+  "password": "$2b$10$NkQIkv0JOfluyjPjFIlo1eXXQcmja14bWG.T552xDP7m6RCSTYzF6",
+  "isVerified": false,
+  "doesCardio": false,
+  "doesPediatrics": true,
+  "doesRNM": true,
+  "worksInPublicNeuquen": true,
+  "worksInPrivateNeuquen": true,
+  "worksInPublicRioNegro": false,
+  "worksInPrivateRioNegro": false,
+  "worksInCmacOnly": false,
+  "workSchedule": {
+    "monday": "Mañana",
+    "tuesday": "Variable",
+    "wednesday": "Mañana",
+    "thursday": "Tarde",
+    "friday": "Variable"
+  },
+  "vacations": [
+    {
+      "startDate": {
+        "$date": "2027-01-30T00:00:00.000Z"
+      },
+      "endDate": {
+        "$date": "2027-02-14T00:00:00.000Z"
+      },
+      "_id": {
+        "$oid": "6a5fc658b5645ad5b5a7f59d"
+      }
+    },
+    {
+      "startDate": {
+        "$date": "2026-10-10T00:00:00.000Z"
+      },
+      "endDate": {
+        "$date": "2026-10-25T00:00:00.000Z"
+      },
+      "_id": {
+        "$oid": "6a5fc658b5645ad5b5a7f59e"
+      }
+    },
+    {
+      "startDate": {
+        "$date": "2026-03-14T00:00:00.000Z"
+      },
+      "endDate": {
+        "$date": "2026-03-29T00:00:00.000Z"
+      },
+      "_id": {
+        "$oid": "6a5fc658b5645ad5b5a7f59f"
+      }
+    },
+    {
+      "startDate": {
+        "$date": "2026-02-28T00:00:00.000Z"
+      },
+      "endDate": {
+        "$date": "2026-03-15T00:00:00.000Z"
+      },
+      "_id": {
+        "$oid": "6a5fc658b5645ad5b5a7f5a0"
+      }
+    },
+    {
+      "startDate": {
+        "$date": "2026-01-17T00:00:00.000Z"
+      },
+      "endDate": {
+        "$date": "2026-02-01T00:00:00.000Z"
+      },
+      "_id": {
+        "$oid": "6a5fc658b5645ad5b5a7f5a1"
+      }
+    },
+    {
+      "startDate": {
+        "$date": "2025-09-20T00:00:00.000Z"
+      },
+      "endDate": {
+        "$date": "2025-10-05T00:00:00.000Z"
+      },
+      "_id": {
+        "$oid": "6a5fc658b5645ad5b5a7f5a2"
+      }
+    },
+    {
+      "startDate": {
+        "$date": "2025-08-23T00:00:00.000Z"
+      },
+      "endDate": {
+        "$date": "2025-08-31T00:00:00.000Z"
+      },
+      "_id": {
+        "$oid": "6a5fc658b5645ad5b5a7f5a3"
+      }
+    },
+    {
+      "startDate": {
+        "$date": "2025-06-28T00:00:00.000Z"
+      },
+      "endDate": {
+        "$date": "2025-07-06T00:00:00.000Z"
+      },
+      "_id": {
+        "$oid": "6a5fc658b5645ad5b5a7f5a4"
+      }
+    },
+    {
+      "startDate": {
+        "$date": "2025-04-19T00:00:00.000Z"
+      },
+      "endDate": {
+        "$date": "2025-05-04T00:00:00.000Z"
+      },
+      "_id": {
+        "$oid": "6a5fc658b5645ad5b5a7f5a5"
+      }
+    }
+  ],
+  "__v": 5,
+  "doesShifts": true,
+  "phoneNumber": "2996257766",
+  "otherLeaves": [
+    {
+      "type": "Fiestas",
+      "startDate": {
+        "$date": "2025-12-27T00:00:00.000Z"
+      },
+      "endDate": {
+        "$date": "2026-01-02T00:00:00.000Z"
+      },
+      "_id": {
+        "$oid": "6a5fc658b5645ad5b5a7f5a6"
+      }
+    }
+  ],
+  "defaultAssignments": {
+    "useAlternatingWeeks": true,
+    "oddWeeks": {
+      "monday": [],
+      "tuesday": [],
+      "wednesday": [],
+      "thursday": [],
+      "friday": []
+    },
+    "evenWeeks": {
+      "monday": [],
+      "tuesday": [],
+      "wednesday": [],
+      "thursday": [],
+      "friday": []
+    }
+  },
+  "role": "user",
+  "birthDate": {
+    "$date": "1989-07-15T00:00:00.000Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "66f733f53da60093f4df67ba"
+  },
+  "username": "msalvarezza",
+  "email": "maxi.salvarezza@gmail.com",
+  "password": "$2b$10$gOnmb/nlyvBaW6TqgjAJyuL6tuToASM9o/yUwRbAvUZBhbnThv2Ta",
+  "isVerified": false,
+  "doesCardio": false,
+  "doesPediatrics": true,
+  "doesRNM": true,
+  "worksInPublicNeuquen": true,
+  "worksInPrivateNeuquen": true,
+  "worksInPublicRioNegro": true,
+  "worksInPrivateRioNegro": true,
+  "worksInCmacOnly": false,
+  "workSchedule": {
+    "monday": "Variable",
+    "tuesday": "Mañana",
+    "wednesday": "Tarde",
+    "thursday": "Variable",
+    "friday": "Mañana"
+  },
+  "vacations": [
+    {
+      "startDate": {
+        "$date": "2027-02-13T00:00:00.000Z"
+      },
+      "endDate": {
+        "$date": "2027-02-28T00:00:00.000Z"
+      },
+      "_id": {
+        "$oid": "6a5fc85db5645ad5b5a7faaa"
+      }
+    },
+    {
+      "startDate": {
+        "$date": "2026-11-07T00:00:00.000Z"
+      },
+      "endDate": {
+        "$date": "2026-11-22T00:00:00.000Z"
+      },
+      "_id": {
+        "$oid": "6a5fc85db5645ad5b5a7faab"
+      }
+    },
+    {
+      "startDate": {
+        "$date": "2026-06-20T00:00:00.000Z"
+      },
+      "endDate": {
+        "$date": "2026-07-05T00:00:00.000Z"
+      },
+      "_id": {
+        "$oid": "6a5fc85db5645ad5b5a7faac"
+      }
+    },
+    {
+      "startDate": {
+        "$date": "2026-03-28T00:00:00.000Z"
+      },
+      "endDate": {
+        "$date": "2026-04-12T00:00:00.000Z"
+      },
+      "_id": {
+        "$oid": "6a5fc85db5645ad5b5a7faad"
+      }
+    },
+    {
+      "startDate": {
+        "$date": "2026-02-14T00:00:00.000Z"
+      },
+      "endDate": {
+        "$date": "2026-03-01T00:00:00.000Z"
+      },
+      "_id": {
+        "$oid": "6a5fc85db5645ad5b5a7faae"
+      }
+    },
+    {
+      "startDate": {
+        "$date": "2025-11-15T00:00:00.000Z"
+      },
+      "endDate": {
+        "$date": "2025-11-30T00:00:00.000Z"
+      },
+      "_id": {
+        "$oid": "6a5fc85db5645ad5b5a7faaf"
+      }
+    },
+    {
+      "startDate": {
+        "$date": "2025-08-02T00:00:00.000Z"
+      },
+      "endDate": {
+        "$date": "2025-08-10T00:00:00.000Z"
+      },
+      "_id": {
+        "$oid": "6a5fc85db5645ad5b5a7fab0"
+      }
+    },
+    {
+      "startDate": {
+        "$date": "2025-07-12T00:00:00.000Z"
+      },
+      "endDate": {
+        "$date": "2025-07-20T00:00:00.000Z"
+      },
+      "_id": {
+        "$oid": "6a5fc85db5645ad5b5a7fab1"
+      }
+    },
+    {
+      "startDate": {
+        "$date": "2025-03-08T00:00:00.000Z"
+      },
+      "endDate": {
+        "$date": "2025-03-23T00:00:00.000Z"
+      },
+      "_id": {
+        "$oid": "6a5fc85db5645ad5b5a7fab2"
+      }
+    }
+  ],
+  "__v": 3,
+  "doesShifts": true,
+  "phoneNumber": "1153196814",
+  "otherLeaves": [
+    {
+      "type": "Fiestas",
+      "startDate": {
+        "$date": "2025-12-20T00:00:00.000Z"
+      },
+      "endDate": {
+        "$date": "2025-12-26T00:00:00.000Z"
+      },
+      "_id": {
+        "$oid": "6a5fc85db5645ad5b5a7fab3"
+      }
+    },
+    {
+      "type": "Paternidad",
+      "startDate": {
+        "$date": "2025-07-23T00:00:00.000Z"
+      },
+      "endDate": {
+        "$date": "2025-08-05T00:00:00.000Z"
+      },
+      "_id": {
+        "$oid": "6a5fc85db5645ad5b5a7fab4"
+      }
+    }
+  ],
+  "defaultAssignments": {
+    "useAlternatingWeeks": true,
+    "oddWeeks": {
+      "monday": [],
+      "tuesday": [],
+      "wednesday": [],
+      "thursday": [],
+      "friday": []
+    },
+    "evenWeeks": {
+      "monday": [],
+      "tuesday": [],
+      "wednesday": [],
+      "thursday": [],
+      "friday": []
+    }
+  },
+  "role": "admin",
+  "birthDate": {
+    "$date": "1992-12-21T00:00:00.000Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "6895efcfd33f3e815528e894"
+  },
+  "username": "jbo",
+  "email": "juliabonqn@hotmail.com",
+  "password": "$2b$10$7WIx4KeVmbPTXi1ziYHcZ.QlHFZB.LrmOsKyCPPcaSGEoxp5svCqW",
+  "isVerified": false,
+  "doesCardio": false,
+  "doesPediatrics": false,
+  "doesRNM": false,
+  "worksInPublicNeuquen": false,
+  "worksInPrivateNeuquen": true,
+  "worksInPublicRioNegro": false,
+  "worksInPrivateRioNegro": false,
+  "worksInCmacOnly": false,
+  "doesShifts": true,
+  "workSchedule": {
+    "monday": "Variable",
+    "tuesday": "No trabaja",
+    "wednesday": "No trabaja",
+    "thursday": "No trabaja",
+    "friday": "Tarde"
+  },
+  "vacations": [
+    {
+      "startDate": {
+        "$date": "2026-02-14T00:00:00.000Z"
+      },
+      "endDate": {
+        "$date": "2026-03-08T00:00:00.000Z"
+      },
+      "_id": {
+        "$oid": "6a5fc765b5645ad5b5a7f836"
+      }
+    }
+  ],
+  "otherLeaves": [
+    {
+      "type": "Viaje",
+      "startDate": {
+        "$date": "2026-05-18T00:00:00.000Z"
+      },
+      "endDate": {
+        "$date": "2026-06-01T00:00:00.000Z"
+      },
+      "_id": {
+        "$oid": "6a5fc765b5645ad5b5a7f837"
+      }
+    },
+    {
+      "type": "Viaje programado",
+      "startDate": {
+        "$date": "2025-09-19T00:00:00.000Z"
+      },
+      "endDate": {
+        "$date": "2025-09-29T00:00:00.000Z"
+      },
+      "_id": {
+        "$oid": "6a5fc765b5645ad5b5a7f838"
+      }
+    }
+  ],
+  "__v": 0,
+  "phoneNumber": "3416112835",
+  "defaultAssignments": {
+    "useAlternatingWeeks": true,
+    "oddWeeks": {
+      "monday": [],
+      "tuesday": [],
+      "wednesday": [],
+      "thursday": [],
+      "friday": []
+    },
+    "evenWeeks": {
+      "monday": [],
+      "tuesday": [],
+      "wednesday": [],
+      "thursday": [],
+      "friday": []
+    }
+  },
+  "birthDate": {
+    "$date": "1992-02-29T00:00:00.000Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "6a203588b0fff3ad6454b007"
+  },
+  "username": "rriso",
+  "email": "rdgorisso@gmail.com",
+  "password": "$2b$10$za0Tayj3l7ieksDkGKX8w.0Y.Nx/Fs9p6iI4pjaEg7sqepwOv54R2",
+  "role": "user",
+  "isVerified": false,
+  "doesCardio": false,
+  "doesPediatrics": true,
+  "doesRNM": true,
+  "worksInPublicNeuquen": false,
+  "worksInPrivateNeuquen": true,
+  "worksInPublicRioNegro": false,
+  "worksInPrivateRioNegro": false,
+  "worksInCmacOnly": false,
+  "doesShifts": true,
+  "workSchedule": {
+    "monday": "No trabaja",
+    "tuesday": "Tarde",
+    "wednesday": "No trabaja",
+    "thursday": "Tarde",
+    "friday": "No trabaja"
+  },
+  "defaultAssignments": {
+    "oddWeeks": {
+      "monday": [],
+      "tuesday": [],
+      "wednesday": [],
+      "thursday": [],
+      "friday": []
+    },
+    "evenWeeks": {
+      "monday": [],
+      "tuesday": [],
+      "wednesday": [],
+      "thursday": [],
+      "friday": []
+    },
+    "useAlternatingWeeks": true
+  },
+  "vacations": [],
+  "otherLeaves": [
+    {
+      "type": "Familiar",
+      "startDate": {
+        "$date": "2026-07-21T00:00:00.000Z"
+      },
+      "endDate": {
+        "$date": "2026-07-21T00:00:00.000Z"
+      },
+      "_id": {
+        "$oid": "6a5fcbecb5645ad5b5a7fd56"
+      }
+    },
+    {
+      "type": "Familiar",
+      "startDate": {
+        "$date": "2026-07-07T00:00:00.000Z"
+      },
+      "endDate": {
+        "$date": "2026-07-07T00:00:00.000Z"
+      },
+      "_id": {
+        "$oid": "6a5fcbecb5645ad5b5a7fd57"
+      }
+    }
+  ],
+  "__v": 0,
+  "phoneNumber": "3465449311",
+  "birthDate": {
+    "$date": "1991-08-27T00:00:00.000Z"
+  }
+}]

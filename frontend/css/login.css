@@ -1,13 +1,19 @@
 /* Estilos para los contenedores de formularios */
 .form-container {
-    max-width: 600px;
-    margin: 50px auto;
+    max-width: 1100px;
+    width: 95%;
+    margin: 40px auto;
     padding: 30px;
     border: 1px solid #ddd;
     border-radius: 10px;
     background-color: #fff;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     text-align: center;
+}
+
+/* Para páginas de auth (login, register, recover, reset) */
+.form-container--narrow {
+    max-width: 600px;
 }
 
 .form-container h2, h3 {

@@ -25,7 +25,8 @@
       "Bash(grep -n \"authMiddleware\\\\|requireAdmin\" /c/Users/jpsga/anestesiadelvalle/backend/src/app/routes/*.js)",
       "Bash(ls c:/Users/jpsga/anestesiadelvalle/frontend/*.html)",
       "Bash(grep -v \".js:.*//.*admin\")",
-      "Bash(xargs grep -l \"Birthday\\\\|birthday\")"
+      "Bash(xargs grep -l \"Birthday\\\\|birthday\")",
+      "Bash(python -c \"import json,sys; users=json.load\\(sys.stdin\\); [print\\(u.get\\(''_id'',{}\\).get\\(''$oid'',''?''\\), u.get\\(''username'',''?''\\)\\) for u in users]\")"
     ],
     "deny": [],
     "ask": []

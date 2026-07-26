@@ -1,0 +1,2182 @@
+[
+  {
+    "fechaInicio": {
+      "$date": "2024-08-01T00:00:00.000Z"
+    },
+    "motivo": "Conformacion inicial del grupo",
+    "participaciones": [
+      {
+        "userId": {
+          "$oid": "66849bb060db6c808e86bcfd"
+        },
+        "porcentaje": 5.4858934169279
+      },
+      {
+        "userId": {
+          "$oid": "6697ca5a58bf15a5304e9745"
+        },
+        "porcentaje": 5.4858934169279
+      },
+      {
+        "userId": {
+          "$oid": "66994183b848b9656f243e3d"
+        },
+        "porcentaje": 5.4858934169279
+      },
+      {
+        "userId": {
+          "$oid": "66950ebf4a8cfe8db884a8a6"
+        },
+        "porcentaje": 5.4858934169279
+      },
+      {
+        "userId": {
+          "$oid": "669513184a8cfe8db884a8ae"
+        },
+        "porcentaje": 5.4858934169279
+      },
+      {
+        "userId": {
+          "$oid": "66849bac60db6c808e86bcf4"
+        },
+        "porcentaje": 3.9184952978056
+      },
+      {
+        "userId": {
+          "$oid": "66849bb560db6c808e86bd00"
+        },
+        "porcentaje": 5.4858934169279
+      },
+      {
+        "userId": {
+          "$oid": "6684ae0760db6c808e86bd1a"
+        },
+        "porcentaje": 3.9184952978056
+      },
+      {
+        "userId": {
+          "$oid": "66849c9560db6c808e86bd0e"
+        },
+        "porcentaje": 5.4858934169279
+      },
+      {
+        "userId": {
+          "$oid": "6697c90258bf15a5304e9721"
+        },
+        "porcentaje": 5.4858934169279
+      },
+      {
+        "userId": {
+          "$oid": "66849bae60db6c808e86bcf7"
+        },
+        "porcentaje": 5.4858934169279
+      },
+      {
+        "userId": {
+          "$oid": "669516a54a8cfe8db884a8c0"
+        },
+        "porcentaje": 4.9373040752351
+      },
+      {
+        "userId": {
+          "$oid": "66849bb760db6c808e86bd03"
+        },
+        "porcentaje": 5.4858934169279
+      },
+      {
+        "userId": {
+          "$oid": "66849baf60db6c808e86bcfa"
+        },
+        "porcentaje": 5.4858934169279
+      },
+      {
+        "userId": {
+          "$oid": "6697c9e658bf15a5304e973c"
+        },
+        "porcentaje": 4.9373040752351
+      },
+      {
+        "userId": {
+          "$oid": "6684ada960db6c808e86bd17"
+        },
+        "porcentaje": 5.4858934169279
+      },
+      {
+        "userId": {
+          "$oid": "669513984a8cfe8db884a8b4"
+        },
+        "porcentaje": 5.4858934169279
+      },
+      {
+        "userId": {
+          "$oid": "6696fdef2fd47c764200f7e2"
+        },
+        "porcentaje": 5.4858934169279
+      },
+      {
+        "userId": {
+          "$oid": "668b11a8973c8df73d04140c"
+        },
+        "porcentaje": 5.4858934169279
+      }
+    ],
+    "creadoEn": {
+      "$date": "2024-08-01T00:00:00.000Z"
+    }
+  },
+  {
+    "fechaInicio": {
+      "$date": "2024-09-01T00:00:00.000Z"
+    },
+    "motivo": "Incorporacion Vela",
+    "participaciones": [
+      {
+        "userId": {
+          "$oid": "66849bb060db6c808e86bcfd"
+        },
+        "porcentaje": 5.2790346907994
+      },
+      {
+        "userId": {
+          "$oid": "6697ca5a58bf15a5304e9745"
+        },
+        "porcentaje": 5.2790346907994
+      },
+      {
+        "userId": {
+          "$oid": "66994183b848b9656f243e3d"
+        },
+        "porcentaje": 5.2790346907994
+      },
+      {
+        "userId": {
+          "$oid": "66950ebf4a8cfe8db884a8a6"
+        },
+        "porcentaje": 5.2790346907994
+      },
+      {
+        "userId": {
+          "$oid": "669513184a8cfe8db884a8ae"
+        },
+        "porcentaje": 5.2790346907994
+      },
+      {
+        "userId": {
+          "$oid": "66849bac60db6c808e86bcf4"
+        },
+        "porcentaje": 3.7707390648567
+      },
+      {
+        "userId": {
+          "$oid": "66849bb560db6c808e86bd00"
+        },
+        "porcentaje": 5.2790346907994
+      },
+      {
+        "userId": {
+          "$oid": "6684ae0760db6c808e86bd1a"
+        },
+        "porcentaje": 3.7707390648567
+      },
+      {
+        "userId": {
+          "$oid": "66849c9560db6c808e86bd0e"
+        },
+        "porcentaje": 5.2790346907994
+      },
+      {
+        "userId": {
+          "$oid": "6697c90258bf15a5304e9721"
+        },
+        "porcentaje": 5.2790346907994
+      },
+      {
+        "userId": {
+          "$oid": "66849bae60db6c808e86bcf7"
+        },
+        "porcentaje": 5.2790346907994
+      },
+      {
+        "userId": {
+          "$oid": "669516a54a8cfe8db884a8c0"
+        },
+        "porcentaje": 4.7511312217195
+      },
+      {
+        "userId": {
+          "$oid": "66849bb760db6c808e86bd03"
+        },
+        "porcentaje": 5.2790346907994
+      },
+      {
+        "userId": {
+          "$oid": "66849baf60db6c808e86bcfa"
+        },
+        "porcentaje": 5.2790346907994
+      },
+      {
+        "userId": {
+          "$oid": "6697c9e658bf15a5304e973c"
+        },
+        "porcentaje": 4.7511312217195
+      },
+      {
+        "userId": {
+          "$oid": "6684ada960db6c808e86bd17"
+        },
+        "porcentaje": 5.2790346907994
+      },
+      {
+        "userId": {
+          "$oid": "66f733f53da60093f4df67ba"
+        },
+        "porcentaje": 0.0
+      },
+      {
+        "userId": {
+          "$oid": "669513984a8cfe8db884a8b4"
+        },
+        "porcentaje": 5.2790346907994
+      },
+      {
+        "userId": {
+          "$oid": "6696fdef2fd47c764200f7e2"
+        },
+        "porcentaje": 5.2790346907994
+      },
+      {
+        "userId": {
+          "$oid": "668b11a8973c8df73d04140c"
+        },
+        "porcentaje": 5.2790346907994
+      },
+      {
+        "userId": {
+          "$oid": "66e483fafbc3c272d61e39ab"
+        },
+        "porcentaje": 3.7707390648567
+      }
+    ],
+    "creadoEn": {
+      "$date": "2024-09-01T00:00:00.000Z"
+    }
+  },
+  {
+    "fechaInicio": {
+      "$date": "2024-10-01T00:00:00.000Z"
+    },
+    "motivo": "Incorporacion Salvarezza",
+    "participaciones": [
+      {
+        "userId": {
+          "$oid": "66849bb060db6c808e86bcfd"
+        },
+        "porcentaje": 5.0505050505051
+      },
+      {
+        "userId": {
+          "$oid": "6697ca5a58bf15a5304e9745"
+        },
+        "porcentaje": 5.0505050505051
+      },
+      {
+        "userId": {
+          "$oid": "66994183b848b9656f243e3d"
+        },
+        "porcentaje": 5.0505050505051
+      },
+      {
+        "userId": {
+          "$oid": "66950ebf4a8cfe8db884a8a6"
+        },
+        "porcentaje": 5.0505050505051
+      },
+      {
+        "userId": {
+          "$oid": "669513184a8cfe8db884a8ae"
+        },
+        "porcentaje": 5.0505050505051
+      },
+      {
+        "userId": {
+          "$oid": "66849bac60db6c808e86bcf4"
+        },
+        "porcentaje": 3.6075036075036
+      },
+      {
+        "userId": {
+          "$oid": "66849bb560db6c808e86bd00"
+        },
+        "porcentaje": 5.0505050505051
+      },
+      {
+        "userId": {
+          "$oid": "6684ae0760db6c808e86bd1a"
+        },
+        "porcentaje": 3.6075036075036
+      },
+      {
+        "userId": {
+          "$oid": "66849c9560db6c808e86bd0e"
+        },
+        "porcentaje": 5.0505050505051
+      },
+      {
+        "userId": {
+          "$oid": "6697c90258bf15a5304e9721"
+        },
+        "porcentaje": 5.0505050505051
+      },
+      {
+        "userId": {
+          "$oid": "66849bae60db6c808e86bcf7"
+        },
+        "porcentaje": 5.0505050505051
+      },
+      {
+        "userId": {
+          "$oid": "669516a54a8cfe8db884a8c0"
+        },
+        "porcentaje": 4.5454545454546
+      },
+      {
+        "userId": {
+          "$oid": "66849bb760db6c808e86bd03"
+        },
+        "porcentaje": 5.0505050505051
+      },
+      {
+        "userId": {
+          "$oid": "66849baf60db6c808e86bcfa"
+        },
+        "porcentaje": 5.0505050505051
+      },
+      {
+        "userId": {
+          "$oid": "6697c9e658bf15a5304e973c"
+        },
+        "porcentaje": 4.5454545454546
+      },
+      {
+        "userId": {
+          "$oid": "6684ada960db6c808e86bd17"
+        },
+        "porcentaje": 5.0505050505051
+      },
+      {
+        "userId": {
+          "$oid": "66f733f53da60093f4df67ba"
+        },
+        "porcentaje": 4.3290043290043
+      },
+      {
+        "userId": {
+          "$oid": "669513984a8cfe8db884a8b4"
+        },
+        "porcentaje": 5.0505050505051
+      },
+      {
+        "userId": {
+          "$oid": "6696fdef2fd47c764200f7e2"
+        },
+        "porcentaje": 5.0505050505051
+      },
+      {
+        "userId": {
+          "$oid": "668b11a8973c8df73d04140c"
+        },
+        "porcentaje": 5.0505050505051
+      },
+      {
+        "userId": {
+          "$oid": "66e483fafbc3c272d61e39ab"
+        },
+        "porcentaje": 3.6075036075036
+      }
+    ],
+    "creadoEn": {
+      "$date": "2024-10-01T00:00:00.000Z"
+    }
+  },
+  {
+    "fechaInicio": {
+      "$date": "2025-01-01T00:00:00.000Z"
+    },
+    "motivo": "Incremento Vela",
+    "participaciones": [
+      {
+        "userId": {
+          "$oid": "66849bb060db6c808e86bcfd"
+        },
+        "porcentaje": 5.0143266475645
+      },
+      {
+        "userId": {
+          "$oid": "6697ca5a58bf15a5304e9745"
+        },
+        "porcentaje": 5.0143266475645
+      },
+      {
+        "userId": {
+          "$oid": "66994183b848b9656f243e3d"
+        },
+        "porcentaje": 5.0143266475645
+      },
+      {
+        "userId": {
+          "$oid": "66950ebf4a8cfe8db884a8a6"
+        },
+        "porcentaje": 5.0143266475645
+      },
+      {
+        "userId": {
+          "$oid": "669513184a8cfe8db884a8ae"
+        },
+        "porcentaje": 5.0143266475645
+      },
+      {
+        "userId": {
+          "$oid": "66849bac60db6c808e86bcf4"
+        },
+        "porcentaje": 3.5816618911175
+      },
+      {
+        "userId": {
+          "$oid": "66849bb560db6c808e86bd00"
+        },
+        "porcentaje": 5.0143266475645
+      },
+      {
+        "userId": {
+          "$oid": "6684ae0760db6c808e86bd1a"
+        },
+        "porcentaje": 3.5816618911175
+      },
+      {
+        "userId": {
+          "$oid": "66849c9560db6c808e86bd0e"
+        },
+        "porcentaje": 5.0143266475645
+      },
+      {
+        "userId": {
+          "$oid": "6697c90258bf15a5304e9721"
+        },
+        "porcentaje": 5.0143266475645
+      },
+      {
+        "userId": {
+          "$oid": "66849bae60db6c808e86bcf7"
+        },
+        "porcentaje": 5.0143266475645
+      },
+      {
+        "userId": {
+          "$oid": "669516a54a8cfe8db884a8c0"
+        },
+        "porcentaje": 4.512893982808
+      },
+      {
+        "userId": {
+          "$oid": "66849bb760db6c808e86bd03"
+        },
+        "porcentaje": 5.0143266475645
+      },
+      {
+        "userId": {
+          "$oid": "66849baf60db6c808e86bcfa"
+        },
+        "porcentaje": 5.0143266475645
+      },
+      {
+        "userId": {
+          "$oid": "6697c9e658bf15a5304e973c"
+        },
+        "porcentaje": 4.512893982808
+      },
+      {
+        "userId": {
+          "$oid": "6684ada960db6c808e86bd17"
+        },
+        "porcentaje": 5.0143266475645
+      },
+      {
+        "userId": {
+          "$oid": "66f733f53da60093f4df67ba"
+        },
+        "porcentaje": 4.297994269341
+      },
+      {
+        "userId": {
+          "$oid": "669513984a8cfe8db884a8b4"
+        },
+        "porcentaje": 5.0143266475645
+      },
+      {
+        "userId": {
+          "$oid": "6696fdef2fd47c764200f7e2"
+        },
+        "porcentaje": 5.0143266475645
+      },
+      {
+        "userId": {
+          "$oid": "668b11a8973c8df73d04140c"
+        },
+        "porcentaje": 5.0143266475645
+      },
+      {
+        "userId": {
+          "$oid": "66e483fafbc3c272d61e39ab"
+        },
+        "porcentaje": 4.297994269341
+      }
+    ],
+    "creadoEn": {
+      "$date": "2025-01-01T00:00:00.000Z"
+    }
+  },
+  {
+    "fechaInicio": {
+      "$date": "2025-02-01T00:00:00.000Z"
+    },
+    "motivo": "Baja Serrano",
+    "participaciones": [
+      {
+        "userId": {
+          "$oid": "66849bb060db6c808e86bcfd"
+        },
+        "porcentaje": 5.0651230101303
+      },
+      {
+        "userId": {
+          "$oid": "6697ca5a58bf15a5304e9745"
+        },
+        "porcentaje": 5.0651230101303
+      },
+      {
+        "userId": {
+          "$oid": "66994183b848b9656f243e3d"
+        },
+        "porcentaje": 5.0651230101303
+      },
+      {
+        "userId": {
+          "$oid": "66950ebf4a8cfe8db884a8a6"
+        },
+        "porcentaje": 5.0651230101303
+      },
+      {
+        "userId": {
+          "$oid": "669513184a8cfe8db884a8ae"
+        },
+        "porcentaje": 5.0651230101303
+      },
+      {
+        "userId": {
+          "$oid": "66849bac60db6c808e86bcf4"
+        },
+        "porcentaje": 3.6179450072359
+      },
+      {
+        "userId": {
+          "$oid": "66849bb560db6c808e86bd00"
+        },
+        "porcentaje": 5.0651230101303
+      },
+      {
+        "userId": {
+          "$oid": "6684ae0760db6c808e86bd1a"
+        },
+        "porcentaje": 3.6179450072359
+      },
+      {
+        "userId": {
+          "$oid": "66849c9560db6c808e86bd0e"
+        },
+        "porcentaje": 5.0651230101303
+      },
+      {
+        "userId": {
+          "$oid": "6697c90258bf15a5304e9721"
+        },
+        "porcentaje": 5.0651230101303
+      },
+      {
+        "userId": {
+          "$oid": "66849bae60db6c808e86bcf7"
+        },
+        "porcentaje": 5.0651230101303
+      },
+      {
+        "userId": {
+          "$oid": "669516a54a8cfe8db884a8c0"
+        },
+        "porcentaje": 4.5586107091172
+      },
+      {
+        "userId": {
+          "$oid": "66849bb760db6c808e86bd03"
+        },
+        "porcentaje": 5.0651230101303
+      },
+      {
+        "userId": {
+          "$oid": "66849baf60db6c808e86bcfa"
+        },
+        "porcentaje": 5.0651230101303
+      },
+      {
+        "userId": {
+          "$oid": "6697c9e658bf15a5304e973c"
+        },
+        "porcentaje": 4.5586107091172
+      },
+      {
+        "userId": {
+          "$oid": "6684ada960db6c808e86bd17"
+        },
+        "porcentaje": 5.0651230101303
+      },
+      {
+        "userId": {
+          "$oid": "66f733f53da60093f4df67ba"
+        },
+        "porcentaje": 4.3415340086831
+      },
+      {
+        "userId": {
+          "$oid": "669513984a8cfe8db884a8b4"
+        },
+        "porcentaje": 5.0651230101303
+      },
+      {
+        "userId": {
+          "$oid": "6696fdef2fd47c764200f7e2"
+        },
+        "porcentaje": 4.0520984081042
+      },
+      {
+        "userId": {
+          "$oid": "668b11a8973c8df73d04140c"
+        },
+        "porcentaje": 5.0651230101303
+      },
+      {
+        "userId": {
+          "$oid": "66e483fafbc3c272d61e39ab"
+        },
+        "porcentaje": 4.3415340086831
+      }
+    ],
+    "creadoEn": {
+      "$date": "2025-02-01T00:00:00.000Z"
+    }
+  },
+  {
+    "fechaInicio": {
+      "$date": "2025-04-01T00:00:00.000Z"
+    },
+    "motivo": "Incremento Vela",
+    "participaciones": [
+      {
+        "userId": {
+          "$oid": "66849bb060db6c808e86bcfd"
+        },
+        "porcentaje": 4.9928673323823
+      },
+      {
+        "userId": {
+          "$oid": "6697ca5a58bf15a5304e9745"
+        },
+        "porcentaje": 4.9928673323823
+      },
+      {
+        "userId": {
+          "$oid": "66994183b848b9656f243e3d"
+        },
+        "porcentaje": 4.9928673323823
+      },
+      {
+        "userId": {
+          "$oid": "66950ebf4a8cfe8db884a8a6"
+        },
+        "porcentaje": 4.9928673323823
+      },
+      {
+        "userId": {
+          "$oid": "669513184a8cfe8db884a8ae"
+        },
+        "porcentaje": 4.9928673323823
+      },
+      {
+        "userId": {
+          "$oid": "66849bac60db6c808e86bcf4"
+        },
+        "porcentaje": 3.5663338088445
+      },
+      {
+        "userId": {
+          "$oid": "66849bb560db6c808e86bd00"
+        },
+        "porcentaje": 4.9928673323823
+      },
+      {
+        "userId": {
+          "$oid": "6684ae0760db6c808e86bd1a"
+        },
+        "porcentaje": 3.5663338088445
+      },
+      {
+        "userId": {
+          "$oid": "66849c9560db6c808e86bd0e"
+        },
+        "porcentaje": 4.9928673323823
+      },
+      {
+        "userId": {
+          "$oid": "6697c90258bf15a5304e9721"
+        },
+        "porcentaje": 4.9928673323823
+      },
+      {
+        "userId": {
+          "$oid": "66849bae60db6c808e86bcf7"
+        },
+        "porcentaje": 4.9928673323823
+      },
+      {
+        "userId": {
+          "$oid": "669516a54a8cfe8db884a8c0"
+        },
+        "porcentaje": 4.4935805991441
+      },
+      {
+        "userId": {
+          "$oid": "66849bb760db6c808e86bd03"
+        },
+        "porcentaje": 4.9928673323823
+      },
+      {
+        "userId": {
+          "$oid": "66849baf60db6c808e86bcfa"
+        },
+        "porcentaje": 4.9928673323823
+      },
+      {
+        "userId": {
+          "$oid": "6697c9e658bf15a5304e973c"
+        },
+        "porcentaje": 4.4935805991441
+      },
+      {
+        "userId": {
+          "$oid": "6684ada960db6c808e86bd17"
+        },
+        "porcentaje": 4.9928673323823
+      },
+      {
+        "userId": {
+          "$oid": "66f733f53da60093f4df67ba"
+        },
+        "porcentaje": 4.9928673323823
+      },
+      {
+        "userId": {
+          "$oid": "669513984a8cfe8db884a8b4"
+        },
+        "porcentaje": 4.9928673323823
+      },
+      {
+        "userId": {
+          "$oid": "6696fdef2fd47c764200f7e2"
+        },
+        "porcentaje": 3.9942938659059
+      },
+      {
+        "userId": {
+          "$oid": "668b11a8973c8df73d04140c"
+        },
+        "porcentaje": 4.9928673323823
+      },
+      {
+        "userId": {
+          "$oid": "66e483fafbc3c272d61e39ab"
+        },
+        "porcentaje": 4.9928673323823
+      }
+    ],
+    "creadoEn": {
+      "$date": "2025-04-01T00:00:00.000Z"
+    }
+  },
+  {
+    "fechaInicio": {
+      "$date": "2025-05-01T00:00:00.000Z"
+    },
+    "motivo": "Baja Harriague",
+    "participaciones": [
+      {
+        "userId": {
+          "$oid": "66849bb060db6c808e86bcfd"
+        },
+        "porcentaje": 5.0179211469534
+      },
+      {
+        "userId": {
+          "$oid": "6697ca5a58bf15a5304e9745"
+        },
+        "porcentaje": 5.0179211469534
+      },
+      {
+        "userId": {
+          "$oid": "66994183b848b9656f243e3d"
+        },
+        "porcentaje": 5.0179211469534
+      },
+      {
+        "userId": {
+          "$oid": "66950ebf4a8cfe8db884a8a6"
+        },
+        "porcentaje": 5.0179211469534
+      },
+      {
+        "userId": {
+          "$oid": "669513184a8cfe8db884a8ae"
+        },
+        "porcentaje": 5.0179211469534
+      },
+      {
+        "userId": {
+          "$oid": "66849bac60db6c808e86bcf4"
+        },
+        "porcentaje": 3.584229390681
+      },
+      {
+        "userId": {
+          "$oid": "66849bb560db6c808e86bd00"
+        },
+        "porcentaje": 5.0179211469534
+      },
+      {
+        "userId": {
+          "$oid": "6684ae0760db6c808e86bd1a"
+        },
+        "porcentaje": 3.584229390681
+      },
+      {
+        "userId": {
+          "$oid": "66849c9560db6c808e86bd0e"
+        },
+        "porcentaje": 5.0179211469534
+      },
+      {
+        "userId": {
+          "$oid": "6697c90258bf15a5304e9721"
+        },
+        "porcentaje": 5.0179211469534
+      },
+      {
+        "userId": {
+          "$oid": "66849bae60db6c808e86bcf7"
+        },
+        "porcentaje": 5.0179211469534
+      },
+      {
+        "userId": {
+          "$oid": "669516a54a8cfe8db884a8c0"
+        },
+        "porcentaje": 4.0143369175627
+      },
+      {
+        "userId": {
+          "$oid": "66849bb760db6c808e86bd03"
+        },
+        "porcentaje": 5.0179211469534
+      },
+      {
+        "userId": {
+          "$oid": "66849baf60db6c808e86bcfa"
+        },
+        "porcentaje": 5.0179211469534
+      },
+      {
+        "userId": {
+          "$oid": "6697c9e658bf15a5304e973c"
+        },
+        "porcentaje": 4.5161290322581
+      },
+      {
+        "userId": {
+          "$oid": "6684ada960db6c808e86bd17"
+        },
+        "porcentaje": 5.0179211469534
+      },
+      {
+        "userId": {
+          "$oid": "66f733f53da60093f4df67ba"
+        },
+        "porcentaje": 5.0179211469534
+      },
+      {
+        "userId": {
+          "$oid": "669513984a8cfe8db884a8b4"
+        },
+        "porcentaje": 5.0179211469534
+      },
+      {
+        "userId": {
+          "$oid": "6696fdef2fd47c764200f7e2"
+        },
+        "porcentaje": 4.0143369175627
+      },
+      {
+        "userId": {
+          "$oid": "668b11a8973c8df73d04140c"
+        },
+        "porcentaje": 5.0179211469534
+      },
+      {
+        "userId": {
+          "$oid": "66e483fafbc3c272d61e39ab"
+        },
+        "porcentaje": 5.0179211469534
+      }
+    ],
+    "creadoEn": {
+      "$date": "2025-05-01T00:00:00.000Z"
+    }
+  },
+  {
+    "fechaInicio": {
+      "$date": "2026-01-01T00:00:00.000Z"
+    },
+    "motivo": "Baja partes",
+    "participaciones": [
+      {
+        "userId": {
+          "$oid": "66849bb060db6c808e86bcfd"
+        },
+        "porcentaje": 5.1063829787234
+      },
+      {
+        "userId": {
+          "$oid": "6697ca5a58bf15a5304e9745"
+        },
+        "porcentaje": 5.1063829787234
+      },
+      {
+        "userId": {
+          "$oid": "66994183b848b9656f243e3d"
+        },
+        "porcentaje": 5.1063829787234
+      },
+      {
+        "userId": {
+          "$oid": "66950ebf4a8cfe8db884a8a6"
+        },
+        "porcentaje": 5.1063829787234
+      },
+      {
+        "userId": {
+          "$oid": "669513184a8cfe8db884a8ae"
+        },
+        "porcentaje": 5.1063829787234
+      },
+      {
+        "userId": {
+          "$oid": "66849bac60db6c808e86bcf4"
+        },
+        "porcentaje": 3.4042553191489
+      },
+      {
+        "userId": {
+          "$oid": "66849bb560db6c808e86bd00"
+        },
+        "porcentaje": 5.1063829787234
+      },
+      {
+        "userId": {
+          "$oid": "6684ae0760db6c808e86bd1a"
+        },
+        "porcentaje": 3.4042553191489
+      },
+      {
+        "userId": {
+          "$oid": "66849c9560db6c808e86bd0e"
+        },
+        "porcentaje": 5.1063829787234
+      },
+      {
+        "userId": {
+          "$oid": "6697c90258bf15a5304e9721"
+        },
+        "porcentaje": 5.1063829787234
+      },
+      {
+        "userId": {
+          "$oid": "66849bae60db6c808e86bcf7"
+        },
+        "porcentaje": 5.1063829787234
+      },
+      {
+        "userId": {
+          "$oid": "669516a54a8cfe8db884a8c0"
+        },
+        "porcentaje": 3.5744680851064
+      },
+      {
+        "userId": {
+          "$oid": "66849bb760db6c808e86bd03"
+        },
+        "porcentaje": 5.1063829787234
+      },
+      {
+        "userId": {
+          "$oid": "66849baf60db6c808e86bcfa"
+        },
+        "porcentaje": 5.1063829787234
+      },
+      {
+        "userId": {
+          "$oid": "6697c9e658bf15a5304e973c"
+        },
+        "porcentaje": 4.3404255319149
+      },
+      {
+        "userId": {
+          "$oid": "6684ada960db6c808e86bd17"
+        },
+        "porcentaje": 5.1063829787234
+      },
+      {
+        "userId": {
+          "$oid": "66f733f53da60093f4df67ba"
+        },
+        "porcentaje": 5.1063829787234
+      },
+      {
+        "userId": {
+          "$oid": "669513984a8cfe8db884a8b4"
+        },
+        "porcentaje": 5.1063829787234
+      },
+      {
+        "userId": {
+          "$oid": "6696fdef2fd47c764200f7e2"
+        },
+        "porcentaje": 3.5744680851064
+      },
+      {
+        "userId": {
+          "$oid": "668b11a8973c8df73d04140c"
+        },
+        "porcentaje": 5.1063829787234
+      },
+      {
+        "userId": {
+          "$oid": "66e483fafbc3c272d61e39ab"
+        },
+        "porcentaje": 5.1063829787234
+      }
+    ],
+    "creadoEn": {
+      "$date": "2026-01-01T00:00:00.000Z"
+    }
+  },
+  {
+    "fechaInicio": {
+      "$date": "2026-02-01T00:00:00.000Z"
+    },
+    "motivo": "Incremento Serrano",
+    "participaciones": [
+      {
+        "userId": {
+          "$oid": "66849bb060db6c808e86bcfd"
+        },
+        "porcentaje": 5.0675675675676
+      },
+      {
+        "userId": {
+          "$oid": "6697ca5a58bf15a5304e9745"
+        },
+        "porcentaje": 5.0675675675676
+      },
+      {
+        "userId": {
+          "$oid": "66994183b848b9656f243e3d"
+        },
+        "porcentaje": 5.0675675675676
+      },
+      {
+        "userId": {
+          "$oid": "66950ebf4a8cfe8db884a8a6"
+        },
+        "porcentaje": 5.0675675675676
+      },
+      {
+        "userId": {
+          "$oid": "669513184a8cfe8db884a8ae"
+        },
+        "porcentaje": 5.0675675675676
+      },
+      {
+        "userId": {
+          "$oid": "66849bac60db6c808e86bcf4"
+        },
+        "porcentaje": 3.3783783783784
+      },
+      {
+        "userId": {
+          "$oid": "66849bb560db6c808e86bd00"
+        },
+        "porcentaje": 5.0675675675676
+      },
+      {
+        "userId": {
+          "$oid": "6684ae0760db6c808e86bd1a"
+        },
+        "porcentaje": 3.3783783783784
+      },
+      {
+        "userId": {
+          "$oid": "66849c9560db6c808e86bd0e"
+        },
+        "porcentaje": 5.0675675675676
+      },
+      {
+        "userId": {
+          "$oid": "6697c90258bf15a5304e9721"
+        },
+        "porcentaje": 5.0675675675676
+      },
+      {
+        "userId": {
+          "$oid": "66849bae60db6c808e86bcf7"
+        },
+        "porcentaje": 5.0675675675676
+      },
+      {
+        "userId": {
+          "$oid": "669516a54a8cfe8db884a8c0"
+        },
+        "porcentaje": 3.5472972972973
+      },
+      {
+        "userId": {
+          "$oid": "66849bb760db6c808e86bd03"
+        },
+        "porcentaje": 5.0675675675676
+      },
+      {
+        "userId": {
+          "$oid": "66849baf60db6c808e86bcfa"
+        },
+        "porcentaje": 5.0675675675676
+      },
+      {
+        "userId": {
+          "$oid": "6697c9e658bf15a5304e973c"
+        },
+        "porcentaje": 4.3074324324324
+      },
+      {
+        "userId": {
+          "$oid": "6684ada960db6c808e86bd17"
+        },
+        "porcentaje": 5.0675675675676
+      },
+      {
+        "userId": {
+          "$oid": "66f733f53da60093f4df67ba"
+        },
+        "porcentaje": 5.0675675675676
+      },
+      {
+        "userId": {
+          "$oid": "669513984a8cfe8db884a8b4"
+        },
+        "porcentaje": 5.0675675675676
+      },
+      {
+        "userId": {
+          "$oid": "6696fdef2fd47c764200f7e2"
+        },
+        "porcentaje": 4.3074324324324
+      },
+      {
+        "userId": {
+          "$oid": "668b11a8973c8df73d04140c"
+        },
+        "porcentaje": 5.0675675675676
+      },
+      {
+        "userId": {
+          "$oid": "66e483fafbc3c272d61e39ab"
+        },
+        "porcentaje": 5.0675675675676
+      }
+    ],
+    "creadoEn": {
+      "$date": "2026-02-01T00:00:00.000Z"
+    }
+  },
+  {
+    "fechaInicio": {
+      "$date": "2026-02-15T00:00:00.000Z"
+    },
+    "motivo": "Baja licencia Lu",
+    "participaciones": [
+      {
+        "userId": {
+          "$oid": "66849bb060db6c808e86bcfd"
+        },
+        "porcentaje": 5.1590713671539
+      },
+      {
+        "userId": {
+          "$oid": "6697ca5a58bf15a5304e9745"
+        },
+        "porcentaje": 5.1590713671539
+      },
+      {
+        "userId": {
+          "$oid": "66994183b848b9656f243e3d"
+        },
+        "porcentaje": 5.1590713671539
+      },
+      {
+        "userId": {
+          "$oid": "66950ebf4a8cfe8db884a8a6"
+        },
+        "porcentaje": 5.1590713671539
+      },
+      {
+        "userId": {
+          "$oid": "669513184a8cfe8db884a8ae"
+        },
+        "porcentaje": 5.1590713671539
+      },
+      {
+        "userId": {
+          "$oid": "66849bac60db6c808e86bcf4"
+        },
+        "porcentaje": 3.4393809114359
+      },
+      {
+        "userId": {
+          "$oid": "66849bb560db6c808e86bd00"
+        },
+        "porcentaje": 5.1590713671539
+      },
+      {
+        "userId": {
+          "$oid": "6684ae0760db6c808e86bd1a"
+        },
+        "porcentaje": 3.4393809114359
+      },
+      {
+        "userId": {
+          "$oid": "66849c9560db6c808e86bd0e"
+        },
+        "porcentaje": 5.1590713671539
+      },
+      {
+        "userId": {
+          "$oid": "6697c90258bf15a5304e9721"
+        },
+        "porcentaje": 5.1590713671539
+      },
+      {
+        "userId": {
+          "$oid": "66849bae60db6c808e86bcf7"
+        },
+        "porcentaje": 5.1590713671539
+      },
+      {
+        "userId": {
+          "$oid": "669516a54a8cfe8db884a8c0"
+        },
+        "porcentaje": 1.8056749785039
+      },
+      {
+        "userId": {
+          "$oid": "66849bb760db6c808e86bd03"
+        },
+        "porcentaje": 5.1590713671539
+      },
+      {
+        "userId": {
+          "$oid": "66849baf60db6c808e86bcfa"
+        },
+        "porcentaje": 5.1590713671539
+      },
+      {
+        "userId": {
+          "$oid": "6697c9e658bf15a5304e973c"
+        },
+        "porcentaje": 4.3852106620808
+      },
+      {
+        "userId": {
+          "$oid": "6684ada960db6c808e86bd17"
+        },
+        "porcentaje": 5.1590713671539
+      },
+      {
+        "userId": {
+          "$oid": "66f733f53da60093f4df67ba"
+        },
+        "porcentaje": 5.1590713671539
+      },
+      {
+        "userId": {
+          "$oid": "669513984a8cfe8db884a8b4"
+        },
+        "porcentaje": 5.1590713671539
+      },
+      {
+        "userId": {
+          "$oid": "6696fdef2fd47c764200f7e2"
+        },
+        "porcentaje": 4.3852106620808
+      },
+      {
+        "userId": {
+          "$oid": "668b11a8973c8df73d04140c"
+        },
+        "porcentaje": 5.1590713671539
+      },
+      {
+        "userId": {
+          "$oid": "66e483fafbc3c272d61e39ab"
+        },
+        "porcentaje": 5.1590713671539
+      }
+    ],
+    "creadoEn": {
+      "$date": "2026-02-15T00:00:00.000Z"
+    }
+  },
+  {
+    "fechaInicio": {
+      "$date": "2026-03-01T00:00:00.000Z"
+    },
+    "motivo": "Baja Silvestre",
+    "participaciones": [
+      {
+        "userId": {
+          "$oid": "66849bb060db6c808e86bcfd"
+        },
+        "porcentaje": 5.1993067590988
+      },
+      {
+        "userId": {
+          "$oid": "6697ca5a58bf15a5304e9745"
+        },
+        "porcentaje": 5.1993067590988
+      },
+      {
+        "userId": {
+          "$oid": "66994183b848b9656f243e3d"
+        },
+        "porcentaje": 5.1993067590988
+      },
+      {
+        "userId": {
+          "$oid": "66950ebf4a8cfe8db884a8a6"
+        },
+        "porcentaje": 5.1993067590988
+      },
+      {
+        "userId": {
+          "$oid": "669513184a8cfe8db884a8ae"
+        },
+        "porcentaje": 4.419410745234
+      },
+      {
+        "userId": {
+          "$oid": "66849bac60db6c808e86bcf4"
+        },
+        "porcentaje": 3.4662045060659
+      },
+      {
+        "userId": {
+          "$oid": "66849bb560db6c808e86bd00"
+        },
+        "porcentaje": 5.1993067590988
+      },
+      {
+        "userId": {
+          "$oid": "6684ae0760db6c808e86bd1a"
+        },
+        "porcentaje": 3.4662045060659
+      },
+      {
+        "userId": {
+          "$oid": "66849c9560db6c808e86bd0e"
+        },
+        "porcentaje": 5.1993067590988
+      },
+      {
+        "userId": {
+          "$oid": "6697c90258bf15a5304e9721"
+        },
+        "porcentaje": 5.1993067590988
+      },
+      {
+        "userId": {
+          "$oid": "66849bae60db6c808e86bcf7"
+        },
+        "porcentaje": 5.1993067590988
+      },
+      {
+        "userId": {
+          "$oid": "669516a54a8cfe8db884a8c0"
+        },
+        "porcentaje": 1.8197573656846
+      },
+      {
+        "userId": {
+          "$oid": "66849bb760db6c808e86bd03"
+        },
+        "porcentaje": 5.1993067590988
+      },
+      {
+        "userId": {
+          "$oid": "66849baf60db6c808e86bcfa"
+        },
+        "porcentaje": 5.1993067590988
+      },
+      {
+        "userId": {
+          "$oid": "6697c9e658bf15a5304e973c"
+        },
+        "porcentaje": 4.419410745234
+      },
+      {
+        "userId": {
+          "$oid": "6684ada960db6c808e86bd17"
+        },
+        "porcentaje": 5.1993067590988
+      },
+      {
+        "userId": {
+          "$oid": "66f733f53da60093f4df67ba"
+        },
+        "porcentaje": 5.1993067590988
+      },
+      {
+        "userId": {
+          "$oid": "669513984a8cfe8db884a8b4"
+        },
+        "porcentaje": 5.1993067590988
+      },
+      {
+        "userId": {
+          "$oid": "6696fdef2fd47c764200f7e2"
+        },
+        "porcentaje": 4.419410745234
+      },
+      {
+        "userId": {
+          "$oid": "668b11a8973c8df73d04140c"
+        },
+        "porcentaje": 5.1993067590988
+      },
+      {
+        "userId": {
+          "$oid": "66e483fafbc3c272d61e39ab"
+        },
+        "porcentaje": 5.1993067590988
+      }
+    ],
+    "creadoEn": {
+      "$date": "2026-03-01T00:00:00.000Z"
+    }
+  },
+  {
+    "fechaInicio": {
+      "$date": "2026-04-01T00:00:00.000Z"
+    },
+    "motivo": "Baja Gonza",
+    "participaciones": [
+      {
+        "userId": {
+          "$oid": "66849bb060db6c808e86bcfd"
+        },
+        "porcentaje": 5.2401746724891
+      },
+      {
+        "userId": {
+          "$oid": "6697ca5a58bf15a5304e9745"
+        },
+        "porcentaje": 5.2401746724891
+      },
+      {
+        "userId": {
+          "$oid": "66994183b848b9656f243e3d"
+        },
+        "porcentaje": 4.4541484716157
+      },
+      {
+        "userId": {
+          "$oid": "66950ebf4a8cfe8db884a8a6"
+        },
+        "porcentaje": 5.2401746724891
+      },
+      {
+        "userId": {
+          "$oid": "669513184a8cfe8db884a8ae"
+        },
+        "porcentaje": 4.4541484716157
+      },
+      {
+        "userId": {
+          "$oid": "66849bac60db6c808e86bcf4"
+        },
+        "porcentaje": 3.4934497816594
+      },
+      {
+        "userId": {
+          "$oid": "66849bb560db6c808e86bd00"
+        },
+        "porcentaje": 5.2401746724891
+      },
+      {
+        "userId": {
+          "$oid": "6684ae0760db6c808e86bd1a"
+        },
+        "porcentaje": 3.4934497816594
+      },
+      {
+        "userId": {
+          "$oid": "66849c9560db6c808e86bd0e"
+        },
+        "porcentaje": 5.2401746724891
+      },
+      {
+        "userId": {
+          "$oid": "6697c90258bf15a5304e9721"
+        },
+        "porcentaje": 5.2401746724891
+      },
+      {
+        "userId": {
+          "$oid": "66849bae60db6c808e86bcf7"
+        },
+        "porcentaje": 5.2401746724891
+      },
+      {
+        "userId": {
+          "$oid": "669516a54a8cfe8db884a8c0"
+        },
+        "porcentaje": 1.8340611353712
+      },
+      {
+        "userId": {
+          "$oid": "66849bb760db6c808e86bd03"
+        },
+        "porcentaje": 5.2401746724891
+      },
+      {
+        "userId": {
+          "$oid": "66849baf60db6c808e86bcfa"
+        },
+        "porcentaje": 5.2401746724891
+      },
+      {
+        "userId": {
+          "$oid": "6697c9e658bf15a5304e973c"
+        },
+        "porcentaje": 4.4541484716157
+      },
+      {
+        "userId": {
+          "$oid": "6684ada960db6c808e86bd17"
+        },
+        "porcentaje": 5.2401746724891
+      },
+      {
+        "userId": {
+          "$oid": "66f733f53da60093f4df67ba"
+        },
+        "porcentaje": 5.2401746724891
+      },
+      {
+        "userId": {
+          "$oid": "669513984a8cfe8db884a8b4"
+        },
+        "porcentaje": 5.2401746724891
+      },
+      {
+        "userId": {
+          "$oid": "6696fdef2fd47c764200f7e2"
+        },
+        "porcentaje": 4.4541484716157
+      },
+      {
+        "userId": {
+          "$oid": "668b11a8973c8df73d04140c"
+        },
+        "porcentaje": 5.2401746724891
+      },
+      {
+        "userId": {
+          "$oid": "66e483fafbc3c272d61e39ab"
+        },
+        "porcentaje": 5.2401746724891
+      }
+    ],
+    "creadoEn": {
+      "$date": "2026-04-01T00:00:00.000Z"
+    }
+  },
+  {
+    "fechaInicio": {
+      "$date": "2026-04-15T00:00:00.000Z"
+    },
+    "motivo": "Baja licencia Lu (parcial)",
+    "participaciones": [
+      {
+        "userId": {
+          "$oid": "66849bb060db6c808e86bcfd"
+        },
+        "porcentaje": 5.288673424416
+      },
+      {
+        "userId": {
+          "$oid": "6697ca5a58bf15a5304e9745"
+        },
+        "porcentaje": 5.288673424416
+      },
+      {
+        "userId": {
+          "$oid": "66994183b848b9656f243e3d"
+        },
+        "porcentaje": 4.4953724107536
+      },
+      {
+        "userId": {
+          "$oid": "66950ebf4a8cfe8db884a8a6"
+        },
+        "porcentaje": 5.288673424416
+      },
+      {
+        "userId": {
+          "$oid": "669513184a8cfe8db884a8ae"
+        },
+        "porcentaje": 4.4953724107536
+      },
+      {
+        "userId": {
+          "$oid": "66849bac60db6c808e86bcf4"
+        },
+        "porcentaje": 3.525782282944
+      },
+      {
+        "userId": {
+          "$oid": "66849bb560db6c808e86bd00"
+        },
+        "porcentaje": 5.288673424416
+      },
+      {
+        "userId": {
+          "$oid": "6684ae0760db6c808e86bd1a"
+        },
+        "porcentaje": 3.525782282944
+      },
+      {
+        "userId": {
+          "$oid": "66849c9560db6c808e86bd0e"
+        },
+        "porcentaje": 5.288673424416
+      },
+      {
+        "userId": {
+          "$oid": "6697c90258bf15a5304e9721"
+        },
+        "porcentaje": 5.288673424416
+      },
+      {
+        "userId": {
+          "$oid": "66849bae60db6c808e86bcf7"
+        },
+        "porcentaje": 5.288673424416
+      },
+      {
+        "userId": {
+          "$oid": "669516a54a8cfe8db884a8c0"
+        },
+        "porcentaje": 0.9255178492728
+      },
+      {
+        "userId": {
+          "$oid": "66849bb760db6c808e86bd03"
+        },
+        "porcentaje": 5.288673424416
+      },
+      {
+        "userId": {
+          "$oid": "66849baf60db6c808e86bcfa"
+        },
+        "porcentaje": 5.288673424416
+      },
+      {
+        "userId": {
+          "$oid": "6697c9e658bf15a5304e973c"
+        },
+        "porcentaje": 4.4953724107536
+      },
+      {
+        "userId": {
+          "$oid": "6684ada960db6c808e86bd17"
+        },
+        "porcentaje": 5.288673424416
+      },
+      {
+        "userId": {
+          "$oid": "66f733f53da60093f4df67ba"
+        },
+        "porcentaje": 5.288673424416
+      },
+      {
+        "userId": {
+          "$oid": "669513984a8cfe8db884a8b4"
+        },
+        "porcentaje": 5.288673424416
+      },
+      {
+        "userId": {
+          "$oid": "6696fdef2fd47c764200f7e2"
+        },
+        "porcentaje": 4.4953724107536
+      },
+      {
+        "userId": {
+          "$oid": "668b11a8973c8df73d04140c"
+        },
+        "porcentaje": 5.288673424416
+      },
+      {
+        "userId": {
+          "$oid": "66e483fafbc3c272d61e39ab"
+        },
+        "porcentaje": 5.288673424416
+      }
+    ],
+    "creadoEn": {
+      "$date": "2026-04-15T00:00:00.000Z"
+    }
+  },
+  {
+    "fechaInicio": {
+      "$date": "2026-05-01T00:00:00.000Z"
+    },
+    "motivo": "Regreso Lu",
+    "participaciones": [
+      {
+        "userId": {
+          "$oid": "66849bb060db6c808e86bcfd"
+        },
+        "porcentaje": 5.1457975986278
+      },
+      {
+        "userId": {
+          "$oid": "6697ca5a58bf15a5304e9745"
+        },
+        "porcentaje": 5.1457975986278
+      },
+      {
+        "userId": {
+          "$oid": "66994183b848b9656f243e3d"
+        },
+        "porcentaje": 4.3739279588336
+      },
+      {
+        "userId": {
+          "$oid": "66950ebf4a8cfe8db884a8a6"
+        },
+        "porcentaje": 5.1457975986278
+      },
+      {
+        "userId": {
+          "$oid": "669513184a8cfe8db884a8ae"
+        },
+        "porcentaje": 4.3739279588336
+      },
+      {
+        "userId": {
+          "$oid": "66849bac60db6c808e86bcf4"
+        },
+        "porcentaje": 3.4305317324185
+      },
+      {
+        "userId": {
+          "$oid": "66849bb560db6c808e86bd00"
+        },
+        "porcentaje": 5.1457975986278
+      },
+      {
+        "userId": {
+          "$oid": "6684ae0760db6c808e86bd1a"
+        },
+        "porcentaje": 3.4305317324185
+      },
+      {
+        "userId": {
+          "$oid": "66849c9560db6c808e86bd0e"
+        },
+        "porcentaje": 5.1457975986278
+      },
+      {
+        "userId": {
+          "$oid": "6697c90258bf15a5304e9721"
+        },
+        "porcentaje": 5.1457975986278
+      },
+      {
+        "userId": {
+          "$oid": "66849bae60db6c808e86bcf7"
+        },
+        "porcentaje": 5.1457975986278
+      },
+      {
+        "userId": {
+          "$oid": "669516a54a8cfe8db884a8c0"
+        },
+        "porcentaje": 3.6020583190395
+      },
+      {
+        "userId": {
+          "$oid": "66849bb760db6c808e86bd03"
+        },
+        "porcentaje": 5.1457975986278
+      },
+      {
+        "userId": {
+          "$oid": "66849baf60db6c808e86bcfa"
+        },
+        "porcentaje": 5.1457975986278
+      },
+      {
+        "userId": {
+          "$oid": "6697c9e658bf15a5304e973c"
+        },
+        "porcentaje": 4.3739279588336
+      },
+      {
+        "userId": {
+          "$oid": "6684ada960db6c808e86bd17"
+        },
+        "porcentaje": 5.1457975986278
+      },
+      {
+        "userId": {
+          "$oid": "66f733f53da60093f4df67ba"
+        },
+        "porcentaje": 5.1457975986278
+      },
+      {
+        "userId": {
+          "$oid": "669513984a8cfe8db884a8b4"
+        },
+        "porcentaje": 5.1457975986278
+      },
+      {
+        "userId": {
+          "$oid": "6696fdef2fd47c764200f7e2"
+        },
+        "porcentaje": 4.3739279588336
+      },
+      {
+        "userId": {
+          "$oid": "668b11a8973c8df73d04140c"
+        },
+        "porcentaje": 5.1457975986278
+      },
+      {
+        "userId": {
+          "$oid": "66e483fafbc3c272d61e39ab"
+        },
+        "porcentaje": 5.1457975986278
+      }
+    ],
+    "creadoEn": {
+      "$date": "2026-05-01T00:00:00.000Z"
+    }
+  },
+  {
+    "fechaInicio": {
+      "$date": "2026-06-01T00:00:00.000Z"
+    },
+    "motivo": "Baja Eze",
+    "participaciones": [
+      {
+        "userId": {
+          "$oid": "66849bb060db6c808e86bcfd"
+        },
+        "porcentaje": 5.1858254105445
+      },
+      {
+        "userId": {
+          "$oid": "6697ca5a58bf15a5304e9745"
+        },
+        "porcentaje": 5.1858254105445
+      },
+      {
+        "userId": {
+          "$oid": "66994183b848b9656f243e3d"
+        },
+        "porcentaje": 4.4079515989628
+      },
+      {
+        "userId": {
+          "$oid": "66950ebf4a8cfe8db884a8a6"
+        },
+        "porcentaje": 5.1858254105445
+      },
+      {
+        "userId": {
+          "$oid": "669513184a8cfe8db884a8ae"
+        },
+        "porcentaje": 4.4079515989628
+      },
+      {
+        "userId": {
+          "$oid": "66849bac60db6c808e86bcf4"
+        },
+        "porcentaje": 3.457216940363
+      },
+      {
+        "userId": {
+          "$oid": "66849bb560db6c808e86bd00"
+        },
+        "porcentaje": 5.1858254105445
+      },
+      {
+        "userId": {
+          "$oid": "6684ae0760db6c808e86bd1a"
+        },
+        "porcentaje": 3.457216940363
+      },
+      {
+        "userId": {
+          "$oid": "66849c9560db6c808e86bd0e"
+        },
+        "porcentaje": 5.1858254105445
+      },
+      {
+        "userId": {
+          "$oid": "6697c90258bf15a5304e9721"
+        },
+        "porcentaje": 5.1858254105445
+      },
+      {
+        "userId": {
+          "$oid": "66849bae60db6c808e86bcf7"
+        },
+        "porcentaje": 5.1858254105445
+      },
+      {
+        "userId": {
+          "$oid": "669516a54a8cfe8db884a8c0"
+        },
+        "porcentaje": 3.6300777873812
+      },
+      {
+        "userId": {
+          "$oid": "66849bb760db6c808e86bd03"
+        },
+        "porcentaje": 5.1858254105445
+      },
+      {
+        "userId": {
+          "$oid": "66849baf60db6c808e86bcfa"
+        },
+        "porcentaje": 5.1858254105445
+      },
+      {
+        "userId": {
+          "$oid": "6697c9e658bf15a5304e973c"
+        },
+        "porcentaje": 4.4079515989628
+      },
+      {
+        "userId": {
+          "$oid": "6684ada960db6c808e86bd17"
+        },
+        "porcentaje": 4.4079515989628
+      },
+      {
+        "userId": {
+          "$oid": "66f733f53da60093f4df67ba"
+        },
+        "porcentaje": 5.1858254105445
+      },
+      {
+        "userId": {
+          "$oid": "669513984a8cfe8db884a8b4"
+        },
+        "porcentaje": 5.1858254105445
+      },
+      {
+        "userId": {
+          "$oid": "6696fdef2fd47c764200f7e2"
+        },
+        "porcentaje": 4.4079515989628
+      },
+      {
+        "userId": {
+          "$oid": "668b11a8973c8df73d04140c"
+        },
+        "porcentaje": 5.1858254105445
+      },
+      {
+        "userId": {
+          "$oid": "66e483fafbc3c272d61e39ab"
+        },
+        "porcentaje": 5.1858254105445
+      }
+    ],
+    "creadoEn": {
+      "$date": "2026-06-01T00:00:00.000Z"
+    }
+  },
+  {
+    "fechaInicio": {
+      "$date": "2026-06-06T00:00:00.000Z"
+    },
+    "motivo": "Licencia Nadia",
+    "participaciones": [
+      {
+        "userId": {
+          "$oid": "66849bb060db6c808e86bcfd"
+        },
+        "porcentaje": 5.323868677906
+      },
+      {
+        "userId": {
+          "$oid": "6697ca5a58bf15a5304e9745"
+        },
+        "porcentaje": 5.323868677906
+      },
+      {
+        "userId": {
+          "$oid": "66994183b848b9656f243e3d"
+        },
+        "porcentaje": 4.5252883762201
+      },
+      {
+        "userId": {
+          "$oid": "66950ebf4a8cfe8db884a8a6"
+        },
+        "porcentaje": 5.323868677906
+      },
+      {
+        "userId": {
+          "$oid": "669513184a8cfe8db884a8ae"
+        },
+        "porcentaje": 4.5252883762201
+      },
+      {
+        "userId": {
+          "$oid": "66849bac60db6c808e86bcf4"
+        },
+        "porcentaje": 3.5492457852706
+      },
+      {
+        "userId": {
+          "$oid": "66849bb560db6c808e86bd00"
+        },
+        "porcentaje": 5.323868677906
+      },
+      {
+        "userId": {
+          "$oid": "6684ae0760db6c808e86bd1a"
+        },
+        "porcentaje": 3.5492457852706
+      },
+      {
+        "userId": {
+          "$oid": "66849c9560db6c808e86bd0e"
+        },
+        "porcentaje": 5.323868677906
+      },
+      {
+        "userId": {
+          "$oid": "6697c90258bf15a5304e9721"
+        },
+        "porcentaje": 2.661934338953
+      },
+      {
+        "userId": {
+          "$oid": "66849bae60db6c808e86bcf7"
+        },
+        "porcentaje": 5.323868677906
+      },
+      {
+        "userId": {
+          "$oid": "669516a54a8cfe8db884a8c0"
+        },
+        "porcentaje": 3.7267080745342
+      },
+      {
+        "userId": {
+          "$oid": "66849bb760db6c808e86bd03"
+        },
+        "porcentaje": 5.323868677906
+      },
+      {
+        "userId": {
+          "$oid": "66849baf60db6c808e86bcfa"
+        },
+        "porcentaje": 5.323868677906
+      },
+      {
+        "userId": {
+          "$oid": "6697c9e658bf15a5304e973c"
+        },
+        "porcentaje": 4.5252883762201
+      },
+      {
+        "userId": {
+          "$oid": "6684ada960db6c808e86bd17"
+        },
+        "porcentaje": 4.5252883762201
+      },
+      {
+        "userId": {
+          "$oid": "66f733f53da60093f4df67ba"
+        },
+        "porcentaje": 5.323868677906
+      },
+      {
+        "userId": {
+          "$oid": "669513984a8cfe8db884a8b4"
+        },
+        "porcentaje": 5.323868677906
+      },
+      {
+        "userId": {
+          "$oid": "6696fdef2fd47c764200f7e2"
+        },
+        "porcentaje": 4.5252883762201
+      },
+      {
+        "userId": {
+          "$oid": "668b11a8973c8df73d04140c"
+        },
+        "porcentaje": 5.323868677906
+      },
+      {
+        "userId": {
+          "$oid": "66e483fafbc3c272d61e39ab"
+        },
+        "porcentaje": 5.323868677906
+      }
+    ],
+    "creadoEn": {
+      "$date": "2026-06-06T00:00:00.000Z"
+    }
+  }
+]
