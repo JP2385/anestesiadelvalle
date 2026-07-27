@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pago a Socios - Anestesiólogos del Valle</title>
+    <link rel="icon" type="image/png" href="images/logo/logo64x64.png">
+    <link rel="stylesheet" href="css/base.css">
+    <link rel="stylesheet" href="css/header.css">
+    <link rel="stylesheet" href="css/login.css">
+    <link rel="stylesheet" href="css/media.css">
+    <link rel="stylesheet" href="css/nav.css">
+    <link rel="stylesheet" href="css/main.css">
+    <link rel="stylesheet" href="css/spinner.css">
+    <link rel="stylesheet" href="css/toast.css">
+    <link rel="stylesheet" href="css/admin.css">
+    <script defer src="js/bundle.js"></script>
+    <script type="module" defer src="js/pagosSocios.js"></script>
+    <script defer src="js/spinner.js"></script>
+    <script type="module">
+        import { initializePermissions, redirectIfNoRole } from './js/authUtils.js';
+        document.addEventListener('DOMContentLoaded', async function() {
+            await initializePermissions();
+            redirectIfNoRole('/index.html', 'admin');
+        });
+    </script>
+</head>
+<body>
+    <div class="spinner" id="spinner"></div>
+    <header>
+        <a href="index.html" class="app-logo-link">
+            <img src="images/logo/logo.png" alt="Logo Anestesiólogos del Valle" class="app-logo">
+        </a>
+        <h1>Anestesiólogos del Valle</h1>
+        <a href="index.html" class="back-to-main-menu" title="Volver al menú principal">
+            <img src="images/icons/back-icon.svg" alt="Volver" class="back-icon">
+        </a>
+    </header>
+
+    <main class="form-container">
+        <h2>Pago a Socios</h2>
+
+        <!-- Botón nuevo pago -->
+        <div class="liq-toolbar">
+            <button id="btn-nuevo-pago" class="main-menu-button">+ Nuevo Pago a Socios</button>
+        </div>
+
+        <!-- Tabla de pagos -->
+        <div class="abm-section">
+            <div id="pago-table-container">
+                <table id="pago-table">
+                    <thead>
+                        <tr>
+                            <th>Desde</th>
+                            <th>Hasta</th>
+                            <th>Liquidaciones</th>
+                            <th>Socios</th>
+                            <th>Total</th>
+                            <th>Estado</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody id="pago-table-body">
+                        <tr><td colspan="7" class="liq-empty">Cargando...</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </main>
+
+    <!-- Modal: Crear / Editar pago a socios -->
+    <div id="pago-form-modal" class="liq-modal" style="display:none;">
+        <div class="liq-modal-content liq-modal-wide">
+            <span class="liq-close" id="close-form-modal">&times;</span>
+            <h3 id="form-modal-title">Nuevo Pago a Socios</h3>
+
+            <form id="pago-form">
+                <input type="hidden" id="edit-pago-id">
+
+                <div class="liq-section-header">
+                    <h4>Liquidaciones a incluir</h4>
+                </div>
+                <div id="liquidaciones-checklist" class="liq-checklist">
+                    <p class="liq-empty">Cargando liquidaciones disponibles...</p>
+                </div>
+
+                <div class="liq-form-actions">
+                    <button type="submit" class="main-menu-button" id="btn-guardar-pago">Generar Pago a Socios</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal: Ver detalle / gestionar socios -->
+    <div id="pago-detail-modal" class="liq-modal" style="display:none;">
+        <div class="liq-modal-content liq-modal-wide">
+            <span class="liq-close" id="close-detail-modal">&times;</span>
+            <h3 id="detail-modal-title">Detalle de Pago a Socios</h3>
+
+            <div id="detail-total-desembolso" class="total-desembolso-bar">
+                Total a desembolsar (socios pendientes con pago neto positivo): <strong id="total-desembolso-val">$0.00</strong>
+            </div>
+
+            <div id="detail-pago-masivo-bar" class="pago-masivo-bar" style="display:none;">
+                <label>Fecha de pago: <input type="date" id="pago-masivo-fecha"></label>
+                <button type="button" id="btn-registrar-pago-masivo" class="btn-registrar-pago">Registrar pago a todos los socios pendientes</button>
+            </div>
+            <div id="detail-pago-completado-bar" class="pago-completado-bar" style="display:none;"></div>
+
+            <div class="liq-table-wrapper">
+                <table class="liq-inner-table" id="socios-table">
+                    <thead>
+                        <tr>
+                            <th></th>
+                            <th>Socio</th>
+                            <th>Saldo acumulado</th>
+                            <th>Aportes</th>
+                            <th>Deducciones</th>
+                            <th>Deuda arrastrada</th>
+                            <th>Pago neto</th>
+                            <th>Estado</th>
+                        </tr>
+                    </thead>
+                    <tbody id="detail-socios-body"></tbody>
+                </table>
+            </div>
+
+            <div class="liq-form-actions">
+                <button type="button" id="btn-guardar-todos" class="btn-guardar-socio">Guardar cambios</button>
+            </div>
+        </div>
+    </div>
+
+    <style>
+        .liq-toolbar { margin-bottom: 20px; }
+
+        #pago-table { width: 100%; border-collapse: collapse; font-size: 14px; }
+        #pago-table th { background-color: #0056b3; color: white; padding: 10px 14px; text-align: left; }
+        #pago-table td { padding: 10px 14px; border-bottom: 1px solid #e9ecef; }
+        #pago-table tbody tr:hover { background-color: #f5f5f5; }
+
+        .liq-empty { text-align: center; color: #888; padding: 32px !important; }
+
+        .badge-pendiente { background-color: #856404; color: white; padding: 2px 8px; border-radius: 10px; font-size: 12px; font-weight: 600; }
+        .badge-parcial { background-color: #0056b3; color: white; padding: 2px 8px; border-radius: 10px; font-size: 12px; font-weight: 600; }
+        .badge-pagado { background-color: #1a7a32; color: white; padding: 2px 8px; border-radius: 10px; font-size: 12px; font-weight: 600; }
+
+        .action-btn { border: none; border-radius: 5px; padding: 5px 10px; font-size: 12px; cursor: pointer; margin-right: 4px; }
+        .ver-btn { background-color: #6c757d; color: white; }
+        .edit-btn { background-color: #1a7a32; color: white; }
+        .delete-btn { background-color: #dc3545; color: white; }
+        .action-btn:hover { opacity: 0.85; }
+
+        .liq-modal { position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; overflow: auto; background-color: rgba(0,0,0,0.4); }
+        .liq-modal-content { background: #fefefe; margin: 2% auto; padding: 28px; border-radius: 10px; border: 1px solid #ddd; width: 92%; max-width: 1000px; max-height: 92vh; overflow-y: auto; }
+        .liq-modal-wide { max-width: 1100px; }
+        .liq-close { float: right; font-size: 28px; font-weight: bold; color: #aaa; cursor: pointer; line-height: 1; }
+        .liq-close:hover { color: #333; }
+
+        .liq-form-grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 0 24px; }
+
+        .liq-section-header { display: flex; align-items: center; justify-content: space-between; margin: 20px 0 8px; border-bottom: 1px solid #e0e0e0; padding-bottom: 6px; }
+        .liq-section-header h4 { margin: 0; font-size: 15px; color: #333; }
+
+        .liq-checklist { max-height: 260px; overflow-y: auto; border: 1px solid #e9ecef; border-radius: 6px; padding: 8px 12px; }
+        .liq-checklist-row { display: flex; align-items: center; gap: 10px; padding: 6px 4px; border-bottom: 1px solid #f0f0f0; font-size: 13px; }
+        .liq-checklist-row:last-child { border-bottom: none; }
+        .liq-checklist-row input[type="checkbox"] { width: 16px; height: 16px; cursor: pointer; }
+
+        .liq-form-actions { margin-top: 24px; text-align: right; }
+
+        /* Tabla de socios */
+        .liq-table-wrapper { overflow-x: auto; margin-bottom: 8px; }
+        .liq-inner-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+        .liq-inner-table th { background: #f0f4f8; color: #444; padding: 8px 10px; text-align: left; border-bottom: 2px solid #dee2e6; }
+        .liq-inner-table td { padding: 8px 10px; border-bottom: 1px solid #f0f0f0; vertical-align: middle; }
+
+        .pago-neto-positivo { color: #1a7a32; font-weight: 700; }
+        .pago-neto-negativo { color: #c0392b; font-weight: 700; }
+
+        .socio-row { cursor: pointer; }
+        .socio-row:hover { background-color: #f5f5f5; }
+        .socio-row.pagado { color: #888; }
+
+        .expand-toggle { background: none; border: none; cursor: pointer; font-size: 13px; color: #0056b3; width: 20px; }
+
+        .socio-inline-input { width: 110px; padding: 5px 8px; border: 1px solid #ccc; border-radius: 4px; font-size: 13px; }
+
+        .socio-detalle-row td { background: #f8f9fa; padding: 14px 20px; }
+        .socio-detalle-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+        .socio-detalle-grid h5 { margin: 0 0 8px; font-size: 13px; color: #555; }
+
+        .ded-row { display: grid; grid-template-columns: 1fr 120px 32px; gap: 8px; align-items: center; margin-bottom: 6px; background: white; border: 1px solid #e9ecef; border-radius: 6px; padding: 6px 10px; }
+        .ded-row input { padding: 5px 8px; border: 1px solid #ccc; border-radius: 4px; font-size: 13px; width: 100%; box-sizing: border-box; }
+        .liq-add-btn { background: #0056b3; color: white; border: none; border-radius: 5px; padding: 4px 12px; font-size: 12px; cursor: pointer; }
+        .liq-add-btn:hover { opacity: 0.85; }
+        .liq-remove-btn { background: #dc3545; color: white; border: none; border-radius: 4px; padding: 3px 8px; font-size: 11px; cursor: pointer; }
+        .liq-remove-btn:hover { opacity: 0.85; }
+
+        .btn-guardar-socio, .btn-registrar-pago { background: #0056b3; color: white; border: none; border-radius: 5px; padding: 6px 14px; font-size: 13px; cursor: pointer; }
+        .btn-registrar-pago { background: #1a7a32; }
+        .btn-guardar-socio:hover, .btn-registrar-pago:hover { opacity: 0.85; }
+
+        .socio-pagado-tag { color: #1a7a32; font-weight: 600; font-size: 13px; }
+
+        .total-desembolso-bar { margin-bottom: 16px; padding: 12px 16px; background: #fff8e6; border: 1px solid #f0e0a8; border-radius: 8px; font-size: 14px; color: #6b5500; }
+        .total-desembolso-bar strong { font-size: 16px; color: #856404; }
+
+        /* Barra de pago masivo del período */
+        .pago-masivo-bar { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; margin-bottom: 18px; padding: 12px 16px; background: #f0f4f8; border-radius: 8px; }
+        .pago-masivo-bar label { font-size: 13px; color: #333; display: flex; gap: 6px; align-items: center; }
+        .pago-masivo-bar input { padding: 5px 8px; border: 1px solid #ccc; border-radius: 4px; font-size: 13px; }
+
+        .pago-completado-bar { margin-bottom: 18px; padding: 12px 16px; background: #eaf7ec; color: #1a7a32; border-radius: 8px; font-weight: 600; font-size: 14px; }
+
+        @media (max-width: 600px) {
+            .liq-form-grid-2 { grid-template-columns: 1fr; }
+        }
+    </style>
+</body>
+</html>

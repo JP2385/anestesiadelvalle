@@ -117,7 +117,11 @@ function calcularDistribucion(liquidacion, groupPeriods) {
         const deduccionPersonal = deduccionPorSocio[uid] || 0;
         const fraccion = montoBruto > 0 ? parteBruta / montoBruto : 0;
         const redistribucion = internas ? totalDedPersonales * fraccion : 0;
-        const parteNeta = parteBruta - reserva - deduccionGrupal - deduccionPersonal + redistribucion;
+        // Lo que le corresponde por su % de participación societaria, sin ajustes personales
+        // (deducciones/redistribución dependen de la situación de cada socio, no de su participación).
+        // Dos socios con el mismo % de participación en el mismo período tienen el mismo parteSocietaria.
+        const parteSocietaria = parteBruta - reserva - deduccionGrupal;
+        const parteNeta = parteSocietaria - deduccionPersonal + redistribucion;
         const ingresadoEnCuenta = ingresoPorSocio[uid] || 0;
         const saldo = parteNeta - ingresadoEnCuenta;
 
@@ -127,6 +131,7 @@ function calcularDistribucion(liquidacion, groupPeriods) {
             parteBruta: Math.round(parteBruta * 100) / 100,
             reserva: Math.round(reserva * 100) / 100,
             deduccionGrupal: Math.round(deduccionGrupal * 100) / 100,
+            parteSocietaria: Math.round(parteSocietaria * 100) / 100,
             deduccionPersonal: Math.round(deduccionPersonal * 100) / 100,
             redistribucion: Math.round(redistribucion * 100) / 100,
             parteNeta: Math.round(parteNeta * 100) / 100,
@@ -319,6 +324,9 @@ exports.downloadPlantilla = (req, res) => {
     res.setHeader('Content-Disposition', 'attachment; filename="plantilla-liquidacion.xlsx"');
     res.send(buffer);
 };
+
+exports.calcularDistribucion = calcularDistribucion;
+exports.getPeriodForDate = getPeriodForDate;
 
 // POST /liquidaciones/importar — parsea Excel (.xlsx) con 3 hojas
 // Hoja "Anestesias": paciente, fechaPractica, obraSocial, lugarPractica, montoFacturado, iva

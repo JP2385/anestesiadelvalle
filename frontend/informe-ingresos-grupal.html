@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Informe de Ingresos Grupales - Anestesiólogos del Valle</title>
+    <link rel="icon" type="image/png" href="images/logo/logo64x64.png">
+    <link rel="stylesheet" href="css/base.css">
+    <link rel="stylesheet" href="css/header.css">
+    <link rel="stylesheet" href="css/login.css">
+    <link rel="stylesheet" href="css/media.css">
+    <link rel="stylesheet" href="css/nav.css">
+    <link rel="stylesheet" href="css/main.css">
+    <link rel="stylesheet" href="css/spinner.css">
+    <link rel="stylesheet" href="css/toast.css">
+    <link rel="stylesheet" href="css/admin.css">
+    <script defer src="js/bundle.js"></script>
+    <script type="module" defer src="js/informeIngresosGrupal.js"></script>
+    <script defer src="js/spinner.js"></script>
+    <script type="module">
+        import { initializePermissions } from './js/authUtils.js';
+        document.addEventListener('DOMContentLoaded', async function() {
+            await initializePermissions();
+        });
+    </script>
+</head>
+<body>
+    <div class="spinner" id="spinner"></div>
+    <header>
+        <a href="index.html" class="app-logo-link">
+            <img src="images/logo/logo.png" alt="Logo Anestesiólogos del Valle" class="app-logo">
+        </a>
+        <h1>Anestesiólogos del Valle</h1>
+        <a href="index.html" class="back-to-main-menu" title="Volver al menú principal">
+            <img src="images/icons/back-icon.svg" alt="Volver" class="back-icon">
+        </a>
+    </header>
+
+    <main class="form-container">
+        <h2>Informe de Ingresos Grupales</h2>
+
+        <div class="filtro-anio-bar">
+            <label>Año <select id="filtro-anio"></select></label>
+        </div>
+
+        <div class="abm-section">
+            <h3>Evolución de ingresos por mes y provincia</h3>
+            <p class="resumen-nota">Suma de lo que le corresponde a cada socio por su % de participación societaria (sin reserva de impuestos ni deducciones grupales) — no descuenta deducciones personales de ningún socio, para que no reduzcan artificialmente el total del grupo.</p>
+            <div id="evolucion-chart" class="chart-container">
+                <p class="liq-empty">Cargando...</p>
+            </div>
+            <div class="liq-table-wrapper">
+                <table id="evolucion-table">
+                    <thead>
+                        <tr>
+                            <th>Mes</th>
+                            <th>Neuquén</th>
+                            <th>Río Negro</th>
+                            <th>Total</th>
+                        </tr>
+                    </thead>
+                    <tbody id="evolucion-body">
+                        <tr><td colspan="4" class="liq-empty">Cargando...</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="abm-section">
+            <h3>Facturado por mes y provincia</h3>
+            <p class="resumen-nota">Suma bruta de lo facturado en anestesias, por mes y por provincia — sin descontar reserva, deducciones ni ningún otro concepto.</p>
+            <div id="facturado-chart" class="chart-container">
+                <p class="liq-empty">Cargando...</p>
+            </div>
+            <div class="liq-table-wrapper">
+                <table id="facturado-table">
+                    <thead>
+                        <tr>
+                            <th>Mes</th>
+                            <th>Neuquén</th>
+                            <th>Río Negro</th>
+                            <th>Total</th>
+                        </tr>
+                    </thead>
+                    <tbody id="facturado-body">
+                        <tr><td colspan="4" class="liq-empty">Cargando...</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="abm-section">
+            <h3>Facturado vs. distribuido</h3>
+            <p class="resumen-nota">Compara lo facturado (bruto) contra lo que le corresponde a los socios por participación societaria en cada ámbito — la brecha entre ambas líneas es la reserva de impuestos más las deducciones grupales.</p>
+            <div class="comparativo-grid">
+                <div class="comparativo-item">
+                    <div class="comparativo-item-header">
+                        <h4>Total</h4>
+                        <span class="comparativo-pct-wrap"><span id="comparativo-total-pct" class="comparativo-pct">—</span><span class="comparativo-pct-label">distribuido / facturado</span></span>
+                    </div>
+                    <div id="comparativo-total-chart" class="chart-container"><p class="liq-empty">Cargando...</p></div>
+                </div>
+                <div class="comparativo-item">
+                    <div class="comparativo-item-header">
+                        <h4>Neuquén</h4>
+                        <span class="comparativo-pct-wrap"><span id="comparativo-neuquen-pct" class="comparativo-pct">—</span><span class="comparativo-pct-label">distribuido / facturado</span></span>
+                    </div>
+                    <div id="comparativo-neuquen-chart" class="chart-container"><p class="liq-empty">Cargando...</p></div>
+                </div>
+                <div class="comparativo-item">
+                    <div class="comparativo-item-header">
+                        <h4>Río Negro</h4>
+                        <span class="comparativo-pct-wrap"><span id="comparativo-rionegro-pct" class="comparativo-pct">—</span><span class="comparativo-pct-label">distribuido / facturado</span></span>
+                    </div>
+                    <div id="comparativo-rionegro-chart" class="chart-container"><p class="liq-empty">Cargando...</p></div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <style>
+        .filtro-anio-bar { display: flex; gap: 14px; align-items: center; flex-wrap: wrap; margin-bottom: 24px; padding: 12px 16px; background: #f0f4f8; border-radius: 8px; }
+        .filtro-anio-bar label { font-size: 13px; color: #333; display: flex; gap: 6px; align-items: center; }
+        .filtro-anio-bar select { padding: 5px 8px; border: 1px solid #ccc; border-radius: 4px; font-size: 13px; }
+
+        .resumen-nota { margin: 8px 0 16px; font-size: 12px; color: #888; }
+
+        .chart-container { margin-bottom: 20px; background: #f8f9fa; border: 1px solid #e9ecef; border-radius: 10px; padding: 16px; }
+        .line-chart-svg { width: 100%; height: auto; color: #333; }
+        .chart-legend { display: flex; gap: 18px; flex-wrap: wrap; justify-content: center; margin-top: 8px; font-size: 12px; color: #444; }
+        .chart-legend-item { display: flex; align-items: center; gap: 6px; }
+        .chart-legend-dot { width: 10px; height: 10px; border-radius: 50%; display: inline-block; }
+
+        .liq-empty { text-align: center; color: #888; padding: 24px !important; }
+
+        .liq-table-wrapper { overflow-x: auto; }
+        #evolucion-table, #facturado-table { width: 100%; border-collapse: collapse; font-size: 14px; }
+        #evolucion-table th, #facturado-table th { background-color: #0056b3; color: white; padding: 10px 14px; text-align: left; }
+        #evolucion-table td, #facturado-table td { padding: 10px 14px; border-bottom: 1px solid #e9ecef; }
+
+        .comparativo-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 16px; }
+        .comparativo-item-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+        .comparativo-item h4 { margin: 0; font-size: 13px; color: #555; }
+        .comparativo-item .chart-container { margin-bottom: 0; }
+        .comparativo-pct-wrap { display: flex; flex-direction: column; align-items: flex-end; gap: 1px; }
+        .comparativo-pct { font-size: 15px; font-weight: 700; color: #0056b3; background: #eef4fb; padding: 2px 10px; border-radius: 10px; }
+        .comparativo-pct-label { font-size: 10px; color: #999; }
+    </style>
+</body>
+</html>

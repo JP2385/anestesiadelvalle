@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Informe de Ingresos Individuales - Anestesiólogos del Valle</title>
+    <link rel="icon" type="image/png" href="images/logo/logo64x64.png">
+    <link rel="stylesheet" href="css/base.css">
+    <link rel="stylesheet" href="css/header.css">
+    <link rel="stylesheet" href="css/login.css">
+    <link rel="stylesheet" href="css/media.css">
+    <link rel="stylesheet" href="css/nav.css">
+    <link rel="stylesheet" href="css/main.css">
+    <link rel="stylesheet" href="css/spinner.css">
+    <link rel="stylesheet" href="css/toast.css">
+    <link rel="stylesheet" href="css/admin.css">
+    <script defer src="js/bundle.js"></script>
+    <script type="module" defer src="js/informeIngresosIndividual.js"></script>
+    <script defer src="js/spinner.js"></script>
+    <script type="module">
+        import { initializePermissions } from './js/authUtils.js';
+        document.addEventListener('DOMContentLoaded', async function() {
+            await initializePermissions();
+        });
+    </script>
+</head>
+<body>
+    <div class="spinner" id="spinner"></div>
+    <header>
+        <a href="index.html" class="app-logo-link">
+            <img src="images/logo/logo.png" alt="Logo Anestesiólogos del Valle" class="app-logo">
+        </a>
+        <h1>Anestesiólogos del Valle</h1>
+        <a href="index.html" class="back-to-main-menu" title="Volver al menú principal">
+            <img src="images/icons/back-icon.svg" alt="Volver" class="back-icon">
+        </a>
+    </header>
+
+    <main class="form-container">
+        <h2>Informe de Ingresos Individuales</h2>
+
+        <div class="informe-cards-row">
+            <div id="saldo-actual-card" class="informe-card">
+                <p class="liq-empty">Cargando...</p>
+            </div>
+            <div id="proximo-pago-card" class="informe-card">
+                <p class="liq-empty">Cargando...</p>
+            </div>
+        </div>
+
+        <div class="abm-section">
+            <h3>Evolución de ingresos (total y por provincia)</h3>
+            <p class="resumen-nota">Lo que te corresponde por tu % de participación en la sociedad — no incluye descuentos personales (esos se ven en el detalle de cada pago más abajo), así que dos socios con la misma participación muestran el mismo número acá.</p>
+            <div id="historial-chart" class="chart-container">
+                <p class="liq-empty">Cargando...</p>
+            </div>
+        </div>
+
+        <div class="abm-section">
+            <h3>Pagos recibidos (últimos 6)</h3>
+            <div id="historial-pagos-container">
+                <p class="liq-empty">Cargando...</p>
+            </div>
+        </div>
+    </main>
+
+    <style>
+        .informe-cards-row { display: flex; gap: 20px; flex-wrap: wrap; margin-bottom: 24px; }
+        .informe-card { flex: 1; min-width: 260px; background: #f8f9fa; border: 1px solid #e9ecef; border-radius: 10px; padding: 18px 22px; }
+        .informe-card h3 { margin: 0 0 10px; font-size: 15px; color: #333; }
+
+        .saldo-total-val, .pago-neto-val { font-size: 24px; font-weight: 700; margin: 4px 0; }
+        .saldo-total-hint { font-size: 12px; color: #888; margin: 0; }
+
+        .valor-positivo { color: #1a7a32; }
+        .valor-negativo { color: #c0392b; }
+
+        .deuda-warning { background: #fdecea; color: #c0392b; border: 1px solid #f0b8b0; border-radius: 6px; padding: 8px 12px; font-weight: 600; font-size: 13px; margin-top: 10px; }
+
+        .liq-empty { text-align: center; color: #888; padding: 24px !important; }
+
+        .chart-container { margin-bottom: 20px; background: #f8f9fa; border: 1px solid #e9ecef; border-radius: 10px; padding: 16px; }
+        .line-chart-svg { width: 100%; height: auto; color: #333; }
+        .chart-legend { display: flex; gap: 18px; flex-wrap: wrap; justify-content: center; margin-top: 8px; font-size: 12px; color: #444; }
+        .chart-legend-item { display: flex; align-items: center; gap: 6px; }
+        .chart-legend-dot { width: 10px; height: 10px; border-radius: 50%; display: inline-block; }
+
+        .liq-table-wrapper { overflow-x: auto; }
+
+        .resumen-nota { margin: 10px 0 0; font-size: 12px; color: #888; }
+
+        .badge-pendiente { background-color: #856404; color: white; padding: 2px 8px; border-radius: 10px; font-size: 12px; font-weight: 600; }
+        .badge-pagado { background-color: #1a7a32; color: white; padding: 2px 8px; border-radius: 10px; font-size: 12px; font-weight: 600; }
+
+        .pago-detalle-card { background: #f8f9fa; border: 1px solid #e9ecef; border-radius: 10px; padding: 18px 22px; margin-bottom: 18px; }
+        .pago-detalle-header { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px; margin-bottom: 16px; padding-bottom: 12px; border-bottom: 1px solid #e0e0e0; }
+        .pago-detalle-subtitulo { display: block; font-size: 12px; color: #888; margin-top: 2px; }
+
+        .pago-detalle-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 14px 20px; margin-bottom: 16px; }
+        .pago-detalle-item { display: flex; flex-direction: column; gap: 2px; }
+        .pago-detalle-item .resumen-label { font-size: 12px; color: #888; }
+        .pago-detalle-item .resumen-val { font-size: 16px; font-weight: 700; }
+
+        .pago-detalle-conceptos { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+        .pago-detalle-conceptos h5 { margin: 0 0 6px; font-size: 13px; color: #555; }
+        .pago-detalle-conceptos ul { list-style: none; margin: 0; padding: 0; font-size: 13px; }
+        .pago-detalle-conceptos li { padding: 4px 0; border-bottom: 1px solid #f0f0f0; display: flex; justify-content: space-between; gap: 8px; }
+        .pago-detalle-conceptos li.sin-conceptos { color: #aaa; justify-content: flex-start; }
+
+        .pago-deuda-warning { margin-top: 16px; background: #fdecea; color: #c0392b; border: 1px solid #f0b8b0; border-radius: 6px; padding: 8px 12px; font-weight: 600; font-size: 13px; }
+
+        .pago-detalle-liquidaciones { margin-top: 18px; padding-top: 14px; border-top: 1px solid #e0e0e0; }
+        .pago-detalle-liquidaciones h5 { margin: 0 0 10px; font-size: 13px; color: #555; }
+        .detalle-liq-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+        .detalle-liq-table th { background-color: #0056b3; color: white; padding: 8px 12px; text-align: left; }
+        .detalle-liq-table td { padding: 8px 12px; border-bottom: 1px solid #e9ecef; }
+        .detalle-liq-table td:last-child { text-align: right; }
+
+        .detalle-liq-subtotal td { border-top: 2px solid #ccc; font-weight: 600; }
+        .detalle-liq-ajuste td { color: #555; font-size: 12px; }
+        .detalle-liq-total td { border-top: 1px solid #999; font-weight: 700; }
+
+        @media (max-width: 600px) {
+            .informe-cards-row { flex-direction: column; }
+            .pago-detalle-conceptos { grid-template-columns: 1fr; }
+        }
+    </style>
+</body>
+</html>
