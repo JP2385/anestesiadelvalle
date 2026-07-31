@@ -104,7 +104,10 @@ document.addEventListener('DOMContentLoaded', function () {
 
                 // Pre-cargar datos generales
                 if (data.data.fecha) liqFecha.value = data.data.fecha;
-                if (data.data.origen) liqOrigen.value = data.data.origen;
+                if (data.data.origen) {
+                    liqOrigen.value = data.data.origen;
+                    liqOrigen.dispatchEvent(new Event('change')); // sincroniza reserva de ganancias / ded. personales internas
+                }
 
                 // Pre-cargar ingresos
                 ingresosContainer.innerHTML = '';
@@ -166,6 +169,9 @@ document.addEventListener('DOMContentLoaded', function () {
         reservaGananciasRow.style.display = 'none';
         liqReservaGanancias.checked = false;
         document.getElementById('form-distribucion-section').style.display = 'none';
+        const importStatus = document.getElementById('import-status');
+        importStatus.textContent = '';
+        importStatus.className = 'liq-import-status';
         addIngresoRow();
         addAnestesiaRow();
         updateTotals();
@@ -416,6 +422,10 @@ document.addEventListener('DOMContentLoaded', function () {
 
             const liq = data.liquidacion;
             const distribucion = data.distribucion;
+
+            const importStatus = document.getElementById('import-status');
+            importStatus.textContent = '';
+            importStatus.className = 'liq-import-status';
 
             document.getElementById('form-modal-title').textContent = 'Editar Liquidación';
             editLiqId.value = liq._id;
