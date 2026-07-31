@@ -21,7 +21,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
             renderSaldoActual(data);
             renderProximoPago(data.proximoPago);
-            renderEvolucionPagos(data.historialPagos);
+            renderEvolucionMensual(data.evolucionMensual);
             renderHistorialPagos(data.historialPagos);
         } catch {
             toast.error('Error de conexión');
@@ -55,20 +55,19 @@ document.addEventListener('DOMContentLoaded', function () {
         `;
     }
 
-    function renderEvolucionPagos(historialPagos) {
-        // El gráfico se lee en orden cronológico ascendente (historialPagos viene ordenado desc)
-        const cronologico = [...historialPagos].reverse();
+    function renderEvolucionMensual(evolucionMensual) {
         const chartContainer = document.getElementById('historial-chart');
-
-        const porOrigen = (p, origen) => (p.liquidaciones || [])
-            .filter(l => l.origen === origen)
-            .reduce((s, l) => s + l.parteSocietaria, 0);
-
-        renderLineChart(chartContainer, cronologico.map(p => formatDate(p.fechaHasta)), [
-            { label: 'Total', color: '#0056b3', values: cronologico.map(p => p.correspondiaCobrar) },
-            { label: 'Neuquén', color: '#1a7a32', values: cronologico.map(p => porOrigen(p, 'Neuquén')) },
-            { label: 'Río Negro', color: '#c0392b', values: cronologico.map(p => porOrigen(p, 'Río Negro')) }
+        renderLineChart(chartContainer, evolucionMensual.map(m => formatPeriodo(m.periodo)), [
+            { label: 'Total', color: '#0056b3', values: evolucionMensual.map(m => m.total) },
+            { label: 'Neuquén', color: '#1a7a32', values: evolucionMensual.map(m => m.neuquen) },
+            { label: 'Río Negro', color: '#c0392b', values: evolucionMensual.map(m => m.rioNegro) }
         ]);
+    }
+
+    function formatPeriodo(periodo) {
+        const [y, m] = periodo.split('-');
+        const meses = ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'];
+        return `${meses[parseInt(m, 10) - 1]} ${y}`;
     }
 
     const LIMITE_TARJETAS_PAGO = 6;

@@ -122,6 +122,24 @@ exports.getDashboardIndividual = async (req, res) => {
         const proximoPago = historialPagos.find(p => !p.pagado) || null;
         const deudaActual = proximoPago && proximoPago.pagoNeto < 0 ? Math.abs(proximoPago.pagoNeto) : 0;
 
+        // Evolución mensual por provincia: suma de parteSocietaria (participación, sin ajustes
+        // personales) agrupada por mes calendario de la fecha de cada liquidación.
+        const porMes = {}; // 'YYYY-MM' -> { periodo, neuquen, rioNegro }
+        for (const h of historial) {
+            const mes = new Date(h.fecha).toISOString().substring(0, 7);
+            if (!porMes[mes]) porMes[mes] = { periodo: mes, neuquen: 0, rioNegro: 0 };
+            if (h.origen === 'Neuquén') porMes[mes].neuquen += h.parteSocietaria;
+            else if (h.origen === 'Río Negro') porMes[mes].rioNegro += h.parteSocietaria;
+        }
+        const evolucionMensual = Object.values(porMes)
+            .sort((a, b) => a.periodo.localeCompare(b.periodo))
+            .map(m => ({
+                periodo: m.periodo,
+                neuquen: Math.round(m.neuquen * 100) / 100,
+                rioNegro: Math.round(m.rioNegro * 100) / 100,
+                total: Math.round((m.neuquen + m.rioNegro) * 100) / 100
+            }));
+
         res.json({
             success: true,
             socio: { userId: uid, username: req.user.username },
@@ -129,7 +147,8 @@ exports.getDashboardIndividual = async (req, res) => {
             proximoPago,
             deudaActual,
             historial,
-            historialPagos
+            historialPagos,
+            evolucionMensual
         });
     } catch (error) {
         res.status(500).json({ success: false, message: 'Error al obtener el dashboard individual' });

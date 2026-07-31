@@ -95,7 +95,10 @@
     <div id="pago-detail-modal" class="liq-modal" style="display:none;">
         <div class="liq-modal-content liq-modal-wide">
             <span class="liq-close" id="close-detail-modal">&times;</span>
-            <h3 id="detail-modal-title">Detalle de Pago a Socios</h3>
+            <div class="detail-modal-header">
+                <h3 id="detail-modal-title">Detalle de Pago a Socios</h3>
+                <button type="button" id="btn-descargar-excel" class="btn-descargar-excel">⭳ Descargar Excel</button>
+            </div>
 
             <div id="detail-total-desembolso" class="total-desembolso-bar">
                 Total a desembolsar (socios pendientes con pago neto positivo): <strong id="total-desembolso-val">$0.00</strong>
@@ -200,6 +203,10 @@
         .btn-guardar-socio, .btn-registrar-pago { background: #0056b3; color: white; border: none; border-radius: 5px; padding: 6px 14px; font-size: 13px; cursor: pointer; }
         .btn-registrar-pago { background: #1a7a32; }
         .btn-guardar-socio:hover, .btn-registrar-pago:hover { opacity: 0.85; }
+
+        .detail-modal-header { display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap; margin-right: 24px; }
+        .btn-descargar-excel { background: #1a7a32; color: white; border: none; border-radius: 5px; padding: 6px 14px; font-size: 13px; cursor: pointer; white-space: nowrap; }
+        .btn-descargar-excel:hover { opacity: 0.85; }
 
         .socio-pagado-tag { color: #1a7a32; font-weight: 600; font-size: 13px; }
 

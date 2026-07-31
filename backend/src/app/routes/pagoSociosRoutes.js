@@ -5,6 +5,7 @@ const { requireAdmin } = require('../middlewares/authorization');
 const {
     getAllPagosSocios,
     getPagoSociosById,
+    downloadExcel,
     createPagoSocios,
     updatePagoSocios,
     registrarPago,
@@ -15,6 +16,7 @@ const {
 router.get('/liquidaciones-disponibles', authMiddleware, requireAdmin, getLiquidacionesDisponibles);
 
 router.get('/', authMiddleware, getAllPagosSocios);
+router.get('/:id/excel', authMiddleware, requireAdmin, downloadExcel);
 router.get('/:id', authMiddleware, getPagoSociosById);
 router.post('/', authMiddleware, requireAdmin, createPagoSocios);
 router.put('/:id', authMiddleware, requireAdmin, updatePagoSocios);

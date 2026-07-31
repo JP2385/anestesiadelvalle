@@ -1,4 +1,5 @@
 import toast from './toast.js';
+import { userRealNames } from './userLabels.js';
 
 document.addEventListener('DOMContentLoaded', function () {
     const apiUrl = window.location.hostname === 'localhost' ? 'http://localhost:3000' : window.location.origin;
@@ -214,10 +215,37 @@ document.addEventListener('DOMContentLoaded', function () {
             renderSociosDetail(id, socios);
             actualizarTotalDesembolso();
 
+            const btnDescargarExcel = document.getElementById('btn-descargar-excel');
+            const newBtnDescargar = btnDescargarExcel.cloneNode(true); // limpia listeners previos
+            btnDescargarExcel.replaceWith(newBtnDescargar);
+            newBtnDescargar.addEventListener('click', () => descargarExcel(id, pago));
+
             pagoDetailModal.style.display = 'block';
         } catch {
             toast.error('Error de conexión');
         }
+    }
+
+    // ── Descargar Excel con el monto a abonar por socio ────────────────────
+    function descargarExcel(id, pago) {
+        fetch(`${apiUrl}/pagos-socios/${id}/excel`, {
+            headers: { 'Authorization': 'Bearer ' + getToken() }
+        })
+            .then(r => {
+                if (!r.ok) throw new Error();
+                return r.blob();
+            })
+            .then(blob => {
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.setAttribute('download', `pago-socios-${formatDate(pago.fechaDesde).replaceAll('/', '-')}-a-${formatDate(pago.fechaHasta).replaceAll('/', '-')}.xlsx`);
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+            })
+            .catch(() => toast.error('Error al descargar el Excel'));
     }
 
     // ── Barra de pago masivo (una sola fecha para todo el período) ────────
@@ -247,7 +275,10 @@ document.addEventListener('DOMContentLoaded', function () {
 
     function renderSociosDetail(pagoId, socios) {
         const tbody = document.getElementById('detail-socios-body');
-        tbody.innerHTML = socios.map(s => renderSocioRows(s)).join('');
+        const sociosOrdenados = [...socios].sort((a, b) =>
+            (userRealNames[a.username] || a.username).localeCompare(userRealNames[b.username] || b.username, 'es')
+        );
+        tbody.innerHTML = sociosOrdenados.map(s => renderSocioRows(s)).join('');
 
         socios.forEach(s => {
             const row = tbody.querySelector(`[data-socio-row="${s.userId}"]`);
@@ -302,7 +333,7 @@ document.addEventListener('DOMContentLoaded', function () {
         const filaPrincipal = `
             <tr class="socio-row ${s.pagado ? 'pagado' : ''}" data-socio-row="${s.userId}" data-saldo-acumulado="${s.saldoAcumulado}">
                 <td><button type="button" class="expand-toggle">${tieneConceptos ? '▾' : '▸'}</button></td>
-                <td>${s.username}</td>
+                <td>${userRealNames[s.username] || s.username}</td>
                 <td>${formatMoney(s.saldoAcumulado)}</td>
                 <td class="total-aportes-val">${formatMoney(s.totalAportes)}</td>
                 <td class="total-deducciones-val">${formatMoney(s.totalDeducciones)}</td>

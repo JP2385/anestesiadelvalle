@@ -2,6 +2,7 @@ const PagoSocios = require('../models/pagoSociosModel');
 const Liquidacion = require('../models/liquidacionModel');
 const GroupPeriod = require('../models/groupPeriodModel');
 const { calcularDistribucion } = require('./liquidacionController');
+const XLSX = require('xlsx');
 
 // Recalcula, para un conjunto de liquidaciones individuales, el saldo acumulado por socio
 async function calcularSaldosAcumulados(liquidacionIds) {
@@ -90,7 +91,7 @@ exports.getPagoSociosById = async (req, res) => {
     try {
         const pago = await PagoSocios.findById(req.params.id)
             .populate('liquidaciones', 'origen fecha')
-            .populate('socios.userId', 'username');
+            .populate('socios.userId', 'username nombre apellido');
 
         if (!pago) {
             return res.status(404).json({ success: false, message: 'Pago a socios no encontrado' });
@@ -106,6 +107,8 @@ exports.getPagoSociosById = async (req, res) => {
             return {
                 userId: uid,
                 username: socio.userId.username,
+                nombre: socio.userId.nombre || '',
+                apellido: socio.userId.apellido || '',
                 saldoAcumulado: Math.round(saldoAcumulado * 100) / 100,
                 aportes: socio.aportes,
                 deducciones: socio.deducciones,
@@ -118,7 +121,8 @@ exports.getPagoSociosById = async (req, res) => {
             };
         });
 
-        socios.sort((a, b) => a.username.localeCompare(b.username, 'es'));
+        const nombreOrden = s => s.apellido ? `${s.apellido}, ${s.nombre}` : s.username;
+        socios.sort((a, b) => nombreOrden(a).localeCompare(nombreOrden(b), 'es'));
 
         res.json({
             success: true,
@@ -134,6 +138,54 @@ exports.getPagoSociosById = async (req, res) => {
         });
     } catch (error) {
         res.status(500).json({ success: false, message: 'Error al obtener el pago a socios' });
+    }
+};
+
+// GET /pagos-socios/:id/excel — descarga Excel con el monto a abonar por socio
+exports.downloadExcel = async (req, res) => {
+    try {
+        const pago = await PagoSocios.findById(req.params.id)
+            .populate('liquidaciones', 'origen fecha')
+            .populate('socios.userId', 'username nombre apellido');
+
+        if (!pago) {
+            return res.status(404).json({ success: false, message: 'Pago a socios no encontrado' });
+        }
+
+        const saldoPorSocio = await calcularSaldosAcumulados(pago.liquidaciones.map(l => l._id));
+
+        const socios = pago.socios.map(socio => {
+            const uid = socio.userId._id.toString();
+            const saldoAcumulado = saldoPorSocio[uid]?.saldo || 0;
+            const { pagoNeto } = calcularPagoNeto(saldoAcumulado, socio);
+            // Mismo criterio que registrarPago: si el neto es negativo no se le abona nada
+            const monto = socio.pagado ? (socio.montoPagado || 0) : Math.max(0, pagoNeto);
+            const nombreCompleto = socio.userId.apellido
+                ? `${socio.userId.apellido}, ${socio.userId.nombre}`
+                : socio.userId.username;
+            return { nombreCompleto, monto: Math.round(monto * 100) / 100 };
+        });
+
+        socios.sort((a, b) => a.nombreCompleto.localeCompare(b.nombreCompleto, 'es'));
+
+        const wb = XLSX.utils.book_new();
+        const filas = [
+            ['Socio', 'Monto a abonar'],
+            ...socios.map(s => [s.nombreCompleto, s.monto])
+        ];
+        const ws = XLSX.utils.aoa_to_sheet(filas);
+        ws['!cols'] = [{ wch: 24 }, { wch: 16 }];
+        XLSX.utils.book_append_sheet(wb, ws, 'Monto a abonar');
+
+        const buffer = XLSX.write(wb, { type: 'buffer', bookType: 'xlsx' });
+        const fechaDesde = new Date(pago.fechaDesde).toISOString().substring(0, 10);
+        const fechaHasta = new Date(pago.fechaHasta).toISOString().substring(0, 10);
+
+        res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+        res.setHeader('Content-Disposition', `attachment; filename="pago-socios-${fechaDesde}-a-${fechaHasta}.xlsx"`);
+        res.send(buffer);
+    } catch (error) {
+        res.status(500).json({ success: false, message: 'Error al generar el Excel' });
     }
 };
 

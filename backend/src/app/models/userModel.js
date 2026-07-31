@@ -35,6 +35,14 @@ const userSchema = new Schema({
         required: true,
         unique: true
     },
+    nombre: {
+        type: String,
+        trim: true
+    },
+    apellido: {
+        type: String,
+        trim: true
+    },
     email: {
         type: String,
         required: true,
