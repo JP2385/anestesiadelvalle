@@ -32,7 +32,9 @@ document.addEventListener('DOMContentLoaded', () => {
             const currentUser = data.username;
 
             // Obtener el cronograma de guardias del mes para el usuario actual
-            fetch(`${apiUrl}/shift-schedule/${currentYearMonth}`)
+            fetch(`${apiUrl}/shift-schedule/${currentYearMonth}`, {
+                headers: { 'Authorization': `Bearer ${token}` }
+            })
                 .then(response => response.json())
                 .then(schedule => {
                     const shiftSchedule = schedule.shiftSchedule || [];

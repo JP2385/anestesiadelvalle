@@ -1,6 +1,6 @@
 // backend/src/app/routes/authRoutes.js
 const express = require('express');
-const { register, login, changePassword, getProfile, recoverPassword, resetPassword } = require('../controllers/authController');
+const { register, login, changePassword, getProfile, recoverPassword, resetPassword, createClinicUser } = require('../controllers/authController');
 const { getAllUsers, updateUser, getUserById, updateDefaultAssignments } = require('../controllers/userController');
 const { getUsersAvailability } = require('../controllers/availabilityController');
 const { getAllVacations } = require('../controllers/vacationController');  // Asegúrate de que la ruta al controlador sea correcta
@@ -24,5 +24,8 @@ router.get('/availability', authMiddleware, getUsersAvailability);
 
 // Ruta para obtener las vacaciones de todos los usuarios
 router.get('/vacations', authMiddleware, getAllVacations);
+
+// Crear usuario institucional (solo admin)
+router.post('/create-clinic-user', authMiddleware, requireAdmin, createClinicUser);
 
 module.exports = router;

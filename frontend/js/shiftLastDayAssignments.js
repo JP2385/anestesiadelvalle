@@ -13,7 +13,10 @@
 
                 try {
                     // Cargar el horario del mes completo
-                    const response = await fetch(`${apiUrl}/shift-schedule/${previousYearMonth}`);
+                    const token = localStorage.getItem('token') || sessionStorage.getItem('token');
+                    const response = await fetch(`${apiUrl}/shift-schedule/${previousYearMonth}`, {
+                        headers: { 'Authorization': `Bearer ${token}` }
+                    });
                     if (response.ok) {
                         const scheduleData = await response.json();
                         

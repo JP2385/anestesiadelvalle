@@ -37,9 +37,12 @@ document.addEventListener('DOMContentLoaded', async function () {
     async function loadSchedule(year, month) {
         const yearMonth = `${year}-${month.toString().padStart(2, '0')}`;
         const endpointUrl = `${apiUrl}/shift-schedule/${yearMonth}`;
+        const token = localStorage.getItem('token') || sessionStorage.getItem('token');
         
         try {
-            const response = await fetch(endpointUrl);
+            const response = await fetch(endpointUrl, {
+                headers: { 'Authorization': `Bearer ${token}` }
+            });
             if (response.ok) {
                 const scheduleData = await response.json();
                 return scheduleData;

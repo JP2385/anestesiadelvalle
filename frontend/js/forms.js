@@ -43,7 +43,9 @@ if (loginForm) {
                     }
 
                     toast.success('Inicio de sesión exitoso');
-                    setTimeout(() => window.location.href = 'index.html', 800);
+                    const redirectUrl = sessionStorage.getItem('loginRedirect');
+                    sessionStorage.removeItem('loginRedirect');
+                    setTimeout(() => window.location.href = redirectUrl || 'index.html', 800);
                 } else {
                     toast.error('Error: El servidor no respondió correctamente');
                 }

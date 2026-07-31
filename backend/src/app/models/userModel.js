@@ -107,6 +107,10 @@ const userSchema = new Schema({
         type: Boolean,
         default: false
     },
+    allowedSite: {
+        type: String,
+        default: null
+    },
     workSchedule: {
         monday: {
             type: String,

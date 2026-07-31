@@ -4,6 +4,20 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Cronograma de guardias</title>
+    <script>
+        // Capturar authToken del link antes de que sessionManager verifique la sesión
+        (function () {
+            const params = new URLSearchParams(window.location.search);
+            const authToken = params.get('authToken');
+            if (authToken) {
+                sessionStorage.setItem('token', authToken);
+                params.delete('authToken');
+                const newUrl = window.location.pathname + (params.toString() ? '?' + params.toString() : '');
+                window.history.replaceState(null, '', newUrl);
+            }
+        })();
+    </script>
+    <script type="module" src="js/sessionManager.js"></script>
     <script type="module" src="js/shiftInform.js" defer></script>
     <script defer src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <link rel="icon" type="image/png" href="images/logo/logo64x64.png">

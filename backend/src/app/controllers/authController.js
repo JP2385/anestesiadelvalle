@@ -229,3 +229,30 @@ exports.updateProfile = async (req, res) => {
         res.status(400).send({ message: error.message });
     }
 };
+
+// Crear usuario institucional (solo admin); omite validación de email permitido
+exports.createClinicUser = async (req, res) => {
+    try {
+        const { username, password, allowedSite } = req.body;
+        if (!username || !password || !allowedSite) {
+            return res.status(400).send({ message: 'username, password y allowedSite son requeridos' });
+        }
+
+        const existing = await User.findOne({ username: username.toLowerCase() });
+        if (existing) {
+            return res.status(400).send({ message: 'El usuario ya existe' });
+        }
+
+        const user = new User({
+            username: username.toLowerCase(),
+            email: `${username.toLowerCase()}@clinic.internal`,
+            password,
+            role: 'user',
+            allowedSite
+        });
+        await user.save();
+        res.status(201).send({ message: 'Usuario institucional creado exitosamente' });
+    } catch (error) {
+        res.status(400).send({ message: error.message });
+    }
+};

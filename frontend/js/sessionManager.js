@@ -5,6 +5,11 @@ document.addEventListener('DOMContentLoaded', function() {
     const maxIdleTimeout = 1 * 60 * 60 * 1000; // 1 hora de inactividad (PC y móvil)
     let idleTime = 0;
 
+    function redirectToLogin() {
+        sessionStorage.setItem('loginRedirect', window.location.href);
+        window.location.href = 'login.html';
+    }
+
     // Verificar si el token está en sessionStorage (sin "mantener sesión")
     const token = localStorage.getItem('token') || sessionStorage.getItem('token');
     const isTemporarySession = !localStorage.getItem('token') && sessionStorage.getItem('token');
@@ -31,7 +36,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 localStorage.removeItem('token');
                 sessionStorage.removeItem('token');
                 sessionStorage.removeItem('sessionExpiry');
-                setTimeout(() => window.location.href = 'login.html', 1500);
+                setTimeout(() => redirectToLogin(), 1500);
                 return;
             }
         }
@@ -52,14 +57,14 @@ document.addEventListener('DOMContentLoaded', function() {
     // Verificar si el token está presente
     if (!token) {
         // Si no hay token, redirigir sin toast
-        window.location.href = 'login.html';
+        redirectToLogin();
         return;
     } else if (isTokenExpired(token)) {
         // Si el token expiró, limpiar y redirigir sin toast
         localStorage.removeItem('token');
         sessionStorage.removeItem('token');
         sessionStorage.removeItem('sessionExpiry');
-        window.location.href = 'login.html';
+        redirectToLogin();
         return;
     } else {
         const sessionExpiry = sessionStorage.getItem('sessionExpiry');
@@ -70,7 +75,7 @@ document.addEventListener('DOMContentLoaded', function() {
             localStorage.removeItem('token');
             sessionStorage.removeItem('token');
             sessionStorage.removeItem('sessionExpiry');
-            setTimeout(() => window.location.href = 'login.html', 1500);
+            setTimeout(() => redirectToLogin(), 1500);
         } else {
             resetIdleTimer(); // Reiniciar el temporizador si todo está bien
         }

@@ -27,6 +27,21 @@ document.addEventListener('DOMContentLoaded', async () => {
     const monthParam = urlParams.get('month');
     const siteParam = urlParams.get('site') || 'all';
 
+    // Verificar restricción de sitio según el perfil del usuario autenticado
+    const token = localStorage.getItem('token') || sessionStorage.getItem('token');
+    let allowedSite = null;
+    try {
+        const profileRes = await fetch(`${apiUrl}/auth/profile`, {
+            headers: { 'Authorization': `Bearer ${token}` }
+        });
+        if (profileRes.ok) {
+            const profile = await profileRes.json();
+            allowedSite = profile.allowedSite || null;
+        }
+    } catch (e) {
+        console.error('Error al obtener perfil:', e);
+    }
+
     // Fetch de usuarios para obtener números de teléfono
     try {
         const response = await fetch(`${apiUrl}/public/public-users`, {
@@ -74,10 +89,14 @@ document.addEventListener('DOMContentLoaded', async () => {
     // Ajustar el valor de `yearSelect` y `monthSelect` usando el mes extraído
     yearSelect.value = extractedYear || currentYear;
     monthSelect.value = extractedMonth ? (parseInt(extractedMonth, 10) - 1).toString() : currentMonth.toString();
-    siteSelect.value = siteParam;
+    siteSelect.value = allowedSite || siteParam;
+
+    if (allowedSite || (siteParam && siteParam !== 'all')) {
+        siteSelect.disabled = true;
+    }
 
     // Llama a fetchAndDisplaySchedule para cargar el cronograma en función del año, mes y sitio seleccionados
-    fetchAndDisplaySchedule(yearSelect.value, monthSelect.value, siteSelect.value);
+    fetchAndDisplaySchedule(yearSelect.value, monthSelect.value, allowedSite || siteSelect.value);
 
     // Función para actualizar el título dinámico
     function updateTitle() {
@@ -114,7 +133,11 @@ document.addEventListener('DOMContentLoaded', async () => {
         window.history.replaceState(null, '', newUrl);
 
         // Obtener las asignaciones de la base de datos
-        fetch(`${apiUrl}/shift-schedule/${formattedMonth}`)
+        fetch(`${apiUrl}/shift-schedule/${formattedMonth}`, {
+            headers: {
+                'Authorization': `Bearer ${localStorage.getItem('token') || sessionStorage.getItem('token')}`
+            }
+        })
             .then(response => response.json())
             .then(schedule => {
                 const shiftSchedule = schedule.shiftSchedule || [];

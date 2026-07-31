@@ -1,5 +1,7 @@
 const ShiftSchedule = require('../models/shiftScheduleModel');
+const User = require('../models/userModel');
 const nodemailer = require('nodemailer');
+const jwt = require('jsonwebtoken');
 const config = require('../../../config');
 
 // Guardar o actualizar el horario del mes actual
@@ -46,6 +48,18 @@ const getShiftScheduleByMonth = async (req, res) => {
             console.log("No schedule found for:", yearMonth);
             return res.status(404).json({ message: 'No schedule found for this month' });
         }
+
+        const allowedSite = req.user.allowedSite;
+        if (allowedSite) {
+            const filtered = schedule.shiftSchedule
+                .map(user => ({
+                    username: user.username,
+                    shifts: user.shifts.filter(shift => shift.assignment === allowedSite)
+                }))
+                .filter(user => user.shifts.length > 0);
+            return res.status(200).json({ shiftSchedule: filtered });
+        }
+
         res.status(200).json(schedule);
     } catch (error) {
         console.error('Error fetching shift schedule:', error);
@@ -70,6 +84,19 @@ const sendScheduleEmail = async (req, res) => {
     const fundaEmail = 'cima@lebensalud.com, jonathanpiras89@gmail.com, arodeland@lebensalud.com';
     const imagesEmail = 'lsandobal@lebensalud.com, jonathanpiras89@gmail.com, gurra@lebensalud.com';
 
+    // Generar tokens de acceso directo para cada clínica (45 días)
+    const fundaUser = await User.findOne({ username: config.clinicFundaUser });
+    const imagesUser = await User.findOne({ username: config.clinicImagesUser });
+
+    if (!fundaUser || !imagesUser) {
+        return res.status(500).json({
+            message: 'No se encontraron los usuarios institucionales. Crîlos primero con POST /auth/create-clinic-user.'
+        });
+    }
+
+    const fundaToken = jwt.sign({ userId: fundaUser._id }, config.jwtSecret, { expiresIn: '45d' });
+    const imagesToken = jwt.sign({ userId: imagesUser._id }, config.jwtSecret, { expiresIn: '45d' });
+
     // Configurar nodemailer
     const transporter = nodemailer.createTransport({
         service: 'gmail',
@@ -86,8 +113,8 @@ const sendScheduleEmail = async (req, res) => {
         subject: `Guardias de Anestesia del mes de ${month} de ${year}`,
         text: `Estimado/a:
         
-Haciendo click en el siguiente link podrá acceder a las guardias de anestesia del mes de ${month} de ${year} de Fundación:
-${config.baseUrl}/shiftInform.html?year=${year}&month=${monthYearText}&site=Fn
+Haciendo click en el siguiente link podrá acceder directamente a las guardias de anestesia del mes de ${month} de ${year} de Fundación:
+${config.baseUrl}/shiftInform.html?year=${year}&month=${monthYearText}&site=Fn&authToken=${fundaToken}
 
 Saludos,`
     };
@@ -99,8 +126,8 @@ Saludos,`
         subject: `Guardias de Anestesia del mes de ${month} de ${year}`,
         text: `Estimado/a:
         
-Haciendo click en el siguiente link podrá acceder a las guardias de anestesia del mes de ${month} de ${year} de Imágenes:
-${config.baseUrl}/shiftInform.html?year=${year}&month=${monthYearText}&site=Im
+Haciendo click en el siguiente link podrá acceder directamente a las guardias de anestesia del mes de ${month} de ${year} de Imágenes:
+${config.baseUrl}/shiftInform.html?year=${year}&month=${monthYearText}&site=Im&authToken=${imagesToken}
 
 Saludos,`
     };

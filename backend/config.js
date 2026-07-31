@@ -5,6 +5,9 @@ module.exports = {
     emailUser: process.env.EMAIL_USER,
     emailPass: process.env.EMAIL_PASS,
     baseUrl: process.env.BASE_URL || 'https://anestesiadelvalle.ar',
+    // Usernames de usuarios institucionales (usados para generar tokens en los mails)
+    clinicFundaUser: process.env.CLINIC_FUNDA_USER || 'fundacion',
+    clinicImagesUser: process.env.CLINIC_IMAGES_USER || 'imagenes',
     validEmails: [
         'rconsigli@gmail.com',
         'magioja@hotmail.com',
