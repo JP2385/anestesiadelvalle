@@ -424,8 +424,9 @@ document.addEventListener('DOMContentLoaded', function () {
         actualizarTotalDesembolso();
     }
 
-    // ── Guarda aportes/deducciones/deudaArrastrada de todos los socios pendientes en un solo pedido ──
-    async function guardarTodosLosSocios(pagoId) {
+    // ── Recolecta del DOM y persiste aportes/deducciones/deudaArrastrada de todos los socios
+    // pendientes en un solo pedido. Devuelve true si se guardó bien (o no había nada que guardar).
+    async function guardarConceptosSocios(pagoId, { silencioso = false } = {}) {
         const rows = document.querySelectorAll('#detail-socios-body tr[data-socio-row]');
         const socios = [];
 
@@ -451,6 +452,8 @@ document.addEventListener('DOMContentLoaded', function () {
             socios.push({ userId, aportes, deducciones, deudaArrastrada });
         }
 
+        if (!socios.length) return true; // nada pendiente que guardar
+
         try {
             const response = await fetch(`${apiUrl}/pagos-socios/${pagoId}`, {
                 method: 'PUT',
@@ -464,14 +467,20 @@ document.addEventListener('DOMContentLoaded', function () {
             const data = await response.json();
 
             if (data.success) {
-                toast.success('Cambios guardados');
-                openDetail(pagoId);
-            } else {
-                toast.error(data.message || 'Error al guardar');
+                if (!silencioso) toast.success('Cambios guardados');
+                return true;
             }
+            toast.error(data.message || 'Error al guardar');
+            return false;
         } catch {
             toast.error('Error de conexión');
+            return false;
         }
+    }
+
+    async function guardarTodosLosSocios(pagoId) {
+        const ok = await guardarConceptosSocios(pagoId);
+        if (ok) openDetail(pagoId);
     }
 
     // ── Registrar el pago de todo el período de una vez ───────────────────
@@ -499,6 +508,14 @@ document.addEventListener('DOMContentLoaded', function () {
         }
 
         if (!confirm('¿Confirmás el pago a todos los socios pendientes con esta fecha? Esta acción bloqueará futuras ediciones de aportes/deducciones.')) return;
+
+        // Persistir primero los aportes/deducciones/deuda tipeados en el form — si no se hizo
+        // click en "Guardar cambios" antes, esos conceptos solo existen en el DOM y se perderían.
+        const guardado = await guardarConceptosSocios(pagoId, { silencioso: true });
+        if (!guardado) {
+            toast.error('No se pudo guardar los conceptos cargados; el pago no fue registrado');
+            return;
+        }
 
         try {
             const response = await fetch(`${apiUrl}/pagos-socios/${pagoId}/pago`, {
