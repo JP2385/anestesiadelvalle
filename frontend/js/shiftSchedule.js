@@ -64,7 +64,9 @@ document.addEventListener('DOMContentLoaded', async function () {
         fetchUsers(apiUrl, (users) => {
             fetchOtherLeaves(apiUrl, (usersWithLeaves) => {
                 // Combinar datos de usuarios con otherLeaves
-                const usersWithOtherLeaves = users.map(user => {
+                const usersWithOtherLeaves = users
+                    .filter(user => !user.allowedSite)
+                    .map(user => {
                     const userWithLeaves = usersWithLeaves.find(u => u.username === user.username);
                     return {
                         ...user,
