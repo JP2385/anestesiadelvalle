@@ -2,7 +2,7 @@ const User = require('../models/userModel');
 
 const getUsersAvailability = async (req, res) => {
     try {
-        const users = await User.find({}, 'username workSchedule vacations otherLeaves worksInCmacOnly worksInPrivateRioNegro worksInPublicRioNegro worksInPublicNeuquen worksInPrivateNeuquen doesPediatrics doesCardio doesRNM _id');
+        const users = await User.find({ allowedSite: null }, 'username workSchedule vacations otherLeaves worksInCmacOnly worksInPrivateRioNegro worksInPublicRioNegro worksInPublicNeuquen worksInPrivateNeuquen doesPediatrics doesCardio doesRNM _id');
 
         const availability = {
             monday: [],

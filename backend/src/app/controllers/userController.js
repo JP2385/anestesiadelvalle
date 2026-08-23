@@ -2,7 +2,7 @@ const User = require('../models/userModel');
 
 exports.getAllUsers = async (req, res) => {
     try {
-        const users = await User.find().select('username email beginningDate phoneNumber doesCardio doesPediatrics doesRNM doesShifts worksInPrivateRioNegro worksInPublicRioNegro worksInPrivateNeuquen worksInPublicNeuquen workSchedule vacations otherLeaves worksInCmacOnly defaultAssignments');
+        const users = await User.find({ allowedSite: null }).select('username email beginningDate phoneNumber doesCardio doesPediatrics doesRNM doesShifts worksInPrivateRioNegro worksInPublicRioNegro worksInPrivateNeuquen worksInPublicNeuquen workSchedule vacations otherLeaves worksInCmacOnly defaultAssignments');
         res.send(users);
     } catch (error) {
         res.status(500).send({ message: error.message });
