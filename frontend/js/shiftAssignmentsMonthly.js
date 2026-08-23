@@ -12,8 +12,8 @@ function shuffleArray(array) {
 
 // Offset para nuevos integrantes: los nivela al promedio del equipo para evitar sobre-asignación
 const NEW_MEMBER_OFFSETS = {
-    rriso: { week: 49, weekend: 35, saturday: 5 },
-    jbo:   { week: 50, weekend: 21, saturday: 4 }
+    rriso: { week: 54, weekend: 24, saturday: 4 },
+    jbo:   { week: 55, weekend: 10, saturday: 3 }
 };
 
 export function assignIm(rows, selects, isLharriagueAssignedToday, isMquirogaAssignedToday, assignedFnUser, assignedImUser, isWeekend, accumulatedCounts) {
