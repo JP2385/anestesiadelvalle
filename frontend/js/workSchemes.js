@@ -32,7 +32,6 @@ export function getWorkSchemes(isOddWeek) {
     };
 
     const nvelaScheme = {
-        'thursday-header': 'Hospital Castro Rendon Vespertino',
     };
 
     const lalvarezScheme = {

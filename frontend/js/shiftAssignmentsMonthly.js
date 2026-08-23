@@ -10,6 +10,12 @@ function shuffleArray(array) {
     return shuffled;
 }
 
+// Offset para nuevos integrantes: los nivela al promedio del equipo para evitar sobre-asignación
+const NEW_MEMBER_OFFSETS = {
+    rriso: { week: 49, weekend: 35, saturday: 5 },
+    jbo:   { week: 50, weekend: 21, saturday: 4 }
+};
+
 export function assignIm(rows, selects, isLharriagueAssignedToday, isMquirogaAssignedToday, assignedFnUser, assignedImUser, isWeekend, accumulatedCounts) {
     console.log(`\nIniciando asignación de Im para el día: ${selects[0].getAttribute('data-day')}, es fin de semana: ${isWeekend}`);
 
@@ -22,6 +28,9 @@ export function assignIm(rows, selects, isLharriagueAssignedToday, isMquirogaAss
             // Sumamos acumulado de la semana o del fin de semana según el tipo de conteo
             const accumulated = isWeekend ? accumulatedCounts[username].weekend : accumulatedCounts[username].week;
             userShiftCounts[username] += accumulated;
+        }
+        if (NEW_MEMBER_OFFSETS[username]) {
+            userShiftCounts[username] += isWeekend ? NEW_MEMBER_OFFSETS[username].weekend : NEW_MEMBER_OFFSETS[username].week;
         }
     });
 
@@ -61,6 +70,9 @@ export function assignFn(rows, selects, isLharriagueAssignedToday, isMquirogaAss
             // Sumamos acumulado de la semana o del fin de semana según el tipo de conteo
             const accumulated = isWeekend ? accumulatedCounts[username].weekend : accumulatedCounts[username].week;
             userShiftCounts[username] += accumulated;
+        }
+        if (NEW_MEMBER_OFFSETS[username]) {
+            userShiftCounts[username] += isWeekend ? NEW_MEMBER_OFFSETS[username].weekend : NEW_MEMBER_OFFSETS[username].week;
         }
     });
 
@@ -118,6 +130,9 @@ export function assignTr(rows, selects, isLharriagueAssignedToday, isMquirogaAss
         if (accumulatedCounts[username]) {
             const accumulated = isWeekend ? accumulatedCounts[username].weekend : accumulatedCounts[username].week;
             userShiftCounts[username] += accumulated;
+        }
+        if (NEW_MEMBER_OFFSETS[username]) {
+            userShiftCounts[username] += isWeekend ? NEW_MEMBER_OFFSETS[username].weekend : NEW_MEMBER_OFFSETS[username].week;
         }
     });
 
@@ -177,6 +192,9 @@ export function assignSaturdayP1(users, accumulatedCounts) {
                 if (accumulatedCounts[username]) {
                     userShiftCounts[username] += accumulatedCounts[username].saturday || 0;
                 }
+                if (NEW_MEMBER_OFFSETS[username]) {
+                    userShiftCounts[username] += NEW_MEMBER_OFFSETS[username].saturday || 0;
+                }
             });
 
             // Elegir al usuario con el menor total acumulado y actual de "P1"
@@ -190,15 +208,6 @@ export function assignSaturdayP1(users, accumulatedCounts) {
 
             // Intentar asignar "P1" al primer usuario disponible de la lista ordenada
             for (const user of sortedUsers) {
-                // excluir al usuario rriso
-                if (user.username === 'rriso') {
-                continue;
-                }
-                // excluir al usuario jbo
-                if (user.username === 'jbo') {
-                continue;
-                }
-
                 // Verificar si el usuario ya fue asignado a P1 o P2 en algún sábado del mes
                 const userSaturdaySelects = user.row.querySelectorAll('select[data-daynumber="6"]');
                 const hasP1OrP2Assignment = Array.from(userSaturdaySelects).some(satSelect => 
@@ -265,6 +274,9 @@ export function assignSaturdayP2(users, accumulatedCounts) {
                     if (accumulatedCounts[username]) {
                         userShiftCounts[username] += accumulatedCounts[username].saturday || 0;
                     }
+                    if (NEW_MEMBER_OFFSETS[username]) {
+                        userShiftCounts[username] += NEW_MEMBER_OFFSETS[username].saturday || 0;
+                    }
                 });
 
                 // Filtrar usuarios según la lógica de pairing regional
@@ -276,11 +288,6 @@ export function assignSaturdayP2(users, accumulatedCounts) {
                         return { row, username, user, totalP2Shifts };
                     })
                     .filter(userObj => {
-                        // Excluir usuarios específicos
-                        if (userObj.username === 'rriso' || userObj.username === 'jbo') {
-                            return false;
-                        }
-                        
                         // Excluir el usuario ya asignado a P1
                         if (userObj.username === p1Username) {
                             return false;
@@ -353,14 +360,6 @@ function assignShift(selects, assignmentType, isLharriagueAssignedToday, isMquir
         for (const select of shuffledSelects) {
             const username = select.getAttribute('data-username');
             
-            // 🔴 EXCLUIR rriso de toda asignación automática
-            if (username === 'rriso') {
-                continue;
-            }
-            // 🔴 EXCLUIR jbo de toda asignación automática
-            if (username === 'jbo') {
-                continue;
-            }
             const day = select.getAttribute('data-day');
             const dayNumber = parseInt(select.getAttribute('data-daynumber'), 10); // Obtener el número del día (0-6)
             const shiftOption = Array.from(select.options).find(option => option.value === assignmentType);
@@ -385,7 +384,7 @@ function assignShift(selects, assignmentType, isLharriagueAssignedToday, isMquir
                 if (
                     previousSelect &&
                     previousSelect.value !== '' &&
-                    !(isFriday && (username === 'nvela' || username === 'msalvarezza'))
+                    !(isFriday && username === 'msalvarezza')
                 ) {
                     continue;
                 }
