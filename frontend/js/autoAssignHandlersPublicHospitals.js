@@ -22,7 +22,7 @@ export async function autoAssignPublicHospitalsByDay(apiUrl, dayIndex, availabil
             sdegreefScheme,
             lalvarezScheme,
             msalvarezzaScheme,
-            ecesarScheme,
+            rrisoScheme,
             jboScheme,
         } = getWorkSchemes(isOddWeek);
 
@@ -43,7 +43,7 @@ export async function autoAssignPublicHospitalsByDay(apiUrl, dayIndex, availabil
         }
 
         if (rriso) {
-            assignSpecificUsersByDay(dayIndex, ecesarScheme, rriso, assignedUsers, workSiteElements, virtualState);
+            assignSpecificUsersByDay(dayIndex, rrisoScheme, rriso, assignedUsers, workSiteElements, virtualState);
         }
         if (jbo) {
             assignSpecificUsersByDay(dayIndex, jboScheme, jbo, assignedUsers, workSiteElements, virtualState);

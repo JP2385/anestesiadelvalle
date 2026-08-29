@@ -542,7 +542,6 @@ function isSameLocalDate(d1, d2) {
 
 function applyDefaultAssignments(usersBody) {
     const defaultAssignments = {
-        'lalvarez': { day: 'Mar', value: 'Al' },
     };
 
     // Recorrer cada fila (usuario) de la tabla

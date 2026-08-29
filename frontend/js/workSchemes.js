@@ -18,7 +18,7 @@ export function getWorkSchemes(isOddWeek) {
     }
 
     const ggudinoScheme = {
-        'monday-header': ['COI RNM Vespertino'],
+        'monday-header': ['COI Braqui Vespertino'],
         'tuesday-header': ['COI RNM Matutino'],
         'wednesday-header': ['COI Braqui Largo'],
         'thursday-header': ['COI RNM Matutino'],
@@ -35,26 +35,17 @@ export function getWorkSchemes(isOddWeek) {
     };
 
     const lalvarezScheme = {
-        'tuesday-header': 'Hospital Allen Largo'
     };
 
     const msalvarezzaScheme = {
     };
 
-    const ecesarScheme = isOddWeek ? {
-        'tuesday-header': 'Imágenes Q1 Vespertino',
-        'thursday-header': 'Imágenes Q2 Vespertino',
-    } : {
-        'tuesday-header': 'Imágenes Q2 Vespertino',
-        'thursday-header': 'Imágenes Q1 Vespertino',
+    const rrisoScheme = {
+        'tuesday-header': 'Hospital Heller Q Largo',
     };
 
-    const jboScheme = isOddWeek ? {
-        'monday-header': ['Imágenes Hemo Matutino', 'Imágenes Hemo Vespertino', 'Imágenes Hemo Largo'],
-        'friday-header': 'Imágenes Q1 Vespertino',
-    } : {
-        'monday-header': ['Imágenes Hemo Matutino', 'Imágenes Hemo Vespertino', 'Imágenes Hemo Largo'],
-        'friday-header': 'Imágenes Q2 Vespertino',
+    const jboScheme = {
+        'thursday-header': 'Hospital Heller Q Largo',
     };
 
     return {
@@ -65,7 +56,7 @@ export function getWorkSchemes(isOddWeek) {
         nvelaScheme,
         lalvarezScheme,
         msalvarezzaScheme,
-        ecesarScheme,
+        rrisoScheme,
         jboScheme,
         rconsigliScheme
     };
