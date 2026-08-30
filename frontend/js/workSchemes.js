@@ -40,14 +40,6 @@ export function getWorkSchemes(isOddWeek) {
     const msalvarezzaScheme = {
     };
 
-    const rrisoScheme = {
-        'tuesday-header': 'Hospital Heller Q Largo',
-    };
-
-    const jboScheme = {
-        'thursday-header': 'Hospital Heller Q Largo',
-    };
-
     return {
         montesEspositoScheme,
         ggudinoScheme,
@@ -56,8 +48,6 @@ export function getWorkSchemes(isOddWeek) {
         nvelaScheme,
         lalvarezScheme,
         msalvarezzaScheme,
-        rrisoScheme,
-        jboScheme,
         rconsigliScheme
     };
 }
