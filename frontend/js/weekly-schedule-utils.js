@@ -210,6 +210,10 @@ export async function populateSelectOptions(availability) {
                     return; // Excluir "mquiroga" en vespertino los jueves
                 }
 
+                if (workSite.includes('Trinidad') && ['jbo', 'lharriague', 'rconsigli', 'mgioja', 'ggudiño'].includes(user.username)) {
+                    return;
+                }
+
                 // Restricción adicional para miércoles en "Imágenes Quirofano 1 Matutino"
                 if (dayName === 'wednesday' && workSite.includes('Imágenes Q1') && workSite.includes('Matutino')) {
                     if (!user.doesCardio) {
@@ -264,7 +268,7 @@ export async function populateSelectOptions(availability) {
                     if (!user.worksInPublicNeuquen) return;
                 }
 
-                if ((workSite.includes('Imágenes') || workSite.includes('COI'))) {
+                if ((workSite.includes('Imágenes') || workSite.includes('COI') || workSite.includes('Trinidad'))) {
                     if (!user.worksInPrivateNeuquen) return;
                 }
 
