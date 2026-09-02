@@ -334,8 +334,9 @@ if (dayOfWeek === 0) { // 0 representa el domingo
         }
     });
 
-    assignSaturdayP1(users, accumulatedCounts);
-    assignSaturdayP2(users, accumulatedCounts);
+    // Deshabilitado a pedido: ya no se asignan plantas de sábado (P1/P2) automáticamente
+    // assignSaturdayP1(users, accumulatedCounts);
+    // assignSaturdayP2(users, accumulatedCounts);
 
     const userShiftCountsWeek = countWeekdayShifts();
     const userShiftCountsWeekend = countWeekendShifts();
