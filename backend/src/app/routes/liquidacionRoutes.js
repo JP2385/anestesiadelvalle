@@ -9,11 +9,17 @@ const {
     updateLiquidacion,
     deleteLiquidacion,
     downloadPlantilla,
-    importarCSV
+    importarCSV,
+    generarAutomatico,
+    estadoGeneracionAutomatica
 } = require('../controllers/liquidacionController');
 
 router.get('/plantilla', authMiddleware, requireAdmin, downloadPlantilla);
 router.post('/importar', authMiddleware, requireAdmin, express.text({ limit: '5mb' }), importarCSV);
+
+// Generación automática (scrapea saludng + evweb vía microservicio y guarda todo)
+router.post('/auto', authMiddleware, requireAdmin, generarAutomatico);
+router.get('/auto/:jobId', authMiddleware, requireAdmin, estadoGeneracionAutomatica);
 
 router.get('/', authMiddleware, getAllLiquidaciones);
 router.get('/:id', authMiddleware, getLiquidacionById);

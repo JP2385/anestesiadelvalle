@@ -2,6 +2,7 @@ const Liquidacion = require('../models/liquidacionModel');
 const GroupPeriod = require('../models/groupPeriodModel');
 const User = require('../models/userModel');
 const XLSX = require('xlsx');
+const config = require('../../../config');
 
 // Determina qué GroupPeriod estaba vigente en una fecha dada
 function getPeriodForDate(periods, date) {
@@ -327,6 +328,170 @@ exports.downloadPlantilla = (req, res) => {
 
 exports.calcularDistribucion = calcularDistribucion;
 exports.getPeriodForDate = getPeriodForDate;
+
+// ═══════════════════════════════════════════════════════════════════════
+//  Generación automática (microservicio Python: scrapea saludng + evweb)
+// ═══════════════════════════════════════════════════════════════════════
+
+// jobId -> resumen ya guardado (evita re-guardar en cada poll)
+const _jobsGuardados = new Map();
+
+function _svcHeaders() {
+    return {
+        'Content-Type': 'application/json',
+        'X-Service-Secret': config.liquidacionesServiceSecret || ''
+    };
+}
+
+async function _guardarDesdePayload(p, userMap, creadoPor) {
+    if (!p || !p.origen || !p.fecha) throw new Error('payload sin origen/fecha');
+
+    const ingresos = [];
+    for (const i of (p.ingresos || [])) {
+        const monto = Number(i.monto);
+        if (!(monto > 0)) continue;
+        if (String(i.tipo || '').toLowerCase() === 'empresa') {
+            ingresos.push({ tipo: 'empresa', userId: null, monto });
+        } else {
+            const uid = userMap[String(i.socio || '').toLowerCase()];
+            if (!uid) throw new Error(`Ingresos: usuario "${i.socio}" no encontrado`);
+            ingresos.push({ tipo: 'socio', userId: uid, monto });
+        }
+    }
+
+    const anestesias = (p.anestesias || [])
+        .filter(a => a.fechaPractica && Number(a.montoFacturado) >= 0)
+        .map(a => ({
+            paciente: String(a.paciente || '').trim(),
+            fechaPractica: a.fechaPractica,
+            obraSocial: String(a.obraSocial || '').trim(),
+            lugarPractica: String(a.lugarPractica || '').trim(),
+            montoFacturado: Number(a.montoFacturado),
+            iva: Number(a.iva) || 0
+        }));
+
+    const deduccionesGrupales = (p.deduccionesGrupales || [])
+        .filter(d => d.concepto && Number(d.monto) > 0)
+        .map(d => ({ concepto: String(d.concepto).trim(), monto: Number(d.monto) }));
+
+    const deduccionesPersonales = [];
+    for (const d of (p.deduccionesPersonales || [])) {
+        const monto = Number(d.monto);
+        if (!d.concepto || !(monto > 0)) continue;
+        const uid = userMap[String(d.socio || '').toLowerCase()];
+        if (!uid) throw new Error(`Ded. Personales: usuario "${d.socio}" no encontrado`);
+        deduccionesPersonales.push({ userId: uid, concepto: String(d.concepto).trim(), monto });
+    }
+
+    const doc = {
+        origen: p.origen,
+        fecha: new Date(p.fecha),
+        anestesias, ingresos, deduccionesGrupales, deduccionesPersonales,
+        reservaGanancias: !!p.reservaGanancias,
+        dedPersonalesInternas: p.dedPersonalesInternas !== false,
+        creadoPor
+    };
+
+    // upsert por (origen, día de la fecha)
+    const d0 = new Date(p.fecha);
+    const d1 = new Date(d0); d1.setUTCDate(d1.getUTCDate() + 1);
+    const existente = await Liquidacion.findOne({ origen: doc.origen, fecha: { $gte: d0, $lt: d1 } });
+
+    let accion;
+    if (existente) {
+        Object.assign(existente, doc);
+        await existente.save();
+        accion = 'actualizada';
+    } else {
+        await new Liquidacion(doc).save();
+        accion = 'creada';
+    }
+    return {
+        origen: doc.origen, fecha: p.fecha, accion,
+        anestesias: anestesias.length, ingresos: ingresos.length,
+        deduccionesPersonales: deduccionesPersonales.length,
+        warnings: p.warnings || []
+    };
+}
+
+// POST /liquidaciones/auto  { desde, hasta, origen? }
+exports.generarAutomatico = async (req, res) => {
+    try {
+        if (!config.liquidacionesServiceUrl || !config.liquidacionesServiceSecret) {
+            return res.status(503).json({ success: false, message: 'Servicio de generación no configurado' });
+        }
+        const { desde, hasta, origen = 'ambos' } = req.body || {};
+        if (!desde || !hasta) {
+            return res.status(400).json({ success: false, message: 'desde y hasta son requeridos (YYYY-MM-DD)' });
+        }
+
+        const r = await fetch(`${config.liquidacionesServiceUrl.replace(/\/$/, '')}/jobs`, {
+            method: 'POST',
+            headers: _svcHeaders(),
+            body: JSON.stringify({ desde, hasta, origen })
+        });
+        const data = await r.json();
+        if (!r.ok) {
+            return res.status(502).json({ success: false, message: data.detail || 'El servicio rechazó el pedido' });
+        }
+        res.json({ success: true, jobId: data.jobId });
+    } catch (error) {
+        console.error('generarAutomatico:', error);
+        res.status(502).json({ success: false, message: 'No se pudo contactar el servicio de generación' });
+    }
+};
+
+// GET /liquidaciones/auto/:jobId
+exports.estadoGeneracionAutomatica = async (req, res) => {
+    try {
+        if (!config.liquidacionesServiceUrl || !config.liquidacionesServiceSecret) {
+            return res.status(503).json({ success: false, message: 'Servicio de generación no configurado' });
+        }
+        const { jobId } = req.params;
+
+        if (_jobsGuardados.has(jobId)) {
+            return res.json({ success: true, estado: 'guardado', ..._jobsGuardados.get(jobId) });
+        }
+
+        const r = await fetch(`${config.liquidacionesServiceUrl.replace(/\/$/, '')}/jobs/${jobId}`, {
+            headers: _svcHeaders()
+        });
+        const job = await r.json();
+        if (!r.ok) {
+            return res.status(r.status === 404 ? 404 : 502).json({ success: false, message: job.detail || 'Error consultando el job' });
+        }
+
+        if (job.estado === 'error') {
+            return res.json({ success: true, estado: 'error', log: job.log || [], error: job.error });
+        }
+        if (job.estado !== 'listo') {
+            return res.json({ success: true, estado: job.estado, log: job.log || [] });
+        }
+
+        // listo -> guardar todas
+        const users = await User.find().select('_id username');
+        const userMap = {};
+        users.forEach(u => { userMap[String(u.username).toLowerCase()] = u._id; });
+
+        const resumen = [];
+        const errores = [];
+        for (const payload of (job.resultado || [])) {
+            try {
+                resumen.push(await _guardarDesdePayload(payload, userMap, req.user._id));
+            } catch (e) {
+                errores.push(`${payload.origen} ${payload.fecha}: ${e.message}`);
+            }
+        }
+
+        const out = { log: job.log || [], resumen, errores };
+        if (errores.length === 0) _jobsGuardados.set(jobId, out);
+
+        res.json({ success: true, estado: errores.length ? 'guardado_con_errores' : 'guardado', ...out });
+    } catch (error) {
+        console.error('estadoGeneracionAutomatica:', error);
+        res.status(502).json({ success: false, message: 'Error consultando el estado' });
+    }
+};
 
 // POST /liquidaciones/importar — parsea Excel (.xlsx) con 3 hojas
 // Hoja "Anestesias": paciente, fechaPractica, obraSocial, lugarPractica, montoFacturado, iva
