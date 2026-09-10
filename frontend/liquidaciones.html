@@ -43,6 +43,7 @@
         <!-- Botón nueva liquidación -->
         <div class="liq-toolbar">
             <button id="btn-nueva-liq" class="main-menu-button">+ Nueva Liquidación</button>
+            <button id="btn-generar-auto" class="main-menu-button">⚙ Generar automáticamente</button>
         </div>
 
         <!-- Tabla de liquidaciones -->
@@ -65,6 +66,36 @@
             </div>
         </div>
     </main>
+
+    <!-- Modal: Generar automáticamente -->
+    <div id="gen-auto-modal" class="liq-modal" style="display:none;">
+        <div class="liq-modal-content">
+            <span class="liq-close" id="close-gen-auto">&times;</span>
+            <h3>Generar liquidaciones automáticamente</h3>
+            <p class="gen-auto-hint">Trae las liquidaciones de saludng (Río Negro) y evweb (Neuquén) del
+                período indicado y las guarda. Puede tardar varios minutos.</p>
+            <div class="liq-form-grid-2">
+                <div class="admin-input-group">
+                    <label for="gen-desde">Desde:</label>
+                    <input type="date" id="gen-desde" required>
+                </div>
+                <div class="admin-input-group">
+                    <label for="gen-hasta">Hasta:</label>
+                    <input type="date" id="gen-hasta" required>
+                </div>
+            </div>
+            <div class="admin-input-group">
+                <label for="gen-origen">Plataformas:</label>
+                <select id="gen-origen">
+                    <option value="ambos">Ambas (Río Negro + Neuquén)</option>
+                    <option value="rn">Solo Río Negro (saludng)</option>
+                    <option value="nqn">Solo Neuquén (evweb)</option>
+                </select>
+            </div>
+            <button type="button" class="main-menu-button" id="btn-gen-auto-start">Generar</button>
+            <pre id="gen-auto-log" class="gen-auto-log" style="display:none;"></pre>
+        </div>
+    </div>
 
     <!-- Modal: Crear / Editar liquidación -->
     <div id="liq-form-modal" class="liq-modal" style="display:none;">
@@ -614,6 +645,21 @@
         .liq-import-status.ok { color: #1a7a32; }
         .liq-import-status.warn { color: #856404; }
         .liq-import-status.error { color: #dc3545; }
+
+        .gen-auto-hint { font-size: 0.9rem; color: #555; margin: 0 0 12px; }
+        .gen-auto-log {
+            margin-top: 14px;
+            background: #1e1e1e;
+            color: #d4d4d4;
+            font-size: 0.8rem;
+            line-height: 1.4;
+            padding: 12px;
+            border-radius: 6px;
+            max-height: 320px;
+            overflow-y: auto;
+            white-space: pre-wrap;
+            word-break: break-word;
+        }
 
         @media (max-width: 600px) {
             .liq-form-grid-2 { grid-template-columns: 1fr; }

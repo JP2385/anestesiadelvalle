@@ -178,6 +178,90 @@ document.addEventListener('DOMContentLoaded', function () {
         liqFormModal.style.display = 'block';
     });
 
+    // ── Generar automáticamente ──────────────────────────────────────────
+    const genAutoModal = document.getElementById('gen-auto-modal');
+    const genAutoLog = document.getElementById('gen-auto-log');
+    const btnGenAutoStart = document.getElementById('btn-gen-auto-start');
+
+    document.getElementById('btn-generar-auto').addEventListener('click', () => {
+        genAutoLog.style.display = 'none';
+        genAutoLog.textContent = '';
+        btnGenAutoStart.disabled = false;
+        genAutoModal.style.display = 'block';
+    });
+    document.getElementById('close-gen-auto').addEventListener('click', () => {
+        genAutoModal.style.display = 'none';
+    });
+
+    btnGenAutoStart.addEventListener('click', async () => {
+        const desde = document.getElementById('gen-desde').value;
+        const hasta = document.getElementById('gen-hasta').value;
+        const origen = document.getElementById('gen-origen').value;
+        if (!desde || !hasta) { toast.warning('Indicá desde y hasta'); return; }
+        if (desde > hasta) { toast.warning('El "desde" es posterior al "hasta"'); return; }
+
+        btnGenAutoStart.disabled = true;
+        genAutoLog.style.display = 'block';
+        genAutoLog.textContent = 'Iniciando…';
+
+        try {
+            const r = await fetch(`${apiUrl}/liquidaciones/auto`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + getToken() },
+                body: JSON.stringify({ desde, hasta, origen })
+            });
+            const data = await r.json();
+            if (!data.success) {
+                genAutoLog.textContent = 'Error: ' + (data.message || 'no se pudo iniciar');
+                btnGenAutoStart.disabled = false;
+                return;
+            }
+            pollGenAuto(data.jobId);
+        } catch {
+            genAutoLog.textContent = 'Error de conexión al iniciar la generación';
+            btnGenAutoStart.disabled = false;
+        }
+    });
+
+    async function pollGenAuto(jobId) {
+        try {
+            const r = await fetch(`${apiUrl}/liquidaciones/auto/${jobId}`, {
+                headers: { 'Authorization': 'Bearer ' + getToken() }
+            });
+            const data = await r.json();
+            if (Array.isArray(data.log)) genAutoLog.textContent = data.log.join('\n');
+            genAutoLog.scrollTop = genAutoLog.scrollHeight;
+
+            if (data.estado === 'guardado' || data.estado === 'guardado_con_errores') {
+                const lineas = (data.resumen || []).map(
+                    x => `• ${x.origen} ${x.fecha}: ${x.accion} (${x.anestesias} anestesias)`
+                );
+                genAutoLog.textContent += '\n\n' + lineas.join('\n');
+                if ((data.errores || []).length) {
+                    genAutoLog.textContent += '\n\nERRORES:\n' + data.errores.join('\n');
+                }
+                genAutoLog.scrollTop = genAutoLog.scrollHeight;
+                const conErr = (data.errores || []).length;
+                toast[conErr ? 'warning' : 'success'](
+                    `Generación terminada: ${(data.resumen || []).length} liquidación(es)` +
+                    (conErr ? ` (${conErr} con error)` : '')
+                );
+                btnGenAutoStart.disabled = false;
+                loadLiquidaciones();
+                return;
+            }
+            if (data.estado === 'error') {
+                genAutoLog.textContent += '\n\nERROR:\n' + (data.error || 'desconocido');
+                toast.error('La generación falló');
+                btnGenAutoStart.disabled = false;
+                return;
+            }
+            setTimeout(() => pollGenAuto(jobId), 5000);
+        } catch {
+            setTimeout(() => pollGenAuto(jobId), 8000);
+        }
+    }
+
     // ── Cerrar modales ────────────────────────────────────────────────────
     closeFormModal.addEventListener('click', () => { liqFormModal.style.display = 'none'; });
     closeDetailModal.addEventListener('click', () => { liqDetailModal.style.display = 'none'; });
@@ -185,6 +269,7 @@ document.addEventListener('DOMContentLoaded', function () {
     window.addEventListener('click', (e) => {
         if (e.target === liqFormModal) liqFormModal.style.display = 'none';
         if (e.target === liqDetailModal) liqDetailModal.style.display = 'none';
+        if (e.target === genAutoModal) genAutoModal.style.display = 'none';
     });
 
     // ── Botones agregar filas ─────────────────────────────────────────────
