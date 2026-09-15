@@ -448,6 +448,14 @@ document.addEventListener('DOMContentLoaded', function () {
                   ).join('')
                 : '<p style="color:#888;font-size:13px;">Sin deducciones grupales</p>';
 
+            // Deducciones personales
+            const dedPersEl = document.getElementById('detail-ded-personales');
+            dedPersEl.innerHTML = liquidacion.deduccionesPersonales.length
+                ? liquidacion.deduccionesPersonales.map(d =>
+                    `<div class="detail-ded-grupal-row"><span>${d.userId?.username || '—'} — ${d.concepto}</span><span>${formatMoney(d.monto)}</span></div>`
+                  ).join('')
+                : '<p style="color:#888;font-size:13px;">Sin deducciones personales</p>';
+
             // Distribución
             const distBody = document.getElementById('detail-distribucion-body');
             const distFoot = document.getElementById('detail-distribucion-foot');
