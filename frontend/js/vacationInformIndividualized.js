@@ -43,14 +43,14 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 });
 
-// Función para filtrar las próximas 4 vacaciones
+// Función para filtrar todas las vacaciones futuras
 function filterUpcomingVacations(vacations) {
     const today = new Date();
 
     const futureVacations = vacations.filter(vacation => new Date(vacation.startDate) >= today);
     futureVacations.sort((a, b) => new Date(a.startDate) - new Date(b.startDate));
 
-    return futureVacations.slice(0, 4);
+    return futureVacations;
 }
 
 // Función para generar la lista de vacaciones
