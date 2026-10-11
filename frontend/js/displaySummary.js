@@ -1,5 +1,6 @@
 import { buildWorkSiteName, getInstitutionOrder } from './workSiteNameUtils.js';
 import { generateWeekHeaders } from './weekDateFormatter.js';
+import { captureAndSave } from './saveCanvasImage.js';
 
 document.addEventListener('DOMContentLoaded', () => {
     const summaryContainer = document.getElementById('summary-container');
@@ -339,47 +340,23 @@ function formatTimestamp(timestamp) {
     return `${formattedDate} a las ${hours}:${minutes} hs.`;
 }
 
-function downloadTableAsImage(container) {
-    // Selecciona el botón de descarga y ocúltalo temporalmente
+async function downloadTableAsImage(container) {
     const downloadButton = container.querySelector('#download-button');
-    downloadButton.style.display = 'none';
+    if (downloadButton) downloadButton.disabled = true;
 
-    // Crear un fragmento de documento
-    const fragment = document.createDocumentFragment();
-
-    // Clonar el contenedor y ajustar los estilos
-    const containerClone = container.cloneNode(true);
-    containerClone.style.width = '1290px'; // 1250px + 20px de padding derecho
-    containerClone.style.paddingRight = '20px'; // Mantener el padding derecho
-    containerClone.style.display = 'block'; // Evita el recorte
-    containerClone.style.overflow = 'visible';
-    containerClone.style.boxSizing = 'border-box'; // Asegura que el padding se respete
-
-    // Agregar el clon al fragmento en lugar del DOM visible
-    fragment.appendChild(containerClone);
-
-    // Crear un div temporal oculto y agregar el clon
-    const tempDiv = document.createElement('div');
-    tempDiv.style.position = 'absolute';
-    tempDiv.style.opacity = '0'; // Oculto visualmente
-    tempDiv.style.pointerEvents = 'none'; // Evita la interacción
-    tempDiv.appendChild(fragment);
-    document.body.appendChild(tempDiv); // Añadimos el clon temporal al DOM
-
-    // Usar html2canvas en el clon dentro del fragmento
-    html2canvas(containerClone, { width: 1290, scrollX: 0, scrollY: 0, scale: 3 }).then(canvas => {
-        // Remover el div temporal después de la captura
-        document.body.removeChild(tempDiv);
-
-        // Restablecer la visibilidad del botón
-        downloadButton.style.display = 'block';
-
-        // Crear un enlace para descargar la imagen
-        const link = document.createElement('a');
-        link.download = 'programacion-semanal.png';
-        link.href = canvas.toDataURL('image/png');
-        link.click();
-    });
+    try {
+        await captureAndSave(container, 'programacion-semanal.png', {
+            // El botón se oculta en el clon, no en la página visible.
+            beforeCapture: (clone) => {
+                const clonedButton = clone.querySelector('#download-button');
+                if (clonedButton) clonedButton.style.display = 'none';
+            }
+        });
+    } catch {
+        // captureAndSave ya avisó al usuario.
+    } finally {
+        if (downloadButton) downloadButton.disabled = false;
+    }
 }
 
 /**
