@@ -2,7 +2,10 @@
   "permissions": {
     "allow": [
       "Bash(xargs grep -l \"PUT.*user\\\\|router\\\\.put\")",
-      "Bash(xargs grep -l \"cron\\\\|schedule\\\\|job\\\\|interval\")"
+      "Bash(xargs grep -l \"cron\\\\|schedule\\\\|job\\\\|interval\")",
+      "Bash(node -e ' *)",
+      "Bash(node --input-type=module -e ' *)",
+      "Bash(node --input-type=module --check)"
     ]
   }
 }

@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Licencias de Fiestas - Anestesiólogos del Valle</title>
+    <link rel="icon" type="image/png" href="images/logo/logo64x64.png">
+    <link rel="stylesheet" href="css/base.css">
+    <link rel="stylesheet" href="css/header.css">
+    <link rel="stylesheet" href="css/login.css">
+    <link rel="stylesheet" href="css/media.css">
+    <link rel="stylesheet" href="css/nav.css">
+    <link rel="stylesheet" href="css/main.css">
+    <link rel="stylesheet" href="css/spinner.css">
+    <link rel="stylesheet" href="css/toast.css">
+    <link rel="stylesheet" href="css/admin.css">
+    <script defer src="js/bundle.js"></script>
+    <script type="module" defer src="js/licenciasFiestas.js"></script>
+    <script defer src="js/spinner.js"></script>
+    <script type="module">
+        import { initializePermissions, redirectIfNoRole } from './js/authUtils.js';
+
+        document.addEventListener('DOMContentLoaded', async function() {
+            await initializePermissions();
+            redirectIfNoRole('/index.html', 'admin');
+        });
+    </script>
+</head>
+<body>
+    <div class="spinner" id="spinner"></div>
+    <header>
+        <a href="index.html" class="app-logo-link">
+            <img src="images/logo/logo.png" alt="Logo Anestesiólogos del Valle" class="app-logo">
+        </a>
+        <h1>Anestesiólogos del Valle</h1>
+        <a href="index.html" class="back-to-main-menu" title="Volver al menú principal">
+            <img src="images/icons/back-icon.svg" alt="Volver" class="back-icon">
+        </a>
+    </header>
+    <main class="form-container">
+        <h2>Licencias de Fiestas</h2>
+
+        <!-- Selector de temporada + acciones -->
+        <div class="fiestas-toolbar">
+            <div class="fiestas-toolbar-left">
+                <label for="select-temporada">Temporada:</label>
+                <select id="select-temporada"></select>
+                <span id="semanas-info" class="semanas-info"></span>
+            </div>
+            <div class="fiestas-toolbar-right">
+                <button type="button" id="btn-restablecer" class="btn-secundario">↻ Restablecer sugerencias</button>
+                <button type="button" id="btn-guardar" class="main-menu-button">Guardar asignaciones</button>
+            </div>
+        </div>
+
+        <!-- Banner de estado de la temporada -->
+        <div id="banner-estado" class="banner-estado"></div>
+
+        <!-- Ayuda: cómo se calculan las sugerencias -->
+        <details class="fiestas-ayuda">
+            <summary>¿Cómo se calculan las sugerencias?</summary>
+            <p>
+                Si las vacaciones de la persona <strong>terminan cerca del 25 de diciembre</strong>
+                (hasta 7 días antes o después), se sugiere <strong>Navidad</strong>. Si
+                <strong>comienzan cerca del 1 de enero</strong> (hasta 7 días antes o después), se
+                sugiere <strong>Año Nuevo</strong>. Si coincide con ambas, se sugiere Navidad. Las
+                sugerencias se muestran en <em>cursiva</em> con la etiqueta «Sugerido» y
+                <strong>no están guardadas</strong> hasta que presiones «Guardar asignaciones».
+            </p>
+            <p>
+                La semana de licencia es el bloque de lunes a domingo que contiene al feriado:
+                si el feriado cae en día de semana queda libre el fin de semana siguiente, y si
+                cae en fin de semana ese finde es el libre y la semana libre es la previa.
+            </p>
+        </details>
+
+        <!-- Contadores -->
+        <div id="contadores" class="contadores"></div>
+
+        <!-- Tabla de usuarios -->
+        <div class="tabla-wrapper">
+            <table class="tabla-fiestas">
+                <thead>
+                    <tr>
+                        <th>Usuario</th>
+                        <th>Privado</th>
+                        <th>Vacaciones cercanas</th>
+                        <th>Licencia de fiestas</th>
+                    </tr>
+                </thead>
+                <tbody id="tabla-fiestas-body">
+                    <!-- Se llena dinámicamente -->
+                </tbody>
+            </table>
+        </div>
+
+        <div class="fiestas-footer-actions">
+            <button type="button" id="btn-guardar-abajo" class="main-menu-button">Guardar asignaciones</button>
+        </div>
+    </main>
+
+    <style>
+        .fiestas-toolbar {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 16px;
+            padding: 16px 20px;
+            background: #f8f9fa;
+            border-radius: 8px;
+        }
+
+        .fiestas-toolbar-left,
+        .fiestas-toolbar-right {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .fiestas-toolbar-left label {
+            font-weight: 600;
+            margin: 0;
+        }
+
+        .fiestas-toolbar-left select {
+            padding: 6px 10px;
+            font-size: 1rem;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            background: #fff;
+        }
+
+        .semanas-info {
+            font-size: 0.85rem;
+            color: #666;
+        }
+
+        .fiestas-toolbar .main-menu-button {
+            margin: 0;
+            width: auto;
+        }
+
+        .btn-secundario {
+            padding: 8px 14px;
+            font-size: 0.9rem;
+            border: 1px solid #bbb;
+            border-radius: 4px;
+            background: #fff;
+            color: #444;
+            cursor: pointer;
+        }
+
+        .btn-secundario:hover {
+            background: #eee;
+        }
+
+        .banner-estado {
+            padding: 10px 16px;
+            margin-bottom: 16px;
+            border-radius: 6px;
+            font-size: 0.92rem;
+            border-left: 4px solid #ccc;
+            background: #f1f1f1;
+            color: #444;
+        }
+
+        .banner-estado.sin-guardar {
+            border-left-color: #f0ad4e;
+            background: #fff8ec;
+            color: #7a5420;
+        }
+
+        .banner-estado.guardada {
+            border-left-color: #5cb85c;
+            background: #f1f9f1;
+            color: #2f6f2f;
+        }
+
+        .fiestas-ayuda {
+            margin-bottom: 16px;
+            padding: 10px 16px;
+            background: #f8f9fa;
+            border-radius: 6px;
+            font-size: 0.9rem;
+        }
+
+        .fiestas-ayuda summary {
+            cursor: pointer;
+            font-weight: 600;
+            color: #30588c;
+        }
+
+        .fiestas-ayuda p {
+            margin: 10px 0 0;
+            color: #555;
+            line-height: 1.5;
+        }
+
+        .contadores {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            position: sticky;
+            top: 0;
+            z-index: 5;
+            padding: 12px 16px;
+            margin-bottom: 16px;
+            background: #fff;
+            border: 1px solid #e3e3e3;
+            border-radius: 8px;
+            box-shadow: 0 1px 4px rgba(0, 0, 0, 0.06);
+        }
+
+        .contador {
+            flex: 1 1 160px;
+            padding: 8px 12px;
+            border-radius: 6px;
+            background: #f8f9fa;
+            border-left: 4px solid #30588c;
+        }
+
+        .contador.desbalanceado {
+            background: #fff8ec;
+            border-left-color: #f0ad4e;
+        }
+
+        .contador .contador-titulo {
+            display: block;
+            font-size: 0.8rem;
+            color: #666;
+            text-transform: uppercase;
+            letter-spacing: 0.4px;
+        }
+
+        .contador .contador-valor {
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: #223;
+        }
+
+        .contador .contador-detalle {
+            display: block;
+            font-size: 0.78rem;
+            color: #777;
+            margin-top: 2px;
+        }
+
+        .tabla-wrapper {
+            overflow-x: auto;
+            border: 1px solid #e3e3e3;
+            border-radius: 8px;
+        }
+
+        .tabla-fiestas {
+            width: 100%;
+            border-collapse: collapse;
+            background: #fff;
+            font-size: 0.92rem;
+        }
+
+        .tabla-fiestas th {
+            text-align: left;
+            padding: 10px 12px;
+            background: #30588c;
+            color: #fff;
+            font-weight: 600;
+            white-space: nowrap;
+        }
+
+        .tabla-fiestas td {
+            padding: 10px 12px;
+            border-top: 1px solid #eee;
+            vertical-align: middle;
+        }
+
+        .tabla-fiestas tbody tr.sugerido {
+            background: #fffaf1;
+            box-shadow: inset 4px 0 0 0 #f0ad4e;
+        }
+
+        .usuario-nombre {
+            font-weight: 600;
+            color: #223;
+        }
+
+        .chip-privado {
+            display: inline-block;
+            padding: 3px 9px;
+            border-radius: 12px;
+            font-size: 0.78rem;
+            font-weight: 600;
+            white-space: nowrap;
+        }
+
+        .privado-ambos   { background: #e5dcf5; color: #4b2e83; }
+        .privado-nqn     { background: #d9e8fb; color: #1b4f8a; }
+        .privado-rn      { background: #d8f0e4; color: #1c6b47; }
+        .privado-ninguno { background: #eee;    color: #888;    }
+
+        .vacaciones-lista {
+            color: #444;
+            white-space: nowrap;
+        }
+
+        .vacaciones-vacio {
+            color: #aaa;
+        }
+
+        .motivo-sugerencia {
+            display: block;
+            font-size: 0.8rem;
+            font-style: italic;
+            color: #8a6d3b;
+            margin-top: 3px;
+            white-space: normal;
+        }
+
+        .radio-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 14px;
+            align-items: center;
+        }
+
+        .radio-group label {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            margin: 0;
+            font-weight: 400;
+            white-space: nowrap;
+            cursor: pointer;
+        }
+
+        .radio-group input[type="radio"] {
+            margin: 0;
+            cursor: pointer;
+        }
+
+        .radio-group label.es-sugerido {
+            font-style: italic;
+        }
+
+        .badge-sugerido {
+            display: inline-block;
+            padding: 2px 7px;
+            border-radius: 10px;
+            background: #f0ad4e;
+            color: #fff;
+            font-size: 0.7rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.4px;
+        }
+
+        .fiestas-footer-actions {
+            display: flex;
+            justify-content: flex-end;
+            margin-top: 20px;
+        }
+
+        .fiestas-footer-actions .main-menu-button {
+            margin: 0;
+            width: auto;
+        }
+
+        .tabla-mensaje {
+            text-align: center;
+            color: #888;
+            padding: 32px;
+        }
+
+        @media (max-width: 768px) {
+            .fiestas-toolbar,
+            .fiestas-toolbar-left,
+            .fiestas-toolbar-right {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .contadores {
+                position: static;
+            }
+
+            .radio-group {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 6px;
+            }
+        }
+    </style>
+</body>
+</html>

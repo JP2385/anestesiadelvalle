@@ -27,6 +27,7 @@ const coverageRequestRoutes = require('./src/app/routes/coverageRequestRoutes');
 const otherLeaveRoutes = require('./src/app/routes/otherLeaveRoutes');
 const extraAssignmentRoutes = require('./src/app/routes/extraAssignmentRoutes');
 const groupPeriodRoutes = require('./src/app/routes/groupPeriodRoutes');
+const licenciaFiestasRoutes = require('./src/app/routes/licenciaFiestasRoutes');
 const liquidacionRoutes = require('./src/app/routes/liquidacionRoutes');
 const pagoSociosRoutes = require('./src/app/routes/pagoSociosRoutes');
 const dashboardRoutes = require('./src/app/routes/dashboardRoutes');
@@ -166,6 +167,7 @@ app.use('/work-sites', workSiteRoutes);
 app.use('/extra-assignments', extraAssignmentRoutes);
 
 app.use('/group-periods', groupPeriodRoutes);
+app.use('/licencias-fiestas', licenciaFiestasRoutes);
 app.use('/liquidaciones', liquidacionRoutes);
 app.use('/pagos-socios', pagoSociosRoutes);
 app.use('/dashboard', dashboardRoutes);
@@ -217,6 +219,10 @@ app.use('/extra-assignments/*', (req, res) => {
 
 app.use('/group-periods/*', (req, res) => {
     res.status(404).json({ message: 'Ruta de períodos grupales no encontrada' });
+});
+
+app.use('/licencias-fiestas/*', (req, res) => {
+    res.status(404).json({ message: 'Ruta de licencias de fiestas no encontrada' });
 });
 
 app.use('/pagos-socios/*', (req, res) => {
