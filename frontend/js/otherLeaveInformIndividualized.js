@@ -39,27 +39,18 @@ document.addEventListener('DOMContentLoaded', () => {
             });
 
             if (activeLeave) {
-                const heading = document.createElement('h3');
-                heading.textContent = 'Tenés una licencia en curso:';
-                leaveInformContainer.appendChild(heading);
+                leaveInformContainer.appendChild(buildHeading('Tenés una licencia en curso:'));
+                leaveInformContainer.appendChild(buildLeaveList([activeLeave]));
+            }
 
-                const list = document.createElement('ul');
-                const item = document.createElement('li');
+            // Licencias que todavía no empezaron, ordenadas de la más próxima a la más lejana
+            const upcomingLeaves = otherLeaves
+                .filter(leave => new Date(leave.startDate) > today)
+                .sort((a, b) => new Date(a.startDate) - new Date(b.startDate));
 
-                const options = { day: 'numeric', month: 'long', year: 'numeric' };
-
-                const start = new Date(activeLeave.startDate);
-                start.setHours(start.getHours() + 3); // ajustar a zona horaria local
-                const end = new Date(activeLeave.endDate);
-                end.setHours(end.getHours() + 3);
-
-                const concept = activeLeave.type || 'Licencia';
-                const formattedStart = start.toLocaleDateString('es-ES', options);
-                const formattedEnd = end.toLocaleDateString('es-ES', options);
-
-                item.innerHTML = `<strong>${concept}:</strong> del ${formattedStart} hasta el ${formattedEnd}.`;
-                list.appendChild(item);
-                leaveInformContainer.appendChild(list);
+            if (upcomingLeaves.length > 0) {
+                leaveInformContainer.appendChild(buildHeading('Tus próximas licencias son:'));
+                leaveInformContainer.appendChild(buildLeaveList(upcomingLeaves));
             }
         }
     })
@@ -67,3 +58,36 @@ document.addEventListener('DOMContentLoaded', () => {
         window.location.href = 'login.html';
     });
 });
+
+function buildHeading(text) {
+    const heading = document.createElement('h3');
+    heading.textContent = text;
+    return heading;
+}
+
+function buildLeaveList(leaves) {
+    const list = document.createElement('ul');
+    const options = { day: 'numeric', month: 'long', year: 'numeric' };
+
+    leaves.forEach(leave => {
+        const item = document.createElement('li');
+
+        const start = new Date(leave.startDate);
+        start.setHours(start.getHours() + 3); // ajustar a zona horaria local
+        const end = new Date(leave.endDate);
+        end.setHours(end.getHours() + 3);
+
+        const formattedStart = start.toLocaleDateString('es-ES', options);
+        const formattedEnd = end.toLocaleDateString('es-ES', options);
+
+        // El tipo de licencia es texto cargado a mano, así que va por textContent
+        const concept = document.createElement('strong');
+        concept.textContent = `${leave.type || 'Licencia'}:`;
+        item.appendChild(concept);
+        item.appendChild(document.createTextNode(` del ${formattedStart} hasta el ${formattedEnd}.`));
+
+        list.appendChild(item);
+    });
+
+    return list;
+}
