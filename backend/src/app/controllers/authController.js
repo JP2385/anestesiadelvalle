@@ -36,6 +36,9 @@ exports.login = async (req, res) => {
         if (!user || !(await user.comparePassword(password))) {
             throw new Error('Invalid username or password');
         }
+        if (user.activo === false) {
+            throw new Error('Este usuario está dado de baja. Contactá al administrador.');
+        }
         const token = jwt.sign({ userId: user._id }, config.jwtSecret, { expiresIn: '7d' });
         res.send({ token });
     } catch (error) {

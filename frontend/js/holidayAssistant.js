@@ -287,9 +287,8 @@ document.addEventListener("DOMContentLoaded", () => {
     
             // 📌 Paso 1: Asignar usuario al azar al primer select
             let availableUsers = Array.from(selects[0].options)
-                .filter(option => option.value && 
+                .filter(option => option.value &&
                     !assignedUsers.has(option.value) &&
-                    !["msalvarezza"].includes(allUsers.find(u => u._id === option.value)?.username) &&
                     userCounters[option.value] < maxAssignments // 🔹 EXCLUIR USUARIOS CON EL MÁXIMO DE ASIGNACIONES
                 )
                 .map(option => option.value);
@@ -297,9 +296,8 @@ document.addEventListener("DOMContentLoaded", () => {
             // Si todos tienen el máximo de asignaciones, permitir usuarios con `maxAssignments`
             if (availableUsers.length === 0) {
                 availableUsers = Array.from(selects[0].options)
-                    .filter(option => option.value && 
+                    .filter(option => option.value &&
                         !assignedUsers.has(option.value) &&
-                        !["msalvarezza"].includes(allUsers.find(u => u._id === option.value)?.username) &&
                         userCounters[option.value] <= maxAssignments // 🔹 PERMITIR SOLO A QUIENES NO LO SUPERAN
                     )
                     .map(option => option.value);
@@ -332,7 +330,7 @@ document.addEventListener("DOMContentLoaded", () => {
             // 📌 Paso 3: Si no se pudo asignar la pareja emparejada, elegir otro usuario bajo la misma lógica de equidad
             if (!secondUser) {
                 let firstUserData = allUsers.find(u => u._id === firstUser);
-                let excludeUsers = ["msalvarezza"];
+                let excludeUsers = [];
 
                 // 📌 Si el usuario asignado en el primer select NO trabaja en privado Neuquén, excluir a mmelo y ltotis
                 if (firstUserData && firstUserData.worksInPrivateNeuquen === false) {
@@ -405,7 +403,7 @@ document.addEventListener("DOMContentLoaded", () => {
                         let userData = allUsers.find(u => u._id === option.value);
                         return option.value &&
                             !assignedUsers.has(option.value) &&
-                            !["mquiroga", "lharriague", "mmelo", "ltotis", "msalvarezza"].includes(userData?.username) &&
+                            !["mquiroga", "lharriague", "mmelo", "ltotis"].includes(userData?.username) &&
                             userCounters[option.value] < maxAssignments &&
                             (!excludePrivateNeuquen || userData?.worksInPrivateNeuquen) &&
                             (!excludePrivateRioNegro || userData?.worksInPrivateRioNegro);
@@ -419,7 +417,7 @@ document.addEventListener("DOMContentLoaded", () => {
                             let userData = allUsers.find(u => u._id === option.value);
                             return option.value &&
                                 !assignedUsers.has(option.value) &&
-                                !["mquiroga", "lharriague", "mmelo", "ltotis", "msalvarezza"].includes(userData?.username) &&
+                                !["mquiroga", "lharriague", "mmelo", "ltotis"].includes(userData?.username) &&
                                 userCounters[option.value] <= maxAssignments &&
                                 (!excludePrivateNeuquen || userData?.worksInPrivateNeuquen) &&
                                 (!excludePrivateRioNegro || userData?.worksInPrivateRioNegro);
@@ -434,7 +432,7 @@ document.addEventListener("DOMContentLoaded", () => {
                             let userData = allUsers.find(u => u._id === option.value);
                             return option.value &&
                                 !assignedUsers.has(option.value) &&
-                                !["mquiroga", "lharriague", "mmelo", "ltotis", "msalvarezza"].includes(userData?.username) &&
+                                !["mquiroga", "lharriague", "mmelo", "ltotis"].includes(userData?.username) &&
                                 (!excludePrivateNeuquen || userData?.worksInPrivateNeuquen) &&
                                 (!excludePrivateRioNegro || userData?.worksInPrivateRioNegro);
                         })

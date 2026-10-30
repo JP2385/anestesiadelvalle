@@ -37,9 +37,6 @@ export function getWorkSchemes(isOddWeek) {
     const lalvarezScheme = {
     };
 
-    const msalvarezzaScheme = {
-    };
-
     return {
         montesEspositoScheme,
         ggudinoScheme,
@@ -47,7 +44,6 @@ export function getWorkSchemes(isOddWeek) {
         sdegreefScheme,
         nvelaScheme,
         lalvarezScheme,
-        msalvarezzaScheme,
         rconsigliScheme
     };
 }

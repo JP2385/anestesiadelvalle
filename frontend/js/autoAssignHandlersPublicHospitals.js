@@ -7,7 +7,6 @@ export async function autoAssignPublicHospitalsByDay(apiUrl, dayIndex, availabil
         const dayKey = Object.keys(availability)[dayIndex];
         const workSiteElements = document.querySelectorAll('.work-site');
 
-        const msalvarezza = availability[dayKey].find(user => user.username === 'msalvarezza');
         const lburgueño = availability[dayKey].find(user => user.username === 'lburgueño');
         const sdegreef = availability[dayKey].find(user => user.username === 'sdegreef');
         const lalvarez = availability[dayKey].find(user => user.username === 'lalvarez');
@@ -18,7 +17,6 @@ export async function autoAssignPublicHospitalsByDay(apiUrl, dayIndex, availabil
             lburgueñoScheme,
             sdegreefScheme,
             lalvarezScheme,
-            msalvarezzaScheme,
         } = getWorkSchemes(isOddWeek);
 
         if (lburgueño) {
@@ -31,10 +29,6 @@ export async function autoAssignPublicHospitalsByDay(apiUrl, dayIndex, availabil
 
         if (lalvarez) {
             assignSpecificUsersByDay(dayIndex, lalvarezScheme, lalvarez, assignedUsers, workSiteElements, virtualState);
-        }
-
-        if (msalvarezza) {
-            assignSpecificUsersByDay(dayIndex, msalvarezzaScheme, msalvarezza, assignedUsers, workSiteElements, virtualState);
         }
 
     } catch (error) {

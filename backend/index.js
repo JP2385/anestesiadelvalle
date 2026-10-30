@@ -34,6 +34,7 @@ const dashboardRoutes = require('./src/app/routes/dashboardRoutes');
 const cron = require('node-cron');
 const User = require('./src/app/models/userModel');
 const Notification = require('./src/app/models/notificationModel');
+const { FILTRO_ACTIVO } = require('./src/app/utils/userFilters');
 
 const app = express();
 app.use(express.json());
@@ -94,13 +95,13 @@ async function runBirthdayNotifications(overrideDate = null) {
         };
     }
 
-    const birthdayUsers = await User.find({ birthDate: { $exists: true, $ne: null }, ...query });
+    const birthdayUsers = await User.find({ birthDate: { $exists: true, $ne: null }, ...FILTRO_ACTIVO, ...query });
     if (birthdayUsers.length === 0) {
         console.log('No hay cumpleaños hoy.');
         return [];
     }
 
-    const allUsers = await User.find({});
+    const allUsers = await User.find(FILTRO_ACTIVO);
 
     for (const birthdayUser of birthdayUsers) {
         await Notification.deleteMany({

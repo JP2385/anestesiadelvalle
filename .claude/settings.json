@@ -5,7 +5,10 @@
       "Bash(xargs grep -l \"cron\\\\|schedule\\\\|job\\\\|interval\")",
       "Bash(node -e ' *)",
       "Bash(node --input-type=module -e ' *)",
-      "Bash(node --input-type=module --check)"
+      "Bash(node --input-type=module --check)",
+      "Bash(node --check frontend/js/admin.js)",
+      "Bash(node --check backend/src/app/controllers/userController.js)",
+      "Bash(node -e \"require\\('./backend/src/app/controllers/userController.js'\\); require\\('./backend/src/app/routes/roleRoutes.js'\\); console.log\\('OK  modulos backend resuelven'\\)\")"
     ]
   }
 }

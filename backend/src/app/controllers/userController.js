@@ -1,8 +1,16 @@
 const User = require('../models/userModel');
+const { FILTRO_PADRON } = require('../utils/userFilters');
 
 exports.getAllUsers = async (req, res) => {
     try {
-        const users = await User.find({ allowedSite: null }).select('username email beginningDate phoneNumber doesCardio doesPediatrics doesRNM doesShifts worksInPrivateRioNegro worksInPublicRioNegro worksInPrivateNeuquen worksInPublicNeuquen workSchedule vacations otherLeaves worksInCmacOnly defaultAssignments');
+        // El administrador de perfiles necesita ver también a los dados de baja,
+        // para poder reactivarlos. Para el resto de la app el padrón son sólo
+        // los activos.
+        const incluirInactivos = req.query.incluirInactivos === 'true'
+            && req.user?.role === 'admin';
+        const filtro = incluirInactivos ? { allowedSite: null } : FILTRO_PADRON;
+
+        const users = await User.find(filtro).select('username email beginningDate phoneNumber doesCardio doesPediatrics doesRNM doesShifts worksInPrivateRioNegro worksInPublicRioNegro worksInPrivateNeuquen worksInPublicNeuquen workSchedule vacations otherLeaves worksInCmacOnly defaultAssignments activo fechaBaja');
         res.send(users);
     } catch (error) {
         res.status(500).send({ message: error.message });

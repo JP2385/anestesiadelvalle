@@ -1,8 +1,9 @@
 const User = require('../models/userModel');
+const { FILTRO_PADRON } = require('../utils/userFilters');
 
 const getUsersAvailability = async (req, res) => {
     try {
-        const users = await User.find({ allowedSite: null }, 'username workSchedule vacations otherLeaves worksInCmacOnly worksInPrivateRioNegro worksInPublicRioNegro worksInPublicNeuquen worksInPrivateNeuquen doesPediatrics doesCardio doesRNM _id');
+        const users = await User.find(FILTRO_PADRON, 'username workSchedule vacations otherLeaves worksInCmacOnly worksInPrivateRioNegro worksInPublicRioNegro worksInPublicNeuquen worksInPrivateNeuquen doesPediatrics doesCardio doesRNM _id');
 
         const availability = {
             monday: [],
