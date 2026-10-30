@@ -233,9 +233,19 @@ document.addEventListener('DOMContentLoaded', function () {
             genAutoLog.scrollTop = genAutoLog.scrollHeight;
 
             if (data.estado === 'guardado' || data.estado === 'guardado_con_errores') {
-                const lineas = (data.resumen || []).map(
-                    x => `• ${x.origen} ${x.fecha}: ${x.accion} (${x.anestesias} anestesias)`
-                );
+                const lineas = [];
+                for (const x of (data.resumen || [])) {
+                    lineas.push(`• ${x.origen} ${x.fecha}: ${x.accion} (${x.anestesias} anestesias)`);
+                    // El prorrateo mueve millones: tiene que verse en el log,
+                    // no sólo quedar guardado en la liquidación.
+                    for (const s of (x.prorrateo?.socios || [])) {
+                        lineas.push(
+                            `    ↳ prorrateo ${s.username}: ${(s.proporcion * 100).toFixed(2)}% ` +
+                            `(${s.anestesiasExcluidas} anestesia(s) excluidas)`
+                        );
+                    }
+                    for (const w of (x.warnings || [])) lineas.push(`    ⚠ ${w}`);
+                }
                 genAutoLog.textContent += '\n\n' + lineas.join('\n');
                 if ((data.errores || []).length) {
                     genAutoLog.textContent += '\n\nERRORES:\n' + data.errores.join('\n');
@@ -426,6 +436,9 @@ document.addEventListener('DOMContentLoaded', function () {
                 <div class="detail-header-item"><label>Base distribuible</label><span>${formatMoney(distribucion.totalDistribuible)}</span></div>
             `;
 
+            // Prorrateo por ingreso/egreso al grupo
+            renderProrrateo(liquidacion.prorrateo, data.alertasProrrateo);
+
             // Anestesias
             const anBody = document.getElementById('detail-anestesias-body');
             anBody.innerHTML = liquidacion.anestesias.length
@@ -564,6 +577,70 @@ document.addEventListener('DOMContentLoaded', function () {
         } catch {
             toast.error('Error de conexión');
         }
+    }
+
+    function esc(s) {
+        return String(s ?? '').replace(/[&<>"']/g, c => ({
+            '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
+        }[c]));
+    }
+
+    // Muestra qué socio se prorrateó y con qué proporción, más las alertas del
+    // control de consistencia. El prorrateo excluye del pozo las anestesias
+    // previas al ingreso (o posteriores al egreso) de un socio con
+    // participación parcial y reduce las deducciones grupales en esa misma
+    // proporción; las personales van completas.
+    function renderProrrateo(prorrateo, alertas) {
+        const el = document.getElementById('detail-prorrateo');
+        if (!el) return;
+
+        const partes = [];
+
+        if (prorrateo?.socios?.length) {
+            const filas = prorrateo.socios.map(s => {
+                const ventana = s.ingreso
+                    ? `ingresó ${formatDate(s.ingreso)}`
+                    : (s.egreso ? `egresó ${formatDate(s.egreso)}` : 'participación parcial');
+                const egreso = s.ingreso && s.egreso ? `, egresó ${formatDate(s.egreso)}` : '';
+                return `
+                    <div class="prorrateo-row">
+                        <span class="prorrateo-socio">${esc(s.username)}</span>
+                        <span class="prorrateo-detalle">
+                            ${esc(ventana)}${esc(egreso)} —
+                            ${s.anestesiasExcluidas} de ${s.anestesiasTotales} anestesia(s)
+                            excluidas (${formatMoney(s.montoExcluido)} de ${formatMoney(s.montoTotal)})
+                        </span>
+                        <span class="prorrateo-prop">${(s.proporcion * 100).toFixed(2)}%</span>
+                    </div>`;
+            }).join('');
+
+            const factor = prorrateo.factorDeduccionesGrupales;
+            partes.push(`
+                <div class="prorrateo-box">
+                    <h5>Prorrateo por ingreso/egreso al grupo</h5>
+                    ${filas}
+                    <p class="prorrateo-nota">
+                        Se excluyeron ${prorrateo.anestesiasExcluidas} anestesia(s)
+                        por ${formatMoney(prorrateo.montoExcluido)} del pozo a repartir
+                        (trabajo ajeno al grupo). Las deducciones grupales se redujeron
+                        al ${(factor * 100).toFixed(2)}% porque evweb las calcula sobre el
+                        total facturado. Las deducciones personales van completas y los
+                        ingresos acreditados no se modifican.
+                    </p>
+                </div>`);
+        }
+
+        const avisos = [...(prorrateo?.warnings || []), ...(alertas || [])];
+        if (avisos.length) {
+            partes.push(`
+                <div class="prorrateo-alerta">
+                    <h5>Revisar el prorrateo</h5>
+                    <ul>${avisos.map(w => `<li>${esc(w)}</li>`).join('')}</ul>
+                </div>`);
+        }
+
+        el.innerHTML = partes.join('');
+        el.style.display = partes.length ? 'block' : 'none';
     }
 
     function renderFormDistribucion(distribucion) {

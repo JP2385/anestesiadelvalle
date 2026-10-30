@@ -3,6 +3,11 @@ const GroupPeriod = require('../models/groupPeriodModel');
 const User = require('../models/userModel');
 const XLSX = require('xlsx');
 const config = require('../../../config');
+const {
+    ventanasDeParticipacion,
+    aplicarProrrateo,
+    controlarProrrateo
+} = require('../services/prorrateoIngreso');
 
 // Determina qué GroupPeriod estaba vigente en una fecha dada
 function getPeriodForDate(periods, date) {
@@ -191,9 +196,24 @@ exports.getLiquidacionById = async (req, res) => {
             .sort({ fechaInicio: 1 })
             .populate('participaciones.userId', 'username');
 
-        const distribucion = calcularDistribucion(liquidacion.toObject(), groupPeriods);
+        const plain = liquidacion.toObject();
+        const distribucion = calcularDistribucion(plain, groupPeriods);
 
-        res.json({ success: true, liquidacion, distribucion });
+        // Control de consistencia al leer, no sólo al ingestar: una liquidación
+        // guardada antes de que existiera el prorrateo, o reingestada sin la
+        // atribución por socio, debe delatarse sola en vez de quedar muda.
+        const ventanas = ventanasDeParticipacion(groupPeriods);
+        const usernamePorUid = new Map();
+        for (const period of groupPeriods) {
+            for (const part of (period.participaciones || [])) {
+                if (part.userId?._id && part.userId?.username) {
+                    usernamePorUid.set(String(part.userId._id), part.userId.username);
+                }
+            }
+        }
+        const alertasProrrateo = controlarProrrateo(plain, ventanas, usernamePorUid);
+
+        res.json({ success: true, liquidacion, distribucion, alertasProrrateo });
     } catch (error) {
         res.status(500).json({ success: false, message: 'Error al obtener la liquidación' });
     }
@@ -343,7 +363,29 @@ function _svcHeaders() {
     };
 }
 
-async function _guardarDesdePayload(p, userMap, creadoPor) {
+// Resuelve el socio de una anestesia del payload. El microservicio identifica a
+// los socios por username (jbo, rriso, ggudiño…) y los GroupPeriod por _id, así
+// que hay que mapear. Algunos usernames conservan la ñ y ciertos códigos de
+// evweb difieren del usuario de la app (GOCASTRO→gcastro,
+// MASCHVARTZMAN→mschvartzman); el microservicio ya entrega el username de la
+// app, pero si no resuelve hay que avisar en vez de seguir sin atribución:
+// una anestesia sin socio se trata como del pozo y el prorrateo no corre.
+function _socioDeAnestesia(a, userMap, warnings) {
+    const raw = a.socio ?? a.profesional ?? a.username ?? null;
+    if (!raw) return null;
+    const key = String(raw).trim().toLowerCase();
+    if (!key) return null;
+    const uid = userMap[key];
+    if (!uid) {
+        const msg = `Anestesias: profesional "${raw}" no encontrado; la anestesia ` +
+            `queda sin atribuir (se trata como del pozo del grupo)`;
+        if (!warnings.includes(msg)) warnings.push(msg);
+        return null;
+    }
+    return uid;
+}
+
+async function _guardarDesdePayload(p, userMap, creadoPor, groupPeriods) {
     if (!p || !p.origen || !p.fecha) throw new Error('payload sin origen/fecha');
 
     const ingresos = [];
@@ -359,6 +401,21 @@ async function _guardarDesdePayload(p, userMap, creadoPor) {
         }
     }
 
+    const warnings = [...(p.warnings || [])];
+
+    // Una anestesia sin fechaPractica no se puede clasificar como previa o
+    // posterior al ingreso de un socio, y entra en el denominador de la
+    // proporción. Antes se descartaba en silencio; ahora se avisa, porque mueve
+    // plata en el reparto de todos.
+    const sinFecha = (p.anestesias || []).filter(a => !a.fechaPractica);
+    if (sinFecha.length) {
+        warnings.push(
+            `Anestesias: ${sinFecha.length} sin fecha de práctica, omitidas. ` +
+            `Si pertenecen a un socio con participación parcial, el prorrateo ` +
+            `queda mal calculado. Revisar a mano.`
+        );
+    }
+
     const anestesias = (p.anestesias || [])
         .filter(a => a.fechaPractica && Number(a.montoFacturado) >= 0)
         .map(a => ({
@@ -367,7 +424,8 @@ async function _guardarDesdePayload(p, userMap, creadoPor) {
             obraSocial: String(a.obraSocial || '').trim(),
             lugarPractica: String(a.lugarPractica || '').trim(),
             montoFacturado: Number(a.montoFacturado),
-            iva: Number(a.iva) || 0
+            iva: Number(a.iva) || 0,
+            userId: _socioDeAnestesia(a, userMap, warnings)
         }));
 
     const deduccionesGrupales = (p.deduccionesGrupales || [])
@@ -392,6 +450,36 @@ async function _guardarDesdePayload(p, userMap, creadoPor) {
         creadoPor
     };
 
+    // ── Prorrateo por ingreso/egreso al grupo ───────────────────────────────
+    // Excluye del pozo las anestesias previas al ingreso (o posteriores al
+    // egreso) de un socio con participación parcial, y reduce las deducciones
+    // grupales en esa misma proporción. Muta doc.anestesias y
+    // doc.deduccionesGrupales. Las personales e ingresos[] no se tocan.
+    const ventanas = ventanasDeParticipacion(groupPeriods);
+    const usernamePorUid = new Map(
+        Object.entries(userMap).map(([username, uid]) => [String(uid), username])
+    );
+    const prorrateo = aplicarProrrateo(doc, ventanas, usernamePorUid);
+    if (prorrateo) {
+        doc.prorrateo = prorrateo;
+        warnings.push(...prorrateo.warnings);
+        for (const s of prorrateo.socios) {
+            warnings.push(
+                `Prorrateo ${s.username}: ${s.anestesiasExcluidas}/${s.anestesiasTotales} ` +
+                `anestesia(s) excluidas por estar fuera de su participación; ` +
+                `proporción ${(s.proporcion * 100).toFixed(2)}%`
+            );
+        }
+    } else {
+        doc.prorrateo = null;
+    }
+
+    // Control (punto 5): un socio con participación parcial que quedó sin
+    // prorratear. El cuadre del microservicio no lo detecta —cierra igual con
+    // prorrateo y sin él—, así que hace falta este control del lado de la app.
+    const alertas = controlarProrrateo(doc, ventanas, usernamePorUid);
+    if (alertas.length) warnings.push(...alertas.map(a => `⚠ ${a}`));
+
     // upsert por (origen, día de la fecha)
     const d0 = new Date(p.fecha);
     const d1 = new Date(d0); d1.setUTCDate(d1.getUTCDate() + 1);
@@ -408,9 +496,20 @@ async function _guardarDesdePayload(p, userMap, creadoPor) {
     }
     return {
         origen: doc.origen, fecha: p.fecha, accion,
-        anestesias: anestesias.length, ingresos: ingresos.length,
+        // doc.anestesias, no `anestesias`: el prorrateo pudo excluir algunas
+        anestesias: doc.anestesias.length, ingresos: ingresos.length,
         deduccionesPersonales: deduccionesPersonales.length,
-        warnings: p.warnings || []
+        prorrateo: doc.prorrateo
+            ? {
+                anestesiasExcluidas: doc.prorrateo.anestesiasExcluidas,
+                socios: doc.prorrateo.socios.map(s => ({
+                    username: s.username,
+                    proporcion: s.proporcion,
+                    anestesiasExcluidas: s.anestesiasExcluidas
+                }))
+            }
+            : null,
+        warnings
     };
 }
 
@@ -473,11 +572,14 @@ exports.estadoGeneracionAutomatica = async (req, res) => {
         const userMap = {};
         users.forEach(u => { userMap[String(u.username).toLowerCase()] = u._id; });
 
+        // Los GroupPeriod resuelven ingreso/egreso vía participaciones al 0%
+        const groupPeriods = await GroupPeriod.find().sort({ fechaInicio: 1 });
+
         const resumen = [];
         const errores = [];
         for (const payload of (job.resultado || [])) {
             try {
-                resumen.push(await _guardarDesdePayload(payload, userMap, req.user._id));
+                resumen.push(await _guardarDesdePayload(payload, userMap, req.user._id, groupPeriods));
             } catch (e) {
                 errores.push(`${payload.origen} ${payload.fecha}: ${e.message}`);
             }

@@ -1,0 +1,439 @@
+commit aee7ff85f979ee20fcdd4065be13e844240cbd74
+Author: JP2385 <jpserranogamarra@gmail.com>
+Date:   Fri Oct 30 15:38:19 2026 -0300
+
+    NQN: prorratear las deducciones de los socios que entraron a mitad de camino
+    
+    JBO y RRISO ingresaron al grupo el 1/9/2026 y su liquidacion incluye anestesias
+    anteriores, que son trabajo previo y no son del grupo. evweb calcula las
+    deducciones sobre el TOTAL facturado, asi que quedarse con las anestesias
+    posteriores y las deducciones enteras les restaria de mas.
+    
+    Ahora se prorratea por MONTO (no por cantidad de anestesias):
+    
+        proporcion = suma importe (fecha >= ingreso) / suma importe (todas)
+    
+    y se aplica a credito, total cobrado, total de deducciones y a cada linea de
+    deduccion. Ejemplo del usuario: 100 facturado, 50 posterior al 1/9 ->
+    proporcion 50%; deducciones de 50 -> se toman 25.
+    
+    El prorrateo escala los tres importes por el mismo factor, asi que la identidad
+    bruto + deducciones = cobrado se preserva y _verificar_cuadre() sigue valiendo.
+    Se valida ANTES del prorrateo, sobre los datos tal como los leyo evweb.
+    
+    La fecha de ingreso vive en INGRESO_AL_GRUPO (nqn_model.py). Un socio que no
+    esta en esa tabla no se prorratea: se le cuenta todo, como siempre.
+    
+    Si alguna anestesia propia no tiene fecha de practica se ABORTA: no se puede
+    clasificar, entra en el denominador de la proporcion y mueve plata en el
+    reparto de todos.
+    
+    Co-Authored-By: Claude Opus 5 <noreply@anthropic.com>
+
+diff --git a/src/evweb.py b/src/evweb.py
+index 779436a..ab169a3 100644
+--- a/src/evweb.py
++++ b/src/evweb.py
+@@ -26,6 +26,7 @@ from .nqn_model import (
+     DeduccionLinea,
+     LiquidacionSocio,
+     codigo_socio,
++    ingreso_al_grupo,
+     usuario_login,
+ )
+ 
+@@ -454,6 +455,59 @@ def _clave_anestesia(a: Anestesia) -> tuple:
+     )
+ 
+ 
++def _prorratear_por_ingreso(
++    liq: LiquidacionSocio, propias: list[Anestesia], desde: date, usuario: str,
++) -> list[Anestesia]:
++    """Recorta un socio nuevo a lo que le corresponde desde su ingreso al grupo.
++
++    JBO y RRISO entraron el 1/9/2026 y su liquidación incluye anestesias
++    anteriores (trabajo previo, no es del grupo). evweb calcula las deducciones
++    sobre el total facturado, así que quedarse con las anestesias posteriores y
++    las deducciones enteras le restaría de más.
++
++    Se prorratea por MONTO, no por cantidad de anestesias:
++
++        proporción = Σ importe (fecha >= ingreso) / Σ importe (todas)
++
++    y se aplica a crédito, deducciones y total cobrado. Ejemplo del usuario
++    (2026-10-30): 100 facturado, 50 posterior al 1/9 → proporción 50%;
++    deducciones de 50 → se toman 25.
++
++    Devuelve sólo las anestesias desde el ingreso; muta `liq` con los importes
++    prorrateados.
++    """
++    total = sum(a.monto for a in propias)
++    posteriores = [a for a in propias if a.fecha >= desde]
++    monto_post = sum(a.monto for a in posteriores)
++
++    if total <= 0:
++        return posteriores
++
++    prop = monto_post / total
++    credito_orig = liq.credito
++    ded_orig = liq.total_deducciones
++    cobrado_orig = liq.total_cobrado
++
++    liq.credito = round(credito_orig * prop, 2)
++    liq.total_deducciones = round(ded_orig * prop, 2)
++    liq.total_cobrado = round(cobrado_orig * prop, 2)
++    # las líneas de deducción también, para que la hoja de personales no muestre
++    # el importe entero de un socio que entró a mitad de período
++    liq.deducciones = [
++        DeduccionLinea(concepto=d.concepto, monto=round(d.monto * prop, 2))
++        for d in liq.deducciones
++    ]
++
++    print(
++        f"    {usuario}: ingresó {desde}; "
++        f"{len(posteriores)}/{len(propias)} anestesias desde el ingreso, "
++        f"{monto_post:,.2f} de {total:,.2f} = {prop:.4%}. "
++        f"Cobrado {cobrado_orig:,.2f} -> {liq.total_cobrado:,.2f}, "
++        f"deducciones {ded_orig:,.2f} -> {liq.total_deducciones:,.2f}"
++    )
++    return posteriores
++
++
+ def _verificar_cuadre(liq: LiquidacionSocio) -> None:
+     """bruto - deducido == cobrado. Si no cuadra, abortar en vez de guardar."""
+     TOL = 1.0
+@@ -514,7 +568,27 @@ def scrapear_socio(
+             # GALENO/Sanatorio La Trinidad). También son ingresos del grupo que
+             # se distribuyen, así que van a la hoja Anestesias; no se comparten
+             # entre socios, hay que leerlas en cada liquidación.
+-            liq.anestesias_grupo = ev.leer_anestesias_pagos(usuario)
++            propias = ev.leer_anestesias_pagos(usuario)
++            # Socio que entró después del arranque (JBO, RRISO: 1/9/2026): sólo
++            # cuentan las anestesias desde su ingreso, y las deducciones se
++            # PRORRATEAN en esa misma proporción, porque evweb las calcula sobre
++            # el total facturado (incluido el trabajo previo al ingreso).
++            desde_ingreso = ingreso_al_grupo(usuario)
++            if desde_ingreso:
++                # Una anestesia sin fecha no se puede clasificar, y entra en el
++                # denominador de la proporción. Abortar es más seguro que
++                # adivinar: mueve plata en el reparto de todos.
++                sin_fecha = [a for a in propias if a.fecha is None]
++                if sin_fecha:
++                    raise RuntimeError(
++                        f"{usuario}: {len(sin_fecha)} anestesia(s) propias sin "
++                        f"fecha de práctica; no puedo decidir si son previas a "
++                        f"su ingreso ({desde_ingreso}). Revisar a mano."
++                    )
++                propias = _prorratear_por_ingreso(
++                    liq, propias, desde_ingreso, usuario
++                )
++            liq.anestesias_grupo = propias
+         elif con_anestesias and not anest_leida:
+             # Distribución del grupo (Clínica de Imágenes). Los 14 socios
+             # históricos ven el MISMO listado, pero JBO y RRISO tienen el suyo,
+diff --git a/src/nqn_model.py b/src/nqn_model.py
+index 2d57f67..65914e9 100644
+--- a/src/nqn_model.py
++++ b/src/nqn_model.py
+@@ -83,9 +83,27 @@ USUARIO_A_CODIGO = {
+ }
+ 
+ 
++# Fecha de ingreso al grupo, SÓLO para los socios que entraron después del
++# arranque. Las anestesias PROPIAS (formato 'pagos') con fecha de práctica
++# anterior son trabajo previo a su ingreso: no se contabilizan en la
++# liquidación del grupo (decisión del usuario, 2026-10-30).
++#
++# No afecta a las anestesias del modal del grupo, que son del grupo entero.
++# Un socio que no está acá no tiene filtro: se le cuenta todo, como siempre.
++INGRESO_AL_GRUPO = {
++    "JBO": date(2026, 9, 1),
++    "RRISO": date(2026, 9, 1),
++}
++
++
+ def usuario_login(clave_env: str) -> str:
+     return CLAVE_ENV_A_USUARIO.get(clave_env.upper(), clave_env.upper())
+ 
+ 
+ def codigo_socio(usuario_evweb: str) -> str:
+     return USUARIO_A_CODIGO.get(usuario_evweb.upper(), usuario_evweb.upper())
++
++
++def ingreso_al_grupo(usuario_evweb: str) -> date | None:
++    """Desde cuándo cuentan las anestesias propias de este socio (None = todas)."""
++    return INGRESO_AL_GRUPO.get(usuario_evweb.upper())
+diff --git a/tests/test_nqn.py b/tests/test_nqn.py
+index 5828f1f..3a48479 100644
+--- a/tests/test_nqn.py
++++ b/tests/test_nqn.py
+@@ -145,6 +145,87 @@ def test_cuadre_aborta_si_no_cuadra():
+         _verificar_cuadre(liq(10520698.29, -4728974.75, 5000000.00))
+ 
+ 
++def test_ingreso_al_grupo_filtra_solo_a_los_nuevos():
++    """Las propias previas al ingreso no se cuentan; los históricos no se filtran."""
++    from datetime import date
++
++    from src.nqn_model import ingreso_al_grupo
++
++    # JBO y RRISO entraron el 1/9/2026
++    assert ingreso_al_grupo("JBO") == date(2026, 9, 1)
++    assert ingreso_al_grupo("RRISO") == date(2026, 9, 1)
++    assert ingreso_al_grupo("rriso") == date(2026, 9, 1)  # case-insensitive
++    # un socio histórico no tiene filtro: se le cuenta todo
++    assert ingreso_al_grupo("JSERRANO") is None
++    assert ingreso_al_grupo("AMACIAS") is None
++
++    # el filtro deja fuera lo anterior e incluye el día del ingreso
++    desde = ingreso_al_grupo("JBO")
++    fechas = [date(2026, 7, 15), date(2026, 8, 31), date(2026, 9, 1),
++              date(2026, 9, 20)]
++    assert [f for f in fechas if f >= desde] == [date(2026, 9, 1),
++                                                 date(2026, 9, 20)]
++
++
++def test_prorrateo_por_ingreso_al_grupo():
++    """Socio nuevo: anestesias desde el ingreso y deducciones prorrateadas.
++
++    Ejemplo del usuario (2026-10-30): RRISO factura 100, de los cuales 50 son
++    posteriores al 1/9 -> proporción 50%; con deducciones de 50, se le toman 25.
++    """
++    from datetime import date
++
++    from src.evweb import _prorratear_por_ingreso, _verificar_cuadre
++    from src.nqn_model import (
++        Anestesia,
++        DeduccionLinea,
++        LiquidacionSocio,
++        ingreso_al_grupo,
++    )
++
++    assert ingreso_al_grupo("JBO") == date(2026, 9, 1)
++    assert ingreso_al_grupo("RRISO") == date(2026, 9, 1)
++    # un socio histórico NO se prorratea
++    assert ingreso_al_grupo("JSERRANO") is None
++
++    def an(f, m):
++        return Anestesia(profesional="RRISO", paciente="X", obra_social="OS",
++                         fecha=f, lugar="L", monto=m)
++
++    liq = LiquidacionSocio(
++        usuario_evweb="RRISO", codigo_socio="RRISO",
++        fecha_liquidacion=date(2026, 10, 30), nro_liquidacion="1",
++        matricula="1", credito=100.0, total_deducciones=-50.0,
++        total_cobrado=50.0,
++        deducciones=[DeduccionLinea(concepto="JUBILACION", monto=-50.0)],
++    )
++    propias = [an(date(2026, 8, 1), 50.0), an(date(2026, 9, 15), 50.0)]
++    out = _prorratear_por_ingreso(liq, propias, date(2026, 9, 1), "RRISO")
++
++    # sólo queda la posterior al ingreso
++    assert [a.fecha for a in out] == [date(2026, 9, 15)]
++    # 50% aplicado a los tres importes y a las líneas de deducción
++    assert liq.credito == 50.0
++    assert liq.total_deducciones == -25.0
++    assert liq.total_cobrado == 25.0
++    assert liq.deducciones[0].monto == -25.0
++    # el prorrateo escala todo por el mismo factor: el cuadre se preserva
++    _verificar_cuadre(liq)
++
++    # el día del ingreso cuenta como posterior (>=, no >)
++    liq2 = LiquidacionSocio(
++        usuario_evweb="JBO", codigo_socio="JBO",
++        fecha_liquidacion=date(2026, 10, 30), nro_liquidacion="2",
++        matricula="2", credito=100.0, total_deducciones=-40.0,
++        total_cobrado=60.0,
++    )
++    out2 = _prorratear_por_ingreso(
++        liq2, [an(date(2026, 9, 1), 100.0)], date(2026, 9, 1), "JBO"
++    )
++    assert len(out2) == 1
++    assert liq2.total_cobrado == 60.0  # proporción 100%, no se recorta nada
++
++
+ def test_dedup_anestesias_entre_socios():
+     """Los socios que comparten el listado no duplican; los propios se suman.
+ 
+
+commit 68f22c0fd8ce6eabca6711c87b6f95b076018715
+Author: JP2385 <jpserranogamarra@gmail.com>
+Date:   Fri Oct 30 15:47:06 2026 -0300
+
+    NQN: no prorratear las deducciones personales de los socios nuevos
+    
+    El prorrateo por fecha de ingreso escalaba TODAS las lineas de deduccion. Las
+    personales (OSDE, jubilacion) no dependen del volumen facturado: son del socio
+    y se le descuentan completas (decision del usuario, 2026-10-30).
+    
+    Ahora se prorratean solo las que es_deduccion_estandar() marca como estandar
+    -impuesto a las ganancias, ingresos brutos, cuota social, retenciones-, que son
+    las que evweb calcula sobre el total facturado. Es el mismo criterio con que
+    payload_nqn() separa la hoja de Deducciones Personales, asi que las dos cosas
+    quedan consistentes.
+    
+    El total de deducciones se recalcula sumando las lineas, en vez de escalar el
+    total viejo, porque ahora la mezcla es prorrateada + completa. Si evweb no
+    desglosa lineas, se cae al total escalado. El cobrado se recalcula como
+    bruto + deducciones para no romper _verificar_cuadre().
+    
+    Ejemplo (100 facturado, 50 posterior al 1/9 -> 50%): estandar de 40 -> 20,
+    OSDE de 10 -> 10 completa, total -30, cobrado 20.
+    
+    En la liquidacion del 30/10 ni JBO ni RRISO tienen personales, asi que los
+    numeros no cambian todavia; el caso queda cubierto para cuando aparezcan.
+    
+    Co-Authored-By: Claude Opus 5 <noreply@anthropic.com>
+
+diff --git a/src/evweb.py b/src/evweb.py
+index ab169a3..d8587a9 100644
+--- a/src/evweb.py
++++ b/src/evweb.py
+@@ -26,6 +26,7 @@ from .nqn_model import (
+     DeduccionLinea,
+     LiquidacionSocio,
+     codigo_socio,
++    es_deduccion_estandar,
+     ingreso_al_grupo,
+     usuario_login,
+ )
+@@ -469,9 +470,14 @@ def _prorratear_por_ingreso(
+ 
+         proporción = Σ importe (fecha >= ingreso) / Σ importe (todas)
+ 
+-    y se aplica a crédito, deducciones y total cobrado. Ejemplo del usuario
+-    (2026-10-30): 100 facturado, 50 posterior al 1/9 → proporción 50%;
+-    deducciones de 50 → se toman 25.
++    Ejemplo del usuario (2026-10-30): 100 facturado, 50 posterior al 1/9 →
++    proporción 50%; deducciones de 50 → se toman 25.
++
++    OJO con qué se prorratea (decisión del usuario, 2026-10-30):
++      - las deducciones ESTÁNDAR/grupales sí, porque evweb las calcula sobre el
++        total facturado;
++      - las deducciones PERSONALES (OSDE, jubilación, etc.) **NO**: no dependen
++        del volumen facturado, son del socio y se le descuentan completas.
+ 
+     Devuelve sólo las anestesias desde el ingreso; muta `liq` con los importes
+     prorrateados.
+@@ -488,15 +494,29 @@ def _prorratear_por_ingreso(
+     ded_orig = liq.total_deducciones
+     cobrado_orig = liq.total_cobrado
+ 
++    # Las personales van completas; sólo se prorratean las estándar.
++    lineas: list[DeduccionLinea] = []
++    personales = 0.0
++    for d in liq.deducciones:
++        if es_deduccion_estandar(d.concepto):
++            lineas.append(
++                DeduccionLinea(concepto=d.concepto, monto=round(d.monto * prop, 2))
++            )
++        else:
++            lineas.append(DeduccionLinea(concepto=d.concepto, monto=d.monto))
++            personales += d.monto
++    liq.deducciones = lineas
++
+     liq.credito = round(credito_orig * prop, 2)
+-    liq.total_deducciones = round(ded_orig * prop, 2)
+-    liq.total_cobrado = round(cobrado_orig * prop, 2)
+-    # las líneas de deducción también, para que la hoja de personales no muestre
+-    # el importe entero de un socio que entró a mitad de período
+-    liq.deducciones = [
+-        DeduccionLinea(concepto=d.concepto, monto=round(d.monto * prop, 2))
+-        for d in liq.deducciones
+-    ]
++    # El total se recalcula desde las líneas en vez de escalar el total viejo,
++    # para que sea consistente con la mezcla prorrateada/completa de arriba.
++    # Si evweb no desglosó las líneas, se cae al total escalado.
++    if lineas:
++        liq.total_deducciones = round(sum(d.monto for d in lineas), 2)
++    else:
++        liq.total_deducciones = round(ded_orig * prop, 2)
++    # cobrado = bruto + deducciones (negativas), para no romper el cuadre
++    liq.total_cobrado = round(liq.credito + liq.total_deducciones, 2)
+ 
+     print(
+         f"    {usuario}: ingresó {desde}; "
+@@ -504,6 +524,7 @@ def _prorratear_por_ingreso(
+         f"{monto_post:,.2f} de {total:,.2f} = {prop:.4%}. "
+         f"Cobrado {cobrado_orig:,.2f} -> {liq.total_cobrado:,.2f}, "
+         f"deducciones {ded_orig:,.2f} -> {liq.total_deducciones:,.2f}"
++        + (f" (personales {personales:,.2f} sin prorratear)" if personales else "")
+     )
+     return posteriores
+ 
+diff --git a/tests/test_nqn.py b/tests/test_nqn.py
+index 3a48479..7193a51 100644
+--- a/tests/test_nqn.py
++++ b/tests/test_nqn.py
+@@ -197,19 +197,68 @@ def test_prorrateo_por_ingreso_al_grupo():
+         fecha_liquidacion=date(2026, 10, 30), nro_liquidacion="1",
+         matricula="1", credito=100.0, total_deducciones=-50.0,
+         total_cobrado=50.0,
+-        deducciones=[DeduccionLinea(concepto="JUBILACION", monto=-50.0)],
++        deducciones=[DeduccionLinea(concepto="INGRESOS BRUTOS", monto=-50.0)],
+     )
+     propias = [an(date(2026, 8, 1), 50.0), an(date(2026, 9, 15), 50.0)]
+     out = _prorratear_por_ingreso(liq, propias, date(2026, 9, 1), "RRISO")
+ 
+     # sólo queda la posterior al ingreso
+     assert [a.fecha for a in out] == [date(2026, 9, 15)]
+-    # 50% aplicado a los tres importes y a las líneas de deducción
++    # 50% aplicado: la estándar se prorratea
+     assert liq.credito == 50.0
+     assert liq.total_deducciones == -25.0
+     assert liq.total_cobrado == 25.0
+     assert liq.deducciones[0].monto == -25.0
+-    # el prorrateo escala todo por el mismo factor: el cuadre se preserva
++    # el prorrateo preserva el cuadre
++    _verificar_cuadre(liq)
++
++
++def test_prorrateo_no_toca_las_deducciones_personales():
++    """Las personales NO se prorratean: van completas a descontarle al socio.
++
++    Sólo las estándar (impuestos, retenciones, cuota social) escalan con lo
++    facturado; OSDE/jubilación son del socio (decisión del usuario, 2026-10-30).
++    """
++    from datetime import date
++
++    from src.evweb import _prorratear_por_ingreso, _verificar_cuadre
++    from src.nqn_model import (
++        Anestesia,
++        DeduccionLinea,
++        LiquidacionSocio,
++        es_deduccion_estandar,
++    )
++
++    assert es_deduccion_estandar("INGRESOS BRUTOS")
++    assert not es_deduccion_estandar("OSDE")
++
++    def an(f, m):
++        return Anestesia(profesional="RRISO", paciente="X", obra_social="OS",
++                         fecha=f, lugar="L", monto=m)
++
++    # 100 facturado, 50 posterior -> 50%
++    # estándar 40 -> 20 (prorrateada); OSDE 10 -> 10 (completa); total -30
++    liq = LiquidacionSocio(
++        usuario_evweb="RRISO", codigo_socio="RRISO",
++        fecha_liquidacion=date(2026, 10, 30), nro_liquidacion="1",
++        matricula="1", credito=100.0, total_deducciones=-50.0,
++        total_cobrado=50.0,
++        deducciones=[
++            DeduccionLinea(concepto="INGRESOS BRUTOS", monto=-40.0),
++            DeduccionLinea(concepto="OSDE", monto=-10.0),
++        ],
++    )
++    _prorratear_por_ingreso(
++        liq, [an(date(2026, 8, 1), 50.0), an(date(2026, 9, 15), 50.0)],
++        date(2026, 9, 1), "RRISO",
++    )
++
++    por_concepto = {d.concepto: d.monto for d in liq.deducciones}
++    assert por_concepto["INGRESOS BRUTOS"] == -20.0   # prorrateada
++    assert por_concepto["OSDE"] == -10.0              # completa, sin tocar
++    assert liq.total_deducciones == -30.0
++    assert liq.credito == 50.0
++    assert liq.total_cobrado == 20.0
+     _verificar_cuadre(liq)
+ 
+     # el día del ingreso cuenta como posterior (>=, no >)
