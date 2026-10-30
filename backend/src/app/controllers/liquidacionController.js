@@ -385,9 +385,13 @@ function _svcHeaders() {
 // El scraper marca cuáles son propias con `propia: true` (o `tipo: 'propia'`).
 // Sin esa marca no se atribuye nada: es más seguro no prorratear y avisar que
 // atribuirle al grupo entero las anestesias de un socio.
-function _socioDeAnestesia(a, userMap, warnings) {
+function _socioDeAnestesia(a, userMap, warnings, stats) {
     const esPropia = a.propia === true || String(a.tipo || '').toLowerCase() === 'propia';
-    if (!esPropia) return null; // anestesia del pozo del grupo
+    if (!esPropia) {
+        if (stats) stats.sinMarcaPropia++;
+        return null; // anestesia del pozo del grupo
+    }
+    if (stats) stats.propias++;
 
     const raw = a.socio ?? a.profesional ?? a.username ?? null;
     if (!raw) {
@@ -463,6 +467,12 @@ async function _guardarDesdePayload(p, userMap, creadoPor, groupPeriods) {
         );
     }
 
+    // Cuántas llegaron, cuántas se guardan y cuántas se atribuyeron: si el
+    // payload trae 425 y se guardan 420, hay 5 que se filtraron y el prorrateo
+    // las cuenta mal. Mejor decirlo que dejar el número suelto.
+    const recibidas = (p.anestesias || []).length;
+    const statsAnest = { propias: 0, sinMarcaPropia: 0 };
+
     const anestesias = (p.anestesias || [])
         .filter(a => a.fechaPractica && Number(a.montoFacturado) >= 0)
         .map(a => ({
@@ -472,8 +482,29 @@ async function _guardarDesdePayload(p, userMap, creadoPor, groupPeriods) {
             lugarPractica: String(a.lugarPractica || '').trim(),
             montoFacturado: Number(a.montoFacturado),
             iva: Number(a.iva) || 0,
-            userId: _socioDeAnestesia(a, userMap, warnings)
+            userId: _socioDeAnestesia(a, userMap, warnings, statsAnest)
         }));
+
+    if (anestesias.length !== recibidas) {
+        warnings.push(
+            `Anestesias: llegaron ${recibidas} del scraper pero se guardaron ` +
+            `${anestesias.length}; ${recibidas - anestesias.length} quedaron afuera ` +
+            `por falta de fechaPractica o monto inválido. Si son de un socio con ` +
+            `participación parcial, su proporción queda mal calculada.`
+        );
+    }
+
+    // Ninguna marcada como propia: o el scraper no manda la marca, o este
+    // período realmente no tiene socios con listado individual. En el período
+    // 10/2026 hay 54 (35 de JBO + 19 de RRISO), así que el silencio es sospechoso.
+    if (statsAnest.propias === 0 && recibidas > 0) {
+        warnings.push(
+            `Anestesias: ninguna de las ${recibidas} viene marcada como propia ` +
+            `(propia: true / tipo: 'propia'), así que TODAS se trataron como del ` +
+            `pozo del grupo y el prorrateo no se aplicó a nadie. Si algún socio ` +
+            `tiene listado individual en evweb, falta esa marca en el payload.`
+        );
+    }
 
     // El `socio` es opcional: si el payload lo trae, la deducción se puede
     // prorratear; si no, queda agregada (userId null) y el prorrateo avisa que
@@ -552,6 +583,8 @@ async function _guardarDesdePayload(p, userMap, creadoPor, groupPeriods) {
         origen: doc.origen, fecha: p.fecha, accion,
         // doc.anestesias, no `anestesias`: el prorrateo pudo excluir algunas
         anestesias: doc.anestesias.length, ingresos: ingresos.length,
+        anestesiasRecibidas: recibidas,
+        anestesiasPropias: statsAnest.propias,
         deduccionesPersonales: deduccionesPersonales.length,
         prorrateo: doc.prorrateo
             ? {
