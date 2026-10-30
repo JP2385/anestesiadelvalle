@@ -63,10 +63,12 @@ function startOfDay(date) {
  * Deriva, desde los GroupPeriod, la ventana en que cada socio estuvo en el
  * grupo con participación > 0.
  *
- * Una participación al 0% significa "el socio no está en el grupo en ese
- * período" — así un alta y una baja se expresan con un solo mecanismo, sin
- * duplicar fechas. Un socio que nunca figura al 0% no tiene ventana: estuvo
- * siempre, y no se le prorratea nada.
+ * Un socio no está en el grupo en un período si figura al 0% O si no figura en
+ * absoluto. Las dos formas valen: la segunda es la natural para un alta (a
+ * nadie se le ocurre listar con 0% a quien todavía no existe en el grupo).
+ *
+ * Quien aparece en el PRIMER período es fundador y no tiene ventana: el grupo
+ * no existía antes, así que no hay nada que recortar.
  *
  * `periods` debe venir ordenado por fechaInicio ASC.
  *
@@ -80,7 +82,11 @@ function ventanasDeParticipacion(periods) {
         (a, b) => new Date(a.fechaInicio) - new Date(b.fechaInicio)
     );
 
-    // uid → { primeroConParticipacion, estuvoAlCeroAntes, ultimoConParticipacion }
+    // El PRIMER período es el arranque del grupo: quien figura ahí con
+    // participación es fundador y no tiene ingreso parcial. Quien aparece en un
+    // período posterior, entró después.
+    const primerPeriodo = ordenados.length ? startOfDay(ordenados[0].fechaInicio) : null;
+
     const estado = new Map();
 
     for (const period of ordenados) {
@@ -95,7 +101,10 @@ function ventanasDeParticipacion(periods) {
                 estado.set(uid, {
                     primeroConParticipacion: null,
                     estuvoAlCeroAntes: false,
-                    ultimoConParticipacion: null,
+                    // En qué período apareció por primera vez, con cualquier
+                    // porcentaje. Si no es el primero de todos, antes no estaba
+                    // en el grupo.
+                    primeraAparicion: inicio,
                     primeroAlCeroDespues: null
                 });
             }
@@ -104,7 +113,6 @@ function ventanasDeParticipacion(periods) {
 
             if (tieneParticipacion) {
                 if (!e.primeroConParticipacion) e.primeroConParticipacion = inicio;
-                e.ultimoConParticipacion = inicio;
                 // si vuelve a tener participación, una baja previa quedó revertida
                 e.primeroAlCeroDespues = null;
             } else {
@@ -121,10 +129,25 @@ function ventanasDeParticipacion(periods) {
 
     const ventanas = new Map();
     for (const [uid, e] of estado) {
-        // Sólo hay ingreso si el socio figuró explícitamente al 0% ANTES de
-        // tener participación. Si su primer período ya lo tiene participando,
-        // estuvo desde el arranque y no hay nada que recortar.
-        const ingreso = e.estuvoAlCeroAntes ? e.primeroConParticipacion : null;
+        // Hay ingreso parcial en dos casos, y los dos significan lo mismo —
+        // "este socio no estaba en el grupo antes de esa fecha":
+        //
+        //   a) figuró explícitamente al 0% en un período anterior
+        //      (así quedó registrado msalvarezza, ingreso 2024-10-01);
+        //
+        //   b) NO FIGURA en los períodos anteriores y aparece recién en uno
+        //      posterior al arranque. Es la forma normal de registrar un alta:
+        //      a nadie se le ocurre listar con 0% a alguien que todavía no
+        //      existe en el grupo. Así están JBO y RRISO (1/9/2026), que por
+        //      exigir el 0% explícito nunca se prorrateaban.
+        //
+        // Un fundador aparece en el primer período de todos: ahí no hay nada
+        // que recortar, porque el grupo no existía antes.
+        const apareceDespuesDelArranque =
+            primerPeriodo && e.primeraAparicion > primerPeriodo;
+        const ingreso = (e.estuvoAlCeroAntes || apareceDespuesDelArranque)
+            ? e.primeroConParticipacion
+            : null;
         const egreso = e.primeroAlCeroDespues || null;
         if (ingreso || egreso) ventanas.set(uid, { ingreso, egreso });
     }
@@ -426,7 +449,17 @@ function controlarProrrateo(liquidacion, ventanas, usernamePorUid = new Map()) {
                 .filter(d => uidToString(d.userId) === uid)
                 .reduce((s, d) => s + Number(d.monto || 0), 0);
 
-            if (montoIngresos > 0 || montoDeds > 0) {
+            // OJO: no alcanza con "tiene movimientos y no tiene anestesias
+            // atribuidas". Un socio con ventana puede no tener listado propio
+            // en evweb —todas sus anestesias son del grupo— y entonces no hay
+            // nada que prorratear: es el caso normal, no una falla. Así está
+            // msalvarezza, que generaba un falso positivo.
+            //
+            // Sólo es sospechoso si la liquidación trae anestesias propias de
+            // ALGÚN socio (o sea, el payload sí distingue propias) y las de
+            // este quedaron sin atribuir.
+            const hayPropiasDeOtros = anestesias.some(a => uidToString(a.userId));
+            if (hayPropiasDeOtros && (montoIngresos > 0 || montoDeds > 0)) {
                 alertas.push(
                     `${nombre} tiene participación parcial (ingreso ` +
                     `${ventana.ingreso ? ventana.ingreso.toISOString().substring(0, 10) : '—'}) ` +

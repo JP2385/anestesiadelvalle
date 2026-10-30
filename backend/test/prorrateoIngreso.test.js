@@ -69,6 +69,26 @@ test('deriva el egreso con el mismo mecanismo (vuelve a 0%)', () => {
     assert.equal(v.get(JBO).egreso, null, 'JBO sigue activo');
 });
 
+test('un socio que NO FIGURA en los períodos previos tiene ingreso parcial', () => {
+    // El caso real de JBO y RRISO (log del 30/10): no figuran en absoluto antes
+    // del 1/9/2026, porque a nadie se le ocurre listar con 0% a quien todavía
+    // no está en el grupo. Antes se exigía el 0% explícito y nunca se
+    // prorrateaban: el payload venía perfecto (propia true=54, jbo/rriso OK)
+    // pero la única ventana era la de msalvarezza.
+    const v = ventanasDeParticipacion([
+        period('2024-01-01T00:00:00Z', [{ userId: HIST, porcentaje: 100 }]),
+        period('2026-09-01T00:00:00Z', [
+            { userId: HIST, porcentaje: 50 },
+            { userId: JBO, porcentaje: 25 },
+            { userId: RRISO, porcentaje: 25 }
+        ])
+    ]);
+
+    assert.deepEqual(v.get(JBO).ingreso, new Date('2026-09-01T00:00:00Z'));
+    assert.deepEqual(v.get(RRISO).ingreso, new Date('2026-09-01T00:00:00Z'));
+    assert.equal(v.has(HIST), false, 'el fundador no tiene ventana');
+});
+
 test('un socio que estuvo desde el arranque no tiene ventana', () => {
     // nunca figura al 0%: su primer período ya lo tiene participando
     const v = ventanasDeParticipacion([
@@ -387,11 +407,13 @@ test('no alerta cuando el prorrateo sí corrió', () => {
     assert.deepEqual(controlarProrrateo(doc, ventanas, new Map([[JBO, 'jbo']])), []);
 });
 
-test('detecta la atribución faltante: socio parcial con ingresos y sin anestesias', () => {
-    // El modo de falla silencioso: el payload deja de traer el profesional, las
-    // anestesias quedan sin userId, el prorrateo no corre y nadie se entera.
+test('detecta la atribución faltante: el payload sí distingue propias pero no las de este socio', () => {
+    // El modo de falla silencioso: el payload atribuye las propias de RRISO
+    // pero las de JBO quedaron sin userId, así que su prorrateo no corre.
+    // La señal de que falta algo es que SÍ hay propias de otro socio: si no
+    // hubiera ninguna, sería el caso legítimo de un socio sin listado propio.
     const liq = {
-        anestesias: [an('2026-08-01', 50, null), an('2026-09-15', 50, null)],
+        anestesias: [an('2026-09-15', 50, RRISO), an('2026-08-01', 50, null)],
         prorrateo: null,
         ingresos: [{ tipo: 'socio', userId: JBO, monto: 35483009.79 }]
     };
@@ -399,16 +421,16 @@ test('detecta la atribución faltante: socio parcial con ingresos y sin anestesi
         liq, ventanasDeParticipacion(periodosEstandar()), new Map([[JBO, 'jbo']])
     );
 
-    assert.equal(alertas.length, 1);
-    assert.match(alertas[0], /ninguna anestesia atribuida/);
+    assert.ok(alertas.some(a => /ninguna anestesia atribuida/.test(a)));
+    assert.ok(alertas.some(a => /jbo/.test(a)));
 });
 
 test('detecta el caso real: deducción personal al monto entero', () => {
     // Lo que vio el usuario (2026-10-30): el FONDO APORTE DE ASOCIADOS de JBO
-    // figuraba por $839.503,39, el monto entero, porque las anestesias llegaron
-    // sin atribución y el prorrateo no tuvo con qué calcular la proporción.
+    // figuraba por $839.503,39, el monto entero, porque sus anestesias no
+    // quedaron atribuidas y el prorrateo no tuvo con qué calcular la proporción.
     const liq = {
-        anestesias: [an('2026-08-01', 50, null), an('2026-09-15', 50, null)],
+        anestesias: [an('2026-09-15', 50, RRISO), an('2026-08-01', 50, null)],
         prorrateo: null,
         ingresos: [{ tipo: 'socio', userId: JBO, monto: 35483009.79 }],
         deduccionesPersonales: [
@@ -419,10 +441,25 @@ test('detecta el caso real: deducción personal al monto entero', () => {
         liq, ventanasDeParticipacion(periodosEstandar()), new Map([[JBO, 'jbo']])
     );
 
-    assert.equal(alertas.length, 1);
-    assert.match(alertas[0], /SIN PRORRATEAR/);
-    assert.match(alertas[0], /839503\.39|deducciones/);
-    assert.match(alertas[0], /anestesias\[\] del payload/);
+    const deJbo = alertas.find(a => /jbo/.test(a));
+    assert.ok(deJbo, 'debe alertar sobre jbo');
+    assert.match(deJbo, /SIN PRORRATEAR/);
+    assert.match(deJbo, /anestesias\[\] del payload/);
+});
+
+test('no alerta por un socio con ventana sin anestesias propias', () => {
+    // msalvarezza: entró 2024-10-01 pero todas sus anestesias son del grupo, no
+    // tiene listado propio en evweb. No hay nada que prorratear — es el caso
+    // normal. Antes esto daba un falso positivo.
+    const liq = {
+        anestesias: [an('2026-09-15', 1000, null), an('2026-08-15', 1000, null)],
+        prorrateo: null,
+        ingresos: [{ tipo: 'socio', userId: HIST, monto: 25377884.99 }],
+        deduccionesPersonales: [{ userId: HIST, concepto: 'FONDO', monto: 595725 }]
+    };
+    const ventanas = new Map([[HIST, { ingreso: new Date('2024-10-01Z'), egreso: null }]]);
+
+    assert.deepEqual(controlarProrrateo(liq, ventanas, new Map([[HIST, 'msalvarezza']])), []);
 });
 
 test('no alerta por un socio parcial que simplemente no facturó', () => {

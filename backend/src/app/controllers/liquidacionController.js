@@ -554,11 +554,28 @@ async function _guardarDesdePayload(p, userMap, creadoPor, groupPeriods) {
         }));
 
     if (anestesias.length !== recibidas) {
+        // Detalle de cada una: de quién es, qué le falta y el resto de los
+        // campos, para poder buscarla en evweb y entender por qué no vino.
+        const descartadas = (p.anestesias || [])
+            .filter(a => !(a.fechaPractica && Number(a.montoFacturado) >= 0))
+            .map(a => {
+                const falta = [];
+                if (!a.fechaPractica) falta.push('fechaPractica');
+                if (!(Number(a.montoFacturado) >= 0)) {
+                    falta.push(`montoFacturado=${JSON.stringify(a.montoFacturado)}`);
+                }
+                const quien = a.propia === true
+                    ? `propia de ${a.socio || a.profesional || '?'}`
+                    : 'del grupo';
+                return `${quien} | ${a.paciente || 's/paciente'} | ` +
+                    `${a.obraSocial || 's/OS'} | ${a.lugarPractica || 's/lugar'} | ` +
+                    `falta: ${falta.join(', ')}`;
+            });
+
         warnings.push(
             `Anestesias: llegaron ${recibidas} del scraper pero se guardaron ` +
-            `${anestesias.length}; ${recibidas - anestesias.length} quedaron afuera ` +
-            `por falta de fechaPractica o monto inválido. Si son de un socio con ` +
-            `participación parcial, su proporción queda mal calculada.`
+            `${anestesias.length}; ${recibidas - anestesias.length} quedaron afuera. ` +
+            `Detalle: ${descartadas.join(' // ')}`
         );
     }
 
