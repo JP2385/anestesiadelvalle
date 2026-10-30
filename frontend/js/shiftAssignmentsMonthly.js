@@ -376,16 +376,11 @@ function assignShift(selects, assignmentType, isLharriagueAssignedToday, isMquir
 
             // Verificar restricciones solo si ignoreRestrictions es falso
             if (!ignoreRestrictions) {
-                // Verificar si el día anterior tiene asignación, excepto si es viernes y el usuario es nvela
+                // Verificar si el día anterior tiene asignación
                 const previousDay = getPreviousDay(day);
                 const previousSelect = document.querySelector(`.shift-select[data-username="${username}"][data-day="${previousDay}"]`);
-                const isFriday = dayNumber === 5;
 
-                if (
-                    previousSelect &&
-                    previousSelect.value !== '' &&
-                    !(isFriday && username === 'msalvarezza')
-                ) {
+                if (previousSelect && previousSelect.value !== '') {
                     continue;
                 }
 

@@ -61,6 +61,17 @@ const userSchema = new Schema({
         type: Boolean,
         default: false
     },
+    // Baja lógica: el usuario deja de usar la app, pero su _id se conserva
+    // porque los históricos (liquidaciones, pagos a socios, group periods,
+    // schedules) lo referencian y se romperían al borrarlo.
+    activo: {
+        type: Boolean,
+        default: true
+    },
+    fechaBaja: {
+        type: Date,
+        default: null
+    },
     beginningDate: {
         type: Date,
     },

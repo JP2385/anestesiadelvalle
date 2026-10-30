@@ -27,6 +27,35 @@
     margin-bottom: 20px;
     margin-right: 0rem;
 }
+/* Texto aclaratorio de una acción administrativa */
+.admin-hint {
+    text-align: left;
+    margin: 0 3rem 10px 0;
+    color: #777;
+    font-size: 0.85rem;
+    line-height: 1.4;
+}
+
+/* Estado de la cuenta en el administrador de perfiles */
+.estado-activo {
+    color: #2e7d32;
+    font-weight: bold;
+}
+
+.estado-inactivo {
+    color: #c62828;
+    font-weight: bold;
+}
+
+/* Baja: acción destructiva, se diferencia del resto de los botones */
+.main-menu-button.danger-button {
+    background-color: #c62828;
+}
+
+.main-menu-button.danger-button:hover {
+    background-color: #a81f1f;
+}
+
 .vacation-start, .vacation-end {
     width: 100px;
 }

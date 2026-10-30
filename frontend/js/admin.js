@@ -22,8 +22,9 @@ document.addEventListener('DOMContentLoaded', function () {
     beginningDateElement.parentNode.appendChild(phoneNumberInput)
     const submitButton = adminForm.querySelector('button[type="submit"]'); // Botón de envío
 
-    // Obtener la lista de usuarios
-    fetch(`${apiUrl}/auth/users`, {
+    // Obtener la lista de usuarios. Acá pedimos también los dados de baja, para
+    // que el administrador pueda verlos y reactivarlos.
+    fetch(`${apiUrl}/auth/users?incluirInactivos=true`, {
         method: 'GET',
         headers: {
             'Content-Type': 'application/json',
@@ -39,7 +40,8 @@ document.addEventListener('DOMContentLoaded', function () {
             users.forEach(user => {
                 const option = document.createElement('option');
                 option.value = user._id;
-                option.textContent = `${user.username} (${user.email})`;
+                const sufijo = user.activo === false ? ' — DADO DE BAJA' : '';
+                option.textContent = `${user.username} (${user.email})${sufijo}`;
                 userSelect.appendChild(option);
             });
 
@@ -248,6 +250,9 @@ document.addEventListener('DOMContentLoaded', function () {
                 // Cargar el rol del usuario
                 document.getElementById('userRole').value = user.role || 'user';
 
+                // Reflejar el estado de la cuenta (activo / dado de baja)
+                mostrarEstadoCuenta(user);
+
                 document.getElementById('doesCardio').checked = user.doesCardio;
                 document.getElementById('doesPediatrics').checked = user.doesPediatrics;
                 document.getElementById('doesRNM').checked = user.doesRNM;
@@ -316,6 +321,75 @@ document.addEventListener('DOMContentLoaded', function () {
             toast.error('Hubo un problema con la solicitud: ' + error.message);
         }
     }
+
+    // Pinta el estado de la cuenta y adapta el botón de baja/reactivación
+    function mostrarEstadoCuenta(user) {
+        const estadoElement = document.getElementById('estado-cuenta');
+        const toggleButton = document.getElementById('toggle-activo-btn');
+        const estaActivo = user.activo !== false;
+
+        if (estaActivo) {
+            estadoElement.textContent = 'Activo';
+            estadoElement.className = 'estado-activo';
+            toggleButton.textContent = 'Dar de baja';
+            toggleButton.classList.add('danger-button');
+        } else {
+            const desde = user.fechaBaja
+                ? ` (desde el ${new Date(user.fechaBaja).toLocaleDateString('es-ES')})`
+                : '';
+            estadoElement.textContent = `Dado de baja${desde}`;
+            estadoElement.className = 'estado-inactivo';
+            toggleButton.textContent = 'Reactivar usuario';
+            toggleButton.classList.remove('danger-button');
+        }
+
+        // Guardamos el estado para que el handler del botón sepa qué hacer
+        toggleButton.dataset.activo = String(estaActivo);
+    }
+
+    // Botón para dar de baja / reactivar
+    document.getElementById('toggle-activo-btn').addEventListener('click', async () => {
+        const userId = userSelect.value;
+
+        if (!userId) {
+            toast.warning('Por favor selecciona un usuario');
+            return;
+        }
+
+        const toggleButton = document.getElementById('toggle-activo-btn');
+        const estaActivo = toggleButton.dataset.activo === 'true';
+        const nuevoActivo = !estaActivo;
+        const username = userSelect.selectedOptions[0]?.textContent.split(' (')[0] || 'este usuario';
+
+        const mensaje = nuevoActivo
+            ? `¿Reactivar a ${username}? Volverá a poder entrar a la app y a aparecer en el padrón.`
+            : `¿Dar de baja a ${username}? No podrá entrar a la app y saldrá del padrón. Sus liquidaciones y pagos históricos se conservan.`;
+
+        toast.confirm(mensaje, async () => {
+            try {
+                const response = await fetch(`${apiUrl}/users/${userId}/activo`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': 'Bearer ' + (localStorage.getItem('token') || sessionStorage.getItem('token'))
+                    },
+                    body: JSON.stringify({ activo: nuevoActivo })
+                });
+
+                if (response.ok) {
+                    const result = await response.json();
+                    toast.success(result.message || 'Estado actualizado correctamente');
+                    sessionStorage.setItem('admin_selected_user', userId);
+                    setTimeout(() => window.location.reload(), 1500);
+                } else {
+                    const errorData = await response.json();
+                    toast.error(`Error: ${errorData.message}`);
+                }
+            } catch (error) {
+                toast.error('Hubo un problema al actualizar el estado: ' + error.message);
+            }
+        });
+    });
 
     // Botón para actualizar rol
     document.getElementById('update-role-btn').addEventListener('click', async () => {

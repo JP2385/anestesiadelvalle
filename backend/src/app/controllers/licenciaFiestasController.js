@@ -1,10 +1,7 @@
 const mongoose = require('mongoose');
 const User = require('../models/userModel');
 const { TIPOS_FIESTAS, getSeasonWeeks, formatISO } = require('../utils/holidayWeeks');
-
-// Mismo filtro de padrón que userController.getAllUsers, para que las dos
-// vistas de usuarios no se desalineen.
-const FILTRO_PADRON = { allowedSite: null };
+const { FILTRO_PADRON } = require('../utils/userFilters');
 
 /** Valida la temporada recibida (query param o body). Devuelve el año o null. */
 function parseTemporada(value) {

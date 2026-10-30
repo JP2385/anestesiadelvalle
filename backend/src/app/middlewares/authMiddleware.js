@@ -20,10 +20,16 @@ module.exports = async (req, res, next) => {
 
         try {
             // Obtener el usuario completo de la base de datos para incluir el rol
-            const user = await User.findById(decoded.userId).select('_id username email role');
+            const user = await User.findById(decoded.userId).select('_id username email role activo');
 
             if (!user) {
                 return res.status(404).send({ message: 'Usuario no encontrado' });
+            }
+
+            // El token dura 7 días, así que una baja tiene que cortar también las
+            // sesiones ya abiertas y no sólo impedir nuevos logins.
+            if (user.activo === false) {
+                return res.status(403).send({ message: 'Este usuario está dado de baja.' });
             }
 
             // Asignar tanto req.userId como req.user para compatibilidad

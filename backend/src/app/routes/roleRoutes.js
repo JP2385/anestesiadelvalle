@@ -4,6 +4,7 @@ const authMiddleware = require('../middlewares/authMiddleware');
 const { requireAdmin, requireRole } = require('../middlewares/authorization');
 const {
     changeUserRole,
+    setUserActivo,
     getUsersWithRoles,
     getRolePermissionsEndpoint,
     getMyPermissions
@@ -14,6 +15,13 @@ router.put('/users/:userId/role',
     authMiddleware,
     requireAdmin,
     changeUserRole
+);
+
+// Dar de baja / reactivar un usuario (solo admin)
+router.put('/users/:userId/activo',
+    authMiddleware,
+    requireAdmin,
+    setUserActivo
 );
 
 // Obtener lista de usuarios con roles (solo admin)
