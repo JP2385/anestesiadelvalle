@@ -541,8 +541,11 @@ async function _guardarDesdePayload(p, userMap, creadoPor, groupPeriods) {
     const recibidas = (p.anestesias || []).length;
     const statsAnest = { propias: 0, sinMarcaPropia: 0 };
 
+    // Se aceptan montos NEGATIVOS: son débitos/devoluciones de evweb (PAMI) que
+    // restan de lo facturado. Sólo se exige que el monto sea un número: una
+    // anestesia sin monto no se puede contabilizar.
     const anestesias = (p.anestesias || [])
-        .filter(a => a.fechaPractica && Number(a.montoFacturado) >= 0)
+        .filter(a => a.fechaPractica && Number.isFinite(Number(a.montoFacturado)))
         .map(a => ({
             paciente: String(a.paciente || '').trim(),
             fechaPractica: a.fechaPractica,
@@ -557,11 +560,11 @@ async function _guardarDesdePayload(p, userMap, creadoPor, groupPeriods) {
         // Detalle de cada una: de quién es, qué le falta y el resto de los
         // campos, para poder buscarla en evweb y entender por qué no vino.
         const descartadas = (p.anestesias || [])
-            .filter(a => !(a.fechaPractica && Number(a.montoFacturado) >= 0))
+            .filter(a => !(a.fechaPractica && Number.isFinite(Number(a.montoFacturado))))
             .map(a => {
                 const falta = [];
                 if (!a.fechaPractica) falta.push('fechaPractica');
-                if (!(Number(a.montoFacturado) >= 0)) {
+                if (!Number.isFinite(Number(a.montoFacturado))) {
                     falta.push(`montoFacturado=${JSON.stringify(a.montoFacturado)}`);
                 }
                 const quien = a.propia === true

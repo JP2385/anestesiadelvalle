@@ -285,6 +285,55 @@ test('las 371 del grupo no se atribuyen; sólo las propias de JBO/RRISO', () => 
     assert.equal(doc.deduccionesGrupales[0].monto, 30);
 });
 
+test('los débitos (montos negativos) restan y siguen la suerte de su tramo', () => {
+    // Caso real (log del 30/10): JBO tiene 3 líneas negativas de PAMI/Clínica
+    // de Imágenes. Un débito posterior al ingreso resta del pozo del grupo; uno
+    // previo se excluye igual que una anestesia previa, porque ajusta trabajo
+    // que no era del grupo.
+    const doc = {
+        anestesias: [
+            an('2026-07-15', 1000, JBO),      // previa: fuera
+            an('2026-07-20', -200, JBO),      // débito previo: fuera también
+            an('2026-09-20', 1000, JBO),      // posterior: dentro
+            an('2026-09-25', -85965.56, JBO)  // débito posterior: dentro, resta
+        ],
+        deduccionesGrupales: [{ userId: JBO, concepto: 'IIBB', monto: 1000 }]
+    };
+    const r = aplicarProrrateo(doc, ventanasDeParticipacion(periodosEstandar()));
+
+    // quedan las dos posteriores, incluido el débito
+    assert.equal(doc.anestesias.length, 2);
+    assert.ok(doc.anestesias.some(a => a.montoFacturado === -85965.56), 'el débito posterior queda');
+    assert.ok(!doc.anestesias.some(a => a.montoFacturado === -200), 'el débito previo sale');
+
+    // total = 1000 - 200 + 1000 - 85965.56 = -84165.56... usamos el real:
+    // dentro = 1000 - 85965.56 = -84965.56 ; fuera = 1000 - 200 = 800
+    // proporción cruda = (total - fuera)/total, acotada a [0,1]
+    assert.ok(r.socios[0].proporcion >= 0 && r.socios[0].proporcion <= 1,
+        'la proporción queda en [0,1]');
+});
+
+test('la proporción nunca sale de [0,1] aunque los débitos la empujen', () => {
+    // Si los débitos previos superan la facturación previa, la cuenta daría >1
+    // y SUBIRÍA las deducciones. Se acota y se avisa.
+    const doc = {
+        anestesias: [
+            an('2026-07-15', 100, JBO),
+            an('2026-07-20', -500, JBO),  // débito previo mayor que lo facturado
+            an('2026-09-20', 1000, JBO)
+        ],
+        deduccionesGrupales: [{ userId: JBO, concepto: 'IIBB', monto: 1000 }]
+    };
+    const r = aplicarProrrateo(
+        doc, ventanasDeParticipacion(periodosEstandar()), new Map([[JBO, 'jbo']])
+    );
+
+    assert.ok(r.socios[0].proporcion <= 1, 'acotada a 1 como máximo');
+    assert.ok(r.socios[0].proporcion >= 0);
+    // la deducción nunca sube por encima del original
+    assert.ok(doc.deduccionesGrupales[0].monto <= 1000);
+});
+
 test('un socio histórico no se prorratea aunque tenga anestesias viejas', () => {
     const doc = {
         anestesias: [an('2026-01-15', 100, HIST), an('2026-09-15', 100, HIST)],

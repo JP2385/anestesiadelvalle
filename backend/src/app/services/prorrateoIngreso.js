@@ -299,10 +299,30 @@ function aplicarProrrateo(doc, ventanas, usernamePorUid = new Map()) {
         const fuera = propias.filter(a => dentroDeVentana(a.fechaPractica, ventana) === false);
         const montoFuera = fuera.reduce((s, a) => s + Number(a.montoFacturado || 0), 0);
 
-        if (total <= 0 || fuera.length === 0) continue;
+        // `total` puede ser negativo si los débitos superan lo facturado, así
+        // que la guarda es === 0 (no <= 0): con total 0 la proporción sería una
+        // división por cero, pero un total negativo es un caso válido y hay que
+        // excluir igual las anestesias previas al ingreso.
+        if (total === 0 || fuera.length === 0) continue;
 
         fuera.forEach(a => excluidas.add(a));
-        const proporcion = (total - montoFuera) / total;
+
+        // Con débitos (montos negativos) la proporción podría salir de [0,1]:
+        // si los débitos previos al ingreso superan la facturación previa,
+        // `montoFuera` es negativo y la cuenta daría > 1, lo que SUBIRÍA las
+        // deducciones en vez de bajarlas. Se acota, porque una proporción
+        // fuera de ese rango no tiene sentido y mueve plata para el lado
+        // equivocado.
+        const cruda = (total - montoFuera) / total;
+        const proporcion = Math.min(1, Math.max(0, cruda));
+        if (cruda !== proporcion) {
+            warnings.push(
+                `${nombre}: la proporción calculada dio ${(cruda * 100).toFixed(2)}% ` +
+                `(fuera del rango 0–100%), probablemente por débitos que superan lo ` +
+                `facturado en el tramo. Se acotó a ${(proporcion * 100).toFixed(2)}%. ` +
+                `Revisar a mano.`
+            );
+        }
 
         // Las deducciones de ESTE socio (grupales e individuales) se prorratean
         // por SU proporción. Ejemplo del usuario: $8 grupales → $4, $2

@@ -5,8 +5,12 @@ const anestesiaSchema = new mongoose.Schema({
     fechaPractica: { type: Date, required: true },
     obraSocial: { type: String, trim: true },
     lugarPractica: { type: String, trim: true },
-    montoFacturado: { type: Number, required: true, min: 0 },
-    iva: { type: Number, default: 0, min: 0 },
+    // Puede ser NEGATIVO: evweb liquida débitos y devoluciones (PAMI / Clínica
+    // de Imágenes) como líneas con monto negativo, que restan de lo facturado.
+    // Por eso no lleva min: 0 — descartarlas inflaba el denominador de la
+    // proporción del prorrateo y no cuadraba con lo que evweb depositó.
+    montoFacturado: { type: Number, required: true },
+    iva: { type: Number, default: 0 },
     // Socio que facturó la anestesia. null = anestesia del pozo del grupo
     // (distribución grupal) o histórica, cargada antes de que existiera el
     // campo. Se usa para excluir el trabajo previo al ingreso de un socio
