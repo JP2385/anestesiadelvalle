@@ -377,8 +377,18 @@ function _socioDeAnestesia(a, userMap, warnings) {
     if (!key) return null;
     const uid = userMap[key];
     if (!uid) {
-        const msg = `Anestesias: profesional "${raw}" no encontrado; la anestesia ` +
-            `queda sin atribuir (se trata como del pozo del grupo)`;
+        // Si viene con espacios es el nombre completo de evweb ("ALAN LEANDRO
+        // MACIAS") en vez del username (amacias). Se avisa distinto porque el
+        // arreglo es otro: el scraper tiene que mandar el username, igual que
+        // ya hace en ingresos[] y deduccionesPersonales[].
+        const parecaNombreCompleto = /\s/.test(String(raw).trim());
+        const msg = parecaNombreCompleto
+            ? `Anestesias: "${raw}" parece un nombre completo de evweb, no un ` +
+              `username. El payload debe mandar el username de la app (ej: amacias), ` +
+              `igual que en ingresos[]. Las anestesias quedan sin atribuir y el ` +
+              `prorrateo NO se aplica.`
+            : `Anestesias: profesional "${raw}" no encontrado; la anestesia ` +
+              `queda sin atribuir (se trata como del pozo del grupo)`;
         if (!warnings.includes(msg)) warnings.push(msg);
         return null;
     }
