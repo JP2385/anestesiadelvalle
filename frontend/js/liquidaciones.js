@@ -602,6 +602,20 @@ document.addEventListener('DOMContentLoaded', function () {
                     ? `ingresó ${formatDate(s.ingreso)}`
                     : (s.egreso ? `egresó ${formatDate(s.egreso)}` : 'participación parcial');
                 const egreso = s.ingreso && s.egreso ? `, egresó ${formatDate(s.egreso)}` : '';
+                // Deducciones: se muestra el antes → después de cada concepto,
+                // porque es donde se ve que se le tomó sólo la parte que
+                // corresponde al trabajo hecho dentro del grupo.
+                const deds = [];
+                if (s.dedGrupalOriginal > 0) {
+                    deds.push(`grupales ${formatMoney(s.dedGrupalOriginal)} → ${formatMoney(s.dedGrupalAjustada)}`);
+                }
+                if (s.dedPersonalOriginal > 0) {
+                    deds.push(`individuales ${formatMoney(s.dedPersonalOriginal)} → ${formatMoney(s.dedPersonalAjustada)}`);
+                }
+                const dedTxt = deds.length
+                    ? `<br><span class="prorrateo-deds">Deducciones: ${esc(deds.join(' · '))}</span>`
+                    : '';
+
                 return `
                     <div class="prorrateo-row">
                         <span class="prorrateo-socio">${esc(s.username)}</span>
@@ -609,23 +623,24 @@ document.addEventListener('DOMContentLoaded', function () {
                             ${esc(ventana)}${esc(egreso)} —
                             ${s.anestesiasExcluidas} de ${s.anestesiasTotales} anestesia(s)
                             excluidas (${formatMoney(s.montoExcluido)} de ${formatMoney(s.montoTotal)})
+                            ${dedTxt}
                         </span>
                         <span class="prorrateo-prop">${(s.proporcion * 100).toFixed(2)}%</span>
                     </div>`;
             }).join('');
 
-            const factor = prorrateo.factorDeduccionesGrupales;
             partes.push(`
                 <div class="prorrateo-box">
                     <h5>Prorrateo por ingreso/egreso al grupo</h5>
                     ${filas}
                     <p class="prorrateo-nota">
                         Se excluyeron ${prorrateo.anestesiasExcluidas} anestesia(s)
-                        por ${formatMoney(prorrateo.montoExcluido)} del pozo a repartir
-                        (trabajo ajeno al grupo). Las deducciones grupales se redujeron
-                        al ${(factor * 100).toFixed(2)}% porque evweb las calcula sobre el
-                        total facturado. Las deducciones personales van completas y los
-                        ingresos acreditados no se modifican.
+                        por ${formatMoney(prorrateo.montoExcluido)} del pozo a repartir:
+                        con 0% de participación el socio no estaba en el grupo, así que
+                        ese trabajo es suyo y no del grupo. Sus deducciones —grupales e
+                        individuales— se contabilizan en la misma proporción, porque evweb
+                        las calcula sobre el total facturado. Los ingresos acreditados no
+                        se modifican.
                     </p>
                 </div>`);
         }

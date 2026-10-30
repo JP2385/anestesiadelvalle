@@ -16,6 +16,14 @@ const anestesiaSchema = new mongoose.Schema({
 }, { _id: false });
 
 const deduccionGrupalSchema = new mongoose.Schema({
+    // Socio al que evweb le liquidó esta deducción. null = deducción agregada
+    // (histórica, o cargada a mano sin desglose por socio).
+    //
+    // Hace falta para prorratear: la regla es "de los $8 grupales de RRISO se
+    // cuentan $4", así que se necesita saber cuáles de los $8 son de RRISO. Con
+    // el total sumado de los 16 socios no se puede tomar el 50% de uno solo sin
+    // tocarle las deducciones a los otros 15.
+    userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User', default: null },
     concepto: { type: String, required: true, trim: true },
     monto: { type: Number, required: true, min: 0 }
 }, { _id: false });
@@ -43,14 +51,19 @@ const prorrateoSocioSchema = new mongoose.Schema({
     anestesiasTotales: { type: Number, default: 0 },
     anestesiasExcluidas: { type: Number, default: 0 },
     montoTotal: { type: Number, default: 0 },
-    montoExcluido: { type: Number, default: 0 }
+    montoExcluido: { type: Number, default: 0 },
+    // Deducciones del socio antes y después del prorrateo, para que se vea
+    // cuánto se le tomó de cada concepto.
+    dedGrupalOriginal: { type: Number, default: 0 },
+    dedGrupalAjustada: { type: Number, default: 0 },
+    dedPersonalOriginal: { type: Number, default: 0 },
+    dedPersonalAjustada: { type: Number, default: 0 }
 }, { _id: false });
 
 const prorrateoSchema = new mongoose.Schema({
     socios: { type: [prorrateoSocioSchema], default: [] },
     anestesiasExcluidas: { type: Number, default: 0 },
     montoExcluido: { type: Number, default: 0 },
-    factorDeduccionesGrupales: { type: Number, default: 1 },
     warnings: { type: [String], default: [] },
     aplicadoEn: { type: Date, default: Date.now }
 }, { _id: false });

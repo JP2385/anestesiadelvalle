@@ -385,6 +385,21 @@ function _socioDeAnestesia(a, userMap, warnings) {
     return uid;
 }
 
+// Resuelve el socio de una deducción grupal. A diferencia de las anestesias, un
+// username que no resuelve acá es un error duro: la deducción existe y es de
+// alguien, y dejarla sin atribuir la volvería no prorrateable en silencio.
+function _socioDeDeduccion(d, userMap, warnings) {
+    const key = String(d.socio || '').trim().toLowerCase();
+    const uid = key ? userMap[key] : null;
+    if (!uid) {
+        const msg = `Ded. Grupales: usuario "${d.socio}" no encontrado; la ` +
+            `deducción "${d.concepto}" queda sin atribuir y no se podrá prorratear`;
+        if (!warnings.includes(msg)) warnings.push(msg);
+        return null;
+    }
+    return uid;
+}
+
 async function _guardarDesdePayload(p, userMap, creadoPor, groupPeriods) {
     if (!p || !p.origen || !p.fecha) throw new Error('payload sin origen/fecha');
 
@@ -428,9 +443,16 @@ async function _guardarDesdePayload(p, userMap, creadoPor, groupPeriods) {
             userId: _socioDeAnestesia(a, userMap, warnings)
         }));
 
+    // El `socio` es opcional: si el payload lo trae, la deducción se puede
+    // prorratear; si no, queda agregada (userId null) y el prorrateo avisa que
+    // no la pudo ajustar en vez de tocarle el total a los 16 socios.
     const deduccionesGrupales = (p.deduccionesGrupales || [])
         .filter(d => d.concepto && Number(d.monto) > 0)
-        .map(d => ({ concepto: String(d.concepto).trim(), monto: Number(d.monto) }));
+        .map(d => ({
+            userId: d.socio ? _socioDeDeduccion(d, userMap, warnings) : null,
+            concepto: String(d.concepto).trim(),
+            monto: Number(d.monto)
+        }));
 
     const deduccionesPersonales = [];
     for (const d of (p.deduccionesPersonales || [])) {

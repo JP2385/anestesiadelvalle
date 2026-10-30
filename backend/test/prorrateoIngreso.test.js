@@ -92,38 +92,94 @@ test('el día del ingreso cuenta como dentro; el del egreso, como fuera', () => 
 
 // ── aplicarProrrateo ─────────────────────────────────────────────────────────
 
-test('ejemplo del usuario: 100 facturado, 50 posterior al 1/9 → 50%', () => {
+test('ejemplo del usuario: RRISO entró el 1/9, $50 antes y $50 después', () => {
+    // Del mensaje del usuario (2026-10-30):
+    //   previo al 1/9: anestesias por $50; desde el 1/9: $50 → proporción 50%
+    //   deducciones: $8 de conceptos grupales, $2 de conceptos individuales
+    //   se contabiliza para el grupo: $50 de bruto, $4 grupales, $1 individuales
     const doc = {
-        anestesias: [an('2026-08-01', 50, JBO), an('2026-09-15', 50, JBO)],
-        deduccionesGrupales: [{ concepto: 'INGRESOS BRUTOS', monto: 50 }]
+        anestesias: [an('2026-08-01', 50, RRISO), an('2026-09-15', 50, RRISO)],
+        deduccionesGrupales: [{ userId: RRISO, concepto: 'INGRESOS BRUTOS', monto: 8 }],
+        deduccionesPersonales: [{ userId: RRISO, concepto: 'OSDE', monto: 2 }]
     };
     const r = aplicarProrrateo(doc, ventanasDeParticipacion(periodosEstandar()));
 
-    assert.equal(r.socios.length, 1);
     assert.equal(r.socios[0].proporcion, 0.5);
-    // la previa sale del pozo
+    // $50 de bruto: la previa sale del pozo
     assert.equal(doc.anestesias.length, 1);
-    assert.deepEqual(doc.anestesias[0].fechaPractica, new Date('2026-09-15'));
-    // deducciones grupales al 50%: de 50 se toman 25
-    assert.equal(doc.deduccionesGrupales[0].monto, 25);
+    assert.equal(doc.anestesias[0].montoFacturado, 50);
+    // $4 de deducciones grupales (50% de 8)
+    assert.equal(doc.deduccionesGrupales[0].monto, 4);
+    // $1 de deducciones individuales (50% de 2)
+    assert.equal(doc.deduccionesPersonales[0].monto, 1);
 });
 
-test('las deducciones personales van completas y los ingresos no se tocan', () => {
-    // El caso real: JBO y RRISO tienen FONDO APORTE DE ASOCIADOS, que no debe
-    // prorratearse (hacerlo movería −222.812,78 en JBO).
+test('las deducciones individuales también se prorratean', () => {
+    // El FONDO APORTE DE ASOCIADOS de JBO: con proporción 50% se cuenta la mitad.
     const doc = {
         anestesias: [an('2026-08-01', 50, JBO), an('2026-09-15', 50, JBO)],
-        deduccionesGrupales: [{ concepto: 'IIBB', monto: 40 }],
+        deduccionesGrupales: [],
         deduccionesPersonales: [
             { userId: JBO, concepto: 'FONDO APORTE DE ASOCIADOS', monto: 222812.78 }
-        ],
+        ]
+    };
+    aplicarProrrateo(doc, ventanasDeParticipacion(periodosEstandar()));
+
+    assert.equal(doc.deduccionesPersonales[0].monto, 111406.39, '50% de 222812.78');
+});
+
+test('ingresos[] no se toca: es la plata que realmente entró', () => {
+    const doc = {
+        anestesias: [an('2026-08-01', 50, JBO), an('2026-09-15', 50, JBO)],
+        deduccionesGrupales: [],
         ingresos: [{ tipo: 'socio', userId: JBO, monto: 35483009.79 }]
     };
     aplicarProrrateo(doc, ventanasDeParticipacion(periodosEstandar()));
 
-    assert.equal(doc.deduccionesGrupales[0].monto, 20, 'grupal prorrateada');
-    assert.equal(doc.deduccionesPersonales[0].monto, 222812.78, 'personal completa');
-    assert.equal(doc.ingresos[0].monto, 35483009.79, 'ingresos sin tocar');
+    assert.equal(doc.ingresos[0].monto, 35483009.79);
+});
+
+test('las deducciones se prorratean por socio, no con un factor global', () => {
+    // La regla es "de los $8 de RRISO se cuentan $4", NO "el pozo baja un 3%".
+    // Las líneas de los otros socios quedan intactas.
+    const doc = {
+        anestesias: [
+            an('2026-08-01', 50, RRISO), an('2026-09-15', 50, RRISO),
+            an('2026-09-15', 1000, HIST)
+        ],
+        deduccionesGrupales: [
+            { userId: RRISO, concepto: 'IIBB', monto: 8 },
+            { userId: HIST, concepto: 'IIBB', monto: 100 }
+        ],
+        deduccionesPersonales: [
+            { userId: RRISO, concepto: 'OSDE', monto: 2 },
+            { userId: HIST, concepto: 'OSDE', monto: 50 }
+        ]
+    };
+    aplicarProrrateo(doc, ventanasDeParticipacion(periodosEstandar()));
+
+    const g = Object.fromEntries(doc.deduccionesGrupales.map(d => [d.userId, d.monto]));
+    const p = Object.fromEntries(doc.deduccionesPersonales.map(d => [d.userId, d.monto]));
+    assert.equal(g[RRISO], 4, 'la de RRISO al 50%');
+    assert.equal(g[HIST], 100, 'la del histórico intacta');
+    assert.equal(p[RRISO], 1);
+    assert.equal(p[HIST], 50, 'la del histórico intacta');
+});
+
+test('avisa si una deducción grupal viene agregada (sin socio)', () => {
+    // Modo de falla silencioso: sin `socio` no se puede prorratear, y tocar el
+    // total agregado le cambiaría las deducciones a los 16 socios.
+    const doc = {
+        anestesias: [an('2026-08-01', 50, RRISO), an('2026-09-15', 50, RRISO)],
+        deduccionesGrupales: [{ userId: null, concepto: 'IIBB', monto: 42_000_000 }]
+    };
+    const r = aplicarProrrateo(
+        doc, ventanasDeParticipacion(periodosEstandar()), new Map([[RRISO, 'rriso']])
+    );
+
+    assert.equal(doc.deduccionesGrupales[0].monto, 42_000_000, 'no se toca');
+    assert.ok(r.warnings.some(w => /sin socio asignado/.test(w)), 'avisa');
+    assert.ok(r.warnings.some(w => /rriso/.test(w)));
 });
 
 test('las anestesias del pozo del grupo (sin socio) no se tocan', () => {
@@ -133,7 +189,10 @@ test('las anestesias del pozo del grupo (sin socio) no se tocan', () => {
             an('2026-08-01', 50, JBO),    // de JBO, previa a su ingreso
             an('2026-09-15', 50, JBO)
         ],
-        deduccionesGrupales: [{ concepto: 'IIBB', monto: 110 }]
+        deduccionesGrupales: [
+            { userId: JBO, concepto: 'IIBB', monto: 10 },
+            { userId: HIST, concepto: 'IIBB', monto: 100 }
+        ]
     };
     aplicarProrrateo(doc, ventanasDeParticipacion(periodosEstandar()));
 
@@ -142,9 +201,10 @@ test('las anestesias del pozo del grupo (sin socio) no se tocan', () => {
     assert.ok(!doc.anestesias.some(a => a.userId === JBO && a.montoFacturado === 50
         && a.fechaPractica.getUTCMonth() === 7), 'la previa de JBO sale');
 
-    // factor sobre el bruto total: (1100 - 50) / 1100
-    const esperado = Math.round(110 * (1050 / 1100) * 100) / 100;
-    assert.equal(doc.deduccionesGrupales[0].monto, esperado);
+    // sólo se prorratea la deducción de JBO (50%), no la del histórico
+    const g = Object.fromEntries(doc.deduccionesGrupales.map(d => [d.userId, d.monto]));
+    assert.equal(g[JBO], 5);
+    assert.equal(g[HIST], 100);
 });
 
 test('un socio histórico no se prorratea aunque tenga anestesias viejas', () => {
@@ -190,7 +250,7 @@ test('el prorrateo es idempotente: reingestar no vuelve a recortar', () => {
     const ventanas = ventanasDeParticipacion(periodosEstandar());
     const build = () => ({
         anestesias: [an('2026-08-01', 50, JBO), an('2026-09-15', 50, JBO)],
-        deduccionesGrupales: [{ concepto: 'IIBB', monto: 50 }]
+        deduccionesGrupales: [{ userId: JBO, concepto: 'IIBB', monto: 50 }]
     });
 
     const primera = build();
@@ -230,7 +290,7 @@ test('egreso: las anestesias posteriores a la baja se excluyen', () => {
             an('2026-10-15', 100, RRISO), // dentro
             an('2026-12-15', 100, RRISO)  // posterior al egreso
         ],
-        deduccionesGrupales: [{ concepto: 'IIBB', monto: 100 }]
+        deduccionesGrupales: [{ userId: RRISO, concepto: 'IIBB', monto: 100 }]
     };
     aplicarProrrateo(doc, ventanasDeParticipacion(periods));
 

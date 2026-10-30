@@ -141,17 +141,81 @@ function dentroDeVentana(fechaPractica, ventana) {
     return true;
 }
 
+/** Escala un monto por la proporción, redondeando a centavos. */
+function escalar(monto, proporcion) {
+    return Math.round(Number(monto || 0) * proporcion * 100) / 100;
+}
+
+/**
+ * Prorratea las deducciones de un socio por su proporción.
+ *
+ * Sólo toca las líneas atribuidas a ese socio: las de los demás y las agregadas
+ * (sin userId) quedan intactas. Devuelve el array nuevo y cuánto se descontó.
+ */
+function prorratearDeducciones(lineas, uid, proporcion) {
+    let original = 0;
+    let ajustado = 0;
+    let sinAtribuir = 0;
+
+    const out = (lineas || []).map(d => {
+        const plano = typeof d.toObject === 'function' ? d.toObject() : { ...d };
+        const duid = uidToString(plano.userId);
+        if (!duid) {
+            sinAtribuir += Number(plano.monto || 0);
+            return plano;
+        }
+        if (duid !== uid) return plano;
+
+        const monto = escalar(plano.monto, proporcion);
+        original += Number(plano.monto || 0);
+        ajustado += monto;
+        return { ...plano, monto };
+    });
+
+    return {
+        lineas: out,
+        original: Math.round(original * 100) / 100,
+        ajustado: Math.round(ajustado * 100) / 100,
+        sinAtribuir: Math.round(sinAtribuir * 100) / 100
+    };
+}
+
 /**
  * Aplica el prorrateo a una liquidación recién ingestada.
  *
- * Muta `doc` (anestesias y deduccionesGrupales) y devuelve el detalle del
- * ajuste para guardarlo y mostrarlo en la UI: un ajuste que mueve millones no
- * debería ser invisible.
+ * La regla (ejemplo del usuario, RRISO ingresó el 1/9):
+ *
+ *   previo al 1/9  → anestesias por $50
+ *   desde el 1/9   → anestesias por $50     proporción = 50%
+ *
+ *   deducciones: $8 de conceptos grupales, $2 de conceptos individuales
+ *
+ *   se contabiliza para el grupo:  $50 de bruto
+ *                                  $4 de deducciones grupales   (50% de 8)
+ *                                  $1 de deducciones individuales (50% de 2)
+ *
+ * Es decir: TODO lo que trae la liquidación de ese socio se prorratea por la
+ * misma proporción. Si tiene 0% de participación en un período, no está en el
+ * grupo; si en su evweb figuran anestesias de ese período, son suyas y no
+ * tienen nada que ver con el grupo — ni su bruto ni ninguna de sus
+ * deducciones.
+ *
+ * Lo único que NO se toca es `ingresos[]`: es la plata que realmente entró a la
+ * cuenta del socio, y el saldo la compara contra lo que le corresponde.
+ *
+ * Las deducciones se prorratean POR SOCIO, no con un factor global sobre el
+ * total: la regla es "de los $8 de RRISO se cuentan $4", no "el pozo entero
+ * baja un 3%". Una línea sin `userId` es agregada y no se puede prorratear:
+ * se avisa.
+ *
+ * Muta `doc` (anestesias, deduccionesGrupales, deduccionesPersonales) y
+ * devuelve el detalle del ajuste para guardarlo y mostrarlo en la UI: un ajuste
+ * que mueve millones no debería ser invisible.
  *
  * Las anestesias sin `userId` son del pozo del grupo (distribución grupal, o
  * históricas cargadas antes de que el campo existiera): no se tocan nunca.
  *
- * @param {{anestesias: Array, deduccionesGrupales: Array}} doc
+ * @param {{anestesias: Array, deduccionesGrupales: Array, deduccionesPersonales: Array}} doc
  * @param {Map<string, {ingreso: Date|null, egreso: Date|null}>} ventanas
  * @param {Map<string, string>} usernamePorUid  para mensajes legibles
  * @returns {{socios: Array, warnings: string[], anestesiasExcluidas: number}|null}
@@ -171,9 +235,12 @@ function aplicarProrrateo(doc, ventanas, usernamePorUid = new Map()) {
 
     if (porSocio.size === 0) return null;
 
-    const brutoTotal = anestesias.reduce((s, a) => s + Number(a.montoFacturado || 0), 0);
     const excluidas = new Set();
     const socios = [];
+    // Se prorratean socio por socio sobre estos arrays, que van acumulando los
+    // ajustes de cada uno (cada socio toca sólo sus propias líneas).
+    let dedGrupales = doc.deduccionesGrupales || [];
+    let dedPersonales = doc.deduccionesPersonales || [];
 
     for (const [uid, propias] of porSocio) {
         const ventana = ventanas.get(uid);
@@ -201,6 +268,14 @@ function aplicarProrrateo(doc, ventanas, usernamePorUid = new Map()) {
         fuera.forEach(a => excluidas.add(a));
         const proporcion = (total - montoFuera) / total;
 
+        // Las deducciones de ESTE socio (grupales e individuales) se prorratean
+        // por SU proporción. Ejemplo del usuario: $8 grupales → $4, $2
+        // individuales → $1, con proporción 50%.
+        const g = prorratearDeducciones(dedGrupales, uid, proporcion);
+        const p = prorratearDeducciones(dedPersonales, uid, proporcion);
+        dedGrupales = g.lineas;
+        dedPersonales = p.lineas;
+
         socios.push({
             userId: uid,
             username: nombre,
@@ -210,8 +285,24 @@ function aplicarProrrateo(doc, ventanas, usernamePorUid = new Map()) {
             anestesiasTotales: propias.length,
             anestesiasExcluidas: fuera.length,
             montoTotal: Math.round(total * 100) / 100,
-            montoExcluido: Math.round(montoFuera * 100) / 100
+            montoExcluido: Math.round(montoFuera * 100) / 100,
+            dedGrupalOriginal: g.original,
+            dedGrupalAjustada: g.ajustado,
+            dedPersonalOriginal: p.original,
+            dedPersonalAjustada: p.ajustado
         });
+
+        // Una deducción grupal sin socio no se puede prorratear. Es el modo de
+        // falla silencioso: si el payload la trae agregada, el ajuste de este
+        // socio no se le aplica y nadie se entera.
+        if (g.sinAtribuir > 0) {
+            warnings.push(
+                `${nombre}: hay deducciones grupales sin socio asignado ` +
+                `(${g.sinAtribuir.toFixed(2)}) que no se pudieron prorratear al ` +
+                `${(proporcion * 100).toFixed(2)}%. Falta el campo "socio" en ` +
+                `deduccionesGrupales del payload. Revisar a mano.`
+            );
+        }
     }
 
     // Nada que excluir: el socio existe y tiene ventana, pero toda su
@@ -222,35 +313,31 @@ function aplicarProrrateo(doc, ventanas, usernamePorUid = new Map()) {
             socios,
             warnings,
             anestesiasExcluidas: 0,
-            montoExcluido: 0,
-            factorDeduccionesGrupales: 1
+            montoExcluido: 0
         };
     }
 
-    // 1. Las anestesias previas al ingreso (o posteriores al egreso) salen del pozo
+    // 1. Las anestesias previas al ingreso (o posteriores al egreso) salen del
+    //    pozo: si el socio tenía 0% de participación, no estaba en el grupo y
+    //    ese trabajo es suyo, no del grupo.
     doc.anestesias = anestesias.filter(a => !excluidas.has(a));
 
-    // 2. Las deducciones grupales se reducen en la proporción del bruto que se
-    //    fue con esas anestesias: evweb las calculó sobre el total facturado.
+    // 2. y 3. Las deducciones grupales e individuales ya quedaron prorrateadas
+    //    socio por socio en el loop de arriba.
+    doc.deduccionesGrupales = dedGrupales;
+    doc.deduccionesPersonales = dedPersonales;
+
+    // 4. ingresos[] NO se toca (es lo que realmente se depositó).
+
     const montoExcluidoTotal = [...excluidas].reduce(
         (s, a) => s + Number(a.montoFacturado || 0), 0
     );
-    const factor = brutoTotal > 0 ? (brutoTotal - montoExcluidoTotal) / brutoTotal : 1;
-
-    doc.deduccionesGrupales = (doc.deduccionesGrupales || []).map(d => ({
-        ...(typeof d.toObject === 'function' ? d.toObject() : d),
-        monto: Math.round(Number(d.monto) * factor * 100) / 100
-    }));
-
-    // 3. Las deducciones personales NO se tocan (van completas).
-    // 4. ingresos[] NO se toca (es lo que realmente se depositó).
 
     return {
         socios,
         warnings,
         anestesiasExcluidas: excluidas.size,
-        montoExcluido: Math.round(montoExcluidoTotal * 100) / 100,
-        factorDeduccionesGrupales: Math.round(factor * 1e6) / 1e6
+        montoExcluido: Math.round(montoExcluidoTotal * 100) / 100
     };
 }
 
