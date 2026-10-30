@@ -83,6 +83,11 @@ const liquidacionSchema = new mongoose.Schema({
     deduccionesGrupales: { type: [deduccionGrupalSchema], default: [] },
     deduccionesPersonales: { type: [deduccionPersonalSchema], default: [] },
     reservaGanancias: { type: Boolean, default: false },
+    // Porcentaje de reserva de ganancias vigente cuando se creó la liquidación.
+    // Se guarda en vez de usar una constante global para que un cambio de
+    // alícuota no recalcule el histórico: las liquidaciones viejas no tienen el
+    // campo y siguen con el 29% (ver PORCENTAJE_RESERVA_GANANCIAS_HISTORICO).
+    porcentajeReserva: { type: Number, default: null },
     dedPersonalesInternas: { type: Boolean, default: true },
     // null = no hubo socios con participación parcial en este período
     prorrateo: { type: prorrateoSchema, default: null },

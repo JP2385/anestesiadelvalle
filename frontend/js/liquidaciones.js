@@ -426,8 +426,12 @@ document.addEventListener('DOMContentLoaded', function () {
 
             // Encabezado
             const headerEl = document.getElementById('detail-header');
+            // El % lo define la liquidación, no una constante: las viejas son al
+            // 29% y las nuevas al 32%, así que se muestra el que se le aplicó.
+            const pctReserva = ((distribucion.porcentajeReserva ?? 0.29) * 100)
+                .toFixed(0);
             const reservaItem = distribucion.montoReserva > 0
-                ? `<div class="detail-header-item detail-header-reserva"><label>Reserva ganancias (29%)</label><span>${formatMoney(distribucion.montoReserva)}</span></div>`
+                ? `<div class="detail-header-item detail-header-reserva"><label>Reserva ganancias (${pctReserva}%)</label><span>${formatMoney(distribucion.montoReserva)}</span></div>`
                 : '';
             headerEl.innerHTML = `
                 <div class="detail-header-item"><label>Origen</label><span>${liquidacion.origen}</span></div>
@@ -769,7 +773,11 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     // ── Algoritmo de distribución local (replica el backend) ─────────────
-    const PORCENTAJE_RESERVA = 0.29;
+    // Porcentaje vigente para las liquidaciones NUEVAS, que es lo único que se
+    // calcula en vivo acá (el formulario). Debe coincidir con
+    // PORCENTAJE_RESERVA_GANANCIAS del backend. Las ya guardadas se muestran con
+    // el porcentaje que trae la distribución del backend, no con este.
+    const PORCENTAJE_RESERVA = 0.32;
 
     function getPeriodForDateLocal(date) {
         let vigente = null;

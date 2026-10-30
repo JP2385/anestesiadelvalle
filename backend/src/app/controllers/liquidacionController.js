@@ -23,7 +23,27 @@ function getPeriodForDate(periods, date) {
     return vigente;
 }
 
-const PORCENTAJE_RESERVA_GANANCIAS = 0.29;
+// Reserva de ganancias (sólo Río Negro). El porcentaje vigente se guarda en
+// cada liquidación nueva (campo porcentajeReserva), así un cambio de alícuota
+// no recalcula el histórico.
+//
+// VIGENTE: el que se aplica a las liquidaciones nuevas. Para cambiarlo, basta
+// con tocar este número: las liquidaciones ya guardadas conservan el suyo.
+const PORCENTAJE_RESERVA_GANANCIAS = 0.32;
+
+// HISTÓRICO: el que corresponde a las liquidaciones guardadas ANTES de que
+// existiera el campo porcentajeReserva. No cambiar — es el que se usó para
+// liquidar y cobrar en su momento.
+const PORCENTAJE_RESERVA_GANANCIAS_HISTORICO = 0.29;
+
+// Qué porcentaje de reserva le corresponde a una liquidación: el que tiene
+// guardado, o el histórico si no lo tiene.
+function getPorcentajeReserva(liquidacion) {
+    const guardado = Number(liquidacion?.porcentajeReserva);
+    return Number.isFinite(guardado) && guardado > 0
+        ? guardado
+        : PORCENTAJE_RESERVA_GANANCIAS_HISTORICO;
+}
 
 // Algoritmo de distribución
 //
@@ -31,7 +51,9 @@ const PORCENTAJE_RESERVA_GANANCIAS = 0.29;
 // montoBruto = montoTotalCobrado + deduccionesGrupales
 //              (las ded. personales se redistribuyen entre todos y no afectan el bruto distributable)
 //
-// Si reservaGanancias=true (solo Río Negro): se reserva el 29% del bruto antes de distribuir.
+// Si reservaGanancias=true (solo Río Negro): se reserva del bruto, antes de
+// distribuir, el porcentaje guardado en la liquidación (29% las históricas, 32%
+// las nuevas).
 // Las anestesias se usan SOLO para determinar la PROPORCIÓN por período, no como base de monto.
 // Base de distribución = montoBruto, repartida proporcionalmente al peso de anestesias en cada período.
 //
@@ -63,8 +85,10 @@ function calcularDistribucion(liquidacion, groupPeriods) {
     const montoBruto = anestesias.reduce((sum, a) => sum + a.montoFacturado, 0);
     const totalDeduccionesGrupales = deduccionesGrupales.reduce((sum, d) => sum + d.monto, 0);
 
-    // Reserva = 29% del bruto total (no por socio)
-    const montoReserva = reservaGanancias ? montoBruto * PORCENTAJE_RESERVA_GANANCIAS : 0;
+    // Reserva = % del bruto total (no por socio), con el porcentaje que le
+    // corresponde a ESTA liquidación
+    const porcentajeReserva = getPorcentajeReserva(liquidacion);
+    const montoReserva = reservaGanancias ? montoBruto * porcentajeReserva : 0;
 
     // Deducciones personales por socio
     const deduccionPorSocio = {};
@@ -152,6 +176,7 @@ function calcularDistribucion(liquidacion, groupPeriods) {
         montoTotalCobrado: Math.round(montoTotalCobrado * 100) / 100,
         montoBruto: Math.round(montoBruto * 100) / 100,
         montoReserva: Math.round(montoReserva * 100) / 100,
+        porcentajeReserva,
         totalDeduccionesGrupales: Math.round(totalDeduccionesGrupales * 100) / 100,
         totalDedPersonales: Math.round(totalDedPersonales * 100) / 100,
         totalDistribuible: Math.round(totalDistribuible * 100) / 100,
@@ -236,6 +261,9 @@ exports.createLiquidacion = async (req, res) => {
             deduccionesGrupales: deduccionesGrupales || [],
             deduccionesPersonales: deduccionesPersonales || [],
             reservaGanancias: !!reservaGanancias,
+            // Se congela el porcentaje vigente: si la alícuota cambia más
+            // adelante, esta liquidación conserva el que se le aplicó.
+            porcentajeReserva: PORCENTAJE_RESERVA_GANANCIAS,
             dedPersonalesInternas: dedPersonalesInternas !== false,
             creadoPor: req.user._id
         });
@@ -619,6 +647,7 @@ async function _guardarDesdePayload(p, userMap, creadoPor, groupPeriods) {
         fecha: new Date(p.fecha),
         anestesias, ingresos, deduccionesGrupales, deduccionesPersonales,
         reservaGanancias: !!p.reservaGanancias,
+        porcentajeReserva: PORCENTAJE_RESERVA_GANANCIAS,
         dedPersonalesInternas: p.dedPersonalesInternas !== false,
         creadoPor
     };
@@ -670,7 +699,16 @@ async function _guardarDesdePayload(p, userMap, creadoPor, groupPeriods) {
 
     let accion;
     if (existente) {
-        Object.assign(existente, doc);
+        // Reprocesar un período no le cambia la alícuota de reserva: la que
+        // tenía es la que se le aplicó al liquidar. Sólo se completa si la
+        // liquidación es anterior al campo (null) y corresponde reserva.
+        const doc2 = { ...doc };
+        if (existente.porcentajeReserva) {
+            doc2.porcentajeReserva = existente.porcentajeReserva;
+        } else {
+            doc2.porcentajeReserva = PORCENTAJE_RESERVA_GANANCIAS_HISTORICO;
+        }
+        Object.assign(existente, doc2);
         await existente.save();
         accion = 'actualizada';
     } else {
