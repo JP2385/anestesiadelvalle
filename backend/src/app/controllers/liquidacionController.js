@@ -370,25 +370,47 @@ function _svcHeaders() {
 // MASCHVARTZMAN→mschvartzman); el microservicio ya entrega el username de la
 // app, pero si no resuelve hay que avisar en vez de seguir sin atribución:
 // una anestesia sin socio se trata como del pozo y el prorrateo no corre.
+// Hay DOS tipos de anestesia en el payload de NQN, y sólo uno se atribuye:
+//
+//   - las del GRUPO (371 en el período 10/2026): los socios históricos ven el
+//     MISMO listado en evweb y el scraper las deduplica. El `profesional` ahí
+//     es quién las ve, no de quién son: son del pozo del grupo y NO se
+//     atribuyen a nadie — si se atribuyeran, el prorrateo le recortaría al
+//     grupo anestesias que sí le corresponden.
+//
+//   - las PROPIAS (35 de JBO, 19 de RRISO): listado individual del socio. Son
+//     las que hay que atribuir, porque son las que pueden ser previas a su
+//     ingreso al grupo.
+//
+// El scraper marca cuáles son propias con `propia: true` (o `tipo: 'propia'`).
+// Sin esa marca no se atribuye nada: es más seguro no prorratear y avisar que
+// atribuirle al grupo entero las anestesias de un socio.
 function _socioDeAnestesia(a, userMap, warnings) {
+    const esPropia = a.propia === true || String(a.tipo || '').toLowerCase() === 'propia';
+    if (!esPropia) return null; // anestesia del pozo del grupo
+
     const raw = a.socio ?? a.profesional ?? a.username ?? null;
-    if (!raw) return null;
+    if (!raw) {
+        const msg = `Anestesias: hay anestesias propias sin socio; no se pueden ` +
+            `atribuir y el prorrateo no se aplica a ese socio`;
+        if (!warnings.includes(msg)) warnings.push(msg);
+        return null;
+    }
+
     const key = String(raw).trim().toLowerCase();
-    if (!key) return null;
     const uid = userMap[key];
     if (!uid) {
         // Si viene con espacios es el nombre completo de evweb ("ALAN LEANDRO
-        // MACIAS") en vez del username (amacias). Se avisa distinto porque el
-        // arreglo es otro: el scraper tiene que mandar el username, igual que
-        // ya hace en ingresos[] y deduccionesPersonales[].
-        const parecaNombreCompleto = /\s/.test(String(raw).trim());
-        const msg = parecaNombreCompleto
+        // MACIAS") en vez del username (amacias). El arreglo es en el scraper:
+        // mandar el username, igual que en ingresos[] y deduccionesPersonales[].
+        const pareceNombreCompleto = /\s/.test(String(raw).trim());
+        const msg = pareceNombreCompleto
             ? `Anestesias: "${raw}" parece un nombre completo de evweb, no un ` +
               `username. El payload debe mandar el username de la app (ej: amacias), ` +
-              `igual que en ingresos[]. Las anestesias quedan sin atribuir y el ` +
-              `prorrateo NO se aplica.`
-            : `Anestesias: profesional "${raw}" no encontrado; la anestesia ` +
-              `queda sin atribuir (se trata como del pozo del grupo)`;
+              `igual que en ingresos[]. Sus anestesias propias quedan sin atribuir ` +
+              `y el prorrateo NO se aplica.`
+            : `Anestesias: profesional "${raw}" no encontrado; sus anestesias ` +
+              `propias quedan sin atribuir y el prorrateo NO se aplica`;
         if (!warnings.includes(msg)) warnings.push(msg);
         return null;
     }

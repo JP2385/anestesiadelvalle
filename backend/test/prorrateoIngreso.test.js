@@ -242,6 +242,29 @@ test('las anestesias del pozo del grupo (sin socio) no se tocan', () => {
     assert.equal(g[HIST], 100);
 });
 
+test('las 371 del grupo no se atribuyen; sólo las propias de JBO/RRISO', () => {
+    // Estructura real del payload (log del 30/10): 371 anestesias "del grupo"
+    // que los 14 históricos ven iguales (deduplicadas), + 35 propias de JBO y
+    // 19 de RRISO. Las del grupo van sin userId: son del pozo. Si se
+    // atribuyeran, el prorrateo le recortaría al grupo trabajo que sí es suyo.
+    const delGrupo = Array.from({ length: 5 }, () => an('2026-08-15', 1000, null));
+    const propiasJbo = [an('2026-07-10', 100, JBO), an('2026-09-20', 300, JBO)];
+
+    const doc = {
+        anestesias: [...delGrupo, ...propiasJbo],
+        deduccionesGrupales: [{ userId: JBO, concepto: 'IIBB', monto: 40 }]
+    };
+    const r = aplicarProrrateo(doc, ventanasDeParticipacion(periodosEstandar()));
+
+    // las 5 del grupo quedan aunque sean previas al 1/9: son del pozo
+    assert.equal(doc.anestesias.filter(a => a.userId === null).length, 5);
+    // de JBO sale sólo la previa a su ingreso
+    assert.equal(doc.anestesias.filter(a => a.userId === JBO).length, 1);
+    // proporción de JBO sobre SUS propias: 300 / 400 = 75%
+    assert.equal(r.socios[0].proporcion, 0.75);
+    assert.equal(doc.deduccionesGrupales[0].monto, 30);
+});
+
 test('un socio histórico no se prorratea aunque tenga anestesias viejas', () => {
     const doc = {
         anestesias: [an('2026-01-15', 100, HIST), an('2026-09-15', 100, HIST)],
