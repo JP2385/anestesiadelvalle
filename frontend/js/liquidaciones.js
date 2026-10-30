@@ -245,6 +245,10 @@ document.addEventListener('DOMContentLoaded', function () {
                         );
                     }
                     for (const w of (x.warnings || [])) lineas.push(`    ⚠ ${w}`);
+                    // Diagnóstico del payload: qué campos trajo el scraper y qué
+                    // ventanas de participación hay. Sirve para ver por qué el
+                    // prorrateo no corre sin tener que mirar los logs de Heroku.
+                    for (const d of (x.diagnostico || [])) lineas.push(`    · ${d}`);
                 }
                 genAutoLog.textContent += '\n\n' + lineas.join('\n');
                 if ((data.errores || []).length) {

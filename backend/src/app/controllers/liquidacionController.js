@@ -421,6 +421,74 @@ function _socioDeAnestesia(a, userMap, warnings, stats) {
     return uid;
 }
 
+// Diagnóstico del payload: qué campos trae realmente cada anestesia y con qué
+// valores. Sin esto el prorrateo falla a ciegas — no se puede distinguir "el
+// scraper no manda la marca" de "la manda con otro nombre" o "el username no
+// matchea". Devuelve líneas para el log del job.
+function _diagnosticarPayload(p, userMap, ventanas, usernamePorUid) {
+    const out = [];
+    const anest = p.anestesias || [];
+
+    out.push(`DIAG payload ${p.origen} ${p.fecha}: ${anest.length} anestesias, ` +
+        `${(p.ingresos || []).length} ingresos, ` +
+        `${(p.deduccionesGrupales || []).length} ded.grupales, ` +
+        `${(p.deduccionesPersonales || []).length} ded.personales`);
+
+    if (anest.length) {
+        // Qué campos vienen en las anestesias (la unión de todas las claves)
+        const claves = new Set();
+        anest.forEach(a => Object.keys(a || {}).forEach(k => claves.add(k)));
+        out.push(`DIAG campos en anestesias[]: ${[...claves].sort().join(', ')}`);
+
+        // Una muestra cruda, que es lo que más rápido delata el formato
+        out.push(`DIAG primera anestesia: ${JSON.stringify(anest[0])}`);
+
+        // Cómo se distribuyen los valores de los campos que uso para atribuir
+        const cuenta = (fn) => {
+            const m = new Map();
+            anest.forEach(a => {
+                const v = fn(a);
+                const k = v === undefined ? '(ausente)' : v === null ? '(null)' : String(v);
+                m.set(k, (m.get(k) || 0) + 1);
+            });
+            return [...m.entries()].map(([k, n]) => `${k}=${n}`).join(' ');
+        };
+        out.push(`DIAG propia: ${cuenta(a => a.propia)}`);
+        out.push(`DIAG tipo:   ${cuenta(a => a.tipo)}`);
+
+        // Profesionales y si resuelven contra los usernames de la app
+        const prof = new Map();
+        anest.forEach(a => {
+            const raw = a.socio ?? a.profesional ?? a.username ?? null;
+            const k = raw === null || raw === undefined ? '(ausente)' : String(raw);
+            prof.set(k, (prof.get(k) || 0) + 1);
+        });
+        for (const [raw, n] of prof) {
+            const resuelve = raw !== '(ausente)' && !!userMap[raw.trim().toLowerCase()];
+            out.push(`DIAG profesional "${raw}" x${n} -> ${resuelve ? 'OK' : 'NO MATCHEA'}`);
+        }
+
+        const sinFecha = anest.filter(a => !a.fechaPractica).length;
+        if (sinFecha) out.push(`DIAG ${sinFecha} anestesia(s) sin fechaPractica`);
+    }
+
+    // Ventanas de participación: si está vacío, no hay GroupPeriod con 0% y el
+    // prorrateo no tiene a quién aplicar, por más que el payload venga perfecto.
+    if (!ventanas || ventanas.size === 0) {
+        out.push(`DIAG ventanas de participación: NINGUNA. No hay GroupPeriod con ` +
+            `participación 0%, así que ningún socio se considera de ingreso parcial ` +
+            `y el prorrateo no se aplica a nadie.`);
+    } else {
+        for (const [uid, v] of ventanas) {
+            out.push(`DIAG ventana ${usernamePorUid.get(uid) || uid}: ` +
+                `ingreso ${v.ingreso ? v.ingreso.toISOString().substring(0, 10) : '—'}` +
+                `${v.egreso ? `, egreso ${v.egreso.toISOString().substring(0, 10)}` : ''}`);
+        }
+    }
+
+    return out;
+}
+
 // Resuelve el socio de una deducción grupal. A diferencia de las anestesias, un
 // username que no resuelve acá es un error duro: la deducción existe y es de
 // alguien, y dejarla sin atribuir la volvería no prorrateable en silencio.
@@ -544,6 +612,16 @@ async function _guardarDesdePayload(p, userMap, creadoPor, groupPeriods) {
     const usernamePorUid = new Map(
         Object.entries(userMap).map(([username, uid]) => [String(uid), username])
     );
+
+    // Diagnóstico: qué llegó del scraper y qué ventanas hay. Va al log del job
+    // para poder ver por qué el prorrateo no corre, en vez de adivinar.
+    const diagnostico = _diagnosticarPayload(p, userMap, ventanas, usernamePorUid);
+    diagnostico.push(
+        `DIAG atribuidas a un socio: ` +
+        `${anestesias.filter(a => a.userId).length}/${anestesias.length}`
+    );
+    diagnostico.forEach(l => console.log(l));
+
     const prorrateo = aplicarProrrateo(doc, ventanas, usernamePorUid);
     if (prorrateo) {
         doc.prorrateo = prorrateo;
@@ -585,6 +663,7 @@ async function _guardarDesdePayload(p, userMap, creadoPor, groupPeriods) {
         anestesias: doc.anestesias.length, ingresos: ingresos.length,
         anestesiasRecibidas: recibidas,
         anestesiasPropias: statsAnest.propias,
+        diagnostico,
         deduccionesPersonales: deduccionesPersonales.length,
         prorrateo: doc.prorrateo
             ? {
