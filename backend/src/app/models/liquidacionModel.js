@@ -57,7 +57,10 @@ const prorrateoSocioSchema = new mongoose.Schema({
     dedGrupalOriginal: { type: Number, default: 0 },
     dedGrupalAjustada: { type: Number, default: 0 },
     dedPersonalOriginal: { type: Number, default: 0 },
-    dedPersonalAjustada: { type: Number, default: 0 }
+    dedPersonalAjustada: { type: Number, default: 0 },
+    // Lo que evweb le depositó, y la parte de eso que corresponde al grupo.
+    ingresoOriginal: { type: Number, default: 0 },
+    ingresoAjustado: { type: Number, default: 0 }
 }, { _id: false });
 
 const prorrateoSchema = new mongoose.Schema({
