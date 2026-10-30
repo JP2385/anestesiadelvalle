@@ -612,8 +612,11 @@ document.addEventListener('DOMContentLoaded', function () {
                 if (s.dedPersonalOriginal > 0) {
                     deds.push(`individuales ${formatMoney(s.dedPersonalOriginal)} → ${formatMoney(s.dedPersonalAjustada)}`);
                 }
+                if (s.ingresoOriginal > 0) {
+                    deds.push(`cobrado ${formatMoney(s.ingresoOriginal)} → ${formatMoney(s.ingresoAjustado)}`);
+                }
                 const dedTxt = deds.length
-                    ? `<br><span class="prorrateo-deds">Deducciones: ${esc(deds.join(' · '))}</span>`
+                    ? `<br><span class="prorrateo-deds">${esc(deds.join(' · '))}</span>`
                     : '';
 
                 return `
@@ -638,9 +641,9 @@ document.addEventListener('DOMContentLoaded', function () {
                         por ${formatMoney(prorrateo.montoExcluido)} del pozo a repartir:
                         con 0% de participación el socio no estaba en el grupo, así que
                         ese trabajo es suyo y no del grupo. Sus deducciones —grupales e
-                        individuales— se contabilizan en la misma proporción, porque evweb
-                        las calcula sobre el total facturado. Los ingresos acreditados no
-                        se modifican.
+                        individuales— y lo que cobró se contabilizan en la misma
+                        proporción: de lo que evweb le depositó, sólo esa parte
+                        corresponde a anestesias hechas dentro del grupo.
                     </p>
                 </div>`);
         }

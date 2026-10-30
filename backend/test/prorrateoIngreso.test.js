@@ -100,7 +100,9 @@ test('ejemplo del usuario: RRISO entró el 1/9, $50 antes y $50 después', () =>
     const doc = {
         anestesias: [an('2026-08-01', 50, RRISO), an('2026-09-15', 50, RRISO)],
         deduccionesGrupales: [{ userId: RRISO, concepto: 'INGRESOS BRUTOS', monto: 8 }],
-        deduccionesPersonales: [{ userId: RRISO, concepto: 'OSDE', monto: 2 }]
+        deduccionesPersonales: [{ userId: RRISO, concepto: 'OSDE', monto: 2 }],
+        // evweb le deposita el neto de los $100: 100 − 8 − 2 = 90
+        ingresos: [{ tipo: 'socio', userId: RRISO, monto: 90 }]
     };
     const r = aplicarProrrateo(doc, ventanasDeParticipacion(periodosEstandar()));
 
@@ -112,6 +114,15 @@ test('ejemplo del usuario: RRISO entró el 1/9, $50 antes y $50 después', () =>
     assert.equal(doc.deduccionesGrupales[0].monto, 4);
     // $1 de deducciones individuales (50% de 2)
     assert.equal(doc.deduccionesPersonales[0].monto, 1);
+    // y cobró $45: la mitad de los $90 que le depositaron
+    assert.equal(doc.ingresos[0].monto, 45);
+    // cuadra: 50 de bruto − 4 − 1 = 45
+    assert.equal(
+        doc.anestesias[0].montoFacturado
+        - doc.deduccionesGrupales[0].monto
+        - doc.deduccionesPersonales[0].monto,
+        doc.ingresos[0].monto
+    );
 });
 
 test('las deducciones individuales también se prorratean', () => {
@@ -128,15 +139,39 @@ test('las deducciones individuales también se prorratean', () => {
     assert.equal(doc.deduccionesPersonales[0].monto, 111406.39, '50% de 222812.78');
 });
 
-test('ingresos[] no se toca: es la plata que realmente entró', () => {
+test('ingresos[] también se prorratea: parte de lo cobrado no es del grupo', () => {
+    // A JBO le entraron $35.483.009,79 por evweb, pero parte de eso es el cobro
+    // de sus anestesias previas al ingreso: plata suya que pasó por el mismo
+    // circuito. Para el grupo cuenta sólo la parte posterior al 1/9.
     const doc = {
         anestesias: [an('2026-08-01', 50, JBO), an('2026-09-15', 50, JBO)],
         deduccionesGrupales: [],
         ingresos: [{ tipo: 'socio', userId: JBO, monto: 35483009.79 }]
     };
-    aplicarProrrateo(doc, ventanasDeParticipacion(periodosEstandar()));
+    const r = aplicarProrrateo(doc, ventanasDeParticipacion(periodosEstandar()));
 
-    assert.equal(doc.ingresos[0].monto, 35483009.79);
+    assert.equal(doc.ingresos[0].monto, 17741504.90, '50% de lo depositado');
+    assert.equal(r.socios[0].ingresoOriginal, 35483009.79);
+    assert.equal(r.socios[0].ingresoAjustado, 17741504.90);
+});
+
+test('el ingreso tipo empresa no se toca (no tiene socio)', () => {
+    const doc = {
+        anestesias: [an('2026-08-01', 50, JBO), an('2026-09-15', 50, JBO)],
+        deduccionesGrupales: [],
+        ingresos: [
+            { tipo: 'empresa', userId: null, monto: 1000 },
+            { tipo: 'socio', userId: JBO, monto: 100 }
+        ]
+    };
+    const r = aplicarProrrateo(
+        doc, ventanasDeParticipacion(periodosEstandar()), new Map([[JBO, 'jbo']])
+    );
+
+    assert.equal(doc.ingresos[0].monto, 1000, 'empresa intacto');
+    assert.equal(doc.ingresos[1].monto, 50, 'socio al 50%');
+    // y no debe avisar por el ingreso de empresa: no tener socio es lo normal ahí
+    assert.equal(r.warnings.length, 0);
 });
 
 test('las deducciones se prorratean por socio, no con un factor global', () => {
@@ -343,6 +378,28 @@ test('detecta la atribución faltante: socio parcial con ingresos y sin anestesi
 
     assert.equal(alertas.length, 1);
     assert.match(alertas[0], /ninguna anestesia atribuida/);
+});
+
+test('detecta el caso real: deducción personal al monto entero', () => {
+    // Lo que vio el usuario (2026-10-30): el FONDO APORTE DE ASOCIADOS de JBO
+    // figuraba por $839.503,39, el monto entero, porque las anestesias llegaron
+    // sin atribución y el prorrateo no tuvo con qué calcular la proporción.
+    const liq = {
+        anestesias: [an('2026-08-01', 50, null), an('2026-09-15', 50, null)],
+        prorrateo: null,
+        ingresos: [{ tipo: 'socio', userId: JBO, monto: 35483009.79 }],
+        deduccionesPersonales: [
+            { userId: JBO, concepto: 'FONDO APORTE DE ASOCIADOS', monto: 839503.39 }
+        ]
+    };
+    const alertas = controlarProrrateo(
+        liq, ventanasDeParticipacion(periodosEstandar()), new Map([[JBO, 'jbo']])
+    );
+
+    assert.equal(alertas.length, 1);
+    assert.match(alertas[0], /SIN PRORRATEAR/);
+    assert.match(alertas[0], /839503\.39|deducciones/);
+    assert.match(alertas[0], /anestesias\[\] del payload/);
 });
 
 test('no alerta por un socio parcial que simplemente no facturó', () => {

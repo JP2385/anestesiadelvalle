@@ -8,27 +8,29 @@
 // a su ingreso — trabajo previo, que no es del grupo. Y evweb calcula las
 // deducciones sobre el TOTAL facturado, incluido ese trabajo previo.
 //
-// Esta app reparte por POZO: suma todas las anestesias en un montoBruto único y
-// se lo divide a cada socio por su % de participación (ver calcularDistribucion
-// en liquidacionController). No hay "crédito del socio" que prorratear. Así que
-// la regla del prorrateo se traduce a este modelo como:
-//
-//   1. las anestesias previas al ingreso SALEN del pozo (no se reparten entre
-//      los 16 socios: no son trabajo del grupo);
-//   2. las deducciones GRUPALES se reducen en la proporción que le correspondía
-//      a esas anestesias excluidas, porque evweb las calculó sobre el total;
-//   3. las deducciones PERSONALES van COMPLETAS: no dependen del volumen
-//      facturado, son del socio (OSDE, jubilación, FONDO APORTE DE ASOCIADOS);
-//   4. ingresos[] NO se toca: es la plata que realmente entró a la cuenta del
-//      socio, y el saldo la compara contra lo que le corresponde. Escalarla
-//      haría que el saldo deje de reflejar la realidad.
-//
-// La proporción es por MONTO, no por cantidad de anestesias:
+// La regla: si el socio tenía 0% de participación, no estaba en el grupo. Si en
+// su evweb figuran anestesias de ese período, son suyas y no tienen nada que ver
+// con el grupo. Entonces se prorratea TODO lo que trae por ellas, por la misma
+// proporción:
 //
 //     proporción = Σ importe (fechaPractica >= ingreso) / Σ importe (todas)
 //
-// Ejemplo: factura 100, de los cuales 50 son posteriores al 1/9 → 50%; con
-// deducciones grupales de 50 atribuibles, se toman 25.
+//   1. las anestesias previas al ingreso SALEN del pozo del grupo;
+//   2. las deducciones GRUPALES de ese socio, a su proporción;
+//   3. las deducciones INDIVIDUALES de ese socio, a su proporción;
+//   4. lo que COBRÓ (ingresos[]), a su proporción: a JBO le entraron
+//      $35.483.009,79 por evweb, pero parte de eso es el cobro de su trabajo
+//      previo — plata suya que pasó por el mismo circuito y nunca fue del
+//      grupo. Para la liquidación del grupo hay que considerar sólo lo
+//      correspondiente a las anestesias posteriores a su ingreso, menos el
+//      descuento proporcional.
+//
+// Ejemplo del usuario (RRISO ingresó el 1/9): $50 previos y $50 posteriores →
+// proporción 50%. Con $8 de deducciones grupales y $2 individuales, se
+// contabilizan para el grupo $50 de bruto, $4 grupales y $1 individuales.
+//
+// Los montos se prorratean POR SOCIO, no con un factor global sobre el total:
+// "de los $8 de RRISO se cuentan $4", no "el pozo entero baja un 3%".
 //
 // El ingreso/egreso se deriva de las participaciones al 0% de los GroupPeriod,
 // no de fechas hardcodeadas por socio: una tabla hardcodeada falla en silencio
@@ -147,12 +149,16 @@ function escalar(monto, proporcion) {
 }
 
 /**
- * Prorratea las deducciones de un socio por su proporción.
+ * Prorratea por su proporción las líneas de un socio (deducciones o ingresos).
  *
  * Sólo toca las líneas atribuidas a ese socio: las de los demás y las agregadas
  * (sin userId) quedan intactas. Devuelve el array nuevo y cuánto se descontó.
+ *
+ * `sinAtribuir` suma las líneas sin userId. Para las deducciones grupales eso
+ * es una señal de alarma (no se pudieron prorratear); para los ingresos es
+ * normal, porque los de tipo 'empresa' no tienen socio. El llamador decide.
  */
-function prorratearDeducciones(lineas, uid, proporcion) {
+function prorratearLineasDeSocio(lineas, uid, proporcion) {
     let original = 0;
     let ajustado = 0;
     let sinAtribuir = 0;
@@ -197,11 +203,17 @@ function prorratearDeducciones(lineas, uid, proporcion) {
  * Es decir: TODO lo que trae la liquidación de ese socio se prorratea por la
  * misma proporción. Si tiene 0% de participación en un período, no está en el
  * grupo; si en su evweb figuran anestesias de ese período, son suyas y no
- * tienen nada que ver con el grupo — ni su bruto ni ninguna de sus
- * deducciones.
+ * tienen nada que ver con el grupo — ni su bruto, ni sus deducciones, ni lo
+ * que cobró por ellas.
  *
- * Lo único que NO se toca es `ingresos[]`: es la plata que realmente entró a la
- * cuenta del socio, y el saldo la compara contra lo que le corresponde.
+ * `ingresos[]` TAMBIÉN se prorratea. A JBO le entraron $35.483.009,79 por
+ * evweb, pero una parte de eso es el cobro de sus anestesias previas al
+ * ingreso: plata suya que pasó por el mismo circuito, que nunca fue del grupo.
+ * Para la liquidación del grupo hay que considerar que le ingresó sólo lo
+ * correspondiente a las anestesias posteriores a su ingreso, menos el descuento
+ * proporcional. Si no se prorratea, el saldo compara su parte (calculada sobre
+ * las anestesias del grupo) contra un ingreso que incluye trabajo ajeno al
+ * grupo: magnitudes de universos distintos.
  *
  * Las deducciones se prorratean POR SOCIO, no con un factor global sobre el
  * total: la regla es "de los $8 de RRISO se cuentan $4", no "el pozo entero
@@ -241,6 +253,7 @@ function aplicarProrrateo(doc, ventanas, usernamePorUid = new Map()) {
     // ajustes de cada uno (cada socio toca sólo sus propias líneas).
     let dedGrupales = doc.deduccionesGrupales || [];
     let dedPersonales = doc.deduccionesPersonales || [];
+    let ingresos = doc.ingresos || [];
 
     for (const [uid, propias] of porSocio) {
         const ventana = ventanas.get(uid);
@@ -271,10 +284,16 @@ function aplicarProrrateo(doc, ventanas, usernamePorUid = new Map()) {
         // Las deducciones de ESTE socio (grupales e individuales) se prorratean
         // por SU proporción. Ejemplo del usuario: $8 grupales → $4, $2
         // individuales → $1, con proporción 50%.
-        const g = prorratearDeducciones(dedGrupales, uid, proporcion);
-        const p = prorratearDeducciones(dedPersonales, uid, proporcion);
+        const g = prorratearLineasDeSocio(dedGrupales, uid, proporcion);
+        const p = prorratearLineasDeSocio(dedPersonales, uid, proporcion);
         dedGrupales = g.lineas;
         dedPersonales = p.lineas;
+
+        // Y lo que cobró: de los $35.483.009,79 que le entraron a JBO, sólo la
+        // parte correspondiente a las anestesias posteriores a su ingreso es
+        // del grupo. El resto es el cobro de su trabajo previo.
+        const i = prorratearLineasDeSocio(ingresos, uid, proporcion);
+        ingresos = i.lineas;
 
         socios.push({
             userId: uid,
@@ -289,7 +308,9 @@ function aplicarProrrateo(doc, ventanas, usernamePorUid = new Map()) {
             dedGrupalOriginal: g.original,
             dedGrupalAjustada: g.ajustado,
             dedPersonalOriginal: p.original,
-            dedPersonalAjustada: p.ajustado
+            dedPersonalAjustada: p.ajustado,
+            ingresoOriginal: i.original,
+            ingresoAjustado: i.ajustado
         });
 
         // Una deducción grupal sin socio no se puede prorratear. Es el modo de
@@ -322,12 +343,11 @@ function aplicarProrrateo(doc, ventanas, usernamePorUid = new Map()) {
     //    ese trabajo es suyo, no del grupo.
     doc.anestesias = anestesias.filter(a => !excluidas.has(a));
 
-    // 2. y 3. Las deducciones grupales e individuales ya quedaron prorrateadas
-    //    socio por socio en el loop de arriba.
+    // 2. 3. y 4. Deducciones (grupales e individuales) e ingresos ya quedaron
+    //    prorrateados socio por socio en el loop de arriba.
     doc.deduccionesGrupales = dedGrupales;
     doc.deduccionesPersonales = dedPersonales;
-
-    // 4. ingresos[] NO se toca (es lo que realmente se depositó).
+    doc.ingresos = ingresos;
 
     const montoExcluidoTotal = [...excluidas].reduce(
         (s, a) => s + Number(a.montoFacturado || 0), 0
@@ -391,16 +411,31 @@ function controlarProrrateo(liquidacion, ventanas, usernamePorUid = new Map()) {
 
         // Socio con ventana parcial del que no llegó NINGUNA anestesia atribuida:
         // puede ser legítimo (no facturó), pero si la liquidación tiene ingresos
-        // a su nombre, entonces facturó y el payload no trajo la atribución.
+        // o deducciones a su nombre, entonces facturó y el payload no trajo la
+        // atribución. Es el caso que vio el usuario: el FONDO APORTE DE
+        // ASOCIADOS de JBO figuraba por $839.503,39 (el monto entero) porque el
+        // prorrateo no tenía anestesias con las que calcular la proporción.
         if (!atribuidas.has(uid) && !prorrateados.has(uid)) {
-            const tieneIngreso = (liquidacion.ingresos || []).some(
-                i => i.tipo === 'socio' && uidToString(i.userId) === uid && Number(i.monto) > 0
-            );
-            if (tieneIngreso) {
+            const montoIngresos = (liquidacion.ingresos || [])
+                .filter(i => i.tipo === 'socio' && uidToString(i.userId) === uid)
+                .reduce((s, i) => s + Number(i.monto || 0), 0);
+            const montoDeds = [
+                ...(liquidacion.deduccionesPersonales || []),
+                ...(liquidacion.deduccionesGrupales || [])
+            ]
+                .filter(d => uidToString(d.userId) === uid)
+                .reduce((s, d) => s + Number(d.monto || 0), 0);
+
+            if (montoIngresos > 0 || montoDeds > 0) {
                 alertas.push(
-                    `${nombre} tiene participación parcial e ingresos en esta liquidación, ` +
-                    `pero ninguna anestesia atribuida: no se pudo verificar el prorrateo. ` +
-                    `¿El payload trajo el profesional por anestesia?`
+                    `${nombre} tiene participación parcial (ingreso ` +
+                    `${ventana.ingreso ? ventana.ingreso.toISOString().substring(0, 10) : '—'}) ` +
+                    `y movimientos en esta liquidación ` +
+                    `(${montoIngresos > 0 ? `cobrado ${montoIngresos.toFixed(2)}` : ''}` +
+                    `${montoIngresos > 0 && montoDeds > 0 ? ', ' : ''}` +
+                    `${montoDeds > 0 ? `deducciones ${montoDeds.toFixed(2)}` : ''}), ` +
+                    `pero ninguna anestesia atribuida: los importes están SIN PRORRATEAR ` +
+                    `(se tomaron completos). Falta el campo "socio" en anestesias[] del payload.`
                 );
             }
         }
