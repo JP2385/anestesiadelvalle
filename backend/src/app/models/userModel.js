@@ -86,6 +86,14 @@ const userSchema = new Schema({
         type: Boolean,
         default: false
     },
+    // Ajuste manual del conteo de feriados largos. Se suma al total histórico
+    // real (derivado de Holiday.users) solo a los efectos del reparto
+    // automático, para que quien se incorporó tarde al grupo no arranque en 0
+    // y quede sobrecargado hasta alcanzar a los veteranos.
+    holidayCountOffset: {
+        type: Number,
+        default: 0
+    },
     doesPediatrics: {
         type: Boolean,
         default: false

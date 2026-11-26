@@ -213,6 +213,12 @@ document.addEventListener("DOMContentLoaded", () => {
     }
     
 
+    // 🔹 Ajuste manual de conteo por usuario (para quienes se incorporaron tarde)
+    function getOffset(username) {
+        const user = allUsers.find(u => u.username === username);
+        return user?.holidayCountOffset || 0;
+    }
+
     // 🔹 Renderizar la tabla de conteo de feriados largos
     function renderUserHolidayCountTable(holidayCount, years) {
         const thead = userHolidayCountTable.querySelector("thead");
@@ -248,7 +254,16 @@ document.addEventListener("DOMContentLoaded", () => {
                 row.appendChild(document.createElement("td")).textContent = count;
             });
 
-            row.appendChild(document.createElement("td")).textContent = total;
+            // 📌 El total incluye el ajuste manual. Se muestra "8 (+2)" para que
+            // quede claro que el número que usa el reparto no es solo el histórico.
+            // Importante: el total ajustado va primero, porque assignHolidaysButton
+            // lee esta celda con parseInt() para sembrar userCounters.
+            const offset = getOffset(username);
+            const totalCell = document.createElement("td");
+            totalCell.textContent = offset
+                ? `${total + offset} (${offset > 0 ? "+" : ""}${offset})`
+                : `${total}`;
+            row.appendChild(totalCell);
             tbody.appendChild(row);
         });
     }
@@ -263,14 +278,32 @@ document.addEventListener("DOMContentLoaded", () => {
     // 🔹 Recargar datos al cambiar el año seleccionado
     yearFilter.addEventListener("change", () => loadHolidays(yearFilter.value));
 
+    // 🔹 Pareja que debe trabajar junta en los feriados largos. Ojo: en las
+    // guardias diarias el resto de la app valida lo contrario (ver
+    // shiftValidationUtils.js), acá se asignan juntos a propósito.
+    const pairings = { "mquiroga": "lharriague", "lharriague": "mquiroga" };
+
+    // 🔹 Cada feriado largo se cubre con 3 personas: un rionegrino que haga
+    // cardio y dos neuquinos. Quien trabaja en ambas provincias puede ocupar
+    // cualquiera de los dos tipos de cupo.
+    const CUPOS = [
+        { tipo: "rn-cardio", cumple: u => u?.worksInPrivateRioNegro && u?.doesCardio },
+        { tipo: "nqn",       cumple: u => u?.worksInPrivateNeuquen },
+        { tipo: "nqn",       cumple: u => u?.worksInPrivateNeuquen }
+    ];
+
     assignHolidaysButton.addEventListener("click", () => {
         const holidayRows = document.querySelectorAll("#holiday-table tbody tr");
         const userCounters = {}; // 📌 Contador de asignaciones por usuario
+        const faltantes = []; // 📌 Cupos que no se pudieron cubrir, para avisar al final
 
-        // 📌 Obtener conteo total acumulado desde la tabla
+        // 📌 Obtener conteo total acumulado desde la tabla.
+        // La celda puede venir como "8" o "8 (+2)" cuando hay ajuste manual; en
+        // ambos casos el primer número ya es el total ajustado que debe usar el
+        // reparto, así que se toma solo ese.
         document.querySelectorAll("#user-holiday-count-table tbody tr").forEach(row => {
             const username = row.cells[0].textContent.trim();
-            const total = parseInt(row.lastElementChild.textContent) || 0; // 📌 Última celda es el total acumulado
+            const total = parseInt(row.lastElementChild.textContent.match(/-?\d+/)?.[0]) || 0;
             const user = allUsers.find(u => u.username === username);
             if (user) {
                 userCounters[user._id] = total;
@@ -280,203 +313,105 @@ document.addEventListener("DOMContentLoaded", () => {
     
         holidayRows.forEach(row => {
             const selects = row.querySelectorAll("select");
-            let assignedUsers = new Set(); // 📌 Usuarios ya asignados a este feriado
-    
-            // 📌 Obtener la cantidad máxima de asignaciones actual
-            let maxAssignments = Math.max(...Object.values(userCounters), 0);
-    
-            // 📌 Paso 1: Asignar usuario al azar al primer select
-            let availableUsers = Array.from(selects[0].options)
-                .filter(option => option.value &&
-                    !assignedUsers.has(option.value) &&
-                    userCounters[option.value] < maxAssignments // 🔹 EXCLUIR USUARIOS CON EL MÁXIMO DE ASIGNACIONES
-                )
-                .map(option => option.value);
-    
-            // Si todos tienen el máximo de asignaciones, permitir usuarios con `maxAssignments`
-            if (availableUsers.length === 0) {
-                availableUsers = Array.from(selects[0].options)
-                    .filter(option => option.value &&
-                        !assignedUsers.has(option.value) &&
-                        userCounters[option.value] <= maxAssignments // 🔹 PERMITIR SOLO A QUIENES NO LO SUPERAN
-                    )
-                    .map(option => option.value);
-            }
-    
-            if (availableUsers.length === 0) return; // Si no hay usuarios disponibles, continuar con el siguiente feriado
-    
-            let firstUser = availableUsers[Math.floor(Math.random() * availableUsers.length)];
-            selects[0].value = firstUser;
-            assignedUsers.add(firstUser);
-            userCounters[firstUser]++;
-    
-            let firstUsername = allUsers.find(u => u._id === firstUser)?.username || firstUser;
-            console.log(`📌 Asignado primer usuario: ${firstUsername}`);
-    
-            // 📌 Paso 2: Asignación emparejada (validando que no haya sido ya asignado)
-            let secondUser = null;
-            const pairings = { "ltotis": "mmelo", "mmelo": "ltotis", "mquiroga": "lharriague", "lharriague": "mquiroga" };
-    
-            if (pairings[firstUsername]) {
-                let pairedUser = allUsers.find(u => u.username === pairings[firstUsername]);
-    
-                // ⚠️ Asegurar que el usuario emparejado NO esté ya asignado a este feriado
-                if (pairedUser && !assignedUsers.has(pairedUser._id) &&
-                    Array.from(selects[1].options).some(option => option.value === pairedUser._id)) {
-                    secondUser = pairedUser._id;
+            const holidayName = row.cells[0]?.textContent.trim() || "feriado";
+            const assignedUsers = new Set(); // 📌 Usuarios ya asignados a este feriado
+
+            // 📌 Candidatos de este feriado: las opciones del select ya vienen
+            // filtradas por vacaciones y licencias en loadHolidays().
+            const candidatos = Array.from(selects[0].options)
+                .map(option => option.value)
+                .filter(Boolean);
+
+            const datos = id => allUsers.find(u => u._id === id);
+            const nombre = id => datos(id)?.username || id;
+
+            // 📌 Elige al candidato que cumple el cupo con menos feriados
+            // acumulados. El desempate es al azar para que dos personas con el
+            // mismo conteo no queden siempre en el mismo orden.
+            const elegirPara = cupo => {
+                const maxAssignments = Math.max(...Object.values(userCounters), 0);
+                const aptos = candidatos
+                    .filter(id => !assignedUsers.has(id) && cupo.cumple(datos(id)));
+
+                // Se intenta primero entre quienes están por debajo del máximo
+                // (equidad) y, si no hay nadie, se abre al resto de los aptos.
+                const porDebajo = aptos.filter(id => userCounters[id] < maxAssignments);
+                const pool = porDebajo.length > 0 ? porDebajo : aptos;
+                if (pool.length === 0) return null;
+
+                const minimo = Math.min(...pool.map(id => userCounters[id] ?? 0));
+                const empatados = pool.filter(id => (userCounters[id] ?? 0) === minimo);
+                return empatados[Math.floor(Math.random() * empatados.length)];
+            };
+
+            const asignar = id => {
+                assignedUsers.add(id);
+                userCounters[id] = (userCounters[id] ?? 0) + 1;
+            };
+
+            // 📌 Paso 1: Cubrir los cupos del feriado (1 rionegrino con cardio
+            // + 2 neuquinos). Se ordena por cantidad de candidatos aptos para
+            // resolver primero el cupo más difícil: así quien trabaja en ambas
+            // provincias no se gasta en el cupo fácil y deja el otro vacío.
+            const cuposOrdenados = [...CUPOS].sort((a, b) =>
+                candidatos.filter(id => a.cumple(datos(id))).length -
+                candidatos.filter(id => b.cumple(datos(id))).length
+            );
+
+            cuposOrdenados.forEach(cupo => {
+                const elegido = elegirPara(cupo);
+                if (elegido) {
+                    asignar(elegido);
+                } else {
+                    faltantes.push(`${holidayName}: falta ${cupo.tipo === "rn-cardio" ? "un rionegrino que haga cardio" : "un neuquino"}`);
                 }
-            }
-    
-            // 📌 Paso 3: Si no se pudo asignar la pareja emparejada, elegir otro usuario bajo la misma lógica de equidad
-            if (!secondUser) {
-                let firstUserData = allUsers.find(u => u._id === firstUser);
-                let excludeUsers = [];
-
-                // 📌 Si el usuario asignado en el primer select NO trabaja en privado Neuquén, excluir a mmelo y ltotis
-                if (firstUserData && firstUserData.worksInPrivateNeuquen === false) {
-                    excludeUsers.push("mmelo", "ltotis");
-                }
-
-                availableUsers = Array.from(selects[1].options)
-                    .filter(option => option.value &&
-                        !assignedUsers.has(option.value) &&
-                        !excludeUsers.includes(allUsers.find(u => u._id === option.value)?.username) &&
-                        userCounters[option.value] < maxAssignments // 🔹 Aplicar el filtro de equidad
-                    )
-                    .map(option => option.value);
-
-                if (availableUsers.length === 0) {
-                    availableUsers = Array.from(selects[1].options)
-                        .filter(option => option.value &&
-                            !assignedUsers.has(option.value) &&
-                            !excludeUsers.includes(allUsers.find(u => u._id === option.value)?.username) &&
-                            userCounters[option.value] <= maxAssignments // 🔹 PERMITIR SOLO A QUIENES NO LO SUPERAN
-                        )
-                        .map(option => option.value);
-                }
-
-                if (availableUsers.length > 0) {
-                    secondUser = availableUsers[0];
-                }
-            }
-
-            if (secondUser) {
-                selects[1].value = secondUser;
-                assignedUsers.add(secondUser);
-                userCounters[secondUser]++;
-            }
-
-            let secondUsername = allUsers.find(u => u._id === secondUser)?.username || secondUser;
-            console.log(`📌 Asignado segundo usuario: ${secondUsername}`);
-
-    
-            // 📌 Paso 4: Asignación emparejada del tercer usuario (validando que no haya sido ya asignado)
-            let thirdUser = null;
-            if (pairings[secondUsername]) {
-                let pairedUser = allUsers.find(u => u.username === pairings[secondUsername]);
-    
-                // ⚠️ Asegurar que el usuario emparejado NO esté ya asignado a este feriado
-                if (pairedUser && !assignedUsers.has(pairedUser._id) &&
-                    Array.from(selects[2].options).some(option => option.value === pairedUser._id)) {
-                    thirdUser = pairedUser._id;
-                }
-            }
-    
-            // 📌 Paso 5: Asignar tercer usuario considerando cardio y equidad
-            let hasCardio = [firstUser, secondUser].some(user => {
-                return allUsers.find(u => u._id === user)?.doesCardio;
             });
 
-            // 📌 Obtener datos de los usuarios asignados en primer y segundo lugar
-            let firstUserData = allUsers.find(u => u._id === firstUser);
-            let secondUserData = allUsers.find(u => u._id === secondUser);
+            // 📌 Paso 2: Si alguno de los asignados tiene pareja, sumarla en un
+            // puesto extra. La pareja se agrega además de los cupos, no en
+            // lugar de ellos, para no descubrir una provincia.
+            Array.from(assignedUsers).forEach(id => {
+                const parejaDe = pairings[nombre(id)];
+                if (!parejaDe) return;
 
-            // 📌 Si ambos usuarios NO trabajan en privado Neuquén, excluir a quienes tampoco trabajan en privado Neuquén
-            let excludePrivateNeuquen = (firstUserData?.worksInPrivateNeuquen === false && secondUserData?.worksInPrivateNeuquen === false);
+                const pareja = allUsers.find(u => u.username === parejaDe);
+                if (!pareja || assignedUsers.has(pareja._id)) return;
 
-            // 📌 Si ambos usuarios NO trabajan en privado Río Negro, excluir a quienes tampoco trabajan en privado Río Negro
-            let excludePrivateRioNegro = (firstUserData?.worksInPrivateRioNegro === false && secondUserData?.worksInPrivateRioNegro === false);
-
-            if (!thirdUser) {
-                availableUsers = Array.from(selects[2].options)
-                    .filter(option => {
-                        let userData = allUsers.find(u => u._id === option.value);
-                        return option.value &&
-                            !assignedUsers.has(option.value) &&
-                            !["mquiroga", "lharriague", "mmelo", "ltotis"].includes(userData?.username) &&
-                            userCounters[option.value] < maxAssignments &&
-                            (!excludePrivateNeuquen || userData?.worksInPrivateNeuquen) &&
-                            (!excludePrivateRioNegro || userData?.worksInPrivateRioNegro);
-                    })
-                    .map(option => option.value);
-
-                // 📌 Segundo intento: Permitir usuarios que no superen `maxAssignments`
-                if (availableUsers.length === 0) {
-                    availableUsers = Array.from(selects[2].options)
-                        .filter(option => {
-                            let userData = allUsers.find(u => u._id === option.value);
-                            return option.value &&
-                                !assignedUsers.has(option.value) &&
-                                !["mquiroga", "lharriague", "mmelo", "ltotis"].includes(userData?.username) &&
-                                userCounters[option.value] <= maxAssignments &&
-                                (!excludePrivateNeuquen || userData?.worksInPrivateNeuquen) &&
-                                (!excludePrivateRioNegro || userData?.worksInPrivateRioNegro);
-                        })
-                        .map(option => option.value);
+                // Sólo si sigue siendo candidato (no está de vacaciones ni de licencia)
+                if (!candidatos.includes(pareja._id)) {
+                    faltantes.push(`${holidayName}: ${nombre(id)} quedó sin ${parejaDe}`);
+                    return;
                 }
+                asignar(pareja._id);
+            });
 
-                // 📌 Último intento: Seleccionar al usuario con menos asignaciones, aunque supere `maxAssignments`
-                if (availableUsers.length === 0) {
-                    availableUsers = Array.from(selects[2].options)
-                        .filter(option => {
-                            let userData = allUsers.find(u => u._id === option.value);
-                            return option.value &&
-                                !assignedUsers.has(option.value) &&
-                                !["mquiroga", "lharriague", "mmelo", "ltotis"].includes(userData?.username) &&
-                                (!excludePrivateNeuquen || userData?.worksInPrivateNeuquen) &&
-                                (!excludePrivateRioNegro || userData?.worksInPrivateRioNegro);
-                        })
-                        .map(option => option.value)
-                        .sort((a, b) => userCounters[a] - userCounters[b]); // Ordenar por menor cantidad de asignaciones
-                }
-
-                if (availableUsers.length > 0) {
-                    if (hasCardio) {
-                        availableUsers.sort((a, b) => userCounters[a] - userCounters[b]);
-                    } else {
-                        availableUsers = availableUsers.filter(user => {
-                            return allUsers.find(u => u._id === user)?.doesCardio;
-                        });
-                    }
-
-                    if (availableUsers.length > 0) {
-                        thirdUser = availableUsers[0];
-                    }
-                }
+            // 📌 Paso 3: Volcar las asignaciones a los selects de la fila
+            const finales = Array.from(assignedUsers);
+            if (finales.length > selects.length) {
+                faltantes.push(`${holidayName}: ${finales.length} asignados y sólo ${selects.length} lugares`);
             }
+            selects.forEach((select, i) => {
+                select.value = finales[i] || "";
+            });
 
-            if (thirdUser) {
-                selects[2].value = thirdUser;
-                assignedUsers.add(thirdUser);
-                userCounters[thirdUser]++;
-            }
-
-            let thirdUsername = allUsers.find(u => u._id === thirdUser)?.username || thirdUser;
-            console.log(`📌 Asignado tercer usuario: ${thirdUsername}`);
-
-
-    
-        // 📌 Log del contador de asignaciones con usernames
-        let userCounterWithNames = {};
-        Object.keys(userCounters).forEach(userId => {
-            let username = allUsers.find(u => u._id === userId)?.username || userId;
-            userCounterWithNames[username] = userCounters[userId];
+            console.log(`📌 ${holidayName}:`, finales.map(nombre).join(", "));
         });
-    
-        console.log("📌 Contador de asignaciones finalizado:", userCounterWithNames);
-        updateUserHolidayCountFromDOM();
-    });
 
+        // 📌 Log del contador de asignaciones con usernames
+        const userCounterWithNames = {};
+        Object.keys(userCounters).forEach(userId => {
+            userCounterWithNames[allUsers.find(u => u._id === userId)?.username || userId] = userCounters[userId];
+        });
+        console.log("📌 Contador de asignaciones finalizado:", userCounterWithNames);
+
+        updateUserHolidayCountFromDOM();
+
+        // 📌 Avisar de los cupos que quedaron sin cubrir, en lugar de dejar
+        // selects vacíos sin explicación.
+        if (faltantes.length > 0) {
+            console.warn("⚠️ Cupos sin cubrir:", faltantes);
+            toast.warning(`Quedaron asignaciones incompletas:\n${faltantes.join("\n")}`);
+        }
     });
 
     clearAssignmentsButton.addEventListener("click", () => {
