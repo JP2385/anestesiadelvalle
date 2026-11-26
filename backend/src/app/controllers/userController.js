@@ -10,7 +10,7 @@ exports.getAllUsers = async (req, res) => {
             && req.user?.role === 'admin';
         const filtro = incluirInactivos ? { allowedSite: null } : FILTRO_PADRON;
 
-        const users = await User.find(filtro).select('username email beginningDate phoneNumber doesCardio doesPediatrics doesRNM doesShifts worksInPrivateRioNegro worksInPublicRioNegro worksInPrivateNeuquen worksInPublicNeuquen workSchedule vacations otherLeaves worksInCmacOnly defaultAssignments activo fechaBaja');
+        const users = await User.find(filtro).select('username email beginningDate phoneNumber doesCardio doesPediatrics doesRNM doesShifts worksInPrivateRioNegro worksInPublicRioNegro worksInPrivateNeuquen worksInPublicNeuquen workSchedule vacations otherLeaves worksInCmacOnly defaultAssignments activo fechaBaja holidayCountOffset');
         res.send(users);
     } catch (error) {
         res.status(500).send({ message: error.message });
